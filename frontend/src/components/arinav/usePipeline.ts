@@ -25,6 +25,8 @@ export interface HqResult {
 export type PipelineState =
   | { phase: 'idle' }
   | { phase: 'checking' }
+  /** Never processed and auto-build is off: the browser preview (LQ) stays until started. */
+  | { phase: 'not_built' }
   | { phase: 'running'; run: RunRecord }
   | { phase: 'review'; run: RunRecord }
   | { phase: 'ready'; run: RunRecord | null; hq: HqResult }
@@ -48,16 +50,24 @@ async function loadHq(location: LocationRecord): Promise<HqResult> {
 /**
  * `request` asks for a run to be started for `dataset` (a new nonce each time); without
  * it, a run is only started automatically when the dataset has never been processed.
+ * With `auto: false` nothing starts on its own (a run costs Claude usage when the backend has
+ * an API key): unprocessed datasets end in `not_built` until `start()` is called. Datasets
+ * that already have a run still load their result.
  */
 export function usePipeline(
   dataset: string | null,
   buildingId: string | null,
   request: { dataset: string; nonce: number } | null,
+  { auto = true }: { auto?: boolean } = {},
 ): Pipeline {
   const [state, setState] = useState<PipelineState>({ phase: 'idle' });
   // Bumped on every new dataset/check so stale async work and polls stop.
   const generation = useRef(0);
   const timer = useRef<number | undefined>(undefined);
+  // Read when a dataset is opened, so switching auto-build on never starts a run for the
+  // building already on screen.
+  const autoRef = useRef(auto);
+  autoRef.current = auto;
 
   const settle = useCallback(
     async (gen: number, run: RunRecord | null) => {
@@ -123,13 +133,14 @@ export function usePipeline(
     }
     setState({ phase: 'checking' });
     void (async () => {
-      if (requestedNonce !== null) return startRun(gen, dataset, false);
+      if (requestedNonce !== null && autoRef.current) return startRun(gen, dataset, false);
       const runs = await api.runs(dataset).catch(() => null);
       if (gen !== generation.current) return;
       if (runs === null) {
         setState({ phase: 'failed', run: null, message: 'Could not reach the pipeline.' });
       } else if (runs.length === 0) {
-        await startRun(gen, dataset, false);
+        if (autoRef.current) await startRun(gen, dataset, false);
+        else setState({ phase: 'not_built' });
       } else {
         await settle(gen, runs[0]);
       }

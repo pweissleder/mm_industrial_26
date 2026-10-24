@@ -13,6 +13,14 @@ AriNav (team UI) is the only UI. It now has two modes:
 
 Without keys everything except chat/voice works (Developer mode, search, routing, scenario).
 
+**HQ models are not built automatically** (Developer → *HQ model* → “Auto-build HQ for new
+buildings”, default off, stored per browser). With a key on the server, the team's ingestion
+pipeline calls Claude (measured: about $0.30–1.50 per building). New buildings open in the free
+browser preview (LQ); the top-bar chip “LQ only · Build HQ” starts a build on request.
+Already processed buildings still load their HQ model (`backend/data/workspace/`, local,
+gitignored; an unchanged input is not rebuilt). Switching auto-build on only affects buildings
+opened afterwards.
+
 ## Who owns what
 
 | Area | Code | Origin |
@@ -96,5 +104,6 @@ The voice sample for the browser test is synthesised with the app's ElevenLabs c
 - Lint: `ruff`/`mypy` report pre-existing issues in team files `backend/scripts/navgraph_viz.py`
   and `backend/app/api/routes/buildings.py` (also on `main`); Phase A code is clean.
 - Live turns take ~4–11 s (Claude median 6 s, several tool rounds); voice STT/TTS each ~0.7–0.9 s.
-- Total live API spend for all Phase A tests in this round: about 0.75 $ (estimate from token usage).
+- Live API spend this round: about 0.75 $ for assistant/voice tests plus about 2.1 $ for three HQ pipeline
+  runs started by opening unprocessed buildings in the live app (before auto-build was switched off).
 - Real microphone test by a person is still open (automated test uses a synthetic voice).

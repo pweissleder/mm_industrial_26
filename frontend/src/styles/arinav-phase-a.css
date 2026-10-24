@@ -476,3 +476,13 @@
   color: var(--bad);
   font-weight: 600;
 }
+
+/* ---- HQ pipeline chip when auto-build is off ---- */
+.pipeline-chip--off {
+  background: var(--orange-50);
+  color: var(--orange-600);
+}
+
+.pipeline-chip--off:hover {
+  background: #ffe3cf;
+}

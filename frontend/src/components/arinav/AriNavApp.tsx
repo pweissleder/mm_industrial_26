@@ -44,6 +44,8 @@ import { DEFAULT_VIEW, type CameraAction, type ObjectInfo, type ViewSettings } f
 
 const LAST_DATASET = 'arinav:dataset';
 const LAST_MODE = 'arinav:mode';
+// Off by default: an HQ build calls Claude (paid) when the backend has an API key.
+const AUTO_HQ = 'arinav:auto-hq';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
 const WIDE = '(min-width: 1024px)';
 const wide = () => window.matchMedia(WIDE).matches;
@@ -92,6 +94,11 @@ export default function AriNavApp() {
   const [model, setModel] = useState<BuildingModel | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
   const [runRequest, setRunRequest] = useState<{ dataset: string; nonce: number } | null>(null);
+  const [autoHq, setAutoHq] = useState(() => recall(AUTO_HQ) === 'true');
+  const changeAutoHq = useCallback((value: boolean) => {
+    setAutoHq(value);
+    remember(AUTO_HQ, String(value));
+  }, []);
   const [pipelineOpen, setPipelineOpen] = useState(false);
   // Model URL last switched to automatically, so choosing the preview again sticks.
   const switchedTo = useRef<string | null>(null);
@@ -158,7 +165,7 @@ export default function AriNavApp() {
 
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
-  const pipeline = usePipeline(dataset, buildingId, runRequest);
+  const pipeline = usePipeline(dataset, buildingId, runRequest, { auto: autoHq });
 
   const graphOn = settings.layers.graph;
   useEffect(() => {
@@ -558,6 +565,8 @@ export default function AriNavApp() {
                 onPick={(which) => setPick(which ? { kind: 'endpoint', which } : null)}
                 exactPoint={exactPoint}
                 onExactPoint={setExactPoint}
+                autoHq={autoHq}
+                onAutoHq={changeAutoHq}
                 onSelect={(sel) => {
                   focusFloorOf(sel);
                   handleSelect(sel);

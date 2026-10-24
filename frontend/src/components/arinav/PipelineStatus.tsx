@@ -2,7 +2,7 @@
 // the pipeline's review requests (accept / retry / abort with a note) and retry on failure.
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, locationFileUrl, type ReviewOptionId, type RunRecord } from '../../lib/api';
-import { AlertIcon, CheckIcon, CloseIcon } from './Icons';
+import { AlertIcon, CheckIcon, CloseIcon, SparkleIcon } from './Icons';
 import type { Pipeline, PipelineState } from './usePipeline';
 
 const STAGES: [string, string][] = [
@@ -27,7 +27,13 @@ function progress(run: RunRecord): string {
 export function PipelineChip({ state, onOpen }: { state: PipelineState; onOpen: () => void }) {
   if (state.phase === 'idle') return null;
   const [tone, label, title] =
-    state.phase === 'checking'
+    state.phase === 'not_built'
+      ? [
+          'off',
+          'LQ only · Build HQ',
+          'No high-quality model yet. Auto-build is off (Developer mode); open to build it now.',
+        ]
+      : state.phase === 'checking'
       ? ['busy', 'Checking HQ model…', 'Looking for a processed version of this building']
       : state.phase === 'running'
         ? [
@@ -49,6 +55,7 @@ export function PipelineChip({ state, onOpen }: { state: PipelineState; onOpen: 
     >
       {tone === 'busy' && <span className="spinner" aria-hidden="true" />}
       {tone === 'good' && <CheckIcon width={15} height={15} />}
+      {tone === 'off' && <SparkleIcon width={15} height={15} />}
       {(tone === 'attention' || tone === 'bad') && <AlertIcon width={15} height={15} />}
       <span className="pipeline-chip__label">{label}</span>
     </button>
@@ -64,7 +71,10 @@ interface DialogProps {
 export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const { state } = pipeline;
-  const run = state.phase === 'idle' || state.phase === 'checking' ? null : state.run;
+  const run =
+    state.phase === 'idle' || state.phase === 'checking' || state.phase === 'not_built'
+      ? null
+      : state.run;
   const review = state.phase === 'review' ? state.run.pending_review : null;
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
@@ -96,9 +106,12 @@ export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
 
   const answer = (option: ReviewOptionId) => act(() => pipeline.resume(option, note.trim()));
   const restart = () => act(() => pipeline.start(true));
+  const build = () => act(() => pipeline.start(false));
 
   const heading =
-    state.phase === 'review'
+    state.phase === 'not_built'
+      ? 'No high-quality model yet'
+      : state.phase === 'review'
       ? 'Your decision is needed'
       : state.phase === 'ready'
         ? 'High-quality model ready'
@@ -125,7 +138,16 @@ export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
           </button>
         </header>
 
-        {state.phase !== 'ready' && (
+        {state.phase === 'not_built' && (
+          <p className="muted">
+            You are looking at the quick preview generated in the browser; routing, search and the
+            assistant work on it as usual. Building the high-quality version runs the ingestion
+            pipeline, which calls Claude (Opus, Sonnet, Haiku; roughly $0.30 to $1.50 per building)
+            when the server has an API key. Automatic builds are off; change that in Developer mode.
+          </p>
+        )}
+
+        {state.phase !== 'ready' && state.phase !== 'not_built' && (
           <p className="muted">
             Until then you see a quick preview generated in the browser. The pipeline validates and
             cleans the data, builds a to-scale 3D model and describes every room; the view switches
@@ -234,6 +256,11 @@ export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
         )}
 
         <footer className="dialog__foot">
+          {state.phase === 'not_built' && (
+            <button className="btn btn--accent" disabled={busy} onClick={() => void build()}>
+              Build HQ model
+            </button>
+          )}
           {(state.phase === 'failed' || state.phase === 'ready') && (
             <button className="btn btn--ghost" disabled={busy} onClick={() => void restart()}>
               {state.phase === 'failed' ? 'Try again' : 'Rebuild'}

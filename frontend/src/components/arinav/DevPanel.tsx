@@ -33,6 +33,9 @@ interface Props {
   exactPoint: boolean;
   onExactPoint: (value: boolean) => void;
   onSelect: (selection: Selection) => void;
+  /** Start the HQ pipeline on its own for unprocessed buildings (costs Claude usage). */
+  autoHq: boolean;
+  onAutoHq: (value: boolean) => void;
 }
 
 const SEARCH_KINDS: { id: SearchKind | ''; label: string }[] = [
@@ -82,6 +85,17 @@ export default function DevPanel(props: Props) {
       <RouteFacts nav={nav} model={model} onSelect={props.onSelect} />
       <ScenarioSection nav={nav} model={model} selection={props.selection} />
       <ExamplesSection nav={nav} buildingId={buildingId} />
+      <section className="section">
+        <span className="section__title">HQ model</span>
+        <div className="toggle-list">
+          <Switch label="Auto-build HQ for new buildings" checked={props.autoHq} onChange={props.onAutoHq} />
+        </div>
+        <p className="field__hint">
+          {props.autoHq
+            ? 'Opening or uploading an unprocessed building starts the ingestion pipeline. With an API key on the server it calls Claude (about $0.30 to $1.50 per building).'
+            : 'Off: new buildings stay in the free browser preview (LQ). Start a build from the “LQ only” chip in the top bar. Buildings already processed still load their HQ model.'}
+        </p>
+      </section>
       <section className="section">
         <span className="section__title">Last assistant turn</span>
         {nav.lastTurn ? (
