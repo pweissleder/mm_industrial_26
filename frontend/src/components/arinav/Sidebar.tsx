@@ -1,4 +1,4 @@
-import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   ASSET_COLORS,
   floorLabel,
@@ -10,6 +10,7 @@ import {
 } from '../../lib/building';
 import {
   CloseIcon,
+  CodeIcon,
   CubeIcon,
   FitIcon,
   FrontIcon,
@@ -42,12 +43,19 @@ interface Props {
   onSelect: (selection: Selection) => void;
   onCamera: (action: CameraAction) => void;
   onClose: () => void;
+  /** Developer mode: the developer controls, shown in their own tab. */
+  developer?: ReactNode;
 }
 
-type Tab = 'location' | 'view';
+type Tab = 'location' | 'view' | 'developer';
 
 export default function Sidebar(props: Props) {
   const [tab, setTab] = useState<Tab>('location');
+  const devMode = !!props.developer;
+  // Entering developer mode opens its tab; leaving it falls back to the location tab.
+  useEffect(() => {
+    setTab((t) => (devMode ? 'developer' : t === 'developer' ? 'location' : t));
+  }, [devMode]);
   return (
     <aside className="sidebar card" aria-label="Location and view">
       <div className="sidebar__head">
@@ -68,13 +76,29 @@ export default function Sidebar(props: Props) {
           >
             <LayersIcon width={16} height={16} /> View
           </button>
+          {devMode && (
+            <button
+              role="tab"
+              aria-selected={tab === 'developer'}
+              className="segmented__item"
+              onClick={() => setTab('developer')}
+            >
+              <CodeIcon width={16} height={16} /> Developer
+            </button>
+          )}
         </div>
         <button className="icon-btn sidebar__close" onClick={props.onClose} aria-label="Close panel">
           <CloseIcon />
         </button>
       </div>
       <div className="sidebar__body">
-        {tab === 'location' ? <LocationTab {...props} /> : <ViewTab {...props} />}
+        {tab === 'developer' && devMode ? (
+          props.developer
+        ) : tab === 'view' ? (
+          <ViewTab {...props} />
+        ) : (
+          <LocationTab {...props} />
+        )}
       </div>
     </aside>
   );
@@ -415,7 +439,7 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
   );
 }
 
-function Switch(props: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+export function Switch(props: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
     <label className="switch">
       <span>{props.label}</span>
@@ -430,7 +454,7 @@ function Switch(props: { label: string; checked: boolean; onChange: (v: boolean)
   );
 }
 
-function Slider(props: {
+export function Slider(props: {
   label: string;
   value: number;
   min: number;

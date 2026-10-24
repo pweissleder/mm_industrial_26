@@ -12,6 +12,7 @@ dependencies = [
     "langsmith>=0.14.12",
     "mapbox-earcut>=2.1.0",
     "matplotlib>=3.11.2",
+    "networkx>=3.6.1",
     "numpy>=2.4.6",
     "pydantic-settings>=2.16.1",
     "python-multipart>=0.0.32",
@@ -75,3 +76,16 @@ warn_return_any = false
 [[tool.mypy.overrides]]
 module = ["jsonpatch", "trimesh.*"]
 ignore_missing_imports = true
+
+# Navigation: the vendored official kit 1.1.0 modules stay byte-identical, so they are not checked.
+[[tool.mypy.overrides]]
+module = ["app.navigation.official.building_map", "app.navigation.official.score"]
+ignore_errors = true
+
+# Navigation modules ported unchanged from the prototype: untyped legacy code (still body-checked).
+[[tool.mypy.overrides]]
+module = ["app.navigation.ported.*"]
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+warn_return_any = false

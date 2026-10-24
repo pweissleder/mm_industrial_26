@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   assetColor,
   assetHeight,
@@ -117,6 +118,10 @@ interface Props {
   onClose: () => void;
   onAsk: (question: string) => void;
   onFocusFloor: (level: number) => void;
+  /** Closed in the current navigation scenario. */
+  closed?: boolean;
+  /** Mode-specific actions, e.g. set as simulated location or as route start. */
+  extraActions?: ReactNode;
 }
 
 export default function DetailsCard({
@@ -127,6 +132,8 @@ export default function DetailsCard({
   onClose,
   onAsk,
   onFocusFloor,
+  closed = false,
+  extraActions,
 }: Props) {
   const d = describe(model, selection, info, spaceMeta);
   if (!d) return null;
@@ -143,6 +150,11 @@ export default function DetailsCard({
           <CloseIcon />
         </button>
       </header>
+      {closed && (
+        <p className="details__closed" role="status">
+          Closed in the current scenario
+        </p>
+      )}
       {d.description && <p className="details__description">{d.description}</p>}
       <dl className="details__rows">
         {d.rows.map(([k, v]) => (
@@ -161,6 +173,7 @@ export default function DetailsCard({
             <LayersIcon width={16} height={16} /> Show floor
           </button>
         )}
+        {extraActions}
       </div>
     </section>
   );

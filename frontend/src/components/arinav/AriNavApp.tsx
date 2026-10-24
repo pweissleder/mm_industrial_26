@@ -1,23 +1,56 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { api, datasetFileUrl, type HealthResponse, type UploadResponse } from '../../lib/api';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  api,
+  datasetFileUrl,
+  type AssistantStatus,
+  type ConfirmResponse,
+  type HealthResponse,
+  type TurnResponse,
+  type UploadResponse,
+} from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
-import ChatDock, { type Draft } from './ChatDock';
+import {
+  elementLabel,
+  endpointFromSelection,
+  selectionFromFocus,
+  type AppMode,
+  type SimulatedLocation,
+} from '../../lib/nav';
+import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
-import { FitIcon, MinusIcon, PanelIcon, PlusIcon, TopIcon, CubeIcon, UploadIcon } from './Icons';
+import DevPanel from './DevPanel';
+import {
+  CodeIcon,
+  FitIcon,
+  MinusIcon,
+  PanelIcon,
+  PinIcon,
+  PlusIcon,
+  SparkleIcon,
+  TopIcon,
+  CubeIcon,
+  UploadIcon,
+} from './Icons';
 import Logo, { LogoMark } from './Logo';
 import { PipelineChip, PipelineDialog } from './PipelineStatus';
+import type { PickHit } from './scene';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
+import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
 import { DEFAULT_VIEW, type CameraAction, type ObjectInfo, type ViewSettings } from './view';
 
 const LAST_DATASET = 'arinav:dataset';
+const LAST_MODE = 'arinav:mode';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
 const WIDE = '(min-width: 1024px)';
 const wide = () => window.matchMedia(WIDE).matches;
 // Sidebar width plus its gutters, matching --sidebar-w and --gutter in global.css.
 const DOCKED_SIDEBAR_PX = 340 + 2 * 16;
+
+/** What the next click in the 3D view sets, instead of only selecting. */
+type Pick = { kind: 'endpoint'; which: Which } | { kind: PickPurpose; reply: boolean };
 
 function useWide(): boolean {
   const [value, setValue] = useState(wide);
@@ -30,17 +63,17 @@ function useWide(): boolean {
   return value;
 }
 
-function remember(dataset: string) {
+function remember(key: string, value: string) {
   try {
-    localStorage.setItem(LAST_DATASET, dataset);
+    localStorage.setItem(key, value);
   } catch {
     // Storage can be unavailable (private mode); remembering is only a convenience.
   }
 }
 
-function recall(): string | null {
+function recall(key: string): string | null {
   try {
-    return localStorage.getItem(LAST_DATASET);
+    return localStorage.getItem(key);
   } catch {
     return null;
   }
@@ -49,6 +82,10 @@ function recall(): string | null {
 export default function AriNavApp() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [backendDown, setBackendDown] = useState(false);
+  const [assistant, setAssistant] = useState<AssistantStatus | null>(null);
+  const [mode, setMode] = useState<AppMode>(() =>
+    recall(LAST_MODE) === 'developer' ? 'developer' : 'assistant',
+  );
   const [datasets, setDatasets] = useState<string[]>([]);
   const [dataset, setDataset] = useState<string | null>(null);
   const [model, setModel] = useState<BuildingModel | null>(null);
@@ -69,13 +106,18 @@ export default function AriNavApp() {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [pick, setPick] = useState<Pick | null>(null);
+  const [exactPoint, setExactPoint] = useState(false);
   const isWide = useWide();
+  const nav = useNavigation(buildingId);
+  const developer = mode === 'developer';
 
   const notify = useCallback((text: string) => {
     setToast(text);
     window.setTimeout(() => setToast((t) => (t === text ? null : t)), 4000);
   }, []);
 
+  const { reset: resetNav } = nav;
   const openDataset = useCallback(
     async (name: string, startPipeline = false) => {
       setDataset(name);
@@ -85,6 +127,8 @@ export default function AriNavApp() {
       setSelection(null);
       setLooseGlb(null);
       setSource(GENERATED_SOURCE);
+      setPick(null);
+      resetNav();
       try {
         const [ingestion, files] = await Promise.all([
           api.ingest(name),
@@ -95,15 +139,17 @@ export default function AriNavApp() {
         if (startPipeline) setRunRequest({ dataset: name, nonce: Date.now() });
         setSources(files.map((f) => f.name).filter(isGlb));
         setSettings((s) => ({ ...s, floor: 'all' }));
-        remember(name);
+        remember(LAST_DATASET, name);
+        return ingestion.building_id;
       } catch {
         setModel(null);
         notify(`Could not load “${name}”.`);
+        return null;
       } finally {
         setLoading(false);
       }
     },
-    [notify],
+    [notify, resetNav],
   );
 
   const refreshDatasets = useCallback(() => api.datasets().then(setDatasets), []);
@@ -159,11 +205,16 @@ export default function AriNavApp() {
       .health()
       .then(setHealth)
       .catch(() => setBackendDown(true));
+    // Without the assistant API the chat falls back to the plain agent (/api/chat).
+    api
+      .assistantStatus()
+      .then(setAssistant)
+      .catch(() => setAssistant(null));
     api
       .datasets()
       .then((list) => {
         setDatasets(list);
-        const last = recall();
+        const last = recall(LAST_DATASET);
         const first = last && list.includes(last) ? last : list[0];
         if (first) void openDataset(first);
         else setLoading(false);
@@ -171,25 +222,145 @@ export default function AriNavApp() {
       .catch(() => setLoading(false));
   }, [openDataset]);
 
-  const handleSelect = useCallback((sel: Selection | null, objectInfo?: ObjectInfo) => {
-    setSelection(sel);
-    setInfo(objectInfo);
-  }, []);
+  const changeMode = (next: AppMode) => {
+    setMode(next);
+    remember(LAST_MODE, next);
+    setPick(null);
+    if (next === 'developer') setSidebarOpen(true);
+  };
 
-  // Picking from the list: bring the item's floor into focus so it isn't hidden under the one above.
+  /** Make a room the (simulated) user location; optionally answer the assistant with it. */
+  const setLocationFrom = useCallback(
+    async (sel: Selection, reply: boolean) => {
+      const spaceId =
+        sel.kind === 'space'
+          ? sel.id
+          : sel.kind === 'asset'
+            ? viewModel?.assets.find((a) => a.id === sel.id)?.space_id
+            : undefined;
+      if (!spaceId || !buildingId) {
+        notify('Pick a room to set the simulated location.');
+        return;
+      }
+      const label = elementLabel(spaceId, viewModel);
+      let location: SimulatedLocation = { endpoint: { kind: 'space', id: spaceId }, label };
+      try {
+        const resolved = await api.resolveLocation({
+          building_id: buildingId,
+          source: 'simulated',
+          space_id: spaceId,
+        });
+        if (resolved.status === 'resolved' && resolved.endpoint) {
+          location = { endpoint: resolved.endpoint, label };
+        }
+      } catch {
+        // The room itself is a valid start; resolving only refines it.
+      }
+      nav.setSimulated(location);
+      if (reply) setDraft({ text: `I'm in ${label}.`, nonce: Date.now(), send: true });
+    },
+    [buildingId, viewModel, nav, notify],
+  );
+
+  const handleSelect = useCallback(
+    (sel: Selection | null, objectInfo?: ObjectInfo, hit?: PickHit) => {
+      if (pick && sel) {
+        setPick(null);
+        if (pick.kind === 'endpoint') {
+          const spaceHit = hit && { position: hit.position };
+          const endpoint = endpointFromSelection(sel, spaceHit, exactPoint);
+          if (endpoint) nav.setEndpoint(pick.which, endpoint);
+          else notify('Pick a room, asset or door.');
+        } else if (pick.kind === 'location') {
+          void setLocationFrom(sel, pick.reply);
+        } else {
+          const name = elementLabel(sel.id, viewModel);
+          setDraft({ text: `I mean ${name}.`, nonce: Date.now(), send: true });
+        }
+      }
+      setSelection(sel);
+      setInfo(objectInfo);
+    },
+    [pick, exactPoint, nav, notify, setLocationFrom, viewModel],
+  );
+
+  useEffect(() => {
+    if (!pick) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setPick(null);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [pick]);
+
+  // Bring a floor into focus so the item isn't hidden under the one above.
+  const focusFloorOf = useCallback(
+    (sel: Selection) => {
+      const floorId =
+        sel.kind === 'space'
+          ? viewModel?.spaces.find((s) => s.id === sel.id)?.floor_id
+          : sel.kind === 'asset'
+            ? viewModel?.assets.find((a) => a.id === sel.id)?.floor_id
+            : sel.kind === 'opening'
+              ? viewModel?.openings.find((o) => o.id === sel.id)?.floor_id
+              : undefined;
+      const level = viewModel?.floors.find((f) => f.id === floorId)?.level;
+      const top = Math.max(...(viewModel?.floors.map((f) => f.level) ?? [0]));
+      if (level !== undefined && !(settings.floor === 'all' && level === top)) {
+        setSettings((s) => ({ ...s, floor: level }));
+      }
+    },
+    [viewModel, settings.floor],
+  );
+
   const selectFromList = (sel: Selection) => {
-    const floorId =
-      sel.kind === 'space'
-        ? viewModel?.spaces.find((s) => s.id === sel.id)?.floor_id
-        : viewModel?.assets.find((a) => a.id === sel.id)?.floor_id;
-    const level = viewModel?.floors.find((f) => f.id === floorId)?.level;
-    const top = Math.max(...(viewModel?.floors.map((f) => f.level) ?? [0]));
-    if (level !== undefined && !(settings.floor === 'all' && level === top)) {
-      setSettings((s) => ({ ...s, floor: level }));
-    }
+    focusFloorOf(sel);
     handleSelect(sel);
     if (!isWide) setSidebarOpen(false);
   };
+
+  /** Switch to the building a turn refers to (ids map to datasets via /api/buildings). */
+  const switchBuilding = useCallback(
+    async (id: string) => {
+      const known = await api.buildings().catch(() => []);
+      const name = known.find((b) => b.id === id)?.dataset ?? (datasets.includes(id) ? id : null);
+      if (!name) {
+        notify(`Building ${id} is not available here.`);
+        return false;
+      }
+      return (await openDataset(name)) === id || name === id;
+    },
+    [datasets, openDataset, notify],
+  );
+
+  const applyTurn = useCallback(
+    async (turn: TurnResponse) => {
+      const ui = turn.ui ?? {};
+      if (ui.building_id && ui.building_id !== buildingId) await switchBuilding(ui.building_id);
+      nav.applyTurn(turn);
+      const route = ui.route;
+      if (route?.path?.length) {
+        // Show every floor the route uses: a focused floor would hide the ones above it.
+        const levels = new Set(
+          route.path.map((p) => viewModel?.floors.find((f) => f.id === p.floor_id)?.level),
+        );
+        if (levels.size > 1 && settings.floor !== 'all') setSettings((s) => ({ ...s, floor: 'all' }));
+      }
+      if (ui.focus && !route) {
+        const sel = selectionFromFocus(ui.focus);
+        focusFloorOf(sel);
+        setSelection(sel);
+        setInfo(undefined);
+      }
+    },
+    [buildingId, switchBuilding, nav, viewModel, settings.floor, focusFloorOf],
+  );
+
+  const handleConfirmed = useCallback(
+    (result: ConfirmResponse) => {
+      if (result.state) nav.applyState(result.state);
+      else void nav.refresh();
+    },
+    [nav],
+  );
 
   const runCamera = (action: CameraAction) => setCamera({ action, nonce: Date.now() });
 
@@ -223,9 +394,56 @@ export default function AriNavApp() {
         ? { tone: 'low', label: 'Low', title: 'Quick preview generated in the browser from building.json' }
         : null;
 
+  const chatSelection = useMemo(
+    () =>
+      selection && selection.kind !== 'object'
+        ? { name: elementLabel(selection.id, viewModel), room: selection.kind === 'space' }
+        : null,
+    [selection, viewModel],
+  );
+  const selectedEndpoint = selection ? endpointFromSelection(selection) : null;
+  const closed = nav.state?.closed;
+
+  const pickHint = !pick
+    ? null
+    : pick.kind === 'endpoint'
+      ? `Click a room, asset or door to set the ${pick.which}.`
+      : pick.kind === 'location'
+        ? 'Click a room to set your simulated location.'
+        : 'Click the place you mean.';
+
+  const detailActions =
+    selection && selection.kind !== 'object' ? (
+      developer ? (
+        selectedEndpoint && (
+          <>
+            <button
+              className="btn btn--ghost btn--sm"
+              onClick={() => nav.setEndpoint('start', selectedEndpoint)}
+            >
+              Set as start
+            </button>
+            <button
+              className="btn btn--ghost btn--sm"
+              onClick={() => nav.setEndpoint('target', selectedEndpoint)}
+            >
+              Set as target
+            </button>
+          </>
+        )
+      ) : assistant && selection.kind === 'space' ? (
+        <button
+          className="btn btn--ghost btn--sm"
+          onClick={() => void setLocationFrom(selection, false)}
+        >
+          <PinIcon width={16} height={16} /> I am here (simulated)
+        </button>
+      ) : null
+    ) : null;
+
   return (
     <div
-      className={`app${sidebarOpen ? ' app--sidebar' : ''}${selection ? ' app--selection' : ''}`}
+      className={`app${sidebarOpen ? ' app--sidebar' : ''}${selection ? ' app--selection' : ''}${pick ? ' app--picking' : ''}`}
     >
       <Viewer3D
         model={viewModel}
@@ -236,6 +454,10 @@ export default function AriNavApp() {
         camera={camera}
         insetLeft={isWide && sidebarOpen ? DOCKED_SIDEBAR_PX : 0}
         onSelect={handleSelect}
+        route={nav.routeView}
+        highlight={nav.highlight}
+        diagnosis={nav.diagnosis}
+        closed={closed}
       />
 
       <header className="topbar card">
@@ -259,6 +481,26 @@ export default function AriNavApp() {
           </span>
         )}
         <span className="topbar__spacer" />
+        <div className="segmented segmented--small mode-toggle" role="group" aria-label="Mode">
+          <button
+            className="segmented__item"
+            aria-pressed={!developer}
+            onClick={() => changeMode('assistant')}
+            title="Assistant mode: ask, talk and follow routes"
+          >
+            <SparkleIcon width={15} height={15} />
+            <span className="mode-toggle__label">Assistant</span>
+          </button>
+          <button
+            className="segmented__item"
+            aria-pressed={developer}
+            onClick={() => changeMode('developer')}
+            title="Developer mode: manual routing, scenarios, examples and tool calls"
+          >
+            <CodeIcon width={15} height={15} />
+            <span className="mode-toggle__label">Developer</span>
+          </button>
+        </div>
         <PipelineChip state={run} onOpen={() => setPipelineOpen(true)} />
         <button className="btn btn--accent topbar__upload" onClick={() => setUploadOpen(true)}>
           <UploadIcon width={17} height={17} />
@@ -288,6 +530,24 @@ export default function AriNavApp() {
           onSelect={selectFromList}
           onCamera={runCamera}
           onClose={() => setSidebarOpen(false)}
+          developer={
+            developer ? (
+              <DevPanel
+                buildingId={buildingId}
+                model={viewModel}
+                nav={nav}
+                selection={selection}
+                picking={pick?.kind === 'endpoint' ? pick.which : null}
+                onPick={(which) => setPick(which ? { kind: 'endpoint', which } : null)}
+                exactPoint={exactPoint}
+                onExactPoint={setExactPoint}
+                onSelect={(sel) => {
+                  focusFloorOf(sel);
+                  handleSelect(sel);
+                }}
+              />
+            ) : undefined
+          }
         />
       </div>
 
@@ -310,6 +570,16 @@ export default function AriNavApp() {
         </button>
       </nav>
 
+      {pickHint && (
+        <div className="pick-banner card" role="status">
+          <PinIcon width={16} height={16} />
+          <span>{pickHint}</span>
+          <button className="btn btn--ghost btn--sm" onClick={() => setPick(null)}>
+            Cancel
+          </button>
+        </div>
+      )}
+
       {selection && (
         <DetailsCard
           model={viewModel}
@@ -319,6 +589,8 @@ export default function AriNavApp() {
           onClose={() => handleSelect(null)}
           onAsk={(text) => setDraft({ text, nonce: Date.now() })}
           onFocusFloor={(level) => setSettings((s) => ({ ...s, floor: level }))}
+          closed={!!closed?.includes(selection.id)}
+          extraActions={detailActions}
         />
       )}
 
@@ -339,7 +611,21 @@ export default function AriNavApp() {
         </section>
       )}
 
-      <ChatDock health={health} backendDown={backendDown} draft={draft} />
+      <ChatDock
+        health={health}
+        backendDown={backendDown}
+        draft={draft}
+        assistant={assistant}
+        developer={developer}
+        ui={nav.ui}
+        selection={chatSelection}
+        simulated={nav.simulated}
+        onTurn={(turn) => void applyTurn(turn)}
+        onConfirmed={handleConfirmed}
+        onPick={(purpose, reply) => setPick({ kind: purpose, reply })}
+        onUseSelectionAsLocation={() => selection && void setLocationFrom(selection, true)}
+        onClearSimulated={() => nav.setSimulated(null)}
+      />
 
       <UploadDialog
         open={uploadOpen}

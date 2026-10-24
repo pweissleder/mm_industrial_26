@@ -7,6 +7,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { CSS2DObject, CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import {
@@ -21,6 +24,8 @@ import {
   type Selection,
   type Space,
 } from '../../lib/building';
+import type { RouteResponse } from '../../lib/api';
+import { routeDrawing } from './routeGeometry';
 import type { CameraAction, ObjectInfo, ViewSettings } from './view';
 
 const SLAB = 0.15;
@@ -30,6 +35,15 @@ const EXPLODE_GAP = 12;
 const GHOST_OPACITY = 0.12;
 const ACCENT = new THREE.Color('#fb7928');
 const OPEN_TYPES = new Set(['hall', 'corridor']);
+/** Height of the route line above the floor slab. */
+const ROUTE_LIFT = 0.35;
+const ROUTE_COLORS = { official: '#7c3aed', precision: '#004fab', vertical: '#5d6070' };
+
+/** Where a click hit the model, in building coordinates. */
+export interface PickHit {
+  position: Point;
+}
+
 const OPENING_COLORS: Record<string, string> = {
   door: '#55648a',
   entrance: '#12a594',
@@ -111,10 +125,62 @@ export class BuildingScene {
   private readonly unitBox = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
   private readonly selectMat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.6 });
   private readonly hoverMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.7 });
+  // Overlays painted over an element's own material: closed > diagnosis > highlight.
+  private readonly closedMat = new THREE.MeshStandardMaterial({
+    color: '#d93b3b',
+    roughness: 0.8,
+    transparent: true,
+    opacity: 0.55,
+  });
+  private readonly diagnosisMat = new THREE.MeshStandardMaterial({ color: '#e0115f', roughness: 0.6 });
+  private readonly highlightMat = new THREE.MeshStandardMaterial({ color: '#ffc61a', roughness: 0.6 });
+  // Route: shared materials and marker geometry, so a redraw allocates only line buffers.
+  private readonly routeGroup = new THREE.Group();
+  private readonly routeMats = {
+    official: new LineMaterial({
+      color: ROUTE_COLORS.official,
+      linewidth: 5,
+      dashed: true,
+      dashSize: 0.9,
+      gapSize: 0.55,
+      depthTest: false,
+      transparent: true,
+    }),
+    precision: new LineMaterial({
+      color: ROUTE_COLORS.precision,
+      linewidth: 5,
+      depthTest: false,
+      transparent: true,
+    }),
+    vertical: new LineMaterial({
+      color: ROUTE_COLORS.vertical,
+      linewidth: 3,
+      dashed: true,
+      dashSize: 0.4,
+      gapSize: 0.3,
+      depthTest: false,
+      transparent: true,
+    }),
+  };
+  private readonly markerGeo = new THREE.SphereGeometry(0.45, 20, 14);
+  private readonly doorGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.12, 20);
+  private readonly markerMats = {
+    start: new THREE.MeshBasicMaterial({ color: '#12a594', depthTest: false }),
+    target: new THREE.MeshBasicMaterial({ color: '#fb7928', depthTest: false }),
+    door: new THREE.MeshBasicMaterial({ color: '#002478', depthTest: false }),
+    exit: new THREE.MeshBasicMaterial({ color: '#12a594', depthTest: false }),
+  };
 
   private grid: THREE.GridHelper | null = null;
   private floors: FloorView[] = [];
   private objects = new Map<string, THREE.Object3D>();
+  /** The same objects by element id alone (ids are unique across kinds in building.json). */
+  private byId = new Map<string, THREE.Object3D>();
+  private overlaid = new Set<THREE.Object3D>();
+  private closedIds: string[] = [];
+  private diagnosisIds: string[] = [];
+  private highlightIds: string[] = [];
+  private route: RouteResponse | null = null;
   private model: BuildingModel | null = null;
   private glb: THREE.Object3D | null = null;
   private hq = false;
@@ -135,7 +201,7 @@ export class BuildingScene {
   constructor(
     private readonly container: HTMLElement,
     settings: ViewSettings,
-    private readonly onSelect: (sel: Selection | null, info?: ObjectInfo) => void,
+    private readonly onSelect: (sel: Selection | null, info?: ObjectInfo, hit?: PickHit) => void,
   ) {
     this.settings = settings;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -155,6 +221,7 @@ export class BuildingScene {
     this.sun.shadow.mapSize.set(2048, 2048);
     this.sun.shadow.bias = -0.0005;
     this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight);
+    this.scene.add(this.routeGroup);
 
     this.pin = makeLabel('', 'viewer__pin');
     this.pin.center.set(0.5, 1);
@@ -190,6 +257,12 @@ export class BuildingScene {
     this.resizeObserver.disconnect();
     this.controls.dispose();
     this.clear();
+    this.clearRouteObjects();
+    for (const m of Object.values(this.routeMats)) m.dispose();
+    for (const m of Object.values(this.markerMats)) m.dispose();
+    for (const m of [this.closedMat, this.diagnosisMat, this.highlightMat]) m.dispose();
+    this.markerGeo.dispose();
+    this.doorGeo.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();
     this.labelRenderer.domElement.remove();
@@ -200,10 +273,13 @@ export class BuildingScene {
   setModel(model: BuildingModel | null) {
     this.loadToken++;
     const keepCamera = this.sameBuilding(model);
+    if (!keepCamera) this.route = null;
     this.clear();
     this.model = model;
     if (model) this.build(model);
     this.applySettings();
+    this.applyOverlays();
+    this.buildRoute();
     if (!keepCamera) this.frame('iso', false);
   }
 
@@ -213,11 +289,14 @@ export class BuildingScene {
     const gltf = await new GLTFLoader().loadAsync(url);
     if (this.disposed || token !== this.loadToken) return;
     const keepCamera = this.sameBuilding(model);
+    if (!keepCamera) this.route = null;
     this.clear();
     this.model = model;
     this.hq = true;
     this.buildHq(gltf.scene, model);
     this.applySettings();
+    this.applyOverlays();
+    this.buildRoute();
     if (!keepCamera) this.frame('iso', false);
   }
 
@@ -226,7 +305,9 @@ export class BuildingScene {
     const gltf = await new GLTFLoader().loadAsync(url);
     if (this.disposed || token !== this.loadToken) return;
     this.buildingId = null;
+    this.route = null;
     this.clear();
+    this.clearRouteObjects();
     this.model = null;
     this.glb = gltf.scene;
     this.glb.traverse((o) => {
@@ -242,17 +323,53 @@ export class BuildingScene {
 
   setSettings(settings: ViewSettings) {
     const rebuildConnectors = settings.explode !== this.settings.explode;
+    const redrawRoute = rebuildConnectors || settings.floor !== this.settings.floor;
     this.settings = settings;
-    if (rebuildConnectors && this.model && !this.hq) this.buildConnectors(this.model);
+    if (rebuildConnectors && this.model && !this.hq) {
+      this.buildConnectors(this.model);
+      this.applyOverlays();
+    }
     this.applySettings();
+    if (redrawRoute) this.buildRoute();
+  }
+
+  /** Draw a route (or clear it with null); `fit` flies the camera to it. */
+  setRoute(route: RouteResponse | null, fit = false) {
+    this.route = route;
+    this.buildRoute();
+    if (fit && route && this.routeGroup.children.length) {
+      const box = new THREE.Box3();
+      for (const o of this.routeGroup.children) {
+        if (o instanceof THREE.Mesh || o instanceof Line2) box.expandByObject(o);
+      }
+      if (!box.isEmpty()) this.flyTo(box);
+    }
+  }
+
+  /** Elements the assistant points at (yellow). */
+  setHighlight(ids: readonly string[]) {
+    this.highlightIds = [...ids];
+    this.applyOverlays();
+  }
+
+  /** Elements a failed route blames (red-pink). */
+  setDiagnosis(ids: readonly string[]) {
+    this.diagnosisIds = [...ids];
+    this.applyOverlays();
+  }
+
+  /** Elements closed in the navigation scenario (translucent red). */
+  setClosed(ids: readonly string[]) {
+    this.closedIds = [...ids];
+    this.applyOverlays();
   }
 
   setSelection(selection: Selection | null, fly = true) {
-    if (this.selection) this.restoreMaterial(this.objects.get(selKey(this.selection)));
+    if (this.selection) this.restoreMaterial(this.lookup(this.selection));
     this.selection = selection;
     this.highlight.clear();
     this.pin.visible = false;
-    const obj = selection && this.objects.get(selKey(selection));
+    const obj = selection && this.lookup(selection);
     if (obj) {
       this.paint(obj, this.selectMat);
       const box = new THREE.Box3().setFromObject(obj);
@@ -286,9 +403,15 @@ export class BuildingScene {
     return same;
   }
 
+  private lookup(sel: Selection): THREE.Object3D | undefined {
+    return this.objects.get(selKey(sel)) ?? this.byId.get(sel.id);
+  }
+
   private clear() {
     this.setHovered(null);
     this.selection = null;
+    this.overlaid.clear();
+    this.byId.clear();
     this.highlight.clear();
     this.pin.visible = false;
     for (const f of this.floors) for (const m of f.materials) m.dispose();
@@ -316,6 +439,124 @@ export class BuildingScene {
     obj.userData.sel = sel;
     obj.userData.title = title;
     this.objects.set(selKey(sel), obj);
+    this.byId.set(sel.id, obj);
+  }
+
+  // ---------------------------------------------------------------- overlays + route
+
+  /** Swap an element's resting material (null = its own), keeping hover/selection logic intact. */
+  private setBase(obj: THREE.Object3D, material: THREE.Material | null) {
+    obj.traverse((o) => {
+      if (!(o instanceof THREE.Mesh) || !o.userData.baseMaterial) return;
+      o.userData.origMaterial ??= o.userData.baseMaterial;
+      o.userData.baseMaterial = material ?? o.userData.origMaterial;
+      o.material = o.userData.baseMaterial;
+    });
+  }
+
+  private applyOverlays() {
+    for (const obj of this.overlaid) this.setBase(obj, null);
+    this.overlaid.clear();
+    if (this.glb) return;
+    const paint = (ids: string[], material: THREE.Material) => {
+      for (const id of ids) {
+        const obj = this.byId.get(id);
+        if (!obj || this.overlaid.has(obj)) continue;
+        this.setBase(obj, material);
+        this.overlaid.add(obj);
+      }
+    };
+    paint(this.closedIds, this.closedMat);
+    paint(this.diagnosisIds, this.diagnosisMat);
+    paint(this.highlightIds, this.highlightMat);
+    const selected = this.selection && this.lookup(this.selection);
+    if (selected) this.paint(selected, this.selectMat);
+    this.needsRender = true;
+  }
+
+  private clearRouteObjects() {
+    for (const o of this.routeGroup.children) {
+      if (o instanceof Line2) o.geometry.dispose();
+      if (o instanceof CSS2DObject) o.element.remove();
+    }
+    this.routeGroup.clear();
+  }
+
+  /** Rebuild the route for the current floors, floor focus and explode setting. */
+  private buildRoute() {
+    this.clearRouteObjects();
+    this.needsRender = true;
+    const route = this.route;
+    if (!route || !this.floors.length) return;
+    const drawing = routeDrawing(route);
+    const floorView = new Map(this.floors.map((fv) => [fv.floor.id, fv]));
+    const focus = this.settings.floor;
+    const shown = (floorId: string) => {
+      const fv = floorView.get(floorId);
+      return !!fv && (focus === 'all' || fv.floor.level <= focus);
+    };
+    const yOf = (floorId: string) => {
+      const fv = floorView.get(floorId);
+      return (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + ROUTE_LIFT;
+    };
+    const line = (points: THREE.Vector3[], material: LineMaterial) => {
+      const geo = new LineGeometry();
+      geo.setPositions(points.flatMap((p) => [p.x, p.y, p.z]));
+      const l = new Line2(geo, material);
+      l.computeLineDistances();
+      l.renderOrder = 10;
+      l.raycast = () => {};
+      this.routeGroup.add(l);
+    };
+    const marker = (geo: THREE.BufferGeometry, material: THREE.Material, pos: THREE.Vector3) => {
+      const m = new THREE.Mesh(geo, material);
+      m.position.copy(pos);
+      m.renderOrder = 11;
+      m.raycast = () => {};
+      this.routeGroup.add(m);
+    };
+    const tag = (text: string, pos: THREE.Vector3) => {
+      const label = makeLabel(text, 'viewer__route-tag');
+      label.position.copy(pos);
+      label.center.set(0.5, 1.6);
+      this.routeGroup.add(label);
+    };
+
+    const material = this.routeMats[drawing.style];
+    for (const seg of drawing.lines) {
+      if (!shown(seg.floorId)) continue;
+      const y = yOf(seg.floorId);
+      line(
+        seg.points.map((p) => toVec(p, y)),
+        material,
+      );
+    }
+    const exits = new Set(
+      this.model?.openings.filter((o) => o.space_ids.includes('outside')).map((o) => o.id) ?? [],
+    );
+    for (const d of drawing.doors) {
+      if (!shown(d.floorId)) continue;
+      const mat = exits.has(d.elementId) ? this.markerMats.exit : this.markerMats.door;
+      marker(this.doorGeo, mat, toVec(d.position, yOf(d.floorId)));
+    }
+    for (const v of drawing.vertical) {
+      if (!shown(v.fromFloorId) || !shown(v.toFloorId)) continue;
+      const a = toVec(v.position, yOf(v.fromFloorId));
+      const b = toVec(v.position, yOf(v.toFloorId));
+      line([a, b], this.routeMats.vertical);
+      const name = v.kind === 'lift' ? 'Lift' : 'Stairs';
+      tag(v.schematic ? `${name} · schematic` : name, a.clone().lerp(b, 0.5));
+    }
+    if (drawing.start && shown(drawing.start.floorId)) {
+      const p = toVec(drawing.start.position, yOf(drawing.start.floorId));
+      marker(this.markerGeo, this.markerMats.start, p);
+      tag('Start', p);
+    }
+    if (drawing.target && shown(drawing.target.floorId)) {
+      const p = toVec(drawing.target.position, yOf(drawing.target.floorId));
+      marker(this.markerGeo, this.markerMats.target, p);
+      tag('Destination', p);
+    }
   }
 
   private build(model: BuildingModel) {
@@ -686,7 +927,10 @@ export class BuildingScene {
         fv.walls.scale.y = Math.max(0.01, Math.min(s.wallHeight, fv.floor.height_m - SLAB));
       }
       for (const mesh of fv.spaces.children) {
-        const material = mesh.userData.baseMaterial as THREE.MeshStandardMaterial | undefined;
+        // The own material, also while an overlay (closed, highlight) is painted over it.
+        const material = (mesh.userData.origMaterial ?? mesh.userData.baseMaterial) as
+          | THREE.MeshStandardMaterial
+          | undefined;
         if (!material || !mesh.userData.roomColor) continue;
         material.color.set(s.colorBy === 'room' ? mesh.userData.roomColor : '#eef0f4');
       }
@@ -811,6 +1055,7 @@ export class BuildingScene {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
+    for (const m of Object.values(this.routeMats)) m.resolution.set(w, h);
     this.needsRender = true;
   }
 
@@ -833,6 +1078,10 @@ export class BuildingScene {
   // ---------------------------------------------------------------- picking
 
   private pick(e: PointerEvent): THREE.Object3D | null {
+    return this.pickHit(e)?.obj ?? null;
+  }
+
+  private pickHit(e: PointerEvent): { obj: THREE.Object3D; point: THREE.Vector3 } | null {
     const rect = this.renderer.domElement.getBoundingClientRect();
     const ndc = new THREE.Vector2(
       ((e.clientX - rect.left) / rect.width) * 2 - 1,
@@ -844,9 +1093,9 @@ export class BuildingScene {
       let visible = true;
       for (let o: THREE.Object3D | null = hit.object; o; o = o.parent) visible &&= o.visible;
       if (!visible || isGhost(hit.object)) continue;
-      if (this.glb) return hit.object;
+      if (this.glb) return { obj: hit.object, point: hit.point };
       for (let o: THREE.Object3D | null = hit.object; o && o !== this.root; o = o.parent) {
-        if (o.userData.sel) return o;
+        if (o.userData.sel) return { obj: o, point: hit.point };
       }
     }
     return null;
@@ -859,13 +1108,18 @@ export class BuildingScene {
   private handlePointerUp = (e: PointerEvent) => {
     if (!this.downAt || Math.hypot(e.clientX - this.downAt[0], e.clientY - this.downAt[1]) > 6) return;
     this.downAt = null;
-    const obj = this.pick(e);
+    const hit = this.pickHit(e);
+    const obj = hit?.obj ?? null;
     if (obj && this.glb) {
       this.registerGlbObject(obj);
       this.onSelect(obj.userData.sel, this.glbInfo(obj));
       return;
     }
-    this.onSelect(obj ? (obj.userData.sel as Selection) : null);
+    this.onSelect(
+      obj ? (obj.userData.sel as Selection) : null,
+      undefined,
+      hit ? { position: [hit.point.x, -hit.point.z] } : undefined,
+    );
   };
 
   private handlePointerMove = (e: PointerEvent) => {

@@ -22,6 +22,13 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-opus-5-5"
 
+    # Building assistant (app/assistant): Claude tool loop over the navigation service, and
+    # ElevenLabs voice. Without the keys the assistant/voice endpoints report "offline".
+    assistant_model: str = "claude-sonnet-5-5"
+    assistant_effort: str = "medium"
+    elevenlabs_api_key: str | None = None
+    elevenlabs_voice_id: str = "JBFqnCBsd6RMkjVDRZzb"
+
     # Claude Managed Agents; create both once with scripts/setup_managed_agent.py.
     managed_agent_id: str | None = None
     managed_agent_environment_id: str | None = None
@@ -48,6 +55,7 @@ class Settings(BaseSettings):
 
     @field_validator(
         "anthropic_api_key",
+        "elevenlabs_api_key",
         "managed_agent_id",
         "managed_agent_environment_id",
         "langsmith_api_key",
