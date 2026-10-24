@@ -1,0 +1,79 @@
+{
+ "spec": {
+  "type": "seminar_table",
+  "category": "furniture",
+  "description": "Rectangular table with four legs.",
+  "default_height_m": 0.75,
+  "primitives": [
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.97
+    ],
+    "size": [
+     1.0,
+     1.0,
+     0.06000000000000005
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.47,
+     -0.47,
+     0.47
+    ],
+    "size": [
+     0.06,
+     0.06,
+     0.94
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.47,
+     0.47,
+     0.47
+    ],
+    "size": [
+     0.06,
+     0.06,
+     0.94
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.47,
+     -0.47,
+     0.47
+    ],
+    "size": [
+     0.06,
+     0.06,
+     0.94
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.47,
+     0.47,
+     0.47
+    ],
+    "size": [
+     0.06,
+     0.06,
+     0.94
+    ]
+   }
+  ]
+ },
+ "provenance": "seed",
+ "run_id": null,
+ "version": 1,
+ "created_at": "2026-10-24T15:44:34.368994Z"
+}
