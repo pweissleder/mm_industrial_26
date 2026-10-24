@@ -16,6 +16,7 @@ from app.agent import (
 )
 from app.api.routes import buildings, chat, health, ingestion, managed_agent
 from app.config import Settings, get_settings
+from app.navigation import NavgraphNavigator, NavigatorFactory, NavigatorRegistry
 from app.storage import BuildingRepository, InMemoryBuildingRepository
 from app.tracing import configure_tracing
 
@@ -48,13 +49,16 @@ def create_app(
     model: BaseChatModel | None = None,
     managed_agent_runner: ManagedAgentRunner | None = None,
     building_repository: BuildingRepository | None = None,
+    navigator_factory: NavigatorFactory = NavgraphNavigator,
 ) -> FastAPI:
     settings = settings or get_settings()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.tracing_enabled = configure_tracing(settings)
-        app.state.building_repository = building_repository or InMemoryBuildingRepository()
+        repository = building_repository or InMemoryBuildingRepository()
+        app.state.building_repository = repository
+        app.state.navigators = NavigatorRegistry(repository, navigator_factory)
         app.state.graph = build_graph(model or create_chat_model(settings))
         runner = managed_agent_runner or create_managed_agent_runner(settings)
         app.state.managed_agent_graph = runner and build_managed_agent_graph(runner)

@@ -1,4 +1,4 @@
-from app.agent.graph import AgentGraph, build_graph
+from app.agent.graph import AgentContext, AgentGraph, build_graph
 from app.agent.managed import (
     AnthropicManagedAgentRunner,
     ManagedAgentGraph,
@@ -7,6 +7,7 @@ from app.agent.managed import (
 )
 
 __all__ = [
+    "AgentContext",
     "AgentGraph",
     "AnthropicManagedAgentRunner",
     "ManagedAgentGraph",

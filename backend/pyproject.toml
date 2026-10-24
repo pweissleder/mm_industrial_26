@@ -9,7 +9,9 @@ dependencies = [
     "langchain-anthropic>=1.7.6",
     "langgraph>=1.2.17",
     "langsmith>=0.14.12",
+    "networkx>=3.4",
     "pydantic-settings>=2.16.1",
+    "shapely>=2.0",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -32,6 +34,7 @@ addopts = "-m 'not live'"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["navgraph", "navgraph_checks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "ASYNC"]
@@ -56,3 +59,8 @@ format = { sequence = [
     { cmd = "ruff check --fix ." },
 ], help = "Format and auto-fix" }
 setup-managed-agent = { cmd = "python -m scripts.setup_managed_agent", help = "Create the Managed Agent once" }
+
+# navgraph/ is vendored from the industrial-agents-hackathon-2026 repo; keep it as-is.
+[[tool.mypy.overrides]]
+module = ["navgraph", "navgraph.*"]
+ignore_errors = true
