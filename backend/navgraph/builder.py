@@ -95,10 +95,10 @@ class BuildingBuilder:
             issues.append({"severity": "error", "element": b.id, "problem": "no entrance: nothing is reachable from outside"})
         else:
             from dataclasses import replace as _r
-            from .rules import BAY_READINGS
+            from .rules import any_factory_zone
             rg = RoomGraph(b)
-            reach = rg.reachable(OUTSIDE, WALK)
-            reach_any = rg.reachable(OUTSIDE, _r(WALK, no_pass_through=BAY_READINGS[-1][1]))
+            reach = rg.reachable(OUTSIDE, _r(WALK, no_pass_through=any_factory_zone))
+            reach_any = rg.reachable(OUTSIDE, WALK)
             reach_sf = rg.reachable(OUTSIDE, STEP_FREE)
             for s in b.spaces.values():
                 if s.id not in reach_any:

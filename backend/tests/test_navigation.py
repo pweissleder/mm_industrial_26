@@ -41,7 +41,8 @@ def test_navigator_routes_on_sample_building(navigator: NavgraphNavigator) -> No
     )
 
     assert result["reachable"] is True
-    assert result["length_m"] == pytest.approx(59.39)
+    # 1.1.0 rules: each door lands 30 cm inside the room
+    assert result["length_m"] == pytest.approx(61.13)
     assert "Fertigung Ost 27" in navigator.primer()
 
 

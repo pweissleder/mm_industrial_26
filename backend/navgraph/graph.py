@@ -30,6 +30,8 @@ from .rules import WALK, Profile
 Pt = tuple[float, float]
 
 
+TIE_M = 1e-6   # routes this close in length count as equally long
+
 # ============================================================================================
 # Level 1
 # ============================================================================================
@@ -289,15 +291,13 @@ class NavGraph:
             _, cid, sid = node
             c = b.connectors[cid]
             yield ("land", cid, sid), 0.0, Step("lift_exit", sid, cid, 0.0, floor_id=b.spaces[sid].floor_id)
-            idx = [s for _, s in c.stops].index(sid)
-            for j in (idx - 1, idx + 1):
-                if 0 <= j < len(c.stops):
-                    nxt = c.stops[j][1]
-                    if not profile.space_ok(b.spaces[nxt]):
-                        continue
-                    rise, floors = self._rise(sid, nxt)
-                    w = cost.lift_ride(rise, floors)
-                    yield ("car", cid, nxt), w, Step("lift_ride", nxt, cid, w, floor_id=b.spaces[nxt].floor_id)
+            # one ride straight to any other stop (the floors passed on the way are not visited)
+            for _, nxt in c.stops:
+                if nxt == sid or not profile.space_ok(b.spaces[nxt]):
+                    continue
+                rise, floors = self._rise(sid, nxt)
+                w = cost.lift_ride(rise, floors)
+                yield ("car", cid, nxt), w, Step("lift_ride", nxt, cid, w, floor_id=b.spaces[nxt].floor_id)
 
     def _rise(self, s1: str, s2: str) -> tuple[float, int]:
         f1, f2 = self.b.floor_of(s1), self.b.floor_of(s2)
@@ -309,25 +309,26 @@ class NavGraph:
         """From the anchor of `start` (or from explicit `sources` nodes); returns (dist, prev, hit)."""
         srcs = sources if sources is not None else [("anchor", start)]
         dist = {src: 0.0 for src in srcs}
+        hops = {src: 0 for src in srcs}        # tie-break: equally long routes prefer fewer steps
         prev: dict = {}
-        pq = [(0.0, i, src) for i, src in enumerate(srcs)]
+        pq = [(0.0, 0, i, src) for i, src in enumerate(srcs)]
         heapq.heapify(pq)
         tie = itertools.count(len(srcs))
         while pq:
-            d, _, u = heapq.heappop(pq)
-            if d > dist.get(u, math.inf):
+            d, h, _, u = heapq.heappop(pq)
+            if d > dist.get(u, math.inf) + TIE_M or (d > dist[u] - TIE_M and h > hops[u]):
                 continue
             if u[0] == "anchor" and u[1] != start and goals is not None and u[1] in goals and stop_at_first:
                 return dist, prev, u
             if u[0] == "anchor" and u[1] != start:
                 continue                       # anchors are dead ends (only reached as goals)
-            goal_for_edges = None
             for v, w, step in self._edges_multi(u, profile, start, goals):
-                nd = d + w
-                if nd < dist.get(v, math.inf) - 1e-12:
-                    dist[v] = nd
+                nd, nh = d + w, h + (step.kind not in ("lift_board", "lift_exit"))   # a lift ride is one step
+                old = dist.get(v, math.inf)
+                if nd < old - TIE_M or (nd < old + TIE_M and nh < hops[v]):
+                    dist[v], hops[v] = nd, nh
                     prev[v] = (u, step)
-                    heapq.heappush(pq, (nd, next(tie), v))
+                    heapq.heappush(pq, (nd, nh, next(tie), v))
         return dist, prev, None
 
     def _edges_multi(self, node, profile, start, goals):

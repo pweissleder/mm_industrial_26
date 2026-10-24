@@ -2,7 +2,7 @@
 import json, sys, math, collections, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from navgraph import Building, NavGraph, DatasetCost, rules, analysis as A
+from navgraph import Building, NavGraph, OrganizerCost, rules, analysis as A
 
 def solve(nav, q):
     b, i, k = nav.b, q["inputs"], q["kind"]
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         for qf in sorted(Path(split).glob("*/questions.jsonl")):
             lines = [l for l in qf.read_text().splitlines() if l.strip()]
             if not lines: continue
-            nav = NavGraph(Building.load(qf.parent), DatasetCost())
+            nav = NavGraph(Building.load(qf.parent), OrganizerCost())
             for line in lines:
                 q = json.loads(line)
                 try: got = solve(nav, q); ok = correct(q, got)

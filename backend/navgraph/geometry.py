@@ -4,8 +4,10 @@ plus the polygon relations the agent needs (shared walls, stacking, wall midpoin
 from __future__ import annotations
 
 import heapq
+import itertools
 import math
 
+import shapely
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 from shapely.geometry.polygon import orient
 from shapely.ops import nearest_points
@@ -23,12 +25,16 @@ class WalkableArea:
         self.raw = polygon
         self.clearance = clearance
         self._raw_area: WalkableArea | None = None
-        shrunk = polygon.buffer(-clearance, join_style=2) if clearance > 0 else polygon
+        # round corners, as the 1.1.0 rules do
+        shrunk = polygon.buffer(-clearance) if clearance > 0 else polygon
         parts = [p for p in _parts(shrunk) if p.area > 1e-4]
         if not parts:                       # space narrower than 2 x clearance: walk the centre
             parts = list(_parts(polygon))
         self.parts = [orient(p, 1.0) for p in parts]
-        self._prepared = [prep(p.buffer(EPS * 10)) for p in self.parts]
+        # 2 cm: the 1.1.0 "clear line" tolerance
+        self._tolerance = 0.02 if clearance > 0 else EPS * 10
+        self._prepared = [prep(p.buffer(self._tolerance)) for p in self.parts]
+        self._shapes: dict[int, Polygon] = {}
         self._corners = [self._reflex_corners(p) for p in self.parts]
         self._corner_graph = [self._visibility(i) for i in range(len(self.parts))]
         self._cache: dict[tuple[Pt, Pt], float] = {}
@@ -58,6 +64,21 @@ class WalkableArea:
         return self._geodesic(a, b, want_path=True)
 
     # -- internals --------------------------------------------------------------------------
+    def _area(self, part: int):
+        if part not in self._shapes:
+            self._shapes[part] = self.parts[part].buffer(self._tolerance)
+            shapely.prepare(self._shapes[part])
+        return self._shapes[part]
+
+    def _seen(self, part: int, p: Pt) -> dict[int, float]:
+        """Corners visible from p, with their distances."""
+        cs = self._corners[part]
+        if not cs:
+            return {}
+        clear = shapely.covers(self._area(part), shapely.linestrings([[p, c] for c in cs]))
+        seen = zip(cs, clear, strict=True)
+        return {i: math.dist(p, c) for i, (c, ok) in enumerate(seen) if ok or c == p}
+
     def _visible(self, part: int, a: Pt, b: Pt) -> bool:
         return a == b or self._prepared[part].covers(LineString([a, b]))
 
@@ -76,15 +97,24 @@ class WalkableArea:
     def _visibility(self, part: int) -> dict[int, list[tuple[int, float]]]:
         cs = self._corners[part]
         g: dict[int, list[tuple[int, float]]] = {i: [] for i in range(len(cs))}
-        for i in range(len(cs)):
-            for j in range(i + 1, len(cs)):
-                if self._visible(part, cs[i], cs[j]):
-                    d = math.dist(cs[i], cs[j])
-                    g[i].append((j, d))
-                    g[j].append((i, d))
+        pairs = list(itertools.combinations(range(len(cs)), 2))
+        if not pairs:
+            return g
+        # one vectorised covers() call: round wall offsets give rooms many corners
+        lines = shapely.linestrings([[cs[i], cs[j]] for i, j in pairs])
+        clear = shapely.covers(self._area(part), lines)
+        for (i, j), ok in zip(pairs, clear, strict=True):
+            if ok or cs[i] == cs[j]:
+                d = math.dist(cs[i], cs[j])
+                g[i].append((j, d))
+                g[j].append((i, d))
         return g
 
     def _geodesic(self, a: Pt, b: Pt, want_path: bool = False):
+        off_area = any(not any(pp.covers(Point(p)) for pp in self._prepared) for p in (a, b))
+        if self.clearance > 0 and off_area:
+            # point off the walkable area (tiny rooms): 1.1.0 rules charge 1.5x the straight line
+            return [a, b] if want_path else 1.5 * math.dist(a, b)
         pa, a = self.snap(a)
         pb, b = self.snap(b)
         if pa != pb:
@@ -104,7 +134,7 @@ class WalkableArea:
         dist = {n: 0.0}
         prev: dict[int, int] = {}
         pq = [(0.0, n)]
-        goal_links = {i: math.dist(cs[i], b) for i in range(n) if self._visible(part, cs[i], b)}
+        goal_links = self._seen(part, b)
         while pq:
             d, u = heapq.heappop(pq)
             if d > dist.get(u, math.inf):
@@ -112,7 +142,7 @@ class WalkableArea:
             if u == n + 1:
                 break
             if u == n:
-                nbrs = [(i, math.dist(a, cs[i])) for i in range(n) if self._visible(part, a, cs[i])]
+                nbrs = list(self._seen(part, a).items())
             else:
                 nbrs = list(self._corner_graph[part][u])
                 if u in goal_links:

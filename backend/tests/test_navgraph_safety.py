@@ -92,15 +92,19 @@ def test_same_endpoints_are_validated() -> None:
 def test_robust_route_never_relaxes_the_bay_rule() -> None:
     b = _chain(_space("B", 4, 8, type="hall", room_type="production_zone"))
     nav = NavGraph(b, OrganizerCost())
+    trolley = rules.wide_load(0.5)
 
-    assert not nav.route("A", "C").reachable
-    assert not robust_route(nav, "A", "C", rules.WALK).route.reachable
+    assert not nav.route("A", "C", trolley).reachable
+    assert not robust_route(nav, "A", "C", trolley).route.reachable
 
 
-def test_agent_route_obeys_the_bay_rule() -> None:
+def test_walkers_cross_bays_vehicles_do_not() -> None:
     bi = BuildingIntelligence(_chain(_space("B", 4, 8, type="hall", room_type="production_zone")))
 
-    assert bi.call("route", {"start": "A", "goal": "C"})["reachable"] is False
+    assert bi.call("route", {"start": "A", "goal": "C"})["spaces"] == ["A", "B", "C"]
+    assert bi.call("route", {"start": "A", "goal": "C", "profile": "wide_load", "min_width": 0.5})[
+        "reachable"
+    ] is False
 
 
 def test_closures_survive_save_and_load(tmp_path: Path) -> None:

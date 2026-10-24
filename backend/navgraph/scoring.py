@@ -41,8 +41,9 @@ def links(b: Building, a: str, c: str, profile: Profile) -> list[tuple[str, str]
     if OUTSIDE not in (a, c):
         for k in b.connectors.values():
             ids = [s for _, s in k.stops]
-            if a in ids and c in ids and abs(ids.index(a) - ids.index(c)) == 1 \
-                    and profile.connector_ok(k):
+            # a lift rides between any two of its stops; a stair goes one flight at a time
+            step = abs(ids.index(a) - ids.index(c)) if a in ids and c in ids else 0
+            if (step == 1 or (step > 1 and k.kind == "lift")) and profile.connector_ok(k):
                 out.append((k.kind, k.id))
     return out
 

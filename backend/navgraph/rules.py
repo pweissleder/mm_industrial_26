@@ -66,8 +66,10 @@ class Profile:
     allow_lifts: bool = True
     allow_outside: bool = True
     can_enter: SpacePredicate = _any_space
-    no_pass_through: SpacePredicate = any_factory_zone
-    vehicle: bool = False            # forklift / trolley: the bay rule ("drive into, not through") always applies
+    # walkers take the shortest way, bays included (graded rules);
+    # vehicles drive into bays, never through them
+    no_pass_through: SpacePredicate = _never
+    vehicle: bool = False
     closed: frozenset[str] = field(default_factory=frozenset)
 
     # -- checks used by the graph ---------------------------------------------------------
@@ -103,12 +105,14 @@ class Profile:
 WALK = Profile("walk")
 STEP_FREE = Profile("step_free", step_free=True)                 # wheelchair, pram
 FORKLIFT = Profile("forklift", min_width_m=3.0, allow_stairs=False, allow_lifts=False,
-                   allow_outside=False, can_enter=is_forklift_space, vehicle=True)
+                   allow_outside=False, can_enter=is_forklift_space, no_pass_through=any_factory_zone,
+                   vehicle=True)
 
 
 def wide_load(width_m: float, name: str = "wide_load") -> Profile:
     """Trolley / pallet / bed: no stairs or steps, every door at least `width_m` wide."""
-    return Profile(name, step_free=True, min_width_m=width_m, vehicle=True)
+    return Profile(name, step_free=True, min_width_m=width_m, no_pass_through=any_factory_zone,
+                   vehicle=True)
 
 
 PRESETS = {"walk": WALK, "step_free": STEP_FREE, "forklift": FORKLIFT}

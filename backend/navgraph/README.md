@@ -124,7 +124,7 @@ Rule mapping:
 | Without stairs: lifts, ramps and doors only | `rules.STEP_FREE` (crossing a stairwell landing is allowed, as in the dev answers) |
 | Forklift: aisles and openings >= 3 m | `rules.FORKLIFT` |
 | Closed areas avoided | `Building.set_closed`, `avoid=[...]` |
-| Production bays: destination only | `Space.is_production_bay` (hall + `*_zone`); `no_pass_through` |
+| Production bays: destination only for vehicles (forklift, wide load); walkers may cross | `Space.is_production_bay` (hall + `*_zone`); `no_pass_through` |
 | No route → say so | `reachable: false` + `explain` |
 
 ## Open points to confirm with the organizers

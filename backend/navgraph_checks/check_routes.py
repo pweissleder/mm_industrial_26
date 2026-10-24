@@ -1,14 +1,14 @@
-"""Reproduce every warm-up route in a split with DatasetCost; report mismatches."""
+"""Reproduce every warm-up route in a split with OrganizerCost (the 1.1.0 route rules); report mismatches."""
 import json, sys, glob, time
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from navgraph import Building, NavGraph, DatasetCost, rules
+from navgraph import Building, NavGraph, OrganizerCost, rules
 
 split = Path(sys.argv[1])
 n = ok = okpath = 0; bad = []
 t0 = time.time()
 for qf in sorted(split.glob("*/questions_basic.jsonl")):
-    b = Building.load(qf.parent); nav = NavGraph(b, DatasetCost())
+    b = Building.load(qf.parent); nav = NavGraph(b, OrganizerCost())
     for line in qf.read_text().splitlines():
         q = json.loads(line); a = q["answer"]; k = q["kind"]
         if k not in ("route", "route_step_free", "route_with_closure", "tour"):
