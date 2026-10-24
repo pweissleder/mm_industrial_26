@@ -1,12 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { api, datasetFileUrl, type HealthResponse, type UploadResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import ChatDock, { type Draft } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import { FitIcon, MinusIcon, PanelIcon, PlusIcon, TopIcon, CubeIcon, UploadIcon } from './Icons';
 import Logo, { LogoMark } from './Logo';
-import Sidebar, { GENERATED_SOURCE } from './Sidebar';
+import { PipelineChip, PipelineDialog } from './PipelineStatus';
+import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
+import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
 import { DEFAULT_VIEW, type CameraAction, type ObjectInfo, type ViewSettings } from './view';
 
@@ -50,6 +52,11 @@ export default function AriNavApp() {
   const [datasets, setDatasets] = useState<string[]>([]);
   const [dataset, setDataset] = useState<string | null>(null);
   const [model, setModel] = useState<BuildingModel | null>(null);
+  const [buildingId, setBuildingId] = useState<string | null>(null);
+  const [runRequest, setRunRequest] = useState<{ dataset: string; nonce: number } | null>(null);
+  const [pipelineOpen, setPipelineOpen] = useState(false);
+  // Model URL last switched to automatically, so choosing the preview again sticks.
+  const switchedTo = useRef<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [sources, setSources] = useState<string[]>([]);
   const [source, setSource] = useState(GENERATED_SOURCE);
@@ -70,8 +77,10 @@ export default function AriNavApp() {
   }, []);
 
   const openDataset = useCallback(
-    async (name: string) => {
+    async (name: string, startPipeline = false) => {
       setDataset(name);
+      setBuildingId(null);
+      switchedTo.current = null;
       setLoading(true);
       setSelection(null);
       setLooseGlb(null);
@@ -82,6 +91,8 @@ export default function AriNavApp() {
           api.datasetFiles(name).catch(() => []),
         ]);
         setModel(await api.buildingModel(ingestion.building_id));
+        setBuildingId(ingestion.building_id);
+        if (startPipeline) setRunRequest({ dataset: name, nonce: Date.now() });
         setSources(files.map((f) => f.name).filter(isGlb));
         setSettings((s) => ({ ...s, floor: 'all' }));
         remember(name);
@@ -96,6 +107,52 @@ export default function AriNavApp() {
   );
 
   const refreshDatasets = useCallback(() => api.datasets().then(setDatasets), []);
+
+  // The browser preview shows at once; the pipeline's high-quality version replaces it
+  // when ready (unless an uploaded GLB is being looked at) and stays switchable.
+  const pipeline = usePipeline(dataset, buildingId, runRequest);
+  const { state: run } = pipeline;
+  const hq = run.phase === 'ready' ? run.hq : null;
+  const wasBuilding = useRef(false);
+  useEffect(() => {
+    if (run.phase === 'running' || run.phase === 'review') wasBuilding.current = true;
+    // The scene rebuilds on a switch, so a selection would point at objects that are gone.
+    if (!hq) {
+      if (source === HQ_SOURCE) {
+        setSource(GENERATED_SOURCE);
+        setSelection(null);
+      }
+      return;
+    }
+    if (switchedTo.current === hq.modelUrl) return;
+    switchedTo.current = hq.modelUrl;
+    const switching = source === GENERATED_SOURCE;
+    if (switching) {
+      setSource(HQ_SOURCE);
+      setSelection(null);
+    }
+    if (wasBuilding.current) {
+      notify(
+        switching
+          ? 'High-quality model ready — now showing it.'
+          : 'High-quality model ready — pick it under 3D source.',
+      );
+    }
+    wasBuilding.current = false;
+  }, [run.phase, hq, source, notify]);
+
+  // A review request opens the processing dialog once; later it waits behind the chip.
+  const shownReview = useRef<string | null>(null);
+  const reviewId = run.phase === 'review' ? run.run.pending_review?.review_id : undefined;
+  useEffect(() => {
+    if (reviewId && shownReview.current !== reviewId) {
+      shownReview.current = reviewId;
+      setPipelineOpen(true);
+    }
+  }, [reviewId]);
+
+  const showingHq = source === HQ_SOURCE && !!hq;
+  const viewModel = showingHq ? hq.building : model;
 
   useEffect(() => {
     api
@@ -123,10 +180,10 @@ export default function AriNavApp() {
   const selectFromList = (sel: Selection) => {
     const floorId =
       sel.kind === 'space'
-        ? model?.spaces.find((s) => s.id === sel.id)?.floor_id
-        : model?.assets.find((a) => a.id === sel.id)?.floor_id;
-    const level = model?.floors.find((f) => f.id === floorId)?.level;
-    const top = Math.max(...(model?.floors.map((f) => f.level) ?? [0]));
+        ? viewModel?.spaces.find((s) => s.id === sel.id)?.floor_id
+        : viewModel?.assets.find((a) => a.id === sel.id)?.floor_id;
+    const level = viewModel?.floors.find((f) => f.id === floorId)?.level;
+    const top = Math.max(...(viewModel?.floors.map((f) => f.level) ?? [0]));
     if (level !== undefined && !(settings.floor === 'all' && level === top)) {
       setSettings((s) => ({ ...s, floor: level }));
     }
@@ -143,7 +200,7 @@ export default function AriNavApp() {
     await refreshDatasets().catch(() => {});
     const glb = result.files.find((f) => isGlb(f.name));
     if (result.ingestible) {
-      await openDataset(result.dataset);
+      await openDataset(result.dataset, true);
       if (glb) setSource(glb.name);
     } else if (glb) {
       // A model without building.json: show it on its own.
@@ -155,15 +212,24 @@ export default function AriNavApp() {
     }
   }
 
-  const glbUrl = source && dataset ? datasetFileUrl(dataset, source) : looseGlb;
+  const glbUrl =
+    source && source !== HQ_SOURCE && dataset ? datasetFileUrl(dataset, source) : looseGlb;
   const empty = !loading && !model && !glbUrl;
+  const quality = glbUrl
+    ? null
+    : showingHq
+      ? { tone: 'hq', label: 'HQ', title: 'High-quality model from the ingestion pipeline' }
+      : model
+        ? { tone: 'low', label: 'Low', title: 'Quick preview generated in the browser from building.json' }
+        : null;
 
   return (
     <div
       className={`app${sidebarOpen ? ' app--sidebar' : ''}${selection ? ' app--selection' : ''}`}
     >
       <Viewer3D
-        model={model}
+        model={viewModel}
+        hqUrl={showingHq ? hq.modelUrl : null}
         glbUrl={glbUrl}
         settings={settings}
         selection={selection}
@@ -187,7 +253,13 @@ export default function AriNavApp() {
             {model.building.name}
           </span>
         )}
+        {quality && (
+          <span className={`quality quality--${quality.tone}`} title={quality.title}>
+            {quality.label}
+          </span>
+        )}
         <span className="topbar__spacer" />
+        <PipelineChip state={run} onOpen={() => setPipelineOpen(true)} />
         <button className="btn btn--accent topbar__upload" onClick={() => setUploadOpen(true)}>
           <UploadIcon width={17} height={17} />
           <span className="topbar__upload-label">Upload assets</span>
@@ -201,7 +273,9 @@ export default function AriNavApp() {
           dataset={dataset}
           onDataset={(d) => void openDataset(d)}
           loading={loading}
-          model={model}
+          model={viewModel}
+          summary={showingHq ? hq.location.metadata?.summary : undefined}
+          hqAvailable={!!hq}
           sources={sources}
           source={source}
           onSource={(s) => {
@@ -238,7 +312,8 @@ export default function AriNavApp() {
 
       {selection && (
         <DetailsCard
-          model={model}
+          model={viewModel}
+          spaceMeta={showingHq ? hq.location.metadata?.spaces : undefined}
           selection={selection}
           info={info}
           onClose={() => handleSelect(null)}
@@ -273,6 +348,8 @@ export default function AriNavApp() {
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />
+
+      <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />
 
       {toast && (
         <div className="toast" role="status">

@@ -10,6 +10,9 @@ export interface CameraCommand {
 
 interface Props {
   model: BuildingModel | null;
+  /** The pipeline's model.glb for `model`; shown instead of the generated preview. */
+  hqUrl: string | null;
+  /** An uploaded GLB, shown as is (wins over both). */
   glbUrl: string | null;
   settings: ViewSettings;
   selection: Selection | null;
@@ -21,6 +24,7 @@ interface Props {
 
 export default function Viewer3D({
   model,
+  hqUrl,
   glbUrl,
   settings,
   selection,
@@ -52,13 +56,19 @@ export default function Viewer3D({
 
   useEffect(() => {
     if (!scene.current) return;
+    const current = scene.current;
+    setError(null);
     if (glbUrl) {
-      setError(null);
-      scene.current.setGlb(glbUrl).catch(() => setError('Could not load this 3D model.'));
+      current.setGlb(glbUrl).catch(() => setError('Could not load this 3D model.'));
+    } else if (hqUrl && model) {
+      current.setHq(hqUrl, model).catch(() => {
+        setError('Could not load the high-quality model; showing the preview.');
+        current.setModel(model);
+      });
     } else {
-      scene.current.setModel(model);
+      current.setModel(model);
     }
-  }, [model, glbUrl]);
+  }, [model, hqUrl, glbUrl]);
 
   useEffect(() => scene.current?.setInsetLeft(insetLeft), [insetLeft]);
   useEffect(() => scene.current?.setSettings(settings), [settings]);

@@ -116,3 +116,16 @@ export const ChatIcon = (p: P) => (
     <path d="M20 12a8 8 0 0 1-11.6 7.1L4 20l.9-4.4A8 8 0 1 1 20 12Z" />
   </Icon>
 );
+
+export const CheckIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="m5 12.5 4.5 4.5L19 7.5" />
+  </Icon>
+);
+
+export const AlertIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M12 3.5 2.5 20h19L12 3.5Z" />
+    <path d="M12 10v4.5M12 17.5v.01" />
+  </Icon>
+);

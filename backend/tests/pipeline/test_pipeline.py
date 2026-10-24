@@ -152,11 +152,32 @@ def test_api_runs_pipeline_and_serves_location(client: TestClient) -> None:
     # Finalize also publishes the cleaned building to the building repository.
     assert client.get(f"/api/buildings/{DATASET}").status_code == 200
 
+    assert [r["run_id"] for r in client.get(f"/api/pipeline-runs?dataset={DATASET}").json()] == [
+        run_id
+    ]
+    assert client.get("/api/pipeline-runs?dataset=other").json() == []
+    assert client.get("/api/locations").json()[0]["has_model"] is True
+    building = client.get(f"/api/locations/{DATASET}/building")
+    assert building.status_code == 200 and building.json()["building"]["id"] == DATASET
+    preview = client.get(f"/api/locations/{DATASET}/files/3d/previews/plan_floor_0.png")
+    assert preview.status_code == 200 and preview.headers["content-type"] == "image/png"
+
+
+def test_api_location_files_stay_inside_the_location(client: TestClient) -> None:
+    client.post("/api/pipeline-runs", json={"dataset": DATASET})
+    client.portal.call(client.app.state.pipeline_runner.wait)  # type: ignore[union-attr,attr-defined]
+
+    base = f"/api/locations/{DATASET}/files"
+    assert client.get(f"{base}/location.json").status_code == 404  # not an artifact type
+    assert client.get(f"{base}/..%2F..%2Fruns%2Fx.png").status_code == 404
+    assert client.get(f"{base}/3d/previews/missing.png").status_code == 404
+
 
 def test_api_errors(client: TestClient) -> None:
     assert client.post("/api/pipeline-runs", json={"dataset": "../etc"}).status_code == 404
     assert client.get("/api/pipeline-runs/nope").status_code == 404
     assert client.get("/api/locations/nope").status_code == 404
+    assert client.get("/api/locations/nope/building").status_code == 404
     resume = client.post(
         "/api/pipeline-runs/nope/resume", json={"review_id": "x", "option": "abort"}
     )

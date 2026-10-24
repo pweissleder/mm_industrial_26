@@ -1,5 +1,7 @@
 // Imperative three.js scene for a building. Geometry is generated from building.json
-// (or an uploaded GLB is shown instead); React drives it through the public methods.
+// (the low-quality preview), loaded from the pipeline's model.glb (high quality, still
+// selectable through its node extras), or an uploaded GLB is shown as is. React drives
+// it through the public methods.
 //
 // Axes: dataset (x, y, elevation) -> three (x, elevation, -y), as in blender/.
 import * as THREE from 'three';
@@ -38,12 +40,24 @@ interface FloorView {
   floor: Floor;
   group: THREE.Group;
   spaces: THREE.Group;
-  walls: THREE.Mesh;
+  /** A unit-height mesh scaled to the wall height, or (HQ) the model's walls at full height. */
+  walls: THREE.Object3D;
   assets: THREE.Group;
   openings: THREE.Group;
+  /** HQ only: stair/lift markers and hall lines; shown with the stairs & lifts layer. */
+  marks: THREE.Group;
   labels: THREE.Group;
   materials: THREE.Material[];
+  hq: boolean;
 }
+
+/** Layer of each node kind the pipeline writes into model.glb extras. */
+const HQ_LAYERS: Record<string, 'spaces' | 'walls' | 'assets' | 'openings'> = {
+  space: 'spaces',
+  walls: 'walls',
+  asset: 'assets',
+  opening: 'openings',
+};
 
 interface Fly {
   fromPos: THREE.Vector3;
@@ -103,6 +117,11 @@ export class BuildingScene {
   private objects = new Map<string, THREE.Object3D>();
   private model: BuildingModel | null = null;
   private glb: THREE.Object3D | null = null;
+  private hq = false;
+  /** Building shown last; switching quality of the same building keeps the camera. */
+  private buildingId: string | null = null;
+  /** Bumped per content change so a slow GLB load can't replace newer content. */
+  private loadToken = 0;
   private settings: ViewSettings;
   private selection: Selection | null = null;
   private hovered: THREE.Object3D | null = null;
@@ -179,16 +198,34 @@ export class BuildingScene {
   // ---------------------------------------------------------------- public API
 
   setModel(model: BuildingModel | null) {
+    this.loadToken++;
+    const keepCamera = this.sameBuilding(model);
     this.clear();
     this.model = model;
     if (model) this.build(model);
     this.applySettings();
-    this.frame('iso', false);
+    if (!keepCamera) this.frame('iso', false);
+  }
+
+  /** The pipeline's model.glb for `model` (its cleaned building.json). */
+  async setHq(url: string, model: BuildingModel): Promise<void> {
+    const token = ++this.loadToken;
+    const gltf = await new GLTFLoader().loadAsync(url);
+    if (this.disposed || token !== this.loadToken) return;
+    const keepCamera = this.sameBuilding(model);
+    this.clear();
+    this.model = model;
+    this.hq = true;
+    this.buildHq(gltf.scene, model);
+    this.applySettings();
+    if (!keepCamera) this.frame('iso', false);
   }
 
   async setGlb(url: string): Promise<void> {
+    const token = ++this.loadToken;
     const gltf = await new GLTFLoader().loadAsync(url);
-    if (this.disposed) return;
+    if (this.disposed || token !== this.loadToken) return;
+    this.buildingId = null;
     this.clear();
     this.model = null;
     this.glb = gltf.scene;
@@ -206,7 +243,7 @@ export class BuildingScene {
   setSettings(settings: ViewSettings) {
     const rebuildConnectors = settings.explode !== this.settings.explode;
     this.settings = settings;
-    if (rebuildConnectors && this.model) this.buildConnectors(this.model);
+    if (rebuildConnectors && this.model && !this.hq) this.buildConnectors(this.model);
     this.applySettings();
   }
 
@@ -242,6 +279,13 @@ export class BuildingScene {
 
   // ---------------------------------------------------------------- building
 
+  private sameBuilding(model: BuildingModel | null): boolean {
+    const id = model?.building.id ?? null;
+    const same = id !== null && id === this.buildingId && this.floors.length > 0;
+    this.buildingId = id;
+    return same;
+  }
+
   private clear() {
     this.setHovered(null);
     this.selection = null;
@@ -255,10 +299,17 @@ export class BuildingScene {
       if (o instanceof CSS2DObject) o.element.remove();
     });
     this.root.clear();
+    this.connectors.traverse((o) => {
+      if (o instanceof THREE.Mesh) {
+        o.geometry.dispose();
+        if (this.hq) (o.material as THREE.Material).dispose();
+      }
+    });
     this.connectors.clear();
     this.floors = [];
     this.objects.clear();
     this.glb = null;
+    this.hq = false;
   }
 
   private register(obj: THREE.Object3D, sel: Selection, title: string) {
@@ -363,8 +414,124 @@ export class BuildingScene {
       openings.add(mesh);
     }
 
+    const marks = new THREE.Group();
     group.add(spaceGroup, walls, assetGroup, openings, labels);
-    return { floor, group, spaces: spaceGroup, walls, assets: assetGroup, openings, labels, materials };
+    return {
+      floor,
+      group,
+      spaces: spaceGroup,
+      walls,
+      assets: assetGroup,
+      openings,
+      marks,
+      labels,
+      materials,
+      hq: false,
+    };
+  }
+
+  /**
+   * Split the pipeline's GLB (building > floor > space/walls/asset/opening/marker nodes,
+   * connectors under the building) into the same per-floor layers as the generated view,
+   * and register its nodes under their building.json ids so selection works the same.
+   */
+  private buildHq(gltfRoot: THREE.Object3D, model: BuildingModel) {
+    const floorById = new Map(model.floors.map((f) => [f.id, f]));
+    const spaceById = new Map(model.spaces.map((s) => [s.id, s]));
+    const assetById = new Map(model.assets.map((a) => [a.id, a]));
+    const connectorById = new Map(model.vertical_connectors.map((c) => [c.id, c]));
+    const floorNodes: THREE.Object3D[] = [];
+    const connectorNodes: THREE.Object3D[] = [];
+    gltfRoot.traverse((o) => {
+      if (o.userData.kind === 'floor') floorNodes.push(o);
+      if (o.userData.kind === 'connector') connectorNodes.push(o);
+    });
+
+    // Floors get their own copies of materials so ghosting one floor leaves the others.
+    const adopt = (obj: THREE.Object3D, owned: Map<string, THREE.Material>, kind: string) => {
+      obj.traverse((o) => {
+        if (!(o instanceof THREE.Mesh) || Array.isArray(o.material)) return;
+        const key = `${kind}:${o.material.uuid}`;
+        const material = owned.get(key) ?? o.material.clone();
+        owned.set(key, material);
+        o.material = material;
+        o.userData.baseMaterial = material;
+        o.castShadow = kind !== 'space' && kind !== 'opening';
+        o.receiveShadow = true;
+      });
+    };
+
+    for (const node of floorNodes) {
+      const ex = node.userData;
+      const floor: Floor = floorById.get(ex.id) ?? {
+        id: String(ex.id),
+        level: Number(ex.level ?? 0),
+        name: String(ex.id),
+        elevation_m: Number(ex.elevation_m ?? 0),
+        height_m: Number(ex.height_m ?? 3),
+      };
+      const layers = {
+        spaces: new THREE.Group(),
+        walls: new THREE.Group(),
+        assets: new THREE.Group(),
+        openings: new THREE.Group(),
+      };
+      const marks = new THREE.Group();
+      const labels = new THREE.Group();
+      const owned = new Map<string, THREE.Material>();
+
+      for (const child of [...node.children]) {
+        const kind = String(child.userData.kind ?? '');
+        const layer = HQ_LAYERS[kind];
+        (layer ? layers[layer] : marks).add(child);
+        adopt(child, owned, kind);
+        const id = String(child.userData.id ?? '');
+        if (kind === 'space') {
+          const space = spaceById.get(id);
+          this.register(child, { kind: 'space', id }, space?.name ?? String(child.userData.name ?? id));
+          if (child instanceof THREE.Mesh) {
+            child.userData.roomColor = `#${(child.material as THREE.MeshStandardMaterial).color.getHexString()}`;
+          }
+          if (space && space.polygon.length >= 3) {
+            const label = makeLabel(space.ref || space.name, 'viewer__label');
+            label.position.copy(toVec(centroid(space.polygon), floor.elevation_m + 0.3));
+            labels.add(label);
+          }
+        } else if (kind === 'asset') {
+          this.register(child, { kind: 'asset', id }, assetById.get(id)?.name ?? id);
+        } else if (kind === 'opening') {
+          const title = `${child.userData.opening_kind ?? 'opening'} ${id.split('-').pop()}`;
+          this.register(child, { kind: 'opening', id }, title);
+        } else {
+          child.traverse((o) => (o.raycast = () => {}));
+        }
+      }
+
+      node.add(layers.spaces, layers.walls, layers.assets, layers.openings, marks, labels);
+      const group = new THREE.Group();
+      group.name = floor.name;
+      group.add(node);
+      this.floors.push({
+        floor,
+        group,
+        ...layers,
+        marks,
+        labels,
+        materials: [...owned.values()],
+        hq: true,
+      });
+    }
+    this.floors.sort((a, b) => a.floor.level - b.floor.level);
+    for (const fv of this.floors) this.root.add(fv.group);
+
+    const owned = new Map<string, THREE.Material>();
+    gltfRoot.updateMatrixWorld(true); // attach() keeps world transforms
+    for (const node of connectorNodes) {
+      const id = String(node.userData.id ?? '');
+      this.connectors.attach(node);
+      adopt(node, owned, 'connector');
+      this.register(node, { kind: 'connector', id }, connectorById.get(id)?.name ?? id);
+    }
   }
 
   private nearestEdgeAngle([px, py]: Point, polygon: Point[]): number {
@@ -506,16 +673,26 @@ export class BuildingScene {
       fv.walls.visible = s.layers.walls;
       fv.assets.visible = s.layers.assets && !ghost;
       fv.openings.visible = s.layers.openings && !ghost;
+      fv.marks.visible = s.layers.connectors && !ghost;
       // Labels of stacked floors would show through each other, so only label one floor.
       const labelled = focus === 'all' ? this.floors.length === 1 : level === focus;
       fv.labels.visible = s.layers.labels && labelled;
-      fv.walls.scale.y = Math.max(0.01, Math.min(s.wallHeight, fv.floor.height_m - SLAB));
+      if (fv.hq) {
+        // Model walls are full storey height: squash them towards the floor's elevation.
+        const k = Math.max(0.01, Math.min(1, s.wallHeight / fv.floor.height_m));
+        fv.walls.scale.y = k;
+        fv.walls.position.y = fv.floor.elevation_m * (1 - k);
+      } else {
+        fv.walls.scale.y = Math.max(0.01, Math.min(s.wallHeight, fv.floor.height_m - SLAB));
+      }
       for (const mesh of fv.spaces.children) {
-        const material = mesh.userData.baseMaterial as THREE.MeshStandardMaterial;
+        const material = mesh.userData.baseMaterial as THREE.MeshStandardMaterial | undefined;
+        if (!material || !mesh.userData.roomColor) continue;
         material.color.set(s.colorBy === 'room' ? mesh.userData.roomColor : '#eef0f4');
       }
     }
-    this.connectors.visible = s.layers.connectors;
+    // The model's stair/lift shafts span storeys, so they can't follow exploded floors.
+    this.connectors.visible = s.layers.connectors && !(this.hq && s.explode > 0);
     if (this.glb) {
       this.glb.traverse((o) => {
         const lvl = o.userData.floor_level;
@@ -668,7 +845,9 @@ export class BuildingScene {
       for (let o: THREE.Object3D | null = hit.object; o; o = o.parent) visible &&= o.visible;
       if (!visible || isGhost(hit.object)) continue;
       if (this.glb) return hit.object;
-      if (hit.object.userData.sel) return hit.object;
+      for (let o: THREE.Object3D | null = hit.object; o && o !== this.root; o = o.parent) {
+        if (o.userData.sel) return o;
+      }
     }
     return null;
   }
@@ -713,11 +892,15 @@ export class BuildingScene {
   }
 
   private paint(obj: THREE.Object3D, material: THREE.Material) {
-    if (obj instanceof THREE.Mesh) obj.material = material;
+    obj.traverse((o) => {
+      if (o instanceof THREE.Mesh) o.material = material;
+    });
   }
 
   private restoreMaterial(obj: THREE.Object3D | undefined) {
-    if (obj instanceof THREE.Mesh && obj.userData.baseMaterial) obj.material = obj.userData.baseMaterial;
+    obj?.traverse((o) => {
+      if (o instanceof THREE.Mesh && o.userData.baseMaterial) o.material = o.userData.baseMaterial;
+    });
   }
 
   private addOutline(obj: THREE.Object3D) {

@@ -21,6 +21,8 @@ import {
 import { LAYERS, type CameraAction, type ViewSettings } from './view';
 
 export const GENERATED_SOURCE = '';
+/** The ingestion pipeline's model.glb; dataset file names can't start with ':'. */
+export const HQ_SOURCE = ':hq';
 
 interface Props {
   datasets: string[];
@@ -28,6 +30,9 @@ interface Props {
   onDataset: (dataset: string) => void;
   loading: boolean;
   model: BuildingModel | null;
+  /** The pipeline's building summary, when its result is shown. */
+  summary?: string;
+  hqAvailable: boolean;
   sources: string[];
   source: string;
   onSource: (source: string) => void;
@@ -81,6 +86,8 @@ function LocationTab({
   onDataset,
   loading,
   model,
+  summary,
+  hqAvailable,
   sources,
   source,
   onSource,
@@ -147,17 +154,19 @@ function LocationTab({
               <span>{model.spaces.length} rooms</span>
               <span>{model.assets.length} assets</span>
             </div>
+            {summary && <p className="building-meta__summary">{summary}</p>}
           </div>
         )}
         {loading && <p className="muted">Loading building…</p>}
-        {sources.length > 0 && (
+        {(sources.length > 0 || hqAvailable) && (
           <>
             <label className="section__title" htmlFor="source-select">
               3D source
             </label>
             <div className="select">
               <select id="source-select" value={source} onChange={(e) => onSource(e.target.value)}>
-                <option value={GENERATED_SOURCE}>Generated from floor plan</option>
+                {hqAvailable && <option value={HQ_SOURCE}>High quality (pipeline)</option>}
+                <option value={GENERATED_SOURCE}>Browser preview (low)</option>
                 {sources.map((s) => (
                   <option key={s} value={s}>
                     {s}

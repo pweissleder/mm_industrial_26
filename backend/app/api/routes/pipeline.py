@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 
 from app.ingestion import DatasetNotFoundError
@@ -19,6 +19,15 @@ def get_runner(request: Request) -> PipelineRunner:
 
 RunnerDep = Annotated[PipelineRunner, Depends(get_runner)]
 
+# Location files a client may fetch: previews and plans shown with reviews, and models.
+ARTIFACT_TYPES = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".svg": "image/svg+xml",
+    ".glb": "model/gltf-binary",
+}
+
 
 class PipelineRunRequest(BaseModel):
     dataset: str = Field(min_length=1, max_length=200, examples=["proc-factory-dev-003"])
@@ -31,6 +40,7 @@ class LocationSummary(BaseModel):
     dataset: str
     source: str
     pillars: dict[str, str]
+    has_model: bool = Field(description="True once the pipeline has written a 3D model.")
 
 
 def _run(runner: PipelineRunner, run_id: str) -> RunRecord:
@@ -63,8 +73,9 @@ async def start_run(body: PipelineRunRequest, runner: RunnerDep) -> RunRecord:
 
 
 @router.get("/pipeline-runs", response_model=list[RunRecord])
-def list_runs(runner: RunnerDep) -> list[RunRecord]:
-    return runner.list()
+def list_runs(runner: RunnerDep, dataset: str | None = None) -> list[RunRecord]:
+    """All runs, newest first; `dataset` limits them to one dataset."""
+    return [r for r in runner.list() if dataset is None or r.dataset == dataset]
 
 
 @router.get("/pipeline-runs/{run_id}", response_model=RunRecord)
@@ -90,6 +101,7 @@ def list_locations(runner: RunnerDep) -> list[LocationSummary]:
             dataset=r.dataset,
             source=r.source,
             pillars={k: v.status for k, v in r.pillars.items()},
+            has_model=runner.workspace.locations.path(r.id, "3d/model.glb").is_file(),
         )
         for r in runner.workspace.locations.all()
     ]
@@ -107,3 +119,25 @@ def get_location_model(location_id: str, runner: RunnerDep) -> FileResponse:
     if not path.is_file():
         raise HTTPException(status.HTTP_404_NOT_FOUND, "No 3D model for this location yet")
     return FileResponse(path, media_type="model/gltf-binary", filename=f"{location_id}.glb")
+
+
+@router.get("/locations/{location_id}/building")
+def get_location_building(location_id: str, runner: RunnerDep) -> Response:
+    """The cleaned building.json (same format as the dataset's, after the pipeline's fixes)."""
+    _location(runner, location_id)
+    path = runner.workspace.locations.path(location_id, "building.json")
+    if not path.is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "No cleaned building for this location yet")
+    return Response(path.read_bytes(), media_type="application/json")
+
+
+@router.get("/locations/{location_id}/files/{path:path}", response_class=FileResponse)
+def get_location_file(location_id: str, path: str, runner: RunnerDep) -> FileResponse:
+    """An image or model the pipeline wrote, e.g. a review's preview (`3d/previews/...png`)."""
+    _location(runner, location_id)
+    root = runner.workspace.locations.dir(location_id).resolve()
+    file = (root / path).resolve()
+    media_type = ARTIFACT_TYPES.get(file.suffix.lower())
+    if media_type is None or not file.is_relative_to(root) or not file.is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"File '{path}' not found")
+    return FileResponse(file, media_type=media_type)

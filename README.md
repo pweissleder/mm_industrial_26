@@ -88,6 +88,8 @@ The frontend is **AriNav** (after Ariadne and her thread), one React island on `
 - **View** (left panel): camera presets, layer toggles, explode floors, wall height, room colours, shadows, grid.
 - **Chat** (bottom): talks to the agent via `POST /api/chat` `{ message, thread_id? }` (one-node LangGraph agent with per-thread memory, returns `{ reply, thread_id }`).
 - **Upload assets** (top right): sends files to the backend, which stores them in `DATASETS_DIR/<dataset>/`; a `building.json` is ingested and opened right away.
+- **Two qualities** (tag next to the building name): every building first shows the **Low** preview generated in the browser. The [ingestion pipeline](#agentic-ingestion-pipeline) runs in the background, on every upload and on opening a dataset that was never processed (a failed run is not restarted on its own). Once it has published a model, the view switches to **HQ**: the pipeline's `model.glb` with the cleaned `building.json` and room descriptions, still clickable and filterable by floor. The preview stays available under *3D source*.
+- **Processing** (chip in the top bar): stage progress of the run. When the pipeline asks for a review, a dialog opens with the issues, plan previews and a note field, and answers with *Accept with warnings*, *Retry stage* or *Abort run*. Failed runs can be retried and finished ones rebuilt from the same dialog.
 
 On tablets the panel slides over the view; on phones it becomes a bottom sheet.
 
@@ -137,9 +139,11 @@ uv run poe ingest --all --datasets-dir ../problem_statement/industrial-agents-ha
 | Endpoint | What it does |
 |---|---|
 | `POST /api/pipeline-runs` `{"dataset", "force"?}` | Starts a run in the background (202) and returns its `RunRecord` |
-| `GET /api/pipeline-runs[/{run_id}]` | Run status, per-stage progress, orchestrator decisions, token usage per agent |
+| `GET /api/pipeline-runs[/{run_id}]` | Run status, per-stage progress, orchestrator decisions, token usage per agent; `?dataset=` filters the list (newest first) |
 | `POST /api/pipeline-runs/{run_id}/resume` `{"review_id", "option", "note"?}` | Answers a `needs_review` run. `pending_review` holds the prompt for a frontend: title, message, issues, artifacts, and the options `accept_with_warnings`, `retry` or `abort` |
-| `GET /api/locations[/{id}]`, `GET /api/locations/{id}/model.glb` | Locations, their metadata, and the 3D model |
+| `GET /api/locations[/{id}]`, `GET /api/locations/{id}/model.glb` | Locations (`has_model` in the list), their metadata, and the 3D model |
+| `GET /api/locations/{id}/building` | The cleaned `building.json` |
+| `GET /api/locations/{id}/files/{path}` | An image or model the pipeline wrote, e.g. a review's `3d/previews/plan_floor_0.png` |
 
 State lives as JSON in `backend/data/workspace/` (gitignored):
 - `locations/<id>/`: `raw.json`, `building.json` (cleaned), `patches.json`, `issues.json`, `location.json` (pillar status and metadata), `3d/` and `reports/`

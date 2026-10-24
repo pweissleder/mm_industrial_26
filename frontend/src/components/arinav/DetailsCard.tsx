@@ -8,6 +8,7 @@ import {
   type Floor,
   type Selection,
 } from '../../lib/building';
+import type { SpaceMeta } from '../../lib/api';
 import { ChatIcon, CloseIcon, LayersIcon } from './Icons';
 import type { ObjectInfo } from './view';
 
@@ -17,9 +18,15 @@ interface Details {
   swatch: string;
   rows: [string, string][];
   floor?: Floor;
+  description?: string;
 }
 
-function describe(model: BuildingModel | null, sel: Selection, info?: ObjectInfo): Details | null {
+function describe(
+  model: BuildingModel | null,
+  sel: Selection,
+  info?: ObjectInfo,
+  spaceMeta?: Record<string, SpaceMeta>,
+): Details | null {
   if (sel.kind === 'object') {
     return info ? { kind: '3D object', title: info.title, swatch: '#004fab', rows: info.props } : null;
   }
@@ -33,11 +40,13 @@ function describe(model: BuildingModel | null, sel: Selection, info?: ObjectInfo
     const floor = floorOf(s.floor_id);
     const assets = model.assets.filter((a) => a.space_id === s.id).length;
     const doors = model.openings.filter((o) => o.space_ids.includes(s.id)).length;
+    const meta = spaceMeta?.[s.id];
     return {
       kind: humanize(s.type),
       title: s.name,
       swatch: spaceColor(s),
       floor,
+      description: meta?.description || undefined,
       rows: [
         ['Type', humanize(s.room_type)],
         ['Reference', s.ref],
@@ -45,6 +54,7 @@ function describe(model: BuildingModel | null, sel: Selection, info?: ObjectInfo
         ['Area', `${Math.abs(polygonArea(s.polygon)).toFixed(1)} m²`],
         ['Assets', String(assets)],
         ['Openings', String(doors)],
+        ...(meta ? [['Step-free access', meta.step_free_access ? 'Yes' : 'No'] as [string, string]] : []),
       ],
     };
   }
@@ -100,6 +110,8 @@ function describe(model: BuildingModel | null, sel: Selection, info?: ObjectInfo
 
 interface Props {
   model: BuildingModel | null;
+  /** Room descriptions from the pipeline, when its result is shown. */
+  spaceMeta?: Record<string, SpaceMeta>;
   selection: Selection;
   info?: ObjectInfo;
   onClose: () => void;
@@ -107,8 +119,16 @@ interface Props {
   onFocusFloor: (level: number) => void;
 }
 
-export default function DetailsCard({ model, selection, info, onClose, onAsk, onFocusFloor }: Props) {
-  const d = describe(model, selection, info);
+export default function DetailsCard({
+  model,
+  spaceMeta,
+  selection,
+  info,
+  onClose,
+  onAsk,
+  onFocusFloor,
+}: Props) {
+  const d = describe(model, selection, info, spaceMeta);
   if (!d) return null;
   const floor = d.floor;
   return (
@@ -123,6 +143,7 @@ export default function DetailsCard({ model, selection, info, onClose, onAsk, on
           <CloseIcon />
         </button>
       </header>
+      {d.description && <p className="details__description">{d.description}</p>}
       <dl className="details__rows">
         {d.rows.map(([k, v]) => (
           <div key={k} className="details__row">
