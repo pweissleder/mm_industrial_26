@@ -102,9 +102,12 @@ def test_walkers_cross_bays_vehicles_do_not() -> None:
     bi = BuildingIntelligence(_chain(_space("B", 4, 8, type="hall", room_type="production_zone")))
 
     assert bi.call("route", {"start": "A", "goal": "C"})["spaces"] == ["A", "B", "C"]
-    assert bi.call("route", {"start": "A", "goal": "C", "profile": "wide_load", "min_width": 0.5})[
-        "reachable"
-    ] is False
+    assert (
+        bi.call("route", {"start": "A", "goal": "C", "profile": "wide_load", "min_width": 0.5})[
+            "reachable"
+        ]
+        is False
+    )
 
 
 def test_closures_survive_save_and_load(tmp_path: Path) -> None:

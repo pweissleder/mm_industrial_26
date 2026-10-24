@@ -31,11 +31,11 @@ describe('ChatDock', () => {
 
     expect(await screen.findByText('Room 2.04, second floor.')).toBeInTheDocument();
     expect(screen.getByText('Where is the 3D printer?')).toBeInTheDocument();
-    expect(chat).toHaveBeenCalledWith('Where is the 3D printer?', undefined);
+    expect(chat).toHaveBeenCalledWith('Where is the 3D printer?', undefined, null);
 
     await user.type(screen.getByLabelText('Message'), 'And the lift?');
     await user.click(screen.getByRole('button', { name: 'Send' }));
-    expect(chat).toHaveBeenLastCalledWith('And the lift?', 't1');
+    expect(chat).toHaveBeenLastCalledWith('And the lift?', 't1', null);
   });
 
   it('sends a suggestion with one tap', async () => {
@@ -45,8 +45,18 @@ describe('ChatDock', () => {
     render(<ChatDock health={health} backendDown={false} draft={null} />);
     await user.click(screen.getByRole('button', { name: 'Which rooms are on floor 1?' }));
 
-    expect(chat).toHaveBeenCalledWith('Which rooms are on floor 1?', undefined);
+    expect(chat).toHaveBeenCalledWith('Which rooms are on floor 1?', undefined, null);
     expect(await screen.findByText('Here.')).toBeInTheDocument();
+  });
+
+  it('sends the selected building so the agent gets its navgraph tools', async () => {
+    const chat = vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1' });
+    const user = userEvent.setup();
+
+    render(<ChatDock health={health} backendDown={false} draft={null} buildingId="b1" />);
+    await user.click(screen.getByRole('button', { name: 'Which rooms are on floor 1?' }));
+
+    expect(chat).toHaveBeenCalledWith('Which rooms are on floor 1?', undefined, 'b1');
   });
 
   it('prefills the input from a draft', () => {

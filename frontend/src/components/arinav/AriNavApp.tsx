@@ -3,6 +3,7 @@ import { api, datasetFileUrl, type HealthResponse, type UploadResponse } from '.
 import type { BuildingModel, Selection } from '../../lib/building';
 import ChatDock, { type Draft } from './ChatDock';
 import DetailsCard from './DetailsCard';
+import GraphDialog from './GraphDialog';
 import { FitIcon, MinusIcon, PanelIcon, PlusIcon, TopIcon, CubeIcon, UploadIcon } from './Icons';
 import Logo, { LogoMark } from './Logo';
 import { PipelineChip, PipelineDialog } from './PipelineStatus';
@@ -67,6 +68,7 @@ export default function AriNavApp() {
   const [camera, setCamera] = useState<CameraCommand | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(wide);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [graphOpen, setGraphOpen] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const isWide = useWide();
@@ -287,6 +289,7 @@ export default function AriNavApp() {
           selection={selection}
           onSelect={selectFromList}
           onCamera={runCamera}
+          onOpenGraph={buildingId ? () => setGraphOpen(true) : undefined}
           onClose={() => setSidebarOpen(false)}
         />
       </div>
@@ -339,7 +342,7 @@ export default function AriNavApp() {
         </section>
       )}
 
-      <ChatDock health={health} backendDown={backendDown} draft={draft} />
+      <ChatDock health={health} backendDown={backendDown} draft={draft} buildingId={buildingId} />
 
       <UploadDialog
         open={uploadOpen}
@@ -347,6 +350,14 @@ export default function AriNavApp() {
         current={dataset}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
+      />
+
+      <GraphDialog
+        open={graphOpen}
+        buildingId={buildingId}
+        model={model}
+        onClose={() => setGraphOpen(false)}
+        onSelect={selectFromList}
       />
 
       <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />

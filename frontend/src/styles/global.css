@@ -1413,6 +1413,93 @@ code {
   overflow-y: auto;
 }
 
+/* Developer room-graph view. */
+.dialog--graph {
+  width: min(1200px, calc(100% - 32px));
+}
+
+.dialog--graph .dialog__body {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+
+.graph {
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 200px);
+}
+
+.graph__panel {
+  fill: var(--gray-50);
+  stroke: var(--line);
+}
+
+.graph__floor {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--ink-2);
+}
+
+.graph__edge {
+  stroke: #9aa3b8;
+  stroke-width: 1.2;
+}
+
+.graph__edge--connector {
+  stroke: var(--orange);
+  stroke-width: 1.6;
+}
+
+.graph__edge--steps {
+  stroke-dasharray: 4 3;
+}
+
+.graph__node {
+  cursor: pointer;
+}
+
+.graph__dot {
+  stroke: var(--navy);
+  stroke-width: 1;
+}
+
+.graph__node:hover .graph__dot {
+  stroke-width: 2.5;
+}
+
+.graph__dot--cut {
+  stroke: var(--bad);
+  stroke-width: 2.5;
+}
+
+.graph__label {
+  font-size: 6px;
+  fill: var(--ink-2);
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.graph-bad {
+  color: var(--bad);
+}
+
+.graph-key::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border-top: 2px solid #9aa3b8;
+}
+
+.graph-key--connector::before {
+  border-top-color: var(--orange);
+}
+
+.graph-key--steps::before {
+  border-top-style: dashed;
+}
+
 .btn--danger {
   background: #fdecec;
   color: var(--bad);

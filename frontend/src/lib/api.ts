@@ -112,6 +112,20 @@ export interface LocationRecord {
   artifacts: Record<string, string>;
 }
 
+/** navgraph's level-1 RoomGraph (networkx node-link JSON); ids are space ids plus "outside". */
+export interface RoomGraphData {
+  nodes: { id: string; kind: 'space' | 'outside'; name: string; level?: number; area_m2?: number }[];
+  edges: {
+    source: string;
+    target: string;
+    key: string;
+    kind: string;
+    step_free: boolean;
+    width_m?: number;
+    floors?: number;
+  }[];
+}
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -154,16 +168,18 @@ export const locationModelUrl = (id: string, version: string) =>
 
 export const api = {
   health: () => request<HealthResponse>('/health'),
-  chat: (message: string, threadId?: string) =>
+  chat: (message: string, threadId?: string, buildingId?: string | null) =>
     request<ChatResponse>('/chat', {
       method: 'POST',
-      body: JSON.stringify({ message, thread_id: threadId }),
+      // building_id gives the agent that building's navgraph tools; without it the agent is blind.
+      body: JSON.stringify({ message, thread_id: threadId, building_id: buildingId ?? undefined }),
     }),
   datasets: () => request<{ datasets: string[] }>('/datasets').then((r) => r.datasets),
   ingest: (dataset: string) =>
     request<IngestionResponse>('/ingestions', { method: 'POST', body: JSON.stringify({ dataset }) }),
   buildings: () => request<BuildingSummary[]>('/buildings'),
   buildingModel: (id: string) => request<BuildingModel>(`/buildings/${encodeURIComponent(id)}/model`),
+  buildingGraph: (id: string) => request<RoomGraphData>(`/buildings/${encodeURIComponent(id)}/graph`),
   datasetFiles: (dataset: string) =>
     request<{ files: DatasetFile[] }>(`/datasets/${encodeURIComponent(dataset)}/files`).then(
       (r) => r.files,

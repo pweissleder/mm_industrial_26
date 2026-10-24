@@ -1,9 +1,14 @@
+from typing import Any
+
+import networkx as nx
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import RepositoryDep
 from app.api.schemas import BuildingDetail, BuildingSummary, FloorOut
 from app.domain.building import BuildingFile
 from app.storage import BuildingRepository, StoredBuilding
+from navgraph.graph import RoomGraph
+from navgraph.model import Building
 
 router = APIRouter(prefix="/buildings", tags=["buildings"])
 
@@ -52,3 +57,10 @@ def get_building(building_id: str, repository: RepositoryDep) -> BuildingDetail:
 def get_building_model(building_id: str, repository: RepositoryDep) -> BuildingFile:
     """The full building (floors, spaces, openings, connectors, assets), e.g. for 3D rendering."""
     return _get(repository, building_id).data
+
+
+@router.get("/{building_id}/graph")
+def get_building_graph(building_id: str, repository: RepositoryDep) -> dict[str, Any]:
+    """The level-1 navgraph RoomGraph as node-link JSON, for the debug graph view."""
+    data = _get(repository, building_id).data
+    return nx.node_link_data(RoomGraph(Building.from_dict(data.model_dump())).g, edges="edges")

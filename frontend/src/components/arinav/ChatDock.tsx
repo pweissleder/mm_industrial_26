@@ -17,6 +17,7 @@ interface Props {
   health: HealthResponse | null;
   backendDown: boolean;
   draft: Draft | null;
+  buildingId?: string | null;
 }
 
 const SUGGESTIONS = [
@@ -25,7 +26,7 @@ const SUGGESTIONS = [
   'Which rooms are on floor 1?',
 ];
 
-export default function ChatDock({ health, backendDown, draft }: Props) {
+export default function ChatDock({ health, backendDown, draft, buildingId = null }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [threadId, setThreadId] = useState<string>();
@@ -34,6 +35,9 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
   const [open, setOpen] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLOListElement>(null);
+
+  // A thread's memory belongs to one building, so a new building starts a new thread.
+  useEffect(() => setThreadId(undefined), [buildingId]);
 
   useEffect(() => {
     if (!draft) return;
@@ -54,7 +58,7 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
     setPending(true);
     setError(null);
     try {
-      const { reply, thread_id } = await api.chat(text, threadId);
+      const { reply, thread_id } = await api.chat(text, threadId, buildingId);
       setThreadId(thread_id);
       setMessages((prev) => [...prev, { role: 'assistant', text: reply }]);
     } catch {
