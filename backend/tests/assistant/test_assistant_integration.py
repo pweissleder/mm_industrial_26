@@ -210,3 +210,109 @@ def test_offline_assistant_is_explicit_and_manual_routing_still_works(
             },
         ).json()
         assert route["status"] == "ok" and route["length_m"] > 0
+
+
+def session_state(transport: Any) -> dict[str, Any]:
+    """The <session_state> JSON the model saw in its last request."""
+    content = transport.requests[-1]["messages"][-1]["content"]
+    text = content if isinstance(content, str) else json.dumps(content)
+    start = text.index("<session_state>") + len("<session_state>")
+    return dict(
+        json.loads(text[start : text.index("</session_state>")].strip().replace('\\"', '"'))
+    )
+
+
+def test_d1_cleared_location_is_not_used_as_start(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    exit_route = ("find_nearest", {"category": "exit", "step_free": None, "and_route": True})
+    script = ["Noted.", exit_route, "Where are you right now?"]
+    with make_client(settings, datasets_dir, script) as client:
+        ingest(client)
+        turn(client, "Hi", start={"kind": "space", "id": OFFICE_F1})
+        out = turn(client, "Nearest exit please.", start=None)  # location cleared in the UI
+    assert out["state"]["start"] is None
+    assert "route" not in out["ui"] or out["ui"].get("route") is None
+    assert out["tools"][0]["status"] == "error"  # missing_start: ask, no route from Office 1.04
+
+
+def test_d2_inspected_item_reaches_the_model_context(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    cnc = f"{B}-A00001"
+    settings.datasets_dir = datasets_dir
+    transport = Scripted(["That is CNC mill H-A1-A."])
+    with TestClient(create_app(settings, assistant_transport=transport)) as client:
+        ingest(client)
+        out = turn(client, "What am I looking at?", inspected={"kind": "asset", "id": cnc})
+    seen = session_state(transport)
+    assert seen["inspected"]["name"] == "CNC mill H-A1-A"
+    assert out["state"]["start"] is None and out["state"]["destination"] is None
+
+
+def test_d3_exact_map_point_start_is_used_or_explicitly_refused(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    script = [
+        (
+            "plan_route",
+            {
+                "start": None,
+                "destination": {"kind": "space", "id": f"{B}-F0-S001"},
+                "mode": None,
+                "step_free": None,
+                "assume_closed": [],
+            },
+        ),
+        "Here is the way.",
+        "That point is not inside a room. Where are you?",
+    ]
+    settings.datasets_dir = datasets_dir
+    transport = Scripted(script)
+    with TestClient(create_app(settings, assistant_transport=transport)) as client:
+        ingest(client)
+        model = client.get(f"/api/buildings/{B}/model").json()
+        office = next(s for s in model["spaces"] if s["id"] == OFFICE_F1)
+        xs = [p[0] for p in office["polygon"]]
+        ys = [p[1] for p in office["polygon"]]
+        point = [sum(xs) / len(xs), sum(ys) / len(ys)]
+        start = {"kind": "point", "space_id": OFFICE_F1, "position": point}
+        out = turn(client, "Take me to the corridor.", start=start)
+        assert out["ui"]["route"]["start"]["kind"] == "point"
+        assert out["state"]["start"]["kind"] == "point"
+        bad = {"kind": "point", "space_id": "nope", "position": [1, 2]}
+        out = turn(client, "And from here?", start=bad)
+    assert out["state"]["start"] is None  # no silent fallback to the previous point
+    assert "could not be used" in session_state(transport)["ui_note"]
+
+
+def test_navgraph_asset_edit_is_one_building_for_every_consumer(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    """Alex's chat edits (move a machine) must not leave AriNav routers on the old building."""
+    cnc = f"{B}-A00001"
+    with make_client(settings, datasets_dir, []) as client:
+        ingest(client)
+        state = client.post(
+            f"/api/nav/{B}/scenario",
+            json={"action": "close", "element_id": LIFT, "expected_revision": 0},
+        ).json()
+        navigator = client.app.state.navigators.get(B)  # type: ignore[attr-defined]
+        moved = json.loads(navigator.call("move_asset", {"asset": cnc, "to_space": OFFICE_F1}))
+        assert "error" not in moved
+        served = client.get(f"/api/buildings/{B}/model").json()
+        nav = client.app.state.navigation  # type: ignore[attr-defined]
+        assert next(a for a in served["assets"] if a["id"] == cnc)["space_id"] == OFFICE_F1
+        assert next(a for a in nav.building(B)["assets"] if a["id"] == cnc)["space_id"] == OFFICE_F1
+        after = client.get(f"/api/nav/{B}/state").json()
+        assert after["closed"] == [LIFT]  # the closure survives the new building version
+        assert after["revision"] > state["revision"]
+        route = client.post(
+            f"/api/nav/{B}/route",
+            json={
+                "mode": "official",
+                "start": {"kind": "space", "id": f"{B}-F0-S001"},
+                "target": {"kind": "asset", "id": cnc},
+            },
+        ).json()
+        assert route["target"]["space_id"] == OFFICE_F1

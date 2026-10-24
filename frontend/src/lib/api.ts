@@ -349,8 +349,11 @@ export interface AssistantStatus {
 /** Explicit user choices only; nothing the assistant chose itself. */
 export interface UiState {
   building_id: string | null;
-  start?: Endpoint;
-  destination?: Endpoint;
+  /** null = the user cleared it (the assistant forgets it too); absent = no explicit choice. */
+  start?: Endpoint | null;
+  destination?: Endpoint | null;
+  /** What the user is looking at on the map (context for "this"), not a start/destination. */
+  inspected?: { kind: string; id: string } | null;
   mode?: NavMode;
   step_free?: boolean;
   profile?: ClearanceProfile;

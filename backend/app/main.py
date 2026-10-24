@@ -114,7 +114,7 @@ def create_app(
         app.state.navigation = build_navigation_service(settings, repository)
         app.state.navigators = NavigatorRegistry(
             repository,
-            navigator_factory or scenario_navigator_factory(app.state.navigation),
+            navigator_factory or scenario_navigator_factory(app.state.navigation, repository),
         )
         app.state.assistant = create_assistant(settings, app.state.navigation)
         if assistant_transport is not None:

@@ -8,8 +8,9 @@ agent, the graph overlay and the served building model. So:
 - before every call, `primer()` and `snapshot()` the navigator's closures are set to the service's;
 - `set_closed` runs in navgraph (its name resolution and answer) and the resulting change is written
   through to the service (`NavigationService.change`), which stays the authority (revision);
-- asset edits (`add_asset`, `move_asset`, `remove_asset`) stay local to the navgraph copy and show
-  in the served model; the official router ignores furniture by rule, so routes are unaffected;
+- asset edits (`add_asset`, `move_asset`, `remove_asset`) are saved as the building's new version
+  in the repository (with the closures as element flags), so the official router, the precision
+  router (obstacles) and the served model all see the same things;
 - topology edits (`add_door`, the builder tools) and `save` are not offered: they would change the
   building under the official router without it knowing (team decision to revisit).
 """
@@ -21,10 +22,12 @@ from app.domain.building import BuildingFile
 from app.navigation.base import BuildingNavigator, NavigatorFactory
 from app.navigation.errors import NavigationError
 from app.navigation.navgraph_engine import NavgraphNavigator
+from app.storage import BuildingRepository
 
 BLOCKED_TOOLS = frozenset(
     {"add_door", "add_floor", "add_space", "add_entrance", "add_connector", "save"}
 )
+ASSET_TOOLS = frozenset({"add_asset", "move_asset", "remove_asset"})
 BLOCKED_MESSAGE = (
     "Adding doors, spaces, entrances, connectors or floors is not available here: the official "
     "router would not see them. Closures and things (assets) can be changed."
@@ -44,10 +47,16 @@ class Scenario(Protocol):
 
 
 class ScenarioNavgraphNavigator(NavgraphNavigator):
-    def __init__(self, data: BuildingFile, scenario: Scenario) -> None:
+    def __init__(
+        self,
+        data: BuildingFile,
+        scenario: Scenario,
+        repository: BuildingRepository | None = None,
+    ) -> None:
         super().__init__(data)
         self._building_id = data.building.id
         self._scenario = scenario
+        self._repository = repository
         self._tools = [t for t in self._tools if t["name"] not in BLOCKED_TOOLS]
 
     def _mirror(self) -> None:
@@ -92,13 +101,25 @@ class ScenarioNavgraphNavigator(NavgraphNavigator):
             self._mirror()  # the service's state wins either way
             if refused:
                 return json.dumps({"error": "change_refused", "message": refused})
+        elif name in ASSET_TOOLS and '"error"' not in result[:40]:
+            self._save_version()
         return result
 
+    def _save_version(self) -> None:
+        """Store the edited building as the new version of the one building source."""
+        stored = self._repository.get(self._building_id) if self._repository else None
+        if stored is None or self._repository is None:
+            return
+        self._repository.save(stored.dataset, BuildingFile.model_validate(self.snapshot()))
 
-def scenario_navigator_factory(scenario: Scenario) -> NavigatorFactory:
-    """A `NavigatorFactory` whose navigators share `scenario`'s closures (read and write)."""
+
+def scenario_navigator_factory(
+    scenario: Scenario, repository: BuildingRepository | None = None
+) -> NavigatorFactory:
+    """A `NavigatorFactory` whose navigators share `scenario`'s closures (read and write) and save
+    asset edits to `repository`."""
 
     def factory(data: BuildingFile) -> BuildingNavigator:
-        return ScenarioNavgraphNavigator(data, scenario)
+        return ScenarioNavgraphNavigator(data, scenario, repository)
 
     return factory

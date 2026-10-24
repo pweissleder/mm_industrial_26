@@ -6,6 +6,7 @@ router (official text) or from the checked precision segments, never from a lang
 
 import math
 import re
+from collections.abc import Callable
 from typing import Any
 
 JSON = dict[str, Any]
@@ -43,18 +44,12 @@ def official_response(result: JSON, building: JSON) -> JSON:
     transitions: list[JSON] = []
     vertical = list(result["transitions"])
     door_ids = [e for e in result["element_path"] if e in openings]
-    # Walk segments in route order; a floor change between two segments is the next vertical
-    # move(s): one stair/lift ride per floor hop, and intermediate floors have no walk segment
-    # when the route stays in the stairwell, so take moves until the segment's floor is reached.
+    # Walk segments in traversal order; before each one, the vertical moves that bring the walker
+    # from the current floor to the segment's floor (one ride per floor hop; a route may start in
+    # a stairwell or lift, and intermediate floors have no walk segment). See `_ride_to`.
+    floor = (result.get("start") or {}).get("floor_id")
     for segment in result["segments"]:
-        while (
-            path
-            and vertical
-            and segment["floor_id"] != path[-1].get("to_floor_id", path[-1]["floor_id"])
-        ):
-            move = vertical.pop(0)
-            path.append(_connector_entry(move["kind"], move["element_id"], move))
-            transitions.append(_vertical_transition(move))
+        floor = _ride_to(segment["floor_id"], floor, vertical, path, transitions, lambda m: m)
         path.append(
             {
                 "floor_id": segment["floor_id"],
@@ -144,6 +139,41 @@ def readable_directions(lines: list[str], building: JSON) -> list[str]:
         text = re.sub(r" \[([^\]\s]+)\]", bracket, line)
         out.append(re.sub(r" ([^\s,.;:()\[\]]+)", bare, text))
     return out
+
+
+def _precision_move(move: JSON) -> JSON:
+    """A precision router transition in the official move shape."""
+    return {
+        "kind": move["kind"],
+        "element_id": move["id"],
+        "from_floor": move["from_floor_id"],
+        "to_floor": move["to_floor_id"],
+        "from_position": move["from_position"],
+        "to_position": move["to_position"],
+        "cost_m": move["reference_cost_m"],
+    }
+
+
+def _ride_to(
+    floor_id: str,
+    current: str | None,
+    vertical: list[JSON],
+    path: list[JSON],
+    transitions: list[JSON],
+    shape: Callable[[JSON], JSON],
+) -> str:
+    """Append the queued vertical moves that lead from `current` to `floor_id` (in order) and
+    return the new current floor. Moves are consumed only while the walker is not yet there and
+    the next move starts on the current floor, so a return to an earlier floor works too."""
+    while vertical and current is not None and current != floor_id:
+        move = shape(vertical[0])
+        if move["from_floor"] != current:
+            break
+        vertical.pop(0)
+        path.append(_connector_entry(move["kind"], move["element_id"], move))
+        transitions.append(_vertical_transition(move))
+        current = move["to_floor"]
+    return floor_id
 
 
 def _connector_entry(kind: str, element_id: str, move: JSON) -> JSON:
@@ -241,20 +271,9 @@ def precision_response(result: JSON, building: JSON, start: JSON, target: JSON) 
     vertical = [t for t in result["transitions"] if t.get("kind") in {"stairs", "lift"}]
     doors = [t for t in result["transitions"] if t.get("kind") == "door"]
     door_queue = list(doors)
+    floor = (result.get("start") or {}).get("floor_id") or start.get("floor_id")
     for segment in result["segments"]:
-        if path and segment["floor_id"] != path[-1]["floor_id"] and vertical:
-            move = vertical.pop(0)
-            entry = {
-                "kind": move["kind"],
-                "element_id": move["id"],
-                "from_floor": move["from_floor_id"],
-                "to_floor": move["to_floor_id"],
-                "from_position": move["from_position"],
-                "to_position": move["to_position"],
-                "cost_m": move["reference_cost_m"],
-            }
-            path.append(_connector_entry(move["kind"], move["id"], entry))
-            transitions.append(_vertical_transition(entry))
+        floor = _ride_to(segment["floor_id"], floor, vertical, path, transitions, _precision_move)
         is_door = segment.get("kind") == "validated_door_approach"
         path.append(
             {
@@ -284,6 +303,9 @@ def precision_response(result: JSON, building: JSON, start: JSON, target: JSON) 
                     "width_m": door.get("width_m"),
                 }
             )
+    for move in map(_precision_move, vertical):  # moves with no walk after them
+        path.append(_connector_entry(move["kind"], move["element_id"], move))
+        transitions.append(_vertical_transition(move))
     status = result["status"]
     space_path: list[str] = []
     for segment in result["segments"]:
@@ -389,9 +411,10 @@ def waypoints(
             )
             if points[-1]["floor_id"] == entry["from_floor_id"]:
                 points[-1]["kind"], points[-1]["element_id"] = kind, entry["element_id"]
+            # Arrival where the connector actually lands on the next floor (its XY may differ).
             add(
                 entry["to_floor_id"],
-                xy,
+                entry.get("to_position") or xy,
                 kind,
                 float(entry.get("cost_m") or 0.0),
                 entry["element_id"],

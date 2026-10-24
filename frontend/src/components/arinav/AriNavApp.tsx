@@ -456,6 +456,15 @@ export default function AriNavApp() {
         ? { tone: 'low', label: 'Low', title: 'Quick preview generated in the browser from building.json' }
         : null;
 
+  // The assistant also sees what the user is inspecting on the map (D2), never as their position.
+  const chatUi = useMemo(
+    () => ({
+      ...nav.ui,
+      inspected:
+        selection && selection.kind !== 'object' ? { kind: selection.kind, id: selection.id } : null,
+    }),
+    [nav.ui, selection],
+  );
   const chatSelection = useMemo(
     () =>
       selection && selection.kind !== 'object'
@@ -703,7 +712,7 @@ export default function AriNavApp() {
         draft={draft}
         assistant={assistant}
         developer={developer}
-        ui={nav.ui}
+        ui={chatUi}
         selection={chatSelection}
         simulated={nav.simulated}
         onTurn={(turn) => void applyTurn(turn)}

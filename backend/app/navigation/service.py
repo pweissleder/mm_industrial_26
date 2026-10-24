@@ -133,6 +133,17 @@ def _ms(began: float) -> float:
     return round((time.perf_counter() - began) * 1000, 2)
 
 
+def _stored_closures(data: JSON) -> set[str]:
+    """Closed element ids recorded in a building file (flags plus the `closed` summary)."""
+    known: dict[str, JSON] = {
+        item["id"]: item
+        for key in ("spaces", "openings", "vertical_connectors")
+        for item in data.get(key, [])
+    }
+    flagged = {i for i, item in known.items() if item.get("closed")}
+    return flagged | {i for i in data.get("closed") or [] if i in known}
+
+
 class NavigationService:
     def __init__(self, repository: BuildingRepository, datasets_dir: Path | None = None) -> None:
         self.repository = repository
@@ -164,8 +175,11 @@ class NavigationService:
                     ingested_at=stored.ingested_at,
                     data=data,
                     bmap=bmap,
-                    # Re-ingesting replaces the building: closures dropped, revision moves on.
+                    # A new stored version: the revision moves on; closures are the ones the data
+                    # carries (per-element `closed` flags, e.g. an edit saved with the scenario).
+                    # A plain dataset re-ingest carries none, so it starts open as before.
                     revision=0 if entry is None else entry.revision + 1,
+                    closed=_stored_closures(data),
                 )
                 self._entries[building_id] = entry
             return entry
