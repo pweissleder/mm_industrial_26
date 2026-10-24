@@ -68,3 +68,17 @@ class BuildingDetail(BuildingSummary):
     floors: list[FloorOut]
     space_count: int
     asset_count: int
+
+
+class DatasetFileOut(BaseModel):
+    name: str
+    size_bytes: int
+
+
+class DatasetFileList(BaseModel):
+    dataset: str
+    files: list[DatasetFileOut]
+
+
+class UploadResponse(DatasetFileList):
+    ingestible: bool = Field(description="True once the dataset has a building.json.")

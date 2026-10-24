@@ -1,10 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import ChatDemo from '../components/ChatDemo';
+import AriNavApp from '../components/arinav/AriNavApp';
 ---
 
-<Layout title="Talk to Your Building">
-  <h1>Talk to Your Building</h1>
-  <p>Demo: an Astro page hosting a React island that talks to the FastAPI + LangGraph backend.</p>
-  <ChatDemo client:load />
+<Layout title="AriNav">
+  <!-- three.js needs the browser, so the app renders on the client only. -->
+  <AriNavApp client:only="react" />
 </Layout>

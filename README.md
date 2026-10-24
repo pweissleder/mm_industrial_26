@@ -69,9 +69,17 @@ Backend tasks run through [Poe the Poet](https://poethepoet.natn.io/) (`uv run p
 
 The browser only talks to the Astro dev server: it proxies `/api/*` to FastAPI (`BACKEND_URL`, see `frontend/astro.config.mjs`; in Docker it points at the `backend` service), so there is no CORS in local dev. For split deployments, set `PUBLIC_API_BASE_URL` in the frontend and `CORS_ORIGINS` in the backend.
 
-## Demo feature
+## AriNav web app
 
-`POST /api/chat` `{ message, thread_id? }` runs a one-node LangGraph agent with per-thread memory and returns `{ reply, thread_id }`. The React island `ChatDemo` (on `/`) checks `GET /api/health` and lets you chat with it.
+The frontend is **AriNav** (after Ariadne and her thread), one React island on `/` (`frontend/src/components/arinav/`), styled after synera.ai and responsive down to phones:
+
+- **3D view** (centre): three.js renders any ingested `building.json` (room slabs coloured by type, walls with door gaps, assets as boxes by category, stairs/lifts as tubes), or an uploaded `.glb`. Click or tap to inspect; the camera flies to the selection.
+- **Location** (left panel): building picker, floor focus (higher floors hidden, lower ones ghosted), search over rooms and assets, room list.
+- **View** (left panel): camera presets, layer toggles, explode floors, wall height, room colours, shadows, grid.
+- **Chat** (bottom): talks to the agent via `POST /api/chat` `{ message, thread_id? }` (one-node LangGraph agent with per-thread memory, returns `{ reply, thread_id }`).
+- **Upload assets** (top right): sends files to the backend, which stores them in `DATASETS_DIR/<dataset>/`; a `building.json` is ingested and opened right away.
+
+On tablets the panel slides over the view; on phones it becomes a bottom sheet.
 
 ## Data ingestion and storage
 
@@ -82,6 +90,9 @@ Buildings use the starter kit's format (`building.json`: floors, spaces, opening
 | `GET /api/datasets` | Lists ingestible datasets (subfolders of `DATASETS_DIR` that contain a `building.json`) |
 | `POST /api/ingestions` `{"dataset": "proc-factory-dev-003"}` | Validates and stores that dataset; re-ingesting replaces the building |
 | `GET /api/buildings`, `GET /api/buildings/{id}` | Ingested buildings, with floors and counts |
+| `GET /api/buildings/{id}/model` | The full building (spaces, openings, connectors, assets), used for 3D rendering |
+| `POST /api/datasets/{dataset}/files` (multipart, field `files`) | Stores uploads in `DATASETS_DIR/<dataset>/`, creating the dataset; a `building.json` is validated first. Allowed: `.json .glb .gltf .png .jpg .svg .csv .pdf .txt .md`, up to `MAX_UPLOAD_BYTES` (50 MB) each |
+| `GET /api/datasets/{dataset}/files`, `GET /api/datasets/{dataset}/files/{name}` | Lists or downloads a dataset's files (e.g. a `.glb` for the viewer) |
 
 One sample dataset ships in `backend/data/datasets/` (procedural factory "Fertigung Ost 27", CC0). To ingest any of the kit's 280 buildings without copying them, set `DATASETS_DIR=../problem_statement/industrial-agents-hackathon-2026/data/dev` (or `train`/`test`) in `backend/.env`.
 

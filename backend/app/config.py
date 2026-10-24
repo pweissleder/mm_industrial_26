@@ -28,6 +28,8 @@ class Settings(BaseSettings):
 
     # Folder whose subfolders are ingestible datasets (one building.json each).
     datasets_dir: Path = BACKEND_DIR / "data" / "datasets"
+    # Per-file limit for POST /api/datasets/{dataset}/files.
+    max_upload_bytes: int = 50_000_000
 
     # LangSmith; app.tracing exports these so LangChain/LangGraph pick them up.
     langsmith_tracing: bool = False

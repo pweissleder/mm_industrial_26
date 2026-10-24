@@ -10,6 +10,7 @@ dependencies = [
     "langgraph>=1.2.17",
     "langsmith>=0.14.12",
     "pydantic-settings>=2.16.1",
+    "python-multipart>=0.0.32",
     "uvicorn[standard]>=0.54.0",
 ]
 

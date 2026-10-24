@@ -14,7 +14,7 @@ from app.agent import (
     build_graph,
     build_managed_agent_graph,
 )
-from app.api.routes import buildings, chat, health, ingestion, managed_agent
+from app.api.routes import buildings, chat, health, ingestion, managed_agent, uploads
 from app.config import Settings, get_settings
 from app.storage import BuildingRepository, InMemoryBuildingRepository
 from app.tracing import configure_tracing
@@ -74,6 +74,7 @@ def create_app(
     app.include_router(managed_agent.router, prefix="/api")
     app.include_router(ingestion.router, prefix="/api")
     app.include_router(buildings.router, prefix="/api")
+    app.include_router(uploads.router, prefix="/api")
     return app
 
 
