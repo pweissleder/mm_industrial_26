@@ -38,6 +38,16 @@ export interface Names {
   floor: (id: string | null | undefined) => string | null;
   /** Label of the route target (room, asset, door, point). */
   target: string | null;
+  /** Name of any element id (rooms, doors, stairs, lifts, assets); null if unknown. */
+  element?: (id: string) => string | null;
+}
+
+/** Replace element ids in router text by names (users never see ids). */
+export function readable(text: string, names: Names): string {
+  return text.replace(/[A-Za-z0-9_.]+(?:-[A-Za-z0-9_.]+)*-(?:F-?\d+-[SO]\d+|V\d+|A\d+)/g, (id) => {
+    const name = names.element?.(id) ?? names.space(id);
+    return name ?? 'a closed part of the building';
+  });
 }
 
 const angleDelta = (from: number, to: number) => ((to - from + 540) % 360) - 180;

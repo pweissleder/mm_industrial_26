@@ -87,3 +87,41 @@ describe('not built yet', () => {
     expect(pipeline.start).toHaveBeenCalledWith(false);
   });
 });
+
+describe('stored HQ models (cache)', () => {
+  const stored = {
+    id: 'new-1',
+    dataset: 'New1',
+    name: 'Hall',
+    updated_at: '2026-10-25T01:00:00Z',
+    artifacts: { model: '3d/model.glb' },
+    pillars: { assets_3d: { status: 'done' } },
+  } as never;
+
+  it('loads a model stored under the building id without a run record and without building', async () => {
+    vi.spyOn(api, 'runs').mockResolvedValue([]);
+    vi.spyOn(api, 'locations').mockResolvedValue([{ id: 'new-1', has_model: true }]);
+    vi.spyOn(api, 'location').mockResolvedValue(stored);
+    vi.spyOn(api, 'locationBuilding').mockResolvedValue({} as never);
+    const start = vi.spyOn(api, 'startRun');
+
+    const { result } = renderHook(() => usePipeline('New1', 'new-1', null, { auto: false }));
+
+    await waitFor(() => expect(result.current.state.phase).toBe('ready'));
+    expect(start).not.toHaveBeenCalled();
+  });
+
+  it('reopening a finished building loads its model again, never regenerates', async () => {
+    vi.spyOn(api, 'runs').mockResolvedValue([run({ status: 'completed', current_stage: null })]);
+    vi.spyOn(api, 'location').mockResolvedValue(stored);
+    vi.spyOn(api, 'locationBuilding').mockResolvedValue({} as never);
+    const start = vi.spyOn(api, 'startRun');
+
+    for (let i = 0; i < 2; i++) {
+      const { result, unmount } = renderHook(() => usePipeline('New1', 'new-1', null, { auto: true }));
+      await waitFor(() => expect(result.current.state.phase).toBe('ready'));
+      unmount();
+    }
+    expect(start).not.toHaveBeenCalled();
+  });
+});

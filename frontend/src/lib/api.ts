@@ -203,6 +203,8 @@ export interface RouteRequest {
   snap_m?: number;
   allow_schematic_vertical?: boolean;
   unofficial?: { no_production_transit?: boolean; forklift?: boolean };
+  /** Official only, point starts: begin at the exact point (first leg re-walked officially). */
+  exact_start?: boolean;
 }
 
 export interface RouteEnd {
@@ -613,6 +615,8 @@ export const api = {
       body: JSON.stringify({ review_id: reviewId, option, note: note || null }),
     }),
   location: (id: string) => request<LocationRecord>(locationPath(id)),
+  /** Stored locations (`has_model`: an HQ model.glb exists under the building id). */
+  locations: () => request<{ id: string; has_model: boolean }[]>('/locations'),
   locationBuilding: (id: string) => request<BuildingModel>(`${locationPath(id)}/building`),
 
   // navigation (`/api/nav`)

@@ -1,0 +1,139 @@
+{
+ "generated": "2026-10-24T22:53:33.518Z",
+ "passed": 14,
+ "total": 14,
+ "results": [
+  {
+   "name": "01_preview_keeps_user_position",
+   "pass": true,
+   "ms": 4342,
+   "detail": {
+    "distance": 0,
+    "status": "idle"
+   }
+  },
+  {
+   "name": "02_route_and_endpoints_match_backend",
+   "pass": true,
+   "ms": 35,
+   "detail": {
+    "waypoints": 13,
+    "length_m": 55.81
+   }
+  },
+  {
+   "name": "05_pause_resume_no_jump",
+   "pass": true,
+   "ms": 1518,
+   "detail": {
+    "paused_at_m": 7.8,
+    "jump_m": 0.13
+   }
+  },
+  {
+   "name": "13_user_and_developer_view_same_location",
+   "pass": true,
+   "ms": 2975,
+   "detail": {
+    "position": [
+     18.43542299679543,
+     6.706025013669618
+    ],
+    "instruction": "⇥"
+   }
+  },
+  {
+   "name": "08_floor_changes_in_order_and_03_exit_route_ends_at_exit_door",
+   "pass": true,
+   "ms": 3733,
+   "detail": {
+    "floors": [
+     3,
+     2,
+     1,
+     0
+    ],
+    "arrived_at": [
+     0,
+     7.2
+    ]
+   }
+  },
+  {
+   "name": "06_closure_invalidates_guidance_and_reroutes_from_position",
+   "pass": true,
+   "ms": 4462,
+   "detail": {
+    "closed": "proc-campus-dev-001-V01",
+    "new_elements": 4,
+    "position_kept": true
+   }
+  },
+  {
+   "name": "07_missing_route_stops_the_simulation",
+   "pass": true,
+   "ms": 1713,
+   "detail": {
+    "message": "No route from here: reachable if closures are lifted: Staircase 1."
+   }
+  },
+  {
+   "name": "15_U1_clearing_the_start_removes_the_route",
+   "pass": true,
+   "ms": 1043,
+   "detail": {
+    "guidance_status": "stopped"
+   }
+  },
+  {
+   "name": "16_cached_hq_model_loads_without_regeneration",
+   "pass": true,
+   "ms": 4511,
+   "detail": {
+    "pipeline_starts": 0
+   }
+  },
+  {
+   "name": "04_09_precision_walker_stays_on_checked_route_and_modes_differ",
+   "pass": true,
+   "ms": 6671,
+   "detail": {
+    "official": "Official route · furniture ignored",
+    "precision": "Checked precision route",
+    "max_offset_m": 3.552713678800501e-15
+   }
+  },
+  {
+   "name": "12_missing_hq_does_not_block_map_use",
+   "pass": true,
+   "ms": 2988,
+   "detail": {
+    "quality": "LOW",
+    "waypoints": 13
+   }
+  },
+  {
+   "name": "11_audio_errors_do_not_block_navigation",
+   "pass": true,
+   "ms": 7838,
+   "detail": {
+    "status": "arrived",
+    "hint": "Spoken hints paused: TTS down (test)"
+   }
+  },
+  {
+   "name": "14_sessions_do_not_share_positions",
+   "pass": true,
+   "ms": 12975,
+   "detail": {
+    "session_a_m": 26,
+    "session_b_m": 3.9
+   }
+  },
+  {
+   "name": "no_page_errors",
+   "pass": true,
+   "detail": []
+  }
+ ]
+}

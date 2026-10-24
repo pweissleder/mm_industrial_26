@@ -293,6 +293,10 @@ export default function AriNavApp() {
     return {
       space: (id) => (id ? (spaces.get(id) ?? null) : null),
       floor: (id) => (id ? (floors.get(id) ?? null) : null),
+      element: (id) => {
+        const label = elementLabel(id, viewModel);
+        return label === id ? null : label;
+      },
       target: t
         ? t.kind === 'point'
           ? `the chosen point in ${spaces.get(t.space_id) ?? 'the room'}`
@@ -318,6 +322,14 @@ export default function AriNavApp() {
     const level = viewModel?.floors.find((f) => f.id === walkerFloor)?.level;
     if (level !== undefined) setSettings((s) => (s.floor === level ? s : { ...s, floor: level }));
   }, [walkerFloor, viewModel]);
+  // Others may close doors meanwhile (other tabs, the team agent): poll the shared scenario
+  // while navigating, so the route is re-checked within seconds.
+  const navRefresh = nav.refresh;
+  useEffect(() => {
+    if (!guidance.navigating) return;
+    const timer = window.setInterval(() => void navRefresh(), 2000);
+    return () => window.clearInterval(timer);
+  }, [guidance.navigating, navRefresh]);
   const wasNavigating = useRef(false);
   useEffect(() => {
     if (wasNavigating.current && !guidance.navigating) setSettings((s) => ({ ...s, floor: 'all' }));

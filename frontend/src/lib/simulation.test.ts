@@ -188,3 +188,14 @@ describe('closures and missing routes', () => {
     expect(progressAt(routes.official_lift_start, 0)?.position).toEqual(sim.snapshot().progress?.position);
   });
 });
+
+describe('readable messages', () => {
+  it('replaces element ids by names and never leaks unknown ids', async () => {
+    const { readable } = await import('./simulation');
+    const n = { ...names('x'), element: (id: string) => (id.endsWith('V01') ? 'Staircase 1' : null) };
+    expect(readable('reachable if closures are lifted: proc-campus-dev-001-V01', n)).toBe(
+      'reachable if closures are lifted: Staircase 1',
+    );
+    expect(readable('blocked by proc-campus-dev-001-F0-O0003', n)).not.toMatch(/proc-|O0003/);
+  });
+});

@@ -139,7 +139,12 @@ export function usePipeline(
       if (runs === null) {
         setState({ phase: 'failed', run: null, message: 'Could not reach the pipeline.' });
       } else if (runs.length === 0) {
-        if (autoRef.current) await startRun(gen, dataset, false);
+        // A model stored under the building's id is used as is, even without a run record
+        // (cache: load the file, never regenerate on open).
+        const stored = await api.locations().catch(() => []);
+        if (gen !== generation.current) return;
+        if (stored.some((l) => l.id === buildingId && l.has_model)) await settle(gen, null);
+        else if (autoRef.current) await startRun(gen, dataset, false);
         else setState({ phase: 'not_built' });
       } else {
         await settle(gen, runs[0]);

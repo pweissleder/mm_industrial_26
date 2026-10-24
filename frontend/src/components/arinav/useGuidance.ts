@@ -7,6 +7,7 @@ import type { NavSettings } from '../../lib/nav';
 import {
   buildInstructions,
   GuidanceSim,
+  readable,
   remainingElements,
   type Instruction,
   type Names,
@@ -166,8 +167,11 @@ export function useGuidance(args: {
     load(route, false);
   }, [route, load]);
 
-  // A different building ends everything.
+  // A different building ends everything (not the first mount: a route may already be loaded).
+  const shownBuilding = useRef(buildingId);
   useEffect(() => {
+    if (shownBuilding.current === buildingId) return;
+    shownBuilding.current = buildingId;
     token.current += 1;
     ownRoute.current = null;
     load(null, false);
@@ -214,6 +218,8 @@ export function useGuidance(args: {
       start: { kind: 'point', space_id: p.space_id ?? snap.route.start?.space_id ?? '', position: p.position },
       target,
       step_free: s.step_free,
+      // Keep the walker where it is: only the first leg is re-walked from this exact point.
+      exact_start: true,
       ...(snap.route.mode === 'precision' && {
         profile: s.profile,
         width_m: s.width_m,
@@ -228,7 +234,10 @@ export function useGuidance(args: {
       .then((next) => {
         if (mine !== token.current) return; // a newer building/route/scenario state won
         if (next.status !== 'ok') {
-          handle(sim.current.block(next.unreachable_reason || 'No route from here under the current closures.'));
+          const why = next.unreachable_reason
+            ? readable(next.unreachable_reason, latest.current.names)
+            : 'not possible under the current closures';
+          handle(sim.current.block(`No route from here: ${why}.`));
           return;
         }
         ownRoute.current = next;
@@ -244,7 +253,7 @@ export function useGuidance(args: {
         if (mine !== token.current) return;
         const message =
           e instanceof ApiError ? e.message : 'The route could not be checked. Navigation stopped here.';
-        handle(sim.current.block(`No route from here: ${message}`));
+        handle(sim.current.block(`No route from here: ${readable(message, latest.current.names)}`));
       });
   }, [scenarioRevision, handle, publish]);
 
