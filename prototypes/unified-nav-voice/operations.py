@@ -9,7 +9,6 @@ import math
 import networkx as nx
 from shapely.geometry import Polygon, shape
 
-from data import reference_map
 from errors import ModelError
 
 _INFRA = {'corridor', 'stair', 'lift', 'outdoor'}
@@ -102,15 +101,25 @@ def _alignment(building,spaces,arguments):
     return ['Floor XY alignment explicitly assumed; not geometrically verified.'] if uncertain else ['Shared building XY frame assumed per kit convention.']
 
 
-def _graph(building,closed=None,min_width=None,step_free=False,scenario_closed=()):
-    model=reference_map(building)
+def _official(building):
+    """Official kit 1.1.0 BuildingMap (walk lengths cached per identical building content)."""
+    from challenge import official_map
+    try:
+        return official_map(building)
+    except (KeyError,TypeError) as error:
+        raise ModelError('invalid_input','Building lacks fields of the kit format',{'missing':str(error)}) from error
+
+
+def _graph(building,closed=None,min_width=None,step_free=False,scenario_closed=(),model=None):
+    model=model or _official(building)
     if not isinstance(scenario_closed,(list,tuple)) or any(not isinstance(x,str) for x in scenario_closed):
         raise ModelError('invalid_input','Scenario closures must be a list of IDs')
     known=set(model.spaces)|set(model.openings)|set(model.connectors)
     for element in [*scenario_closed,*([closed] if closed else [])]:
         if not isinstance(element,str) or element not in known: raise ModelError('invalid_input','Unknown closure ID')
         model.set_closed(element,True)
-    graph=model.graph(step_free)
+    try:graph=model.graph(step_free)
+    except KeyError as error:raise ModelError('geometry_underdetermined','Building data lacks a field of the official route model',{'missing':str(error)}) from error
     if min_width is not None:
         graph.remove_nodes_from(['door:'+o['id'] for o in model.openings.values() if o.get('width_m',0)<min_width])
     return graph
@@ -119,6 +128,12 @@ def _graph(building,closed=None,min_width=None,step_free=False,scenario_closed=(
 def _lengths(graph,start):
     if start not in graph: raise ModelError('blocked','Selected start is not in the active reference graph')
     return nx.single_source_dijkstra_path_length(graph,start,weight='weight')
+
+
+def _exit_lengths(graph,model):
+    entrances=['door:'+o['id'] for o in model.openings.values() if 'outside' in o['space_ids'] and 'door:'+o['id'] in graph]
+    if not entrances:raise ModelError('geometry_underdetermined','No open entrance in the official graph')
+    return nx.multi_source_dijkstra_path_length(graph,entrances,weight='weight')
 
 
 def _lines(geometry):
@@ -134,7 +149,7 @@ def compute(building,operation,arguments):
     if not isinstance(building,dict) or not all(key in building for key in ('spaces','floors')):
         raise ModelError('invalid_input','A building with rooms and floors is required')
     scenario_closed=arguments.get('_scenario_closed',[])
-    result={'model':'benchmark','operation':operation,'ids':[],'assumptions':[],'trace':{},'cost_model':'official_reference' if operation in {'errand','wide_delivery_count','step_free_reachable_count','what_if_door'} else 'polygon_geometry'}
+    result={'model':'benchmark','operation':operation,'ids':[],'assumptions':[],'trace':{},'cost_model':'official_kit_1_1_0' if operation in {'errand','wide_delivery_count','step_free_reachable_count','what_if_door'} else 'polygon_geometry'}
     if operation in {'largest_room','floor_area_total'}:
         if operation=='largest_room':
             room=_largest(building,arguments)
@@ -156,7 +171,7 @@ def compute(building,operation,arguments):
         after=_lengths(graph,via)
         if target['id'] not in after: raise ModelError('blocked','Largest target room is unreachable after pickup')
         result.update(value=round(distances[via]+after[target['id']],2),unit='m',ids=[start,via,target['id']],via=via,target=target['id'],trace={'pickup_length_m':distances[via],'delivery_length_m':after[target['id']]})
-        result['assumptions'].append('Nearest pickup room is chosen first by reference walking cost; not by globally minimizing both legs. Asset access is its room anchor in this benchmark contract.')
+        result['assumptions'].append('Official kit 1.1.0 route model. Nearest pickup room is chosen first by route length; not by globally minimizing both legs. A route to an item ends in the room that holds it.')
     elif operation in {'wide_delivery_count','step_free_reachable_count'}:
         start=_space(building,arguments.get('start'))['id'];floor_id=arguments.get('floor_id');_floor(building,floor_id)
         width=_number(arguments,'min_width',minimum=0) if operation=='wide_delivery_count' else None
@@ -165,7 +180,7 @@ def compute(building,operation,arguments):
         reachable=_lengths(graph,start)
         rooms=[s['id'] for s in building['spaces'] if s['floor_id']==floor_id and s['type']=='room' and s['id'] in reachable]
         result.update(value=len(rooms),unit='rooms',ids=rooms,trace={'start':start,'closed':closed,'min_width_m':width,'step_free':True})
-        result['assumptions'].append('Count only type=room, not hall/corridor/stair/lift/outdoor; width comparison is inclusive. This is reference reachability, not obstacle clearance.')
+        result['assumptions'].append('Count only type=room, not hall/corridor/stair/lift/outdoor; width comparison is inclusive. Reachability in the official kit 1.1.0 graph (no route round the outside), not obstacle clearance.')
     elif operation=='room_stacked':
         start=_space(building,arguments.get('start'));direction=arguments.get('direction')
         if direction not in {'above','below'}: raise ModelError('invalid_input','Direction must be above or below')
@@ -212,14 +227,11 @@ def compute(building,operation,arguments):
         wall=max(pieces,key=lambda line:line.length)
         if wall.length<=.7+1e-9: raise ModelError('geometry_underdetermined','Boundary-near segment is too short to distinguish it from tolerance end caps')
         point=wall.interpolate(.5,normalized=True)
-        edited=copy.deepcopy(building)
-        opening_ids={o['id'] for o in edited['openings']};door_id='prototype-what-if-door'
-        while door_id in opening_ids:door_id+='-new'
-        door={'id':door_id,'floor_id':first['floor_id'],'space_ids':[first['id'],second['id']],'kind':'door','position':[point.x,point.y],'width_m':.9,'step_free':True,'synthetic':True}
-        edited['openings'].append(door)
-        before_graph=_graph(building,scenario_closed=scenario_closed);after_graph=_graph(edited,scenario_closed=scenario_closed)
-        if 'outside' not in before_graph:raise ModelError('geometry_underdetermined','No entrance/outside graph node available')
-        before=_lengths(before_graph,'outside');after=_lengths(after_graph,'outside')
+        before_model=_official(building);after_model=_official(building)
+        try:door=after_model.add_door(first['id'],second['id'],step_free=True,position=(point.x,point.y))
+        except ValueError as error:raise ModelError('geometry_underdetermined',str(error)) from error
+        before=_exit_lengths(_graph(building,scenario_closed=scenario_closed,model=before_model),before_model)
+        after=_exit_lengths(_graph(after_model.data,scenario_closed=scenario_closed,model=after_model),after_model)
         changed=[];effects=[]
         for room in building['spaces']:
             if room['floor_id']!=floor_id or room['type']!='room':continue
@@ -227,8 +239,8 @@ def compute(building,operation,arguments):
             improvement=old-new if old is not None and new is not None else None
             if new is not None and (old is None or improvement>threshold+1e-9):
                 changed.append(room['id']);effects.append({'space_id':room['id'],'before_m':old,'after_m':new,'improvement_m':improvement})
-        result.update(value=len(changed),unit='rooms',ids=changed,trace={'door':door,'shared_wall_length_m':wall.length,'improvement_threshold_m':threshold,'effects':effects})
-        result['assumptions'].append('New reference door at midpoint of longest boundary-near shared segment (0.35 m); no original edit. Nearest-entrance distance uses the official zero-cost outside node; not a physical outside path.')
+        result.update(value=len(changed),unit='rooms',ids=changed,trace={'door':copy.deepcopy(door),'shared_wall_length_m':wall.length,'improvement_threshold_m':threshold,'effects':effects})
+        result['assumptions'].append('New door (official add_door, 0.9 m, step-free) at the midpoint of the longest boundary-near shared segment (0.35 m); no original edit. Walk out = official kit 1.1.0 route length to the nearest entrance opening; no route round the outside.')
     return result
 
 

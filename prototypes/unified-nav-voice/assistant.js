@@ -5,13 +5,16 @@
 const root=document.getElementById('assistant');if(!root)return;
 const A=id=>document.getElementById(id);
 const EXAMPLES=[
+ ["I'm in Office 0.38. Where can I get a coffee?",'Remembers your position, finds the nearest place'],
+ ['And how do I get there?','Follow-up uses the remembered start'],
  ['Where is the CNC mill?','Ambiguous machine name → follow-up question'],
- ["I'm in Meeting room 0.20.",'Remembers your position'],
- ['How do I get to the quality lab?','Route from remembered start'],
- ['Is there a step-free way to Office 1.04?','Floor change, step-free'],
- ['What if the Office corridor 0.16 were closed?','Preview, nothing changes'],
- ['Please close the Office corridor 0.16.','Change → needs your confirmation'],
- ['Which is the largest office on floor 1?','Benchmark tool'],
+ ['I use a wheelchair. How do I get to Office 1.04?','Step-free, lift, floor change'],
+ ['What if the office corridor 0.16 were closed?','Preview, nothing changes'],
+ ['Please close the office corridor 0.16.','Change → needs your Confirm'],
+ ['Open the corridor again.','Undo a confirmed closure'],
+ ["I'm pushing a 0.9 m wide trolley to warehouse zone H-A5, keep clear of machines.",'Precision route with width'],
+ ['Is there a gym here?','Honest answer for missing facilities'],
+ ['Which is the largest kitchen on floor 1?','Benchmark tool'],
 ];
 const DEMO_BUILDING='proc-factory-dev-003';
 root.innerHTML=`<div class='as-head'><strong>Assistant</strong><span id='as-mode' class='note'>connecting…</span>
@@ -99,10 +102,15 @@ async function send(text,{speak=A('as-speak').checked,voiceMeta=null}={}){
  try{
   const value=await post('/api/assistant/turn',{text,speak,voice:!!voiceMeta,ui:uiState()});
   for(const t of value.tools||[])bubble('as-tool',toolLine(t));
-  await applyUi(value.ui||{});
+  const uiStart=performance.now();await applyUi(value.ui||{});const uiMs=performance.now()-uiStart;
   const tm=value.timing_ms||{},u=value.usage||{};
-  const meta=[`Claude ${(tm.claude_ms/1000).toFixed(1)} s`,`tools ${Math.round(tm.tools_ms)} ms`,voiceMeta,tm.tts_ms!=null?`TTS ${Math.round(tm.tts_ms)} ms`:null,`total ${((performance.now()-began)/1000).toFixed(1)} s`,`${u.input_tokens||0}/${u.output_tokens||0} tokens ≈ $${(u.estimated_usd||0).toFixed(4)}`].filter(Boolean).join(' · ');
-  bubble('as-bot',value.reply,meta);
+  const meta=[`Claude ${(tm.claude_ms/1000).toFixed(1)} s`,`tools ${Math.round(tm.tools_ms)} ms`,`map ${Math.round(uiMs)} ms`,voiceMeta,tm.tts_ms!=null?`TTS ${Math.round(tm.tts_ms)} ms`:null,`total ${((performance.now()-began)/1000).toFixed(1)} s`,`${u.input_tokens||0}/${u.output_tokens||0} tokens ≈ $${(u.estimated_usd||0).toFixed(4)}`].filter(Boolean).join(' · ');
+  const bot=bubble('as-bot',value.reply,meta);
+  const routed=value.ui?.route?.result,steps=routed?.directions;
+  if(Array.isArray(steps)&&steps.length){const tag=document.createElement('div');tag.className='as-meta';
+   tag.textContent=routed.model==='challenge'?'Directions · official route rules (furniture ignored, not obstacle-checked)':(routed.fully_checked?'Directions · checked precision route':'Directions · precision route with schematic floor change');
+   const list=document.createElement('ol');list.className='as-directions';for(const step of steps.slice(0,14)){const li=document.createElement('li');li.textContent=step;list.append(li);}
+   bot.append(tag,list);A('as-log').scrollTop=A('as-log').scrollHeight;}
   if(value.ui?.proposal)proposalCard(value.ui.proposal);
   if(value.voice_error)bubble('as-error','Voice output failed: '+value.voice_error+' The text answer above is complete.');
   if(value.audio_pcm16)await play(value.audio_pcm16,value.sample_rate);

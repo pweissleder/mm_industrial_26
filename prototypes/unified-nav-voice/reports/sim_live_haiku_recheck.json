@@ -1,0 +1,548 @@
+{
+  "summary": {
+    "label": "live_haiku_recheck",
+    "mode": "live",
+    "model": "claude-haiku-5-5",
+    "effort": "medium",
+    "scenarios_passed": 1,
+    "scenarios": 2,
+    "turns_passed": 2,
+    "turns": 3,
+    "estimated_usd": 0.0021,
+    "latency_ms": {
+      "claude_median": 8252.9,
+      "claude_max": 10248.5,
+      "tools_median": 24.6
+    },
+    "concise_1_2_sentences": 1
+  },
+  "results": [
+    {
+      "id": "toilet_unknown_start",
+      "title": "Nearest toilet without a known position",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "Where is the nearest toilet?",
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "mentions_any": [
+              "toilet"
+            ],
+            "asks": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "mentions_any": true,
+            "asks": true
+          },
+          "reply": "There are two toilets: Toilet 0.22 on the ground floor and Toilet 1.32 on Floor 1. Where are you right now? I can then tell you which one is closer.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "toilet",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 2,
+                "shown": 2,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S022",
+                    "name": "Toilet 0.22",
+                    "type": "toilet",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F1-S032",
+                    "name": "Toilet 1.32",
+                    "type": "toilet",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0
+                  }
+                ],
+                "note": "No start known, so not sorted by distance; ask where the user is if it matters."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 2757.6,
+            "tools_ms": 0.5,
+            "total_ms": 2758.2,
+            "wall_ms": 2758
+          },
+          "usage": {
+            "input_tokens": 6,
+            "output_tokens": 237,
+            "cache_read_input_tokens": 8993,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.00021,
+            "session": {
+              "api_calls": 2,
+              "input_tokens": 6,
+              "output_tokens": 237,
+              "cache_read_input_tokens": 8993,
+              "cache_creation_input_tokens": 0
+            }
+          }
+        },
+        {
+          "user": "I'm in the quality lab.",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S021",
+            "tools": [
+              "plan_route"
+            ],
+            "route_to_nearest": "toilet",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_start": true,
+            "tools": false,
+            "route_to_nearest": false,
+            "route_to_nearest_expected": "Toilet 0.22",
+            "short": true
+          },
+          "reply": "Toilet 0.22 is the closest, about 10 metres away on this ground floor. Shall I give you the route there?",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "quality lab",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "type": "quality_lab",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S021"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "toilet",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 2,
+                "shown": 2,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S022",
+                    "name": "Toilet 0.22",
+                    "type": "toilet",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "walk_m": 10.3
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F1-S032",
+                    "name": "Toilet 1.32",
+                    "type": "toilet",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "walk_m": 94.6
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 8252.9,
+            "tools_ms": 24.6,
+            "total_ms": 8277.7,
+            "wall_ms": 8278
+          },
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 757,
+            "cache_read_input_tokens": 18273,
+            "cache_creation_input_tokens": 1526,
+            "estimated_usd": 0.00075,
+            "session": {
+              "api_calls": 6,
+              "input_tokens": 16,
+              "output_tokens": 994,
+              "cache_read_input_tokens": 27266,
+              "cache_creation_input_tokens": 1526
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "break_relax",
+      "title": "Vague intent: somewhere to relax",
+      "building": "proc-campus-dev-009",
+      "turns": [
+        {
+          "user": "I'm in Lab 0.02 and need a break. Where can I relax and get something to eat?",
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-campus-dev-009-F0-S002",
+            "mentions_any": [
+              "canteen",
+              "kitchen"
+            ],
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_start": true,
+            "mentions_any": true,
+            "short": true
+          },
+          "reply": "The closest spot is Canteen 0.32, about 12 m away on this ground floor, and it's the best place to get food. Kitchen 0.15 is also on this floor, about 76 m away, if you want to make your own break. Shall I route you to the canteen?",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Lab 0.02",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 25,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F0-S002",
+                    "name": "Lab 0.02",
+                    "type": "lab",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "kitchen canteen lounge",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 0,
+                "shown": 0,
+                "results": [],
+                "did_you_mean": [
+                  "kitchen counter",
+                  "canteen table",
+                  "Kitchen counter 5.28",
+                  "Kitchen counter 4.13",
+                  "Kitchen counter 3.23"
+                ],
+                "note": "Nothing matches. Tell the user and offer the suggestions or a related place type."
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-campus-dev-009-F0-S002"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-campus-dev-009-F0-S002",
+                    "name": "Lab 0.02",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "kitchen",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 6,
+                "shown": 6,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F3-S023",
+                    "name": "Kitchen 3.23",
+                    "type": "kitchen",
+                    "floor": "Floor 3",
+                    "floor_level": 3,
+                    "match": 1.0,
+                    "walk_m": 52.6
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F0-S015",
+                    "name": "Kitchen 0.15",
+                    "type": "kitchen",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "walk_m": 76.4
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F1-S034",
+                    "name": "Kitchen 1.34",
+                    "type": "kitchen",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "walk_m": 87.6
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F5-S028",
+                    "name": "Kitchen 5.28",
+                    "type": "kitchen",
+                    "floor": "Floor 5",
+                    "floor_level": 5,
+                    "match": 1.0,
+                    "walk_m": 89.1
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F4-S013",
+                    "name": "Kitchen 4.13",
+                    "type": "kitchen",
+                    "floor": "Floor 4",
+                    "floor_level": 4,
+                    "match": 1.0,
+                    "walk_m": 90.3
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F2-S035",
+                    "name": "Kitchen 2.35",
+                    "type": "kitchen",
+                    "floor": "Floor 2",
+                    "floor_level": 2,
+                    "match": 1.0,
+                    "walk_m": 98.7
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "lounge",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 0,
+                "shown": 0,
+                "results": [],
+                "did_you_mean": [],
+                "note": "Nothing matches. Tell the user and offer the suggestions or a related place type."
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "canteen",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F0-S032",
+                    "name": "Canteen 0.32",
+                    "type": "canteen",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "walk_m": 12.5
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 10248.5,
+            "tools_ms": 120.3,
+            "total_ms": 10369.3,
+            "wall_ms": 10369
+          },
+          "usage": {
+            "input_tokens": 16,
+            "output_tokens": 1131,
+            "cache_read_input_tokens": 37279,
+            "cache_creation_input_tokens": 1684,
+            "estimated_usd": 0.00115,
+            "session": {
+              "api_calls": 7,
+              "input_tokens": 16,
+              "output_tokens": 1131,
+              "cache_read_input_tokens": 37279,
+              "cache_creation_input_tokens": 1684
+            }
+          }
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

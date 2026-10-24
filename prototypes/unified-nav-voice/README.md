@@ -22,12 +22,20 @@ python -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt   # macOS/Linux: .venv/bin/python
 ```
 
-Data: the official kit **v1.0.0 ZIP** (`industrial-agents-hackathon-2026-main.zip`) and a checkout of
-the starter kit at commit `cb51a6f` (for `starter_agent/building_map.py` and `benchmark/score.py`).
+Data (pinned to **kit 1.1.0**, starter `main` = `dc03c44`): buildings come from the official kit ZIP
+(`industrial-agents-hackathon-2026-main.zip`, buildings unchanged in 1.1.0 and verified per blob);
+`starter_agent/building_map.py`, `benchmark/score.py` and the Train/Dev `questions*.jsonl` come from a
+checkout of the starter repo at `dc03c44`, verified by git blob id. Checkout setup:
+
+```bash
+git clone --filter=blob:none https://github.com/Synera-GmbH/industrial-agents-hackathon-2026 SyneraStarterReference
+cd SyneraStarterReference && git sparse-checkout set --no-cone '/*' '!/*/' '/benchmark/' '/starter_agent/' \
+  '/data/train/*/questions.jsonl' '/data/train/*/questions_basic.jsonl' '/data/dev/*/questions.jsonl' '/data/dev/*/questions_basic.jsonl'
+```
+
 Defaults are `~/Downloads/industrial-agents-hackathon-2026-main.zip` and
 `~/Documents/HackathonTransfer/SyneraStarterReference`; override with `SYNERA_KIT_ZIP` and
-`SYNERA_REFERENCE_DIR`. The kit data is not copied into this repo. See `KIT_1_1_0_IMPACT.md` for the
-v1.1.0 patch.
+`SYNERA_REFERENCE_DIR`. No kit data is copied into this repo. See `KIT_1_1_0_IMPACT.md`.
 
 ## Run
 
@@ -52,25 +60,34 @@ pwsh -File scripts/Start-Lab.ps1 -Live                        # http://127.0.0.1
 - **Assistant panel:** type, or hold *Hold to talk* (max 10 s). Each tool call, its result, timing and
   estimated cost are shown. *Example questions* run on building proc-factory-dev-003.
 - Changes (close/open a room, door, lift) appear as a card; only *Confirm* applies them.
-- **Calculation mode:** *Precision* (obstacles, width, safety margin; procedural buildings only),
-  *Official challenge* (room sequence, 0.15 m wall clearance, furniture ignored, stairs/lift costs),
-  *Starter-kit reference*. Map click → *Set as start / target*. Tabs *Inspect building*, *Benchmark*.
+- **Calculation mode:** *Official routing* (default; exactly the kit 1.1.0 route model, dashed purple
+  line, furniture ignored) · *Precision* (blue; obstacles with person/vehicle width and safety margin,
+  profiles A/B/0 = stationary / snapshot / walls only, optional 1 m snapping of blocked points;
+  procedural buildings only) · *Official graph (debug)*. Map click → *Set as start / target*.
+  Tabs *Inspect building*, *Benchmark* (nine operations, Train/Dev examples). Everything works without
+  the LLM; the assistant only chooses tools. Step-by-step directions under each reply come from the
+  router, never from the model.
 
 ## Tests
 
 ```bash
-.venv/Scripts/python -B -m unittest discover     # offline: 123 tests, needs the kit ZIP + node
+.venv/Scripts/python -B -m unittest discover        # offline, needs the kit ZIP, checkout + node
+.venv/Scripts/python -B benchmark_eval.py           # all Train+Dev benchmark + warm-up questions (~85 s)
+.venv/Scripts/python -B sim/run_sim.py --offline    # 13 customer dialogs, scripted plan, real tools
+pwsh -File scripts/Run-Sim.ps1 --live --label x     # same dialogs with real Claude (costs ~$0.26)
+.venv/Scripts/python -B robustness_audit.py --label x   # precision routes vs independent geometry checker
 ```
 
-`test_assistant.py` replaces Claude with a scripted stand-in (marked offline) but uses the real
-tools, data and router. Live checks: `tools/live_check.py --out live/x.json "Where is the CNC mill?"`.
+`test_assistant.py` and `sim --offline` replace Claude with a scripted stand-in (marked offline) but use
+the real tools, data and routers. Results and the round-3 report: `reports/ROUND3_REPORT.md`.
 
 ## Integration gaps (honest list)
 
 - Not connected to `backend/` (FastAPI/LangGraph) or `frontend/` (Astro); separate stdlib server and
   data access via the kit ZIP rather than the team's ingestion/storage.
-- Challenge routing predates kit v1.1.0 in two details (door landing, extra production/forklift
-  rules); see `KIT_1_1_0_IMPACT.md`. Benchmark `errand`/`what_if_door` still use the v1.0.0 model.
+- Production-zone transit and forklift rules are not in kit 1.1.0; available only as opt-in,
+  labelled unofficial.
 - Precision routing only for verified procedural buildings; vertical moves are schematic.
+- Indoor positioning: concept only, see `LOCALIZATION.md`.
 - Voice verified with a synthesised WAV through the real STT → Claude → router → TTS chain; a
   human microphone test in the browser is still open.

@@ -2,7 +2,7 @@ import hashlib
 from pathlib import Path
 import unittest
 from unittest.mock import patch
-from data import load_building,source_hash,read_member,reference_map,REFERENCE
+from data import load_building,source_hash,read_member,reference_map,REFERENCE,KIT_COMMIT,git_blob_id,pinned_tree,verify_buildings
 from errors import ModelError
 from service import Service
 from validation import validate_footprints
@@ -21,7 +21,10 @@ class ServiceTests(unittest.TestCase):
         self.service.change(self.bid,{'action':'reset'})
         self.assertEqual(self.service.reference_route(self.bid,request)['benchmark_cost_m'],expected)
         self.assertEqual(source_hash(self.bid),hashlib.sha256(read_member('data/dev/'+self.bid+'/building.json')).hexdigest())
-        self.assertEqual((REFERENCE/'starter_agent/building_map.py').read_bytes().replace(b'\r\n',b'\n'),read_member('starter_agent/building_map.py').replace(b'\r\n',b'\n'))
+        # Reference module and buildings are pinned to kit 1.1.0 (commit blob ids), not to the 1.0.0 ZIP.
+        self.assertEqual(KIT_COMMIT,'dc03c447dbe5b2e5f82c7db0d72249931817d86d')
+        self.assertEqual(git_blob_id((REFERENCE/'starter_agent/building_map.py').read_bytes()),pinned_tree()['starter_agent/building_map.py'])
+        self.assertEqual(verify_buildings([self.bid,'osm-way22744230','resplan-14509','swiss-1785'])['identical'],4)
 
     def test_ram_add_reset_and_revision(self):
         before=self.service.building(self.bid)
@@ -88,5 +91,34 @@ class ServiceTests(unittest.TestCase):
             result=self.service.navigate(self.bid,request)
         self.assertTrue(result['fully_checked'])
         self.assertEqual(result['reference_comparison']['status'],'not_comparable')
+
+    def test_challenge_mode_is_official_1_1_0_route_with_directions(self):
+        a=self.prefix+'F0-S021';b=self.prefix+'F1-S010'
+        request={'model':'challenge','start':{'kind':'space','id':a},'target':{'kind':'space','id':b}}
+        result=self.service.navigate(self.bid,request)
+        official=reference_map(load_building(self.bid)).route(a,b)
+        self.assertEqual((result['model'],result['label'],result['cost_m'],result['space_path'],result['directions']),
+                         ('challenge','Official challenge routing',official.length_m,official.space_path,official.steps))
+        for key in ('status','reachable','element_path','walk_m','vertical_cost_m','steps','legs','segments','transitions',
+                    'start','target','rules','unreachable_reason','assumptions','warnings'):
+            self.assertIn(key,result)
+        reference=self.service.navigate(self.bid,{**request,'model':'reference'})
+        self.assertEqual((reference['model'],reference['benchmark_cost_m']),('reference',official.length_m))
+        # RAM scenario closures apply to the official route.
+        self.service.change(self.bid,{'action':'close','element':self.prefix+'V01'})
+        closed=self.service.navigate(self.bid,request)
+        self.assertEqual(closed['rules']['closed'],[self.prefix+'V01'])
+        self.assertEqual([t['kind'] for t in closed['transitions']],['lift'])
+        self.assertGreater(closed['cost_m'],result['cost_m'])
+
+    def test_unreachable_challenge_route_and_non_adjacent_door(self):
+        a=self.prefix+'F0-S021';b=self.prefix+'F0-S030'
+        result=self.service.navigate(self.bid,{'model':'challenge','start':{'kind':'space','id':a},'target':{'kind':'space','id':b},
+                                               'closed':[self.prefix+'F0-S016']})
+        self.assertEqual((result['reachable'],result['cost_m']),(False,None))
+        self.assertIn(self.prefix+'F0-S016',result['unreachable_reason'])
+        with self.assertRaises(ModelError) as error:
+            self.service.change(self.bid,{'action':'add_door','first':a,'second':self.prefix+'F1-S010'})
+        self.assertEqual(error.exception.code,'invalid_input')
 
 if __name__=='__main__':unittest.main(verbosity=2)

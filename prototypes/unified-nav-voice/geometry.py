@@ -44,8 +44,8 @@ def finite(value, name):
 
 
 def parameters(profile='stationary', width_m=.6, safety_m=.05):
-    if not isinstance(profile, str) or profile not in {'stationary', 'all'}:
-        raise ModelError('invalid_input', 'Obstacle profile must be stationary or all')
+    if not isinstance(profile, str) or profile not in {'none', 'stationary', 'all'}:
+        raise ModelError('invalid_input', 'Obstacle profile must be none, stationary or all')
     width, safety = finite(width_m, 'width_m'), finite(safety_m, 'safety_m')
     if not .05 <= width <= 5 or not 0 <= safety <= 2:
         raise ModelError('invalid_input', 'Width must be .05..5 m and safety 0..2 m')
@@ -96,7 +96,9 @@ def asset_polygon(asset):
 
 
 def prepare_assets(building, profile, force_ids=()):
-    allowed, forced = (STATIONARY if profile == 'stationary' else SNAPSHOT), set(force_ids)
+    # 'none' = walls and doors only (furniture/machines ignored); endpoint assets stay forced obstacles.
+    allowed = {'none': set(), 'stationary': STATIONARY}.get(profile, SNAPSHOT)
+    forced = set(force_ids)
     result, excluded, unknown = [], [], []
     for asset in building.get('assets', []):
         kind = asset.get('type')
@@ -163,6 +165,36 @@ class SpaceGeometry:
     def check_budget(self):
         if time.perf_counter() > self.deadline:
             raise ModelError('computation_limit', 'Navigation time budget reached', {'space_id': self.space['id']})
+
+    def snap(self, xy, limit):
+        """Move a blocked point to the nearest admissible point within `limit` metres of the same room.
+
+        The connecting straight line must stay inside the room polygon (never through a wall) and may only
+        leave the obstacle that contains the original point; it never crosses another obstacle."""
+        from shapely.ops import nearest_points
+        origin = Point(point_xy(xy))
+        if not self.room.covers(origin) or self.free.is_empty:
+            return None
+        candidate = nearest_points(self.free, origin)[0]
+        distance = origin.distance(candidate)
+        if distance > limit:
+            return None
+        inward = Point(candidate.x + (candidate.x - origin.x) * 1e-6 / max(distance, 1e-9),
+                       candidate.y + (candidate.y - origin.y) * 1e-6 / max(distance, 1e-9))
+        for target in (inward, candidate):
+            if not self.free.covers(target):
+                continue
+            line = LineString([origin, target])
+            if not self.room.covers(line):
+                return None
+            for _record, footprint in self.obstacle_records:
+                if footprint.covers(origin):
+                    continue
+                if line.intersects(footprint):
+                    return None
+            if self.segment_valid((target.x, target.y), (target.x, target.y)):
+                return (target.x, target.y), distance
+        return None
 
     def component(self, xy):
         point = Point(point_xy(xy))

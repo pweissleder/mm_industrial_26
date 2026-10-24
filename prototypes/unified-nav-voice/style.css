@@ -14,3 +14,5 @@
 .as-proposal button{margin:4px 6px 0 0}.as-meta{font-size:10.5px;color:var(--muted);margin-top:2px}
 #as-form{display:flex;gap:5px;flex-wrap:wrap}#as-input{flex:1 1 160px;min-width:0}
 #as-talk.recording{background:#b3261e;color:white}#as-examples{display:flex;flex-direction:column;gap:3px}#as-examples button{text-align:left;font-size:12px}
+.challenge-line{stroke:#8a3fb5;stroke-dasharray:7 4}.challenge-key:before{color:#8a3fb5}
+.as-directions{margin:2px 0 0 18px;padding:0;font-size:12px}.as-directions li{margin:1px 0}

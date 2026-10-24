@@ -111,18 +111,42 @@ class OperationTests(unittest.TestCase):
         scorer=data.reference_module('score')
         self.assertTrue(scorer.score_reply({'type':'number','value':2,'relative_tolerance':0,'absolute_tolerance':0},format_answer('shared_walls_count',{'operation':'shared_walls_count','value':2})))
 
-    def test_all_dev_tools_against_unchanged_official_scorer(self):
+    def check_split(self,split,expected_total):
+        """Kit 1.1.0 answers (verified against the pinned commit) through the unchanged official scorer."""
         scorer=data.reference_module('score');before=hashlib.sha256(data.ARCHIVE.read_bytes()).hexdigest()
-        kinds=set();total=0
-        for example in data.examples('dev'):
+        kinds=set();total=0;failed=[]
+        for example in data.examples(split):
             with self.subTest(kind=example['kind'],question=example['id']):
                 b=data.load_building(example['building_id']);snapshot=copy.deepcopy(b)
                 result=compute(b,example['kind'],example['inputs'])
-                self.assertTrue(scorer.score_reply(example['answer'],format_answer(example['kind'],result)))
+                ok=scorer.score_reply(example['answer'],format_answer(example['kind'],result))
+                if not ok:failed.append(example['id'])
+                self.assertTrue(ok)
                 self.assertEqual(b,snapshot)
                 kinds.add(example['kind']);total+=1
-        self.assertEqual(total,138);self.assertEqual(len(kinds),9)
+        self.assertEqual(total,expected_total);self.assertEqual(len(kinds),9);self.assertEqual(failed,[])
         self.assertEqual(hashlib.sha256(data.ARCHIVE.read_bytes()).hexdigest(),before)
+
+    def test_all_dev_tools_against_unchanged_official_scorer(self):
+        self.check_split('dev',138)
+
+    def test_all_train_tools_against_unchanged_official_scorer(self):
+        self.check_split('train',517)
+
+    def test_errand_and_what_if_use_official_1_1_0_route_lengths(self):
+        b=building()
+        errand=compute(b,'errand',{'start':'A','asset_type':'chair','floor_id':'F0','room_type':'office'})
+        model=data.reference_map(b)
+        self.assertAlmostEqual(errand['trace']['pickup_length_m'],model.route('A','B').length_m,places=2)
+        self.assertEqual(errand['cost_model'],'official_kit_1_1_0')
+        # No route round the outside: two entrances do not join separate wings.
+        wings=building();wings['openings']=[o for o in wings['openings'] if o['id']!='AB']
+        wings['openings'].append({'id':'entrance-c','floor_id':'F0','space_ids':['C','outside'],'kind':'entrance','position':[12,2],'width_m':1.2,'step_free':True})
+        with self.assertRaises(ModelError):compute(wings,'errand',{'start':'A','asset_type':'chair','floor_id':'F0','room_type':'office'})
+        # B already walks out through C's entrance (6 m); via the new A-B door it is also 6 m: no gain.
+        result=compute(wings,'what_if_door',{'first':'A','second':'B','floor_id':'F0'})
+        self.assertEqual(result['ids'],[])
+        self.assertEqual(result['trace']['door']['width_m'],.9)
 
 
 if __name__=='__main__':unittest.main(verbosity=2)

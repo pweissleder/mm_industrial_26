@@ -5,3 +5,7 @@ live/
 *.wav
 .env
 .env.*
+reports/*_before.json
+reports/*rootcheck*
+robustness/*-cases.json
+robustness/round3-summary.json

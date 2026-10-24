@@ -120,7 +120,7 @@ function endpointVisibility(){
 }
 function modeVisibility(){
  const challenge=$('model').value==='challenge';
- for(const id of ['profile-wrap','size-wrap','schematic-wrap','precision-note','analyze'])$(id).hidden=challenge;
+ for(const id of ['profile-wrap','size-wrap','schematic-wrap','snap-wrap','precision-note','analyze'])$(id).hidden=challenge;
  $('forklift-wrap').hidden=$('challenge-note').hidden=!challenge;
 }
 function endpoint(prefix){
@@ -129,7 +129,7 @@ function endpoint(prefix){
  if(kind==='door')return {kind,id:$(prefix+'-door').value,space_id:$(prefix+'-space').value};
  return {kind,id:$(prefix+(kind==='asset'?'-asset':'-space')).value};
 }
-function parameters(){return {profile:$('profile').value,width_m:Number($('width').value),safety_m:Number($('safety').value),step_free:$('step-free').checked,allow_schematic_vertical:$('schematic').checked};}
+function parameters(){return {profile:$('profile').value,width_m:Number($('width').value),safety_m:Number($('safety').value),step_free:$('step-free').checked,allow_schematic_vertical:$('schematic').checked,snap_m:$('snap')?.checked?1:0};}
 function routeArguments(){
  const model=$('model').value,base={model,start:endpoint('start'),target:endpoint('target')};
  // Challenge rules take only step-free/forklift; forklift is never sent to the precise/reference contracts.
@@ -146,7 +146,7 @@ function renderChallenge(value,ms){
  chip('Challenge rules','info');
  chip(`Status: ${value.status??'–'}`,reachable?'ok':'bad');
  chip(reachable?'Reachable':'Not reachable',reachable?'ok':'bad');
- if(value.forklift===true||value.request?.forklift===true)chip('Forklift · partial rules','warn');
+ if(value.forklift===true||value.request?.forklift===true)chip('Forklift · unofficial extra rule','warn');
  if(!reachable&&value.unreachable_reason)$('warnings').append(el('li',`Unreachable: ${typeof value.unreachable_reason==='string'?value.unreachable_reason:JSON.stringify(value.unreachable_reason)}`));
  if(path.length)$('facts').append(el('li',`Spaces: ${path.map(spaceName).join(' → ')}`));
  for(const t of Array.isArray(value.transitions)?value.transitions:[]){
@@ -361,7 +361,7 @@ function draw(){
  if(showDiag)for(const id of diag.keys()){const found=findRecord(id),p=found&&(found.kind==='opening'||found.kind==='asset')?found.record.position:null;if(p&&found.record.floor_id===current)svg.append(shape('circle',{cx:p[0],cy:-p[1],r:unit*7,class:'diag-ring'}));}
  if($('reference-layer').checked){const reference=result?.model==='reference'?result:result?.reference_comparison;for(const segment of reference?.segments||[])if(segment.floor_id===current)svg.append(line(segment.points,'reference-line'));}
  const {segs,first,last}=routeEnds();
- for(const segment of segs)if(segment.floor_id===current&&segment.points?.length)svg.append(line(segment.points,'route-line'));
+ const routeClass=result?.model==='challenge'?'route-line challenge-line':'route-line';for(const segment of segs)if(segment.floor_id===current&&segment.points?.length)svg.append(line(segment.points,routeClass));
  for(const portal of result?.portals||[]){if(portal.floor_id!==current)continue;const p=portal.inner||portal.position;if(p)svg.append(shape('circle',{cx:p[0],cy:-p[1],r:unit*3.5,class:'portal'}));}
  if(first&&first.floor_id===current)svg.append(marker(first.points[0],'start-mark','S',unit));
  if(last&&last.floor_id===current)svg.append(marker(last.points.at(-1),'goal-mark','T',unit));
@@ -388,7 +388,7 @@ function drawIso(){
   if($('rooms-layer').checked)for(const s of data.spaces.filter(s=>s.floor_id===f.id)){const n=shape('path',{d:isoPath(polygonGeometry(s.polygon),z),class:cls(s.id,'room'+(['hall','corridor'].includes(s.type)?' hall':'')),'fill-rule':'evenodd'});n.append(shape('title',{},s.name));g.append(n);}
   if($('assets-layer').checked)for(const a of data.assets.filter(a=>a.floor_id===f.id)){const fp=footprint(a);if(!fp)continue;const n=shape('path',{d:isoPath(polygonGeometry(fp),z),class:cls(a.id,'asset'+(routed.has(a.id)?' routed':''))});n.append(shape('title',{},a.name));g.append(n);}
   if($('reference-layer').checked){const reference=result?.model==='reference'?result:result?.reference_comparison;for(const segment of reference?.segments||[])if(segment.floor_id===f.id&&segment.points?.length)g.append(isoLine(segment.points,z,'reference-line'));}
-  for(const segment of segs)if(segment.floor_id===f.id&&segment.points?.length)g.append(isoLine(segment.points,z,'route-line'));
+  for(const segment of segs)if(segment.floor_id===f.id&&segment.points?.length)g.append(isoLine(segment.points,z,result?.model==='challenge'?'route-line challenge-line':'route-line'));
   for(const [seg,idx,classes,text] of [[first,0,'start-mark','S'],[last,-1,'goal-mark','T']]){if(!seg||seg.floor_id!==f.id)continue;const p=seg.points.at(idx),q=project(p[0],p[1],z);g.append(shape('circle',{cx:q[0],cy:q[1],r:fs*.6,class:classes}));g.append(shape('text',{x:q[0],y:q[1]+fs*.35,'text-anchor':'middle','font-size':fs*.9,class:'mark-text'},text));}
   iso.append(g);
  }

@@ -53,53 +53,39 @@ class Service:
             first,second=arguments.get('first'),arguments.get('second')
             if first==second or first not in model.spaces or second not in model.spaces:
                 raise ModelError('invalid_input','Select two different rooms')
-            model.add_door(first,second)
+            try:model.add_door(first,second)
+            except ValueError as error:raise ModelError('invalid_input',str(error)) from error
         else:raise ModelError('invalid_input','Unknown scenario action')
         self.scenarios[building_id]=model;self.revision+=1
         return self.building(building_id)
 
     def reference_route(self,building_id,arguments):
-        model=copy.deepcopy(self.model(building_id));start=arguments.get('start');target=arguments.get('target')
-        def resolve(spec):
-            if not isinstance(spec,dict):raise ModelError('invalid_input','Endpoint must be structured')
-            if spec.get('kind')=='point':return spec.get('space_id')
-            if spec.get('kind')=='door':
-                door=model.openings.get(spec.get('id'))
-                if not door or spec.get('space_id') not in door['space_ids']:raise ModelError('invalid_input','Door side does not match')
-                return spec.get('space_id')
-            return spec.get('id')
-        start,target=resolve(start),resolve(target)
-        if not isinstance(start,str) or not isinstance(target,str):raise ModelError('invalid_input','Choose endpoints')
-        began=perf_counter()
-        result=model.route(start,target,bool(arguments.get('step_free',False)))
-        graph=model.graph(bool(arguments.get('step_free',False)))
-        import networkx as nx
-        _,path=nx.single_source_dijkstra(graph,result.start_space_id,result.destination_space_id,weight='weight')
-        nodes=[]
-        for node in path:
-            if node=='outside':nodes.append({'id':node,'position':None,'floor_id':None})
-            elif node.startswith('door:'):
-                opening=model.openings[node[5:]];nodes.append({'id':node,'position':opening['position'],'floor_id':opening['floor_id']})
-            else:nodes.append({'id':node,'position':model.anchor(node),'floor_id':model.spaces[node]['floor_id']})
-        segments=[]
+        """'reference' = the official kit 1.1.0 room graph drawn as straight lines between its nodes
+        (space anchors and door positions); the cost is the official rule-based route length."""
+        result=self.challenge_route(building_id,{k:v for k,v in arguments.items() if k in {'start','target','via','step_free','closed'}})
+        if not result['reachable']:
+            raise ModelError('blocked',result.get('unreachable_reason') or 'No official route',{'status':result['status']})
+        nodes=result['nodes'];segments=[]
         for a,b in zip(nodes,nodes[1:]):
-            if a['floor_id'] and a['floor_id']==b['floor_id']:
-                segments.append({'floor_id':a['floor_id'],'points':[a['position'],b['position']]})
-        return {'model':'reference','benchmark_cost_m':result.length_m,'segments':segments,'nodes':nodes,
-                'space_path':result.space_path,'steps':result.steps,'elapsed_ms':(perf_counter()-began)*1000,
-                'status':'abstract_reference','collision_checked':False,
-                'assumptions':['Original room-anchor model; no asset clearance/door-width guarantee',
-                               'Input XY is resolved to its room, not used as a physical endpoint',
-                               'Vertical model costs and outside zero links are not measured XY length']}
+            if a['floor_id']==b['floor_id']:segments.append({'floor_id':a['floor_id'],'points':[a['position'],b['position']]})
+        return {'model':'reference','benchmark_cost_m':result['cost_m'],'segments':segments,'nodes':nodes,
+                'space_path':result['space_path'],'element_path':result['element_path'],'steps':result['directions'],
+                'directions':result['directions'],'elapsed_ms':result.get('elapsed_ms'),
+                'status':'abstract_reference','collision_checked':False,'kit':result['kit'],
+                'assumptions':['Official kit 1.1.0 route model (rule-based cost); nodes are space anchors and door positions',
+                               'Straight node-to-node lines; the official walk geometry is in challenge mode',
+                               'Input XY is resolved to its room, not used as a physical endpoint']}
 
     def challenge_route(self,building_id,arguments):
-        from challenge import challenge_route
+        from challenge import official_route
         closed=arguments.get('closed',[])
         if not isinstance(closed,list) or not all(isinstance(value,str) for value in closed):
             raise ModelError('invalid_input','closed must be a list of element IDs')
         model=self.model(building_id)
         request=copy.deepcopy(arguments);request.pop('model',None);request['closed']=sorted(set(model.closed)|set(closed))
-        result=challenge_route(copy.deepcopy(model.data),request)
+        began=perf_counter()
+        result=official_route(model,request)
+        result['elapsed_ms']=(perf_counter()-began)*1000
         result['revision']=self.revision
         return result
 
@@ -141,7 +127,7 @@ class Service:
         result['revision']=self.revision;result['source_validation']=proof
         # Compare contracts explicitly; this number never labels the physical polyline.
         try:result['reference_comparison']=self.reference_route(building_id,arguments)
-        except (ValueError,KeyError,TypeError,nx.NetworkXException):result['reference_comparison']={'status':'not_comparable','assumptions':['No comparable reference room route for these endpoints; validated physical result is retained']}
+        except (ModelError,ValueError,KeyError,TypeError,nx.NetworkXException):result['reference_comparison']={'status':'not_comparable','assumptions':['No comparable reference room route for these endpoints; validated physical result is retained']}
         a,b=arguments.get('start',{}),arguments.get('target',{})
         if a.get('kind')=='door' and b.get('kind')=='door' and a.get('space_id')==b.get('space_id'):
             if a.get('id') in model.openings and b.get('id') in model.openings and a.get('space_id') in model.spaces:
@@ -176,7 +162,8 @@ class Service:
 
     def operation(self,building_id,arguments):
         from operations import compute,format_answer
-        model=self.model(building_id)
+        from challenge import prime_map_cache
+        model=self.model(building_id);prime_map_cache(model)
         inputs=copy.deepcopy(arguments.get('arguments',{}));inputs['_scenario_closed']=sorted(model.closed)
         result=compute(copy.deepcopy(model.data),arguments.get('operation'),inputs)
         result['formatted_answer']=format_answer(arguments.get('operation'),result)
@@ -204,5 +191,5 @@ class Service:
         result['example']={'id':selected['id'],'split':split,'building_id':building_id,
                            'question':selected['question'],'expected':copy.deepcopy(selected['answer'])}
         result['comparison']={'matches_reference':bool(matched),
-            'scope':'Structured Train/Dev reference comparison; live RAM scenario applies; no language benchmark or new organizer routing score'}
+            'scope':'Structured Train/Dev comparison with the kit 1.1.0 answers (official scorer); live RAM scenario applies; no language benchmark'}
         return result

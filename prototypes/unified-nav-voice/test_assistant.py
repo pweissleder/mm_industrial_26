@@ -59,6 +59,7 @@ class ToolLayer(unittest.TestCase):
         self.assistant = Assistant(self.service)
         self.session = self.assistant.session('t' * 32)
         self.session.state['building_id'] = B
+        self.session.state['mode'] = 'precision'  # these cases exercise the precision router
         self.ui = {}
 
     def call(self, name, args):
@@ -167,6 +168,46 @@ class ToolLayer(unittest.TestCase):
             self.call('plan_route', route_args({'kind': 'space', 'id': 'nope'}, {'kind': 'space', 'id': S('F0-S021')}))
         with self.assertRaises(ModelError):
             self.call('propose_change', {'action': 'close', 'element_id': 'nope'})
+
+    def test_nearest_place_uses_official_walking_distance(self):
+        self.call('update_session', settings(start={'kind': 'space', 'id': S('F0-S038')}))
+        found = self.call('find_places', {'query': 'kitchen', 'kind': 'room', 'floor_level': None, 'near_start': True})
+        costs = [r['walk_m'] for r in found['results'] if r.get('walk_m') is not None]
+        self.assertEqual(costs, sorted(costs))
+        self.assertEqual(found['results'][0]['floor_level'], 0)
+        self.assertIn('walking distance', found['note'])
+
+    def test_unknown_place_gets_suggestions_not_inventions(self):
+        found = self.call('find_places', {'query': 'kitchn', 'kind': None, 'floor_level': None, 'near_start': False})
+        self.assertEqual(found['results'], [])
+        self.assertTrue(any('itchen' in s for s in found['did_you_mean']))
+        none = self.call('find_places', {'query': 'gymnasium', 'kind': None, 'floor_level': None, 'near_start': False})
+        self.assertEqual(none['results'], [])
+        self.assertIn('Nothing matches', none['note'])
+
+    def test_precision_directions_use_only_real_doors_and_connectors(self):
+        self.call('update_session', settings(step_free=True))
+        out = self.call('plan_route', route_args({'kind': 'space', 'id': S('F0-S020')}, {'kind': 'space', 'id': S('F1-S004')}))
+        steps = out['directions_shown_in_app']
+        self.assertIn('take the lift to Floor 1', ' '.join(steps))
+        names = {s['name'] for s in self.service.model(B).data['spaces']}
+        for step in steps[:-1]:
+            if 'into' in step:
+                self.assertIn(step.split('into ', 1)[1].rstrip('.'), names)
+        self.assertNotRegex(' '.join(steps), r'\b(left|right|straight)\b')
+
+    def test_closure_preview_changes_nothing(self):
+        self.call('update_session', settings(start={'kind': 'space', 'id': S('F0-S020')}))
+        out = self.call('preview_closure', {'element_ids': [S('F0-S016')]})
+        self.assertGreater(out['rooms_unreachable_after'], 10)
+        self.assertEqual(out['measured_from'], 'Meeting room 0.20')
+        self.assertEqual(self.service.model(B).closed, set())
+        with self.assertRaises(ModelError):
+            self.call('preview_closure', {'element_ids': ['nope']})
+
+    def test_default_mode_is_official_route(self):
+        session = self.assistant.session('z' * 32)
+        self.assertEqual(session.state['mode'], 'challenge')
 
     def test_words(self):
         self.assertEqual(words('Office 1.12_cnc'), ['office', '1.12', 'cnc'])

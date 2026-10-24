@@ -17,6 +17,40 @@ from geometry import (EPS, build_space, parameters, prepare_assets, point_xy,
                       access_candidates, door_side, effective_opening)
 
 
+
+def paired_sides(first, second, opening, step=.5):
+    """Door approaches on both sides; wide open apertures may be crossed off-centre.
+
+    The centre is tried first. Only for openings at least 2.5 m wide, a blocked centre is retried at
+    positions shifted along the same boundary, each with a reduced nominal interval that stays inside the
+    original one, so door_side re-validates walls, obstacles and clearance exactly as for the centre.
+    """
+    try:
+        return opening, [door_side(first, opening), door_side(second, opening)]
+    except ModelError as error:
+        width = opening.get('width_m')
+        if error.code != 'portal_blocked' or not isinstance(width, (int, float)) or width < 2.5:
+            raise
+        centre = Point(point_xy(opening['position']))
+        shared = first.room.boundary.intersection(second.room.boundary)
+        if shared.is_empty or shared.distance(centre) > 1e-6 or shared.geom_type != 'LineString':
+            raise
+        t = shared.project(centre)
+        reach = width / 2 - max(first.clearance, second.clearance) - .05
+        offsets = sorted({k * step * sign for k in range(1, int(reach / step) + 1) for sign in (1, -1)}, key=abs)
+        for offset in offsets:
+            if not 0 <= t + offset <= shared.length:
+                continue
+            moved = shared.interpolate(t + offset)
+            candidate = {**opening, 'position': [moved.x, moved.y], 'width_m': width - 2 * abs(offset),
+                         '_crossing_offset_m': round(offset, 3)}
+            try:
+                return candidate, [door_side(first, candidate), door_side(second, candidate)]
+            except ModelError as retry:
+                if retry.code != 'portal_blocked':
+                    raise
+        raise
+
 def path_length(points):
     return sum(math.dist(a, b) for a, b in zip(points, points[1:]))
 
@@ -42,6 +76,11 @@ def navigate(building: dict, request: dict) -> dict:
     raw_closed = request.get('closed', [])
     if not isinstance(raw_closed, list) or not all(isinstance(s, str) for s in raw_closed):
         raise ModelError('invalid_input', 'closed must be a list of room/door/connector IDs')
+    snap_limit = request.get('snap_m', 0)
+    if isinstance(snap_limit, bool) or not isinstance(snap_limit, (int, float)) or not 0 <= snap_limit <= 2:
+        raise ModelError('invalid_input', 'snap_m must be 0..2 m')
+    snaps = []
+    shifted = []
     closed = set(raw_closed)
     if not closed <= spaces.keys() | openings.keys() | connectors.keys():
         raise ModelError('invalid_input', 'Unknown closure ID')
@@ -69,8 +108,18 @@ def navigate(building: dict, request: dict) -> dict:
         if kind == 'point':
             sid, positions = spec.get('space_id'), [point_xy(spec.get('position'))]
             ctx = context(sid)
-            ctx.component(positions[0])
             note = 'Exact user point; no projection.'
+            try:
+                ctx.component(positions[0])
+            except ModelError:
+                snapped = ctx.snap(positions[0], snap_limit) if snap_limit > 0 else None
+                if snapped is None:
+                    raise
+                positions = [snapped[0]]
+                note = (f'Point moved {snapped[1]:.2f} m to the nearest admissible position in the same room '
+                        f'(limit {snap_limit:.2f} m; no wall or other obstacle crossed).')
+                snaps.append({'note': note, 'from': list(point_xy(spec.get('position'))), 'to': list(snapped[0]),
+                              'distance_m': round(snapped[1], 3), 'role': 'target' if is_target else 'start'})
         elif kind == 'space':
             sid = spec.get('id')
             ctx = context(sid)
@@ -151,7 +200,7 @@ def navigate(building: dict, request: dict) -> dict:
             if first.space['floor_id'] != second.space['floor_id']:
                 raise ModelError('geometry_unsupported', 'Opening joins different floors')
             opening = effective_opening(building, opening)
-            sides = [door_side(first, opening), door_side(second, opening)]
+            opening, sides = paired_sides(first, second, opening)
             normal_dot = sum(a*b for a, b in zip(sides[0]['normal'], sides[1]['normal']))
             shared = first.room.boundary.intersection(second.room.boundary)
             if (normal_dot > -.99999 or first.room.intersection(second.room).area > 1e-7
@@ -166,6 +215,9 @@ def navigate(building: dict, request: dict) -> dict:
             add_node(b, side_ids[1], points[-1])
             graph.add_edge(a, b, weight=path_length(points), kind='door', from_node=a,
                            opening_id=opening['id'], sides=sides, points=points, physical_opening=opening)
+            if opening.get('_crossing_offset_m'):
+                shifted.append(f"Opening {opening['id']} is crossed {abs(opening['_crossing_offset_m']):.1f} m from its centre "
+                               'because the centre approach is blocked; walls, obstacles and clearance re-checked there.')
             portal_records.append({'id': opening['id'], 'kind': 'door', 'floor_id': first.space['floor_id'],
                                    'position': list(opening['position']), 'sides': sides, 'points': points,
                                    'aperture': opening.get('_precision_aperture')})
@@ -298,6 +350,11 @@ def navigate(building: dict, request: dict) -> dict:
     selected_target = graph.nodes[target_node]['position']
     warnings = ['Only a static disc model in declared planning polygons; not certified real-world collision freedom.',
                 'Stationarity and asset service sides are not verified.']
+    warnings += [entry['note'] for entry in snaps]
+    used_openings = {t.get('id') for t in transitions if t.get('kind') == 'door'}
+    warnings += [note for note in shifted if note.split()[1] in used_openings]
+    if profile == 'none':
+        warnings.append('Furniture and machines are ignored (walls and doors only); only endpoint assets are obstacles.')
     if prepared[1]['unknown_asset_types']:
         warnings.append('Unknown asset types were excluded explicitly; inspect obstacle profile assumptions.')
     if unsupported:
@@ -309,6 +366,7 @@ def navigate(building: dict, request: dict) -> dict:
     geometries = [context(sid).export() for sid in sorted(used_contexts | {start['space_id'], target['space_id']})]
     return {'model': 'precise', 'status': 'schematic_vertical' if has_schematic else 'validated_2d_model',
             'fully_geometrically_checked': not has_schematic, 'fully_checked': not has_schematic, 'length_m': length,
+            'snapped_endpoints': snaps,
             'search_cost_m_equivalent': search_cost, 'schematic_transition_cost_m': vertical_cost,
             'profile': profile, 'width_m': width, 'safety_m': safety, 'clearance_m': clearance,
             'validation_summary':{'predicate_tolerance_m':EPS,'minimum_selected_obstacle_clearance_m':min(obstacle_clearances) if obstacle_clearances else None,

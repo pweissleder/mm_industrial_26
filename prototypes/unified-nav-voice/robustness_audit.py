@@ -142,7 +142,11 @@ def independent_check(building,request,result):
             if door['width_m']+TOL < 2*c:raise AssertionError('door too narrow')
             if sid not in door['space_ids']:raise AssertionError('wrong door room side')
             if door['id'] in request.get('closed',[]):raise AssertionError('closed door used')
-            if min(math.dist(p,door['position']) for p in points)>TOL:raise AssertionError('door stub misses door centre')
+            # The crossing must lie on this room's boundary inside the opening interval, leaving the full
+            # clearance to both interval ends (off-centre crossings of wide openings are allowed).
+            crossing=min(points,key=lambda p:room.boundary.distance(Point(p)))
+            if room.boundary.distance(Point(crossing))>TOL:raise AssertionError('door stub does not reach the wall')
+            if math.dist(crossing,door['position'])>door['width_m']/2-c+TOL:raise AssertionError('door crossing outside the usable opening interval')
             walls=walls_except_aperture(room,door)
         wall_distance=line.distance(walls)
         if wall_distance < c-TOL:raise AssertionError(f'wall clearance {wall_distance} < {c}')

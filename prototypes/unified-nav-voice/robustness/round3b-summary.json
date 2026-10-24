@@ -1,0 +1,478 @@
+{
+  "seed": 24102026,
+  "label": "round3b",
+  "cases": 404,
+  "buildings": 26,
+  "elapsed_seconds": 31.576540799986105,
+  "outcomes": {
+    "success": 246,
+    "blocked_or_unreachable_unproven": 51,
+    "unsupported": 107
+  },
+  "source_hashes": {
+    "proc-factory-dev-003": "e0229a3c82616d4c4ee62d5753022c8e383585b1118a170162ee59afb69ed66b",
+    "proc-factory-dev-004": "8423f9fdabbd0d608d70f390efd92864c407c1a0a6fe0f21c34e632d7b1aebe4",
+    "proc-factory-dev-005": "93c35066fa27705f94b8eabd8cd2aaed3ea7b3e0570afbaabf66eb9856b994b0",
+    "proc-factory-dev-007": "bee37f2e3db732f9682aec8ce88e66fc47b22f09ee7bdf946a0425fdc00a25fc",
+    "proc-factory-dev-008": "e14eba774212330b5c97b9f5be457c05477e8eb4614c09f36754cc3f07270856",
+    "proc-factory-dev-010": "89ce58b7fff80d38d32585c530bab57f77e89820ea7998179bd9fe0c9fbbbd7a",
+    "proc-factory-dev-011": "a9d21b9c0dd264d633d0f78931ab12a372784263dd33c6f074edae6d41661195",
+    "proc-factory-dev-012": "ed87733b7c5dc2315fbbd2c1cb8b784c6c5135ec46d7a3bdf9f998b489a3574e",
+    "proc-factory-train-005": "c27dc0b9815aa0b1fd131adffdf163385c29cc68bdc4eabc137bd3710dba9432",
+    "proc-factory-train-006": "043b4b7a2bb1f1178aca2f33a8524f2866821edfe6d0ab15877a558085ce3b97",
+    "proc-factory-train-007": "13af2b985a8646781ee7e154bfe0011fb1c96c4ea3c74ccdbaf66d10856d470e",
+    "proc-factory-train-008": "fee18e03839b0764c236726c007a65787fb8187db0ef3b56b6c610477e1ac709",
+    "proc-factory-train-009": "776853c6d7a8d688dd2b001c461684bd24b397a39681016e8d8fe36b8960e6a5",
+    "proc-factory-train-010": "4af042a42efafd229019125300f3ad7917883cccb290960e20a3615fb9b37285",
+    "proc-factory-train-015": "9e78b8832efe1174dbc735ab5d81c11bf6b89c6b425bffdbd7fa26b22bb3614b",
+    "proc-factory-train-017": "bf983b72d9b30015e596e5e46d4ef00d03eeb1ae2e7620fc9d0cd2ea9d8b57c1",
+    "proc-factory-train-018": "351d2e9bcc6a76a381cdc06d0235f74c09b58312bc4baf83266a1781daf8b095",
+    "proc-factory-train-020": "31ae43a5c7e57d5b1fb4dc38df3aed8fd3f6ad805c41891cd5624648001729a4",
+    "proc-campus-dev-000": "27e16425ae61d7069ce3a5c1b3360b8fc07e197dfe50d79fa13979a108706cfe",
+    "proc-campus-dev-001": "2857071f2d03b1c37253b5318ce24b6760e2ce98cf48df436d9fc5f8c3bd4b58",
+    "osm-way10053349": "93f38157fc238bb19165ccfc111802e467f2251f6b1af44be02ac01df55d84bb",
+    "osm-way13507441": "a2784c9af0c3605b7df1532242fc42b4ba64ed1ec731f46c0330ee6578c24359",
+    "resplan-10002": "86113a79405239d2f105c891cc9c3e8d925a7194bae3572e1fba763bbecf2d6d",
+    "resplan-10192": "5ff35946356d237f9de0ee532c3ddcb492d94a90141aab5af3ec21b9f27686f7",
+    "swiss-1075": "deb9ae8a5067643a8ff2577f25a34d0eabc22d1dd51904c25caec876ffd0e732",
+    "swiss-1104": "230b2d654b63bb455e020077959e19ad07cbb21620ea2eeaf8cafd14409fd6f3"
+  },
+  "by_family": {
+    "campus": {
+      "success": 24,
+      "blocked_or_unreachable_unproven": 6,
+      "unsupported": 2
+    },
+    "factory": {
+      "success": 222,
+      "blocked_or_unreachable_unproven": 45,
+      "unsupported": 21
+    },
+    "osm_indoor": {
+      "unsupported": 28
+    },
+    "resplan": {
+      "unsupported": 28
+    },
+    "swiss_dwellings": {
+      "unsupported": 28
+    }
+  },
+  "by_function": {
+    "adjacent": {
+      "blocked_or_unreachable_unproven": 12,
+      "success": 60,
+      "unsupported": 32
+    },
+    "asset": {
+      "success": 67,
+      "blocked_or_unreachable_unproven": 12,
+      "unsupported": 13
+    },
+    "closure": {
+      "blocked_or_unreachable_unproven": 21,
+      "success": 6,
+      "unsupported": 25
+    },
+    "local": {
+      "success": 74,
+      "blocked_or_unreachable_unproven": 6,
+      "unsupported": 24
+    },
+    "multispace": {
+      "success": 39,
+      "unsupported": 13
+    }
+  },
+  "known_reachable_failures": [
+    {
+      "building": "osm-way10053349",
+      "name": "local-0",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "osm-way10053349",
+      "name": "local-2",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.6
+          }
+        }
+      }
+    },
+    {
+      "building": "osm-way13507441",
+      "name": "local-0",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "osm-way13507441",
+      "name": "local-1",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "osm-way13507441",
+      "name": "local-2",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.6
+          }
+        }
+      }
+    },
+    {
+      "building": "osm-way13507441",
+      "name": "local-3",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 1.1
+          }
+        }
+      }
+    },
+    {
+      "building": "resplan-10002",
+      "name": "local-0",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "resplan-10002",
+      "name": "local-1",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "resplan-10002",
+      "name": "local-2",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.6
+          }
+        }
+      }
+    },
+    {
+      "building": "resplan-10002",
+      "name": "local-3",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 1.1
+          }
+        }
+      }
+    },
+    {
+      "building": "resplan-10192",
+      "name": "local-0",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "resplan-10192",
+      "name": "local-1",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1075",
+      "name": "local-0",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1075",
+      "name": "local-1",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1075",
+      "name": "local-2",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.6
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1075",
+      "name": "local-3",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 1.1
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1104",
+      "name": "local-0",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1104",
+      "name": "local-1",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.35
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1104",
+      "name": "local-2",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 0.6
+          }
+        }
+      }
+    },
+    {
+      "building": "swiss-1104",
+      "name": "local-3",
+      "error": {
+        "code": "geometry_undetermined",
+        "message": "Footprint convention not verified for this building",
+        "details": {
+          "verified": false,
+          "reason": "SVG convention validation currently limited to procedural factory/campus rectangles",
+          "diagnosis": {
+            "category": "unsupported",
+            "summary": "This data source, geometry or computation size is not yet supported by the precision model.",
+            "elements": [],
+            "clearance_m": 1.1
+          }
+        }
+      }
+    }
+  ],
+  "source_code_hashes": {
+    "assistant.py": "ded8b9472a78b86558b3121cf058e138e99b6b01bb792f05f6b74d2badda4fa4",
+    "benchmark_eval.py": "dfc1df30a17775ef133b71b1bb7230b5c92a0238819e422a0645b9deefa27928",
+    "challenge.py": "42e4b824dfe3cb32a33c15141b4cfb77ca8e8596da3ce917186dd67873b089db",
+    "data.py": "89b22387461afb7e7b540ff19e6c28bc8c9d5ecd6476868d3d4d5359aa58991b",
+    "diagnostics.py": "d7b4b9e9b2d04ef5258da74c217aa5f0651ed58dd3fc2210f899d56b9bb37708",
+    "errors.py": "d5b990819628e0fea0c68b489dcac7c5b7881fa3c4f98e322cf16a6222fd0e60",
+    "geometry.py": "b8e7a969332dd6425941f97ef52ec59c92bf31df4efe2eb76c396b1c2d516455",
+    "navigation.py": "a9eef84a6262247bb584d7be874245ba95c405f589fc8ed43d84755e8a7d41ba",
+    "operations.py": "d295adc19c871ef06074c8b7ab4a017f39eb40e949e24e750c340a8a536eba92",
+    "robustness_audit.py": "5c7ff4a2bbacc488d38b42ed92cef55bd1715f49921872d334d277e11c121470",
+    "server.py": "b4fda56acd027f36dad7c1634b173b519a4dbf0e812b319302e1fec1a3eb377f",
+    "service.py": "1bf8c13519661af8176f7df02f1997a1846178b0471b8526ba602f3eab6cefb7",
+    "test_access_robustness.py": "aa2cee3c156aefc7359394c059276b129517f2d83f4343c80c7e6cd64d049b00",
+    "test_assistant.py": "0931339d566123901263f32588590b5b55001633308cbd39134579b1aaac817f",
+    "test_challenge.py": "2527d5e4b682dd654adb2d3ca0f81e952a8462f3149bd6b5f76394e8fcba0246",
+    "test_example_lab.py": "a1b43f3f7437aa73b7eafc39b0d5bf13169d6422c9bf5bc8c2f942d8fefb6444",
+    "test_geometry.py": "c599be2355b3df952f0db5a62c03d5765bb2a4d60db8df6794308ecf02c5719c",
+    "test_http.py": "7f76a49dc548c7b877dbcc9b342bc3d89f324ff12b5605cf9543d3a7da312320",
+    "test_navigation.py": "70e05286ff7a2fbcf497e1c4b47288b22088192c59fa401e9d371a044f536885",
+    "test_operations.py": "4ed45b18df1daf6a8de4d462e7910801085d5d8062ddafd599427b28e0bd2145",
+    "test_portal_usability.py": "fa14a22fa6f0982f4413bbc18f66dbecf9c1200903d3e81d5954b3fc4051aa8f",
+    "test_precision_options.py": "ac3bea8212b3a0ffaa7a90fec86f67dcfb0741bb65163d6fb6b30124b2eab460",
+    "test_robustness.py": "8157015a6b66c138cbea659c87c6678d545d20f5b66be1cc4b2b6c5df5f7ba09",
+    "test_service.py": "9f174a64f98a7e60ddef96566ef511b933793167df0c2c5a222367d102c6a89f",
+    "test_ui_state.py": "2129dbc3ecde51247b7a46cd217e7631f334e8a6e64eca25da210b16e4ae62fa",
+    "validation.py": "827a3e204f3e9f583e5f684c706ebfd06c91806273c4c2fabc25e6cb350b0f77",
+    "voice.py": "16b7365fee9596b2dbd086f1a0e3ab7ab5c5fffa1b2a64cd15f70637a15241d4"
+  }
+}

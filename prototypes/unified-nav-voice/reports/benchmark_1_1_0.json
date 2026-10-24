@@ -1,0 +1,498 @@
+{
+ "label": "after (official kit 1.1.0 router)",
+ "splits": [
+  "train",
+  "dev"
+ ],
+ "kit": {
+  "version": "1.1.0",
+  "commit": "dc03c447dbe5b2e5f82c7db0d72249931817d86d",
+  "questions_root": "data layer (verified)"
+ },
+ "runtime_s": {
+  "benchmark": 57.42546050000237,
+  "warmup": 31.90816239999549,
+  "total": 89.33363049999753
+ },
+ "summary": {
+  "benchmark": {
+   "overall": {
+    "ok": 655,
+    "total": 655
+   },
+   "by_split": {
+    "dev": {
+     "ok": 138,
+     "total": 138
+    },
+    "train": {
+     "ok": 517,
+     "total": 517
+    }
+   },
+   "by_kind": {
+    "errand": {
+     "ok": 93,
+     "total": 93
+    },
+    "floor_area_total": {
+     "ok": 181,
+     "total": 181
+    },
+    "largest_room": {
+     "ok": 96,
+     "total": 96
+    },
+    "room_stacked": {
+     "ok": 26,
+     "total": 26
+    },
+    "shared_walls_count": {
+     "ok": 143,
+     "total": 143
+    },
+    "step_free_reachable_count": {
+     "ok": 2,
+     "total": 2
+    },
+    "straight_line_3d": {
+     "ok": 30,
+     "total": 30
+    },
+    "what_if_door": {
+     "ok": 4,
+     "total": 4
+    },
+    "wide_delivery_count": {
+     "ok": 80,
+     "total": 80
+    }
+   },
+   "by_source": {
+    "osm_indoor": {
+     "ok": 82,
+     "total": 82
+    },
+    "procedural": {
+     "ok": 152,
+     "total": 152
+    },
+    "resplan": {
+     "ok": 188,
+     "total": 188
+    },
+    "swiss_dwellings": {
+     "ok": 233,
+     "total": 233
+    }
+   }
+  },
+  "warmup": {
+   "locate": {
+    "overall": {
+     "ok": 553,
+     "total": 553
+    },
+    "by_split": {
+     "dev": {
+      "ok": 100,
+      "total": 100
+     },
+     "train": {
+      "ok": 453,
+      "total": 453
+     }
+    }
+   },
+   "count": {
+    "overall": {
+     "ok": 239,
+     "total": 239
+    },
+    "by_split": {
+     "dev": {
+      "ok": 40,
+      "total": 40
+     },
+     "train": {
+      "ok": 199,
+      "total": 199
+     }
+    }
+   },
+   "route": {
+    "overall": {
+     "ok": 720,
+     "total": 720
+    },
+    "by_split": {
+     "dev": {
+      "ok": 120,
+      "total": 120
+     },
+     "train": {
+      "ok": 600,
+      "total": 600
+     }
+    },
+    "expected_reachable": 660,
+    "expected_unreachable": 60,
+    "reachability_agrees": {
+     "ok": 720,
+     "total": 720
+    },
+    "reachability_agrees_expected_reachable": {
+     "ok": 660,
+     "total": 660
+    },
+    "reachability_agrees_expected_unreachable": {
+     "ok": 60,
+     "total": 60
+    },
+    "compared_reachable_pairs": 660,
+    "space_path_exact": {
+     "ok": 660,
+     "total": 660
+    },
+    "element_path_exact": {
+     "ok": 660,
+     "total": 660
+    },
+    "length_within_1pct": {
+     "ok": 660,
+     "total": 660
+    },
+    "length_within_0_01m": {
+     "ok": 660,
+     "total": 660
+    },
+    "length_equal_2dp": {
+     "ok": 660,
+     "total": 660
+    },
+    "tour_legs_length_equal_2dp": {
+     "ok": 0,
+     "total": 0
+    },
+    "drawn_geometry_matches_cost": {
+     "ok": 660,
+     "total": 660
+    },
+    "routes_with_blocked_walk_fallback": 4,
+    "max_abs_length_error_m": 0.0,
+    "median_abs_length_error_m": 0.0
+   },
+   "route_step_free": {
+    "overall": {
+     "ok": 240,
+     "total": 240
+    },
+    "by_split": {
+     "dev": {
+      "ok": 40,
+      "total": 40
+     },
+     "train": {
+      "ok": 200,
+      "total": 200
+     }
+    },
+    "expected_reachable": 168,
+    "expected_unreachable": 72,
+    "reachability_agrees": {
+     "ok": 240,
+     "total": 240
+    },
+    "reachability_agrees_expected_reachable": {
+     "ok": 168,
+     "total": 168
+    },
+    "reachability_agrees_expected_unreachable": {
+     "ok": 72,
+     "total": 72
+    },
+    "compared_reachable_pairs": 168,
+    "space_path_exact": {
+     "ok": 168,
+     "total": 168
+    },
+    "element_path_exact": {
+     "ok": 168,
+     "total": 168
+    },
+    "length_within_1pct": {
+     "ok": 168,
+     "total": 168
+    },
+    "length_within_0_01m": {
+     "ok": 168,
+     "total": 168
+    },
+    "length_equal_2dp": {
+     "ok": 168,
+     "total": 168
+    },
+    "tour_legs_length_equal_2dp": {
+     "ok": 0,
+     "total": 0
+    },
+    "drawn_geometry_matches_cost": {
+     "ok": 168,
+     "total": 168
+    },
+    "routes_with_blocked_walk_fallback": 0,
+    "max_abs_length_error_m": 0.0,
+    "median_abs_length_error_m": 0.0
+   },
+   "route_with_closure": {
+    "overall": {
+     "ok": 138,
+     "total": 138
+    },
+    "by_split": {
+     "dev": {
+      "ok": 29,
+      "total": 29
+     },
+     "train": {
+      "ok": 109,
+      "total": 109
+     }
+    },
+    "expected_reachable": 69,
+    "expected_unreachable": 69,
+    "reachability_agrees": {
+     "ok": 138,
+     "total": 138
+    },
+    "reachability_agrees_expected_reachable": {
+     "ok": 69,
+     "total": 69
+    },
+    "reachability_agrees_expected_unreachable": {
+     "ok": 69,
+     "total": 69
+    },
+    "compared_reachable_pairs": 69,
+    "space_path_exact": {
+     "ok": 69,
+     "total": 69
+    },
+    "element_path_exact": {
+     "ok": 69,
+     "total": 69
+    },
+    "length_within_1pct": {
+     "ok": 69,
+     "total": 69
+    },
+    "length_within_0_01m": {
+     "ok": 69,
+     "total": 69
+    },
+    "length_equal_2dp": {
+     "ok": 69,
+     "total": 69
+    },
+    "tour_legs_length_equal_2dp": {
+     "ok": 0,
+     "total": 0
+    },
+    "drawn_geometry_matches_cost": {
+     "ok": 69,
+     "total": 69
+    },
+    "routes_with_blocked_walk_fallback": 2,
+    "max_abs_length_error_m": 0.0,
+    "median_abs_length_error_m": 0.0
+   },
+   "tour": {
+    "overall": {
+     "ok": 240,
+     "total": 240
+    },
+    "by_split": {
+     "dev": {
+      "ok": 40,
+      "total": 40
+     },
+     "train": {
+      "ok": 200,
+      "total": 200
+     }
+    },
+    "expected_reachable": 208,
+    "expected_unreachable": 32,
+    "reachability_agrees": {
+     "ok": 240,
+     "total": 240
+    },
+    "reachability_agrees_expected_reachable": {
+     "ok": 208,
+     "total": 208
+    },
+    "reachability_agrees_expected_unreachable": {
+     "ok": 32,
+     "total": 32
+    },
+    "compared_reachable_pairs": 208,
+    "space_path_exact": {
+     "ok": 208,
+     "total": 208
+    },
+    "element_path_exact": {
+     "ok": 208,
+     "total": 208
+    },
+    "length_within_1pct": {
+     "ok": 208,
+     "total": 208
+    },
+    "length_within_0_01m": {
+     "ok": 208,
+     "total": 208
+    },
+    "length_equal_2dp": {
+     "ok": 144,
+     "total": 208
+    },
+    "tour_legs_length_equal_2dp": {
+     "ok": 208,
+     "total": 208
+    },
+    "drawn_geometry_matches_cost": {
+     "ok": 208,
+     "total": 208
+    },
+    "routes_with_blocked_walk_fallback": 1,
+    "max_abs_length_error_m": 0.010000000000019327,
+    "median_abs_length_error_m": 0.0
+   },
+   "all_routes": {
+    "overall": {
+     "ok": 1338,
+     "total": 1338
+    },
+    "expected_reachable": 1105,
+    "expected_unreachable": 233,
+    "reachability_agrees": {
+     "ok": 1338,
+     "total": 1338
+    },
+    "reachability_agrees_expected_reachable": {
+     "ok": 1105,
+     "total": 1105
+    },
+    "reachability_agrees_expected_unreachable": {
+     "ok": 233,
+     "total": 233
+    },
+    "compared_reachable_pairs": 1105,
+    "space_path_exact": {
+     "ok": 1105,
+     "total": 1105
+    },
+    "element_path_exact": {
+     "ok": 1105,
+     "total": 1105
+    },
+    "length_within_1pct": {
+     "ok": 1105,
+     "total": 1105
+    },
+    "length_within_0_01m": {
+     "ok": 1105,
+     "total": 1105
+    },
+    "length_equal_2dp": {
+     "ok": 1041,
+     "total": 1105
+    },
+    "tour_legs_length_equal_2dp": {
+     "ok": 208,
+     "total": 208
+    },
+    "drawn_geometry_matches_cost": {
+     "ok": 1105,
+     "total": 1105
+    },
+    "routes_with_blocked_walk_fallback": 7,
+    "max_abs_length_error_m": 0.010000000000019327,
+    "median_abs_length_error_m": 0.0
+   },
+   "routes_without_tours": {
+    "overall": {
+     "ok": 1098,
+     "total": 1098
+    },
+    "expected_reachable": 897,
+    "expected_unreachable": 201,
+    "reachability_agrees": {
+     "ok": 1098,
+     "total": 1098
+    },
+    "reachability_agrees_expected_reachable": {
+     "ok": 897,
+     "total": 897
+    },
+    "reachability_agrees_expected_unreachable": {
+     "ok": 201,
+     "total": 201
+    },
+    "compared_reachable_pairs": 897,
+    "space_path_exact": {
+     "ok": 897,
+     "total": 897
+    },
+    "element_path_exact": {
+     "ok": 897,
+     "total": 897
+    },
+    "length_within_1pct": {
+     "ok": 897,
+     "total": 897
+    },
+    "length_within_0_01m": {
+     "ok": 897,
+     "total": 897
+    },
+    "length_equal_2dp": {
+     "ok": 897,
+     "total": 897
+    },
+    "tour_legs_length_equal_2dp": {
+     "ok": 0,
+     "total": 0
+    },
+    "drawn_geometry_matches_cost": {
+     "ok": 897,
+     "total": 897
+    },
+    "routes_with_blocked_walk_fallback": 6,
+    "max_abs_length_error_m": 0.0,
+    "median_abs_length_error_m": 0.0
+   },
+   "routes_by_source": {
+    "osm_indoor": {
+     "ok": 72,
+     "total": 72
+    },
+    "procedural": {
+     "ok": 210,
+     "total": 210
+    },
+    "resplan": {
+     "ok": 475,
+     "total": 475
+    },
+    "swiss_dwellings": {
+     "ok": 581,
+     "total": 581
+    }
+   }
+  },
+  "failures_by_cause": {},
+  "failures_by_source": {}
+ },
+ "failures": []
+}

@@ -1,0 +1,3588 @@
+{
+  "summary": {
+    "label": "live_v1",
+    "mode": "live",
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "scenarios_passed": 7,
+    "scenarios": 13,
+    "turns_passed": 15,
+    "turns": 21,
+    "estimated_usd": 0.2663,
+    "latency_ms": {
+      "claude_median": 7863.9,
+      "claude_max": 18984.8,
+      "tools_median": 16.1
+    },
+    "concise_1_2_sentences": 6
+  },
+  "results": [
+    {
+      "id": "coffee_nearest",
+      "title": "Coffee near me, then \"how do I get there?\"",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "I'm in Office 0.38. Where can I get a coffee?",
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S038",
+            "tools": [
+              "find_places"
+            ],
+            "mentions_nearest": "coffee",
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_start": true,
+            "tools": true,
+            "mentions_nearest": true,
+            "mentions_nearest_expected": "Kitchen 0.28",
+            "short": true
+          },
+          "reply": "The closest coffee is the coffee machine in Kitchen 0.28 on the ground floor, about 21 m from Office 0.38. Do you want me to show the route?",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "office 0.38",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 31,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S038",
+                    "name": "Office 0.38",
+                    "type": "office",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S038"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S038",
+                    "name": "Office 0.38",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "coffee machine",
+                "kind": "equipment",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 28,
+                "shown": 7,
+                "results": [
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00170",
+                    "name": "Coffee machine 0.28",
+                    "type": "coffee_machine",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Kitchen 0.28",
+                    "room_id": "proc-factory-dev-003-F0-S028",
+                    "walk_m": 21.4
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00191",
+                    "name": "Coffee machine 0.31",
+                    "type": "coffee_machine",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Kitchen 0.31",
+                    "room_id": "proc-factory-dev-003-F0-S031",
+                    "walk_m": 37.4
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00339",
+                    "name": "Coffee machine 1.07",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.07",
+                    "room_id": "proc-factory-dev-003-F1-S007",
+                    "walk_m": 59.7
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00344",
+                    "name": "Coffee machine 1.08",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.08",
+                    "room_id": "proc-factory-dev-003-F1-S008",
+                    "walk_m": 63.5
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00472",
+                    "name": "Coffee machine 1.27",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.27",
+                    "room_id": "proc-factory-dev-003-F1-S027",
+                    "walk_m": 89.7
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00391",
+                    "name": "Coffee machine 1.14",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.14",
+                    "room_id": "proc-factory-dev-003-F1-S014",
+                    "walk_m": 91.9
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00477",
+                    "name": "Coffee machine 1.28",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.28",
+                    "room_id": "proc-factory-dev-003-F1-S028",
+                    "walk_m": 93.9
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 18984.8,
+            "tools_ms": 27.5,
+            "total_ms": 19012.5,
+            "wall_ms": 19013
+          },
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 575,
+            "cache_read_input_tokens": 13109,
+            "cache_creation_input_tokens": 5831,
+            "estimated_usd": 0.02297,
+            "session": {
+              "api_calls": 4,
+              "input_tokens": 10,
+              "output_tokens": 575,
+              "cache_read_input_tokens": 13109,
+              "cache_creation_input_tokens": 5831
+            }
+          }
+        },
+        {
+          "user": "And how do I get there?",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S038",
+              "name": "Office 0.38",
+              "floor": "Ground floor"
+            },
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "tools": [
+              "plan_route"
+            ],
+            "route_from": "proc-factory-dev-003-F0-S038",
+            "route_to_nearest": "coffee",
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "tools": true,
+            "route_from": true,
+            "route_to_nearest": true,
+            "route_to_nearest_expected": "Kitchen 0.28",
+            "short": true
+          },
+          "reply": "I've put the route on the map. You leave Office 0.38 into Office corridor 0.16 and follow it to Kitchen 0.28. It's about 21 m, all on the ground floor.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "coffee machine",
+                "kind": "equipment",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 28,
+                "shown": 7,
+                "results": [
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00170",
+                    "name": "Coffee machine 0.28",
+                    "type": "coffee_machine",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Kitchen 0.28",
+                    "room_id": "proc-factory-dev-003-F0-S028",
+                    "walk_m": 21.4
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00191",
+                    "name": "Coffee machine 0.31",
+                    "type": "coffee_machine",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Kitchen 0.31",
+                    "room_id": "proc-factory-dev-003-F0-S031",
+                    "walk_m": 37.4
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00339",
+                    "name": "Coffee machine 1.07",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.07",
+                    "room_id": "proc-factory-dev-003-F1-S007",
+                    "walk_m": 59.7
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00344",
+                    "name": "Coffee machine 1.08",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.08",
+                    "room_id": "proc-factory-dev-003-F1-S008",
+                    "walk_m": 63.5
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00472",
+                    "name": "Coffee machine 1.27",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.27",
+                    "room_id": "proc-factory-dev-003-F1-S027",
+                    "walk_m": 89.7
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00391",
+                    "name": "Coffee machine 1.14",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.14",
+                    "room_id": "proc-factory-dev-003-F1-S014",
+                    "walk_m": 91.9
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00477",
+                    "name": "Coffee machine 1.28",
+                    "type": "coffee_machine",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "room": "Kitchen 1.28",
+                    "room_id": "proc-factory-dev-003-F1-S028",
+                    "walk_m": 93.9
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": null,
+                "destination": {
+                  "kind": "asset",
+                  "id": "proc-factory-dev-003-A00170"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S038",
+                    "name": "Office 0.38",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "asset",
+                    "id": "proc-factory-dev-003-A00170",
+                    "name": "Coffee machine 0.28",
+                    "room": "Kitchen 0.28",
+                    "floor": "Ground floor"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 21.35,
+                "walk_m": 21.352,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Office 0.38",
+                  "Office corridor 0.16",
+                  "Kitchen 0.28"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Office 0.38 [proc-factory-dev-003-F0-S038] on Ground floor.",
+                  "Walk about 2 m through the door into Office corridor 0.16.",
+                  "Walk about 16 m through the door into Kitchen 0.28.",
+                  "Walk about 2 m. You have arrived at Kitchen 0.28 [proc-factory-dev-003-F0-S028] on Ground floor."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S038"
+            },
+            "target": {
+              "kind": "asset",
+              "id": "proc-factory-dev-003-A00170"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 8188.8,
+            "tools_ms": 16.1,
+            "total_ms": 8205.1,
+            "wall_ms": 8205
+          },
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 648,
+            "cache_read_input_tokens": 19162,
+            "cache_creation_input_tokens": 2568,
+            "estimated_usd": 0.01675,
+            "session": {
+              "api_calls": 8,
+              "input_tokens": 20,
+              "output_tokens": 1223,
+              "cache_read_input_tokens": 32271,
+              "cache_creation_input_tokens": 8399
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "toilet_unknown_start",
+      "title": "Nearest toilet without a known position",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "Where is the nearest toilet?",
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "mentions_any": [
+              "toilet"
+            ],
+            "asks": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "mentions_any": true,
+            "asks": true
+          },
+          "reply": "Where are you right now? There are two toilets, Toilet 0.22 on the ground floor and Toilet 1.32 on Floor 1. Once I know your room, I can tell you which is closer.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "toilet",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 2,
+                "shown": 2,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S022",
+                    "name": "Toilet 0.22",
+                    "type": "toilet",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F1-S032",
+                    "name": "Toilet 1.32",
+                    "type": "toilet",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0
+                  }
+                ],
+                "note": "Several plausible matches: ask the user which one, or offer the nearest if a start is known."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 3256.3,
+            "tools_ms": 0.6,
+            "total_ms": 3257.0,
+            "wall_ms": 3257
+          },
+          "usage": {
+            "input_tokens": 6,
+            "output_tokens": 201,
+            "cache_read_input_tokens": 7788,
+            "cache_creation_input_tokens": 693,
+            "estimated_usd": 0.00531,
+            "session": {
+              "api_calls": 2,
+              "input_tokens": 6,
+              "output_tokens": 201,
+              "cache_read_input_tokens": 7788,
+              "cache_creation_input_tokens": 693
+            }
+          }
+        },
+        {
+          "user": "I'm in the quality lab.",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S021",
+            "tools": [
+              "plan_route"
+            ],
+            "route_to_nearest": "toilet",
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_start": true,
+            "tools": true,
+            "route_to_nearest": true,
+            "route_to_nearest_expected": "Toilet 0.22",
+            "short": true
+          },
+          "reply": "The nearest toilet is Toilet 0.22, about 10 m from the quality lab on the same floor. You go through the office corridor, and I've put the route on the map.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "quality lab",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "type": "quality_lab",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S021"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "toilet",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 2,
+                "shown": 2,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S022",
+                    "name": "Toilet 0.22",
+                    "type": "toilet",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "walk_m": 10.3
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F1-S032",
+                    "name": "Toilet 1.32",
+                    "type": "toilet",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0,
+                    "walk_m": 94.6
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S021"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S022"
+                },
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 10.34,
+                "walk_m": 10.34,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Quality lab 0.21",
+                  "Office corridor 0.16",
+                  "Toilet 0.22"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Quality lab 0.21 [proc-factory-dev-003-F0-S021] on Ground floor.",
+                  "Walk about 2 m through the door into Office corridor 0.16.",
+                  "Walk about 5 m through the door into Toilet 0.22.",
+                  "Walk about 2 m. You have arrived at Toilet 0.22 [proc-factory-dev-003-F0-S022] on Ground floor."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S021"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S022"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 9454.3,
+            "tools_ms": 49.6,
+            "total_ms": 9504.2,
+            "wall_ms": 9504
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 766,
+            "cache_read_input_tokens": 22266,
+            "cache_creation_input_tokens": 1936,
+            "estimated_usd": 0.01698,
+            "session": {
+              "api_calls": 7,
+              "input_tokens": 18,
+              "output_tokens": 967,
+              "cache_read_input_tokens": 30054,
+              "cache_creation_input_tokens": 2629
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "break_relax",
+      "title": "Vague intent: somewhere to relax",
+      "building": "proc-campus-dev-009",
+      "turns": [
+        {
+          "user": "I'm in Lab 0.02 and need a break. Where can I relax and get something to eat?",
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-campus-dev-009-F0-S002",
+            "mentions_any": [
+              "canteen",
+              "kitchen"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_start": true,
+            "mentions_any": true,
+            "short": false
+          },
+          "reply": "Canteen 0.32 is the best spot. You can relax and get something to eat there. It's on the same floor, about 12 m from Lab 0.02. I've put the route on the map.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Lab 0.02",
+                "kind": "room",
+                "floor_level": 0,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 4,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F0-S002",
+                    "name": "Lab 0.02",
+                    "type": "lab",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-campus-dev-009-F0-S002"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-campus-dev-009-F0-S002",
+                    "name": "Lab 0.02",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "canteen",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F0-S032",
+                    "name": "Canteen 0.32",
+                    "type": "canteen",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "walk_m": 12.5
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-campus-dev-009-F0-S032"
+                },
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 12.52,
+                "walk_m": 12.522,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Lab 0.02",
+                  "Corridor 0.01",
+                  "Canteen 0.32"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Lab 0.02 [proc-campus-dev-009-F0-S002] on Ground floor.",
+                  "Walk about 3 m through the door into Corridor 0.01.",
+                  "Walk about 7 m through the door into Canteen 0.32.",
+                  "Walk about 3 m. You have arrived at Canteen 0.32 [proc-campus-dev-009-F0-S032] on Ground floor."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-campus-dev-009-F0-S002"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-campus-dev-009-F0-S032"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 9784.4,
+            "tools_ms": 99.3,
+            "total_ms": 9884.0,
+            "wall_ms": 9884
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 745,
+            "cache_read_input_tokens": 22466,
+            "cache_creation_input_tokens": 1882,
+            "estimated_usd": 0.01667,
+            "session": {
+              "api_calls": 5,
+              "input_tokens": 12,
+              "output_tokens": 745,
+              "cache_read_input_tokens": 22466,
+              "cache_creation_input_tokens": 1882
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "cnc_ambiguous",
+      "title": "Ambiguous machine name",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "Where is the CNC mill?",
+          "context_before": null,
+          "expected": {
+            "asks": true,
+            "mentions_any": [
+              "three",
+              "3"
+            ],
+            "no_route": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "asks": true,
+            "mentions_any": true,
+            "no_route": true
+          },
+          "reply": "There are three CNC mills, all in Production zone H-A1 on the ground floor: H-A1-A, H-A1-B and H-A1-C. Which one do you want, and where are you now so I can give you a route?",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "cnc mill",
+                "kind": "equipment",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 3,
+                "shown": 3,
+                "results": [
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00001",
+                    "name": "CNC mill H-A1-A",
+                    "type": "cnc_mill",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Production zone H-A1",
+                    "room_id": "proc-factory-dev-003-F0-S001"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00002",
+                    "name": "CNC mill H-A1-B",
+                    "type": "cnc_mill",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Production zone H-A1",
+                    "room_id": "proc-factory-dev-003-F0-S001"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00003",
+                    "name": "CNC mill H-A1-C",
+                    "type": "cnc_mill",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Production zone H-A1",
+                    "room_id": "proc-factory-dev-003-F0-S001"
+                  }
+                ],
+                "note": "Several plausible matches: ask the user which one, or offer the nearest if a start is known."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 3362.9,
+            "tools_ms": 2.7,
+            "total_ms": 3365.6,
+            "wall_ms": 3366
+          },
+          "usage": {
+            "input_tokens": 6,
+            "output_tokens": 190,
+            "cache_read_input_tokens": 7787,
+            "cache_creation_input_tokens": 884,
+            "estimated_usd": 0.00568,
+            "session": {
+              "api_calls": 2,
+              "input_tokens": 6,
+              "output_tokens": 190,
+              "cache_read_input_tokens": 7787,
+              "cache_creation_input_tokens": 884
+            }
+          }
+        },
+        {
+          "user": "The B one. I am at hall access 0.19.",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "route_from": "proc-factory-dev-003-F0-S019",
+            "route_to": "proc-factory-dev-003-A00002",
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "route_from": true,
+            "route_to": true,
+            "short": true
+          },
+          "reply": "CNC mill H-A1-B is about 12 m from Hall access 0.19. It's on the same floor, in Production zone H-A1, through the door next to you. I've put the route on the map.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "CNC mill H-A1-B",
+                "kind": "equipment",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 3,
+                "shown": 3,
+                "results": [
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00002",
+                    "name": "CNC mill H-A1-B",
+                    "type": "cnc_mill",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Production zone H-A1",
+                    "room_id": "proc-factory-dev-003-F0-S001"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00001",
+                    "name": "CNC mill H-A1-A",
+                    "type": "cnc_mill",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.8,
+                    "room": "Production zone H-A1",
+                    "room_id": "proc-factory-dev-003-F0-S001"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00003",
+                    "name": "CNC mill H-A1-C",
+                    "type": "cnc_mill",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.8,
+                    "room": "Production zone H-A1",
+                    "room_id": "proc-factory-dev-003-F0-S001"
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "hall access 0.19",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 2,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S019",
+                    "name": "Hall access 0.19",
+                    "type": "lobby",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S019"
+                },
+                "destination": {
+                  "kind": "asset",
+                  "id": "proc-factory-dev-003-A00002"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S019",
+                    "name": "Hall access 0.19",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "asset",
+                    "id": "proc-factory-dev-003-A00002",
+                    "name": "CNC mill H-A1-B",
+                    "room": "Production zone H-A1",
+                    "floor": "Ground floor"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 11.87,
+                "walk_m": 11.873,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Hall access 0.19",
+                  "Production zone H-A1"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Hall access 0.19 [proc-factory-dev-003-F0-S019] on Ground floor.",
+                  "Walk about 2 m through the door into Production zone H-A1.",
+                  "Walk about 9 m. You have arrived at Production zone H-A1 [proc-factory-dev-003-F0-S001] on Ground floor."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S019"
+            },
+            "target": {
+              "kind": "asset",
+              "id": "proc-factory-dev-003-A00002"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 8902.8,
+            "tools_ms": 32.4,
+            "total_ms": 8935.5,
+            "wall_ms": 8936
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 756,
+            "cache_read_input_tokens": 22942,
+            "cache_creation_input_tokens": 2124,
+            "estimated_usd": 0.01748,
+            "session": {
+              "api_calls": 7,
+              "input_tokens": 18,
+              "output_tokens": 946,
+              "cache_read_input_tokens": 30729,
+              "cache_creation_input_tokens": 3008
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "stt_errors",
+      "title": "Speech-recognition errors in room names",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "How do I get from the hall axis zero point one nine to the quality lap?",
+          "context_before": null,
+          "expected": {
+            "route_from": "proc-factory-dev-003-F0-S019",
+            "route_to": "proc-factory-dev-003-F0-S021",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "route_from": true,
+            "route_to": true,
+            "short": false
+          },
+          "reply": "It's about 15 m on the ground floor, with no floor change. From Hall access 0.19, go through Office corridor 0.16 and on into Quality lab 0.21. I took \"hall axis 0.19\" to mean Hall access 0.19. The route is on the map.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "hall axis 0.19",
+                "kind": null,
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S019",
+                    "name": "Hall access 0.19",
+                    "type": "lobby",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.67
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "quality lab",
+                "kind": null,
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "type": "quality_lab",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S019"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S021"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S019",
+                    "name": "Hall access 0.19",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "floor": "Ground floor"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 15.18,
+                "walk_m": 15.182,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Hall access 0.19",
+                  "Office corridor 0.16",
+                  "Quality lab 0.21"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Hall access 0.19 [proc-factory-dev-003-F0-S019] on Ground floor.",
+                  "Walk about 2 m through the door into Office corridor 0.16.",
+                  "Walk about 10 m through the door into Quality lab 0.21.",
+                  "Walk about 2 m. You have arrived at Quality lab 0.21 [proc-factory-dev-003-F0-S021] on Ground floor."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S019"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S021"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 8449.8,
+            "tools_ms": 32.1,
+            "total_ms": 8482.1,
+            "wall_ms": 8482
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 774,
+            "cache_read_input_tokens": 21701,
+            "cache_creation_input_tokens": 1769,
+            "estimated_usd": 0.01653,
+            "session": {
+              "api_calls": 5,
+              "input_tokens": 12,
+              "output_tokens": 774,
+              "cache_read_input_tokens": 21701,
+              "cache_creation_input_tokens": 1769
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "unknown_room",
+      "title": "Unknown room and floor",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "Take me to the cafeteria on floor 7.",
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "honest_missing": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "honest_missing": true,
+            "short": false
+          },
+          "reply": "I can't find a cafeteria on floor 7. This building, Fertigung Ost 27, only has the ground floor and floor 1, and I found no canteen on either. I can look for a kitchen, a coffee machine or a lounge instead. Which would you like, and where are you now?",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "cafeteria",
+                "kind": "room",
+                "floor_level": 7,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 0,
+                "shown": 0,
+                "results": [],
+                "did_you_mean": [
+                  "coat rack",
+                  "pallet rack"
+                ],
+                "note": "Nothing matches. Tell the user and offer the suggestions or a related place type."
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "canteen",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 0,
+                "shown": 0,
+                "results": [],
+                "did_you_mean": [
+                  "plant"
+                ],
+                "note": "Nothing matches. Tell the user and offer the suggestions or a related place type."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 6586.0,
+            "tools_ms": 8.1,
+            "total_ms": 6594.2,
+            "wall_ms": 6594
+          },
+          "usage": {
+            "input_tokens": 8,
+            "output_tokens": 359,
+            "cache_read_input_tokens": 12063,
+            "cache_creation_input_tokens": 768,
+            "estimated_usd": 0.00794,
+            "session": {
+              "api_calls": 3,
+              "input_tokens": 8,
+              "output_tokens": 359,
+              "cache_read_input_tokens": 12063,
+              "cache_creation_input_tokens": 768
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "facility_unavailable",
+      "title": "Facility that does not exist",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "Is there a gym or a shower here?",
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "honest_missing": true,
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "honest_missing": true,
+            "short": true
+          },
+          "reply": "I couldn't find a gym or a shower in this building. The closest related things in the map are lockers, and I can look for those or for toilets if you'd like. Tell me where you are and I'll give you directions.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "gym",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 0,
+                "shown": 0,
+                "results": [],
+                "did_you_mean": [],
+                "note": "Nothing matches. Tell the user and offer the suggestions or a related place type."
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "shower",
+                "kind": null,
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 0,
+                "shown": 0,
+                "results": [],
+                "did_you_mean": [
+                  "dishwasher",
+                  "stove",
+                  "locker"
+                ],
+                "note": "Nothing matches. Tell the user and offer the suggestions or a related place type."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 5108.0,
+            "tools_ms": 4.2,
+            "total_ms": 5112.3,
+            "wall_ms": 5112
+          },
+          "usage": {
+            "input_tokens": 8,
+            "output_tokens": 295,
+            "cache_read_input_tokens": 12039,
+            "cache_creation_input_tokens": 724,
+            "estimated_usd": 0.00718,
+            "session": {
+              "api_calls": 3,
+              "input_tokens": 8,
+              "output_tokens": 295,
+              "cache_read_input_tokens": 12039,
+              "cache_creation_input_tokens": 724
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "closure_flow",
+      "title": "What-if, closure with confirmation, then undo",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "I'm in Meeting room 0.20. What would happen if the office corridor 0.16 were closed?",
+          "context_before": null,
+          "expected": {
+            "tools": [
+              "plan_route"
+            ],
+            "assumed_closed": "proc-factory-dev-003-F0-S016",
+            "unchanged": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "tools": false,
+            "assumed_closed": false,
+            "unchanged": true,
+            "short": false
+          },
+          "reply": "I've set Meeting room 0.20 as your start. Where do you want to go? Once I know, I can compare the route with and without Office corridor 0.16 open. This is only a preview, so nothing will actually be closed.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Meeting room 0.20",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 10,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S020",
+                    "name": "Meeting room 0.20",
+                    "type": "meeting_room",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "corridor 0.16",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 7,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S016",
+                    "name": "Office corridor 0.16",
+                    "type": "corridor",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S020"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S020",
+                    "name": "Meeting room 0.20",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 7103.2,
+            "tools_ms": 1.0,
+            "total_ms": 7104.3,
+            "wall_ms": 7104
+          },
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 626,
+            "cache_read_input_tokens": 16677,
+            "cache_creation_input_tokens": 1302,
+            "estimated_usd": 0.01287,
+            "session": {
+              "api_calls": 4,
+              "input_tokens": 10,
+              "output_tokens": 626,
+              "cache_read_input_tokens": 16677,
+              "cache_creation_input_tokens": 1302
+            }
+          }
+        },
+        {
+          "user": "Okay, close the corridor for cleaning.",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S020",
+              "name": "Meeting room 0.20",
+              "floor": "Ground floor"
+            },
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "proposal": [
+              "close",
+              "proc-factory-dev-003-F0-S016"
+            ],
+            "unchanged": true,
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "proposal": true,
+            "unchanged": true,
+            "short": true
+          },
+          "reply": "I've proposed closing Office corridor 0.16 for cleaning. Nothing changes until you press Confirm in the app.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "office corridor 0.16",
+                "kind": "room",
+                "floor_level": 0,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S016",
+                    "name": "Office corridor 0.16",
+                    "type": "corridor",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "propose_change",
+              "input": {
+                "action": "close",
+                "element_id": "proc-factory-dev-003-F0-S016"
+              },
+              "status": "ok",
+              "output": {
+                "status": "awaiting_user_confirmation",
+                "proposal_id": "89ccfc351aa7",
+                "action": "close",
+                "element": "Office corridor 0.16",
+                "element_kind": "room",
+                "note": "Nothing has changed yet. The user must press Confirm in the app."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": {
+            "proposal_id": "89ccfc351aa7",
+            "action": "close",
+            "element_id": "proc-factory-dev-003-F0-S016",
+            "element_name": "Office corridor 0.16",
+            "element_kind": "room"
+          },
+          "timing_ms": {
+            "claude_ms": 4549.1,
+            "tools_ms": 0.5,
+            "total_ms": 4549.7,
+            "wall_ms": 4550
+          },
+          "usage": {
+            "input_tokens": 8,
+            "output_tokens": 279,
+            "cache_read_input_tokens": 12498,
+            "cache_creation_input_tokens": 974,
+            "estimated_usd": 0.00774,
+            "session": {
+              "api_calls": 7,
+              "input_tokens": 18,
+              "output_tokens": 905,
+              "cache_read_input_tokens": 29175,
+              "cache_creation_input_tokens": 2276
+            }
+          },
+          "confirmation": "applied"
+        },
+        {
+          "user": "How do I get to the quality lab now?",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S020",
+              "name": "Meeting room 0.20",
+              "floor": "Ground floor"
+            },
+            "destination": null,
+            "confirmed_closures": [
+              "proc-factory-dev-003-F0-S016"
+            ],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "closed_now": "proc-factory-dev-003-F0-S016",
+            "route_unreachable": true,
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "closed_now": true,
+            "route_unreachable": true,
+            "short": true
+          },
+          "reply": "I can't find a route to Quality lab 0.21 from Meeting room 0.20 while Office corridor 0.16 is closed. That corridor is the only way through. If you want, I can propose reopening it, and the route would work again once you press Confirm.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "quality lab",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": true
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "type": "quality_lab",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ],
+                "note": "Sorted by walking distance from the start."
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": null,
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S021"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S020",
+                    "name": "Meeting room 0.20",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S021",
+                    "name": "Quality lab 0.21",
+                    "floor": "Ground floor"
+                  },
+                  "confirmed_closures": [
+                    "proc-factory-dev-003-F0-S016"
+                  ],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "unreachable",
+                "reachable": false,
+                "length_m": null,
+                "walk_m": 0.0,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [],
+                "floor_changes": [],
+                "directions_shown_in_app": [],
+                "unreachable_reason": "reachable if closures are lifted: proc-factory-dev-003-F0-S016",
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S020"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S021"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 7863.9,
+            "tools_ms": 30.7,
+            "total_ms": 7894.8,
+            "wall_ms": 7895
+          },
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 619,
+            "cache_read_input_tokens": 17937,
+            "cache_creation_input_tokens": 1728,
+            "estimated_usd": 0.01412,
+            "session": {
+              "api_calls": 11,
+              "input_tokens": 28,
+              "output_tokens": 1524,
+              "cache_read_input_tokens": 47112,
+              "cache_creation_input_tokens": 4004
+            }
+          }
+        },
+        {
+          "user": "Cleaning is done, please open the corridor again.",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S020",
+              "name": "Meeting room 0.20",
+              "floor": "Ground floor"
+            },
+            "destination": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S021",
+              "name": "Quality lab 0.21",
+              "floor": "Ground floor"
+            },
+            "confirmed_closures": [
+              "proc-factory-dev-003-F0-S016"
+            ],
+            "pending_proposals": [],
+            "last_route": {
+              "mode": "challenge (official rules)",
+              "status": "unreachable",
+              "length_m": null,
+              "cost_m": null,
+              "reachable": false,
+              "start": "Meeting room 0.20",
+              "destination": "Quality lab 0.21",
+              "assumed_closed": null
+            }
+          },
+          "expected": {
+            "proposal": [
+              "open",
+              "proc-factory-dev-003-F0-S016"
+            ],
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "proposal": true,
+            "short": true
+          },
+          "reply": "I've proposed reopening Office corridor 0.16. Press Confirm in the app to apply it, and then I can plan your route to the quality lab.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "propose_change",
+              "input": {
+                "action": "open",
+                "element_id": "proc-factory-dev-003-F0-S016"
+              },
+              "status": "ok",
+              "output": {
+                "status": "awaiting_user_confirmation",
+                "proposal_id": "60c96b974593",
+                "action": "open",
+                "element": "Office corridor 0.16",
+                "element_kind": "room",
+                "note": "Nothing has changed yet. The user must press Confirm in the app."
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": {
+            "proposal_id": "60c96b974593",
+            "action": "open",
+            "element_id": "proc-factory-dev-003-F0-S016",
+            "element_name": "Office corridor 0.16",
+            "element_kind": "room"
+          },
+          "timing_ms": {
+            "claude_ms": 2501.3,
+            "tools_ms": 0.0,
+            "total_ms": 2501.4,
+            "wall_ms": 2502
+          },
+          "usage": {
+            "input_tokens": 6,
+            "output_tokens": 133,
+            "cache_read_input_tokens": 8392,
+            "cache_creation_input_tokens": 1121,
+            "estimated_usd": 0.00582,
+            "session": {
+              "api_calls": 13,
+              "input_tokens": 34,
+              "output_tokens": 1657,
+              "cache_read_input_tokens": 55504,
+              "cache_creation_input_tokens": 5125
+            }
+          },
+          "confirmation": "applied"
+        },
+        {
+          "user": "And now?",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": false,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S020",
+              "name": "Meeting room 0.20",
+              "floor": "Ground floor"
+            },
+            "destination": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S021",
+              "name": "Quality lab 0.21",
+              "floor": "Ground floor"
+            },
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "route_found": true,
+            "route_to": "proc-factory-dev-003-F0-S021",
+            "short": true,
+            "open_now": "proc-factory-dev-003-F0-S016"
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "route_found": true,
+            "route_to": true,
+            "short": true,
+            "open_now": true
+          },
+          "reply": "The route to Quality lab 0.21 works again. It's about 10 m on the ground floor, going through Office corridor 0.16. The directions are on the map.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S020"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S021"
+                },
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 10.32,
+                "walk_m": 10.315,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Meeting room 0.20",
+                  "Office corridor 0.16",
+                  "Quality lab 0.21"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Meeting room 0.20 [proc-factory-dev-003-F0-S020] on Ground floor.",
+                  "Walk about 2 m through the door into Office corridor 0.16.",
+                  "Walk about 5 m through the door into Quality lab 0.21.",
+                  "Walk about 2 m. You have arrived at Quality lab 0.21 [proc-factory-dev-003-F0-S021] on Ground floor."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S020"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S021"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 3197.9,
+            "tools_ms": 6.2,
+            "total_ms": 3204.2,
+            "wall_ms": 3204
+          },
+          "usage": {
+            "input_tokens": 6,
+            "output_tokens": 247,
+            "cache_read_input_tokens": 8410,
+            "cache_creation_input_tokens": 1452,
+            "estimated_usd": 0.00779,
+            "session": {
+              "api_calls": 15,
+              "input_tokens": 40,
+              "output_tokens": 1904,
+              "cache_read_input_tokens": 63914,
+              "cache_creation_input_tokens": 6577
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "wheelchair_floors",
+      "title": "Wheelchair user, upper floor",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "I use a wheelchair. How do I get from hall access 0.19 to Office 1.04?",
+          "context_before": null,
+          "expected": {
+            "state_step_free": true,
+            "route_to": "proc-factory-dev-003-F1-S004",
+            "uses": "lift",
+            "mentions_any": [
+              "lift",
+              "elevator"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_step_free": true,
+            "route_to": true,
+            "uses": true,
+            "mentions_any": true,
+            "short": false
+          },
+          "reply": "There's a step-free route from Hall access 0.19 to Office 1.04. It's about 35 m in total, and it uses the office lift to get up to Floor 1. The route follows the official rules, so it hasn't been checked for obstacles or wheelchair clearance. Do you want me to run a clearance check for your chair?",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "hall access 0.19",
+                "kind": null,
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 2,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S019",
+                    "name": "Hall access 0.19",
+                    "type": "lobby",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Office 1.04",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 31,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F1-S004",
+                    "name": "Office 1.04",
+                    "type": "office",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S019"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F1-S004"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": true,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": true,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S019",
+                    "name": "Hall access 0.19",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F1-S004",
+                    "name": "Office 1.04",
+                    "floor": "Floor 1"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": true,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 35.49,
+                "walk_m": 16.986,
+                "vertical_cost_m": 18.5,
+                "rooms_in_order": [
+                  "Hall access 0.19",
+                  "Office corridor 0.16",
+                  "Lift 0.18",
+                  "Lift 1.03",
+                  "Office corridor 1.01",
+                  "Office 1.04"
+                ],
+                "floor_changes": [
+                  {
+                    "kind": "lift",
+                    "cost_m": 18.5
+                  }
+                ],
+                "directions_shown_in_app": [
+                  "Start in Hall access 0.19 [proc-factory-dev-003-F0-S019] on Ground floor.",
+                  "Walk about 2 m through the door into Office corridor 0.16.",
+                  "Walk about 3 m through the door into Lift 0.18.",
+                  "Take Office lift (lift) to Floor 1.",
+                  "Walk about 2 m through the door into Office corridor 1.01.",
+                  "Walk about 3 m through the door into Office 1.04.",
+                  "Walk about 2 m. You have arrived at Office 1.04 [proc-factory-dev-003-F1-S004] on Floor 1."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S019"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F1-S004"
+            },
+            "step_free": true,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 10747.0,
+            "tools_ms": 34.1,
+            "total_ms": 10781.2,
+            "wall_ms": 10781
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 792,
+            "cache_read_input_tokens": 21713,
+            "cache_creation_input_tokens": 1872,
+            "estimated_usd": 0.01697,
+            "session": {
+              "api_calls": 5,
+              "input_tokens": 12,
+              "output_tokens": 792,
+              "cache_read_input_tokens": 21713,
+              "cache_creation_input_tokens": 1872
+            }
+          }
+        },
+        {
+          "user": "And then to the kitchen 1.07?",
+          "context_before": {
+            "mode": "challenge",
+            "step_free": true,
+            "forklift": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true,
+            "building": {
+              "id": "proc-factory-dev-003",
+              "name": "Fertigung Ost 27",
+              "source": "procedural",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": "supported"
+            },
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S019",
+              "name": "Hall access 0.19",
+              "floor": "Ground floor"
+            },
+            "destination": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F1-S004",
+              "name": "Office 1.04",
+              "floor": "Floor 1"
+            },
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": {
+              "mode": "challenge (official rules)",
+              "status": "ok",
+              "length_m": 35.49,
+              "cost_m": null,
+              "reachable": true,
+              "start": "Hall access 0.19",
+              "destination": "Office 1.04",
+              "assumed_closed": null
+            }
+          },
+          "expected": {
+            "route_from": "proc-factory-dev-003-F1-S004",
+            "route_to": "proc-factory-dev-003-F1-S007",
+            "state_step_free": true,
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "route_from": true,
+            "route_to": true,
+            "state_step_free": true,
+            "short": true
+          },
+          "reply": "Kitchen 1.07 is on the same floor as Office 1.04, about 20 m away. The step-free route goes through the Office corridor, so you don't need the lift. This is the official route, so I haven't checked it for obstacles.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "kitchen 1.07",
+                "kind": "room",
+                "floor_level": 1,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 5,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F1-S007",
+                    "name": "Kitchen 1.07",
+                    "type": "kitchen",
+                    "floor": "Floor 1",
+                    "floor_level": 1,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F1-S004"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F1-S007"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": true,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": true,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F1-S004",
+                    "name": "Office 1.04",
+                    "floor": "Floor 1"
+                  },
+                  "destination": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F1-S007",
+                    "name": "Kitchen 1.07",
+                    "floor": "Floor 1"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": true,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 19.92,
+                "walk_m": 19.922,
+                "vertical_cost_m": 0.0,
+                "rooms_in_order": [
+                  "Office 1.04",
+                  "Office corridor 1.01",
+                  "Kitchen 1.07"
+                ],
+                "floor_changes": [],
+                "directions_shown_in_app": [
+                  "Start in Office 1.04 [proc-factory-dev-003-F1-S004] on Floor 1.",
+                  "Walk about 2 m through the door into Office corridor 1.01.",
+                  "Walk about 15 m through the door into Kitchen 1.07.",
+                  "Walk about 2 m. You have arrived at Kitchen 1.07 [proc-factory-dev-003-F1-S007] on Floor 1."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F1-S004"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F1-S007"
+            },
+            "step_free": true,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 7913.9,
+            "tools_ms": 6.3,
+            "total_ms": 7920.3,
+            "wall_ms": 7921
+          },
+          "usage": {
+            "input_tokens": 10,
+            "output_tokens": 713,
+            "cache_read_input_tokens": 18120,
+            "cache_creation_input_tokens": 1952,
+            "estimated_usd": 0.01565,
+            "session": {
+              "api_calls": 9,
+              "input_tokens": 22,
+              "output_tokens": 1505,
+              "cache_read_input_tokens": 39833,
+              "cache_creation_input_tokens": 3824
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "trolley_precision",
+      "title": "Wide trolley avoiding machines",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "I'm pushing a 0.9 metre wide trolley from logistics zone H-C5 to warehouse zone H-A5. I need to stay clear of the machines.",
+          "context_before": null,
+          "expected": {
+            "state_mode": "precision",
+            "state_width": 0.9,
+            "tools": [
+              "plan_route"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_mode": true,
+            "state_width": true,
+            "tools": true,
+            "short": false
+          },
+          "reply": "I couldn't find an obstacle-checked route for a 0.9 m trolley from logistics zone H-C5 to warehouse zone H-A5. The router found no supported path, which doesn't prove the real building has no route. Do you want the official route instead? It ignores furniture and machines, so it wouldn't keep you clear of them.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "H-C5",
+                "kind": null,
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 128,
+                "shown": 8,
+                "results": [
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00101",
+                    "name": "Air compressor H-C5",
+                    "type": "compressor",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00097",
+                    "name": "Forklift H-C5-A",
+                    "type": "forklift",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00098",
+                    "name": "Forklift H-C5-B",
+                    "type": "forklift",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00099",
+                    "name": "Forklift charging station H-C5",
+                    "type": "forklift_charging_station",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S015",
+                    "name": "Logistics zone H-C5",
+                    "type": "logistics_zone",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00095",
+                    "name": "Packing station H-C5-A",
+                    "type": "packing_station",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00096",
+                    "name": "Packing station H-C5-B",
+                    "type": "packing_station",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  },
+                  {
+                    "kind": "equipment",
+                    "id": "proc-factory-dev-003-A00100",
+                    "name": "Pallet rack H-C5",
+                    "type": "pallet_rack",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0,
+                    "room": "Logistics zone H-C5",
+                    "room_id": "proc-factory-dev-003-F0-S015"
+                  }
+                ],
+                "note": "Several plausible matches: ask the user which one, or offer the nearest if a start is known."
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Warehouse zone H-A5",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 10,
+                "shown": 5,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S005",
+                    "name": "Warehouse zone H-A5",
+                    "type": "warehouse_zone",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S011",
+                    "name": "Warehouse zone H-C1",
+                    "type": "warehouse_zone",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.75
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S012",
+                    "name": "Warehouse zone H-C2",
+                    "type": "warehouse_zone",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.75
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S013",
+                    "name": "Warehouse zone H-C3",
+                    "type": "warehouse_zone",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.75
+                  },
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S014",
+                    "name": "Warehouse zone H-C4",
+                    "type": "warehouse_zone",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 0.75
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S015"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S005"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": "precision",
+                "step_free": null,
+                "forklift": null,
+                "profile": "all",
+                "width_m": 0.9,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "precision",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "all",
+                  "width_m": 0.9,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S015",
+                    "name": "Logistics zone H-C5",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S005",
+                    "name": "Warehouse zone H-A5",
+                    "floor": "Ground floor"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": "precision",
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "precision",
+                "status": "failed",
+                "error_code": "geometry_unsupported",
+                "explanation": "No route in the supported portal graph; this is not proof of real-building unreachability",
+                "diagnosis": "No supported route found. The exact cause is not established; real unreachability does not follow.",
+                "diagnosis_category": "unresolved",
+                "blocking_elements": [
+                  "proc-factory-dev-003-F0-O0006",
+                  "proc-factory-dev-003-F0-O0008",
+                  "proc-factory-dev-003-F0-O0011",
+                  "proc-factory-dev-003-F0-O0018",
+                  "proc-factory-dev-003-F0-O0019",
+                  "proc-factory-dev-003-F0-O0020"
+                ],
+                "hint": "Precision routing only works for verified procedural buildings and checked doors; a challenge-mode route may still be possible (simplified, furniture ignored)."
+              }
+            }
+          ],
+          "route_request": {
+            "model": "precise",
+            "start": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S015"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-factory-dev-003-F0-S005"
+            },
+            "step_free": false,
+            "closed": [],
+            "profile": "all",
+            "width_m": 0.9,
+            "safety_m": 0.05,
+            "allow_schematic_vertical": true
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 8772.9,
+            "tools_ms": 235.3,
+            "total_ms": 9008.5,
+            "wall_ms": 9009
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 802,
+            "cache_read_input_tokens": 25188,
+            "cache_creation_input_tokens": 3046,
+            "estimated_usd": 0.0207,
+            "session": {
+              "api_calls": 5,
+              "input_tokens": 12,
+              "output_tokens": 802,
+              "cache_read_input_tokens": 25188,
+              "cache_creation_input_tokens": 3046
+            }
+          }
+        }
+      ],
+      "passed": false
+    },
+    {
+      "id": "long_campus",
+      "title": "Long multi-floor route in a campus building",
+      "building": "proc-campus-dev-009",
+      "turns": [
+        {
+          "user": "From the lecture hall 0.31 to Lab 2.08, please.",
+          "context_before": null,
+          "expected": {
+            "route_from": "proc-campus-dev-009-F0-S031",
+            "route_to": "proc-campus-dev-009-F2-S008",
+            "route_found": true,
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "route_from": true,
+            "route_to": true,
+            "route_found": true,
+            "short": true
+          },
+          "reply": "Lab 2.08 is on Floor 2, about 46 m from Lecture hall 0.31. The route goes up two floors by Staircase 2. The map shows the full route.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "lecture hall 0.31",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 1,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F0-S031",
+                    "name": "Lecture hall 0.31",
+                    "type": "lecture_hall",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Lab 2.08",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 25,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-campus-dev-009-F2-S008",
+                    "name": "Lab 2.08",
+                    "type": "lab",
+                    "floor": "Floor 2",
+                    "floor_level": 2,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-campus-dev-009-F0-S031"
+                },
+                "destination": {
+                  "kind": "space",
+                  "id": "proc-campus-dev-009-F2-S008"
+                },
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-campus-dev-009-F0-S031",
+                    "name": "Lecture hall 0.31",
+                    "floor": "Ground floor"
+                  },
+                  "destination": {
+                    "kind": "space",
+                    "id": "proc-campus-dev-009-F2-S008",
+                    "name": "Lab 2.08",
+                    "floor": "Floor 2"
+                  },
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            },
+            {
+              "tool": "plan_route",
+              "input": {
+                "start": null,
+                "destination": null,
+                "mode": null,
+                "step_free": null,
+                "assume_closed": []
+              },
+              "status": "ok",
+              "output": {
+                "mode": "challenge (official rules)",
+                "status": "ok",
+                "reachable": true,
+                "length_m": 46.19,
+                "walk_m": 30.985,
+                "vertical_cost_m": 15.2,
+                "rooms_in_order": [
+                  "Lecture hall 0.31",
+                  "Corridor 0.01",
+                  "Staircase 2",
+                  "Staircase 2",
+                  "Staircase 2",
+                  "Corridor 2.01",
+                  "Lab 2.08"
+                ],
+                "floor_changes": [
+                  {
+                    "kind": "stairs",
+                    "cost_m": 7.6
+                  },
+                  {
+                    "kind": "stairs",
+                    "cost_m": 7.6
+                  }
+                ],
+                "directions_shown_in_app": [
+                  "Start in Lecture hall 0.31 [proc-campus-dev-009-F0-S031] on Ground floor.",
+                  "Walk about 3 m through the door into Corridor 0.01.",
+                  "Walk about 10 m through the door into Staircase 2.",
+                  "Use Staircase 2 (stairs) to Floor 1.",
+                  "Use Staircase 2 (stairs) to Floor 2.",
+                  "Walk about 3 m through the door into Corridor 2.01.",
+                  "Walk about 9 m through the door into Lab 2.08.",
+                  "Walk about 3 m. You have arrived at Lab 2.08 [proc-campus-dev-009-F2-S008] on Floor 2."
+                ],
+                "unreachable_reason": null,
+                "warnings": []
+              }
+            }
+          ],
+          "route_request": {
+            "model": "challenge",
+            "start": {
+              "kind": "space",
+              "id": "proc-campus-dev-009-F0-S031"
+            },
+            "target": {
+              "kind": "space",
+              "id": "proc-campus-dev-009-F2-S008"
+            },
+            "step_free": false,
+            "closed": [],
+            "forklift": false
+          },
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 7920.9,
+            "tools_ms": 89.6,
+            "total_ms": 8010.6,
+            "wall_ms": 8011
+          },
+          "usage": {
+            "input_tokens": 12,
+            "output_tokens": 749,
+            "cache_read_input_tokens": 22303,
+            "cache_creation_input_tokens": 2083,
+            "estimated_usd": 0.01718,
+            "session": {
+              "api_calls": 5,
+              "input_tokens": 12,
+              "output_tokens": 749,
+              "cache_read_input_tokens": 22303,
+              "cache_creation_input_tokens": 2083
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "benchmark_fact",
+      "title": "Building fact question",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "Which is the largest kitchen on floor 1, and how big is it?",
+          "context_before": null,
+          "expected": {
+            "tools": [
+              "benchmark_operation"
+            ],
+            "mentions_any": [
+              "1.14"
+            ],
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "tools": true,
+            "mentions_any": true,
+            "short": true
+          },
+          "reply": "The largest kitchen on floor 1 is Kitchen 1.14. It's about 28 m².",
+          "error": null,
+          "tools": [
+            {
+              "tool": "benchmark_operation",
+              "input": {
+                "operation": "largest_room",
+                "arguments_json": "{\"floor_id\":\"proc-factory-dev-003-F1\",\"room_type\":\"kitchen\"}"
+              },
+              "status": "ok",
+              "output": {
+                "operation": "largest_room",
+                "value": 28.000000000000007,
+                "unit": "m2",
+                "formatted_answer": "Answer: 1.14, 28 m2",
+                "space_name": "Kitchen 1.14",
+                "space_ref": "1.14",
+                "rooms": [
+                  "Kitchen 1.14"
+                ]
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 2726.7,
+            "tools_ms": 32.5,
+            "total_ms": 2759.2,
+            "wall_ms": 2759
+          },
+          "usage": {
+            "input_tokens": 6,
+            "output_tokens": 144,
+            "cache_read_input_tokens": 7799,
+            "cache_creation_input_tokens": 567,
+            "estimated_usd": 0.00443,
+            "session": {
+              "api_calls": 2,
+              "input_tokens": 6,
+              "output_tokens": 144,
+              "cache_read_input_tokens": 7799,
+              "cache_creation_input_tokens": 567
+            }
+          }
+        }
+      ],
+      "passed": true
+    },
+    {
+      "id": "missing_destination",
+      "title": "Route request without destination",
+      "building": "proc-factory-dev-003",
+      "turns": [
+        {
+          "user": "I am in Office 0.23. Can you show me the way?",
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S023",
+            "no_route": true,
+            "asks": true,
+            "short": true
+          },
+          "passed": true,
+          "verdicts": {
+            "no_ids_in_reply": true,
+            "state_start": true,
+            "no_route": true,
+            "asks": true,
+            "short": true
+          },
+          "reply": "Got it, you're in Office 0.23. Where would you like to go? You can name a room or a facility such as a toilet or coffee machine, or click the spot on the map.",
+          "error": null,
+          "tools": [
+            {
+              "tool": "find_places",
+              "input": {
+                "query": "Office 0.23",
+                "kind": "room",
+                "floor_level": null,
+                "near_start": false
+              },
+              "status": "ok",
+              "output": {
+                "total_matches": 31,
+                "shown": 1,
+                "results": [
+                  {
+                    "kind": "room",
+                    "id": "proc-factory-dev-003-F0-S023",
+                    "name": "Office 0.23",
+                    "type": "office",
+                    "floor": "Ground floor",
+                    "floor_level": 0,
+                    "match": 1.0
+                  }
+                ]
+              }
+            },
+            {
+              "tool": "update_session",
+              "input": {
+                "start": {
+                  "kind": "space",
+                  "id": "proc-factory-dev-003-F0-S023"
+                },
+                "destination": null,
+                "clear_start": false,
+                "clear_destination": false,
+                "mode": null,
+                "step_free": null,
+                "forklift": null,
+                "profile": null,
+                "width_m": null,
+                "safety_m": null
+              },
+              "status": "ok",
+              "output": {
+                "session": {
+                  "mode": "challenge",
+                  "step_free": false,
+                  "forklift": false,
+                  "profile": "stationary",
+                  "width_m": 0.6,
+                  "safety_m": 0.05,
+                  "allow_schematic_vertical": true,
+                  "start": {
+                    "kind": "space",
+                    "id": "proc-factory-dev-003-F0-S023",
+                    "name": "Office 0.23",
+                    "floor": "Ground floor"
+                  },
+                  "destination": null,
+                  "confirmed_closures": [],
+                  "pending_proposals": []
+                }
+              }
+            }
+          ],
+          "route_request": null,
+          "proposal": null,
+          "timing_ms": {
+            "claude_ms": 5355.1,
+            "tools_ms": 0.5,
+            "total_ms": 5355.8,
+            "wall_ms": 5356
+          },
+          "usage": {
+            "input_tokens": 8,
+            "output_tokens": 455,
+            "cache_read_input_tokens": 12089,
+            "cache_creation_input_tokens": 1013,
+            "estimated_usd": 0.00952,
+            "session": {
+              "api_calls": 3,
+              "input_tokens": 8,
+              "output_tokens": 455,
+              "cache_read_input_tokens": 12089,
+              "cache_creation_input_tokens": 1013
+            }
+          }
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

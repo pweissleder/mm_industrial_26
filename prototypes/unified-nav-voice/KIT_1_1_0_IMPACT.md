@@ -1,42 +1,65 @@
-# Official kit v1.1.0 (2026-10-24) — impact on this prototype
+# Official kit v1.1.0 (2026-10-24) — status in this prototype
 
-Reference: starter kit branch `patch/fix-answers-ruleset`, commit `6a2cdec` (CHANGELOG 1.1.0).
-Buildings, equipment and question wording are unchanged; **expected route answers** follow the
-judges' rules: door-to-door walking on `polygon.buffer(-0.15)` with a visibility graph (segment clear
-if `buffer(0.02)` of the shrunken outline covers it), an opening lands 30 cm inside each space
-(nearest point of `buffer(-0.30)`, step added), lengths rounded to 3 decimals, stairs 2 m per metre
-climbed, lift 15 m once per ride + 1 m per metre, every pair of lift stops joined, no outside link,
-routes to an item end in the space that holds it.
+**Done: the prototype is pinned to kit 1.1.0 and reproduces every Train/Dev answer.**
+Reference: starter kit `main` at commit `dc03c447dbe5b2e5f82c7db0d72249931817d86d` (CHANGELOG 1.1.0).
+Kit 1.1.0 changed only expected answers, `starter_agent/building_map.py` (route rules), `evaluate.py`,
+`viewer.py`, README section 3 and the CHANGELOG; buildings, images, manifest and questions are unchanged.
 
-This prototype still pins kit **1.0.0** (`data.py` checks the reference module against the ZIP).
-No router was rewritten for 1.1.0.
+## Data pin (`data.py`)
 
-## Measured against v1.1.0 dev answers (offline, deterministic)
+- `KIT_COMMIT` = `dc03c44…`. `pinned_tree()` reads the commit's tree (`git ls-tree`, no network, lazy fetch
+  disabled) from the reference checkout (`SYNERA_REFERENCE_DIR`).
+- `reference_module('building_map' | 'score')` loads the checkout's file only if its git blob id
+  (CRLF-normalised) equals the commit's; the two blob ids are also pinned in code.
+- Buildings still come from the v1.0.0 ZIP (`SYNERA_KIT_ZIP`). Every `building.json` loaded is checked
+  against the 1.1.0 blob id; all 240 Train/Dev buildings are identical (`verify_buildings()`).
+- `examples(split)` / `basic_examples(split)` read `questions.jsonl` / `questions_basic.jsonl` of 1.1.0, each
+  verified against the commit (checkout file, or the ZIP member when it is byte-identical).
+- Reference checkout setup: `git merge --ff-only origin/main`, then non-cone sparse patterns
+  `/* !/*/ /benchmark/ /starter_agent/ /data/{train,dev}/*/questions.jsonl /data/{train,dev}/*/questions_basic.jsonl`.
+  The 115 question blobs unchanged since 1.0.0 were missing in the partial clone; they were written into the
+  object store from the ZIP after checking that each hashes to the commit's blob id (no fetch).
 
-| Area | Result vs 1.1.0 | Cause |
+## Routing
+
+- **Challenge mode = official router.** `challenge.official_route` builds the official 1.1.0 `BuildingMap`
+  graph and search; cost, space_path, reachability and `directions` are the official ones and are cross-checked
+  against `BuildingMap.route` on every call. Endpoints resolve like `resolve_space` (an asset ends in its
+  holding space). Drawable segments replay the official walk (door → 30 cm landing → visibility path on
+  `buffer(-0.15)` with 0.02 cover tolerance → landing → door); each drawn edge equals its official weight.
+- **Production-transit and forklift rules:** not in kit 1.1.0 (README, CHANGELOG and starter code mention
+  forklifts only as an optional level-5 idea). They are opt-in request flags `no_production_transit` and
+  `forklift` (default off), labelled "unofficial (organizer remark, not in kit 1.1.0)".
+- `model='reference'` is now the official 1.1.0 graph drawn as straight node-to-node lines (cost = official
+  length); precision results keep `reference_comparison`, now on the 1.1.0 rule-based cost.
+- Benchmark operations (`errand`, `what_if_door`, `wide_delivery_count`, `step_free_reachable_count`) use the
+  official 1.1.0 graph; `what_if_door` adds the door with the official `add_door(position=…)` at the middle of
+  the shared wall; "walk out" = route length to the nearest entrance opening (no outside link).
+
+## Measured (`benchmark_eval.py`, offline, deterministic; reports in `reports/`)
+
+| | Before (commit 175542d: kit 1.0.0 `BuildingMap` + old `challenge.py`) | After |
 |---|---|---|
-| Benchmark operations (`operations.py`, starter `BuildingMap` 1.0.0) | 121/138 match. All of `largest_room`, `floor_area_total`, `wide_delivery_count`, `step_free_reachable_count`, `room_stacked`, `shared_walls_count`, `straight_line_3d` match; **`errand` 3/19, `what_if_door` 0/2** | These two use route lengths from the old anchor / 12 m / 15+6 m / outside model |
-| `challenge.py` on warm-up routes (production rule off) | 161 expected routes: same `space_path` 144, cost within 1 % **62**, within 5 % 148 (median error 1.2 %); 28 expected `reachable:false`: agree 21 | Door crossing differs (stub to the 0.15 m outline vs. official 30 cm landing), 2 cm visibility tolerance, rounding; a few unreachable disagreements unexplained yet |
-| Production-transit / forklift rules in `challenge.py` | Not part of 1.1.0; they changed 0 of the dev warm-up routes but block ~29 % of random factory pairs | Came from organizer remarks, not from the published kit — team decision needed |
+| Benchmark, official scorer | 568/655 (dev 120/138, train 448/517); errand 10/93, what_if_door 0/4, other kinds 100 % | **655/655** (dev 138, train 517) |
+| Warm-up locate / count (deterministic lookup) | 553/553 / 239/239 | 553/553 / 239/239 |
+| Warm-up routes incl. tours (1,338; 1,105 reachable) | reachability 1337/1338; space_path 1102/1105; element_path 1102/1105; length ≤1 % 335/1105; ≤0.01 m 11/1105 | **all 1338 exact**: reachability, space_path, element_path, length ≤0.01 m |
 
-## Tests that must be re-checked (or re-pinned) for 1.1.0
+Tours: every leg (208/208) matches to the centimetre; totals are equal to 2 decimals in 144/208. A tour
+answer is the sum of its rounded legs, while the official `BuildingMap.route(via=…)` rounds the total once,
+so 64 totals differ by exactly 0.01 m (inside the 0.01 m check and far inside the scorer's ±1 %).
+Drawn segments equal the official edge weight (±0.6 mm) on all 1,105 reachable routes; 7 routes contain an
+edge where the official model has no clear walk and uses 1.5 × the straight distance (drawn straight, warned).
+Harness runtime: ~89 s for train+dev (benchmark 57 s, warm-up 32 s); full test suite 131 tests, ~60 s.
 
-- `test_operations.py`: the Dev 138/138 assertion (currently against 1.0.0 answers) — with 1.1.0
-  answers `errand` and `what_if_door` fail until they use the 1.1.0 route model.
-- `test_example_lab.py`, `test_service.py`: reference route / example checks and the source-drift pin
-  (`data.reference_module` compares `building_map.py` with the 1.0.0 ZIP and will raise
-  `source_drift` once the checkout is moved to 1.1.0).
-- `test_navigation.py`, `test_portal_usability.py`, `test_http.py`: assertions on
-  `reference_comparison` / `model='reference'` costs (12 m per floor, 15+6 m lift, outside node).
-- `test_challenge.py`: door-crossing geometry, asset endpoints (1.1.0 ends in the holding space),
-  production-transit default, and a new comparison test against 1.1.0 `questions_basic` routes.
-- `test_assistant.py` test_10 (largest_room) is unaffected; challenge-mode live checks should be re-run.
-- Historical Train 517/517 oracle evidence is 1.0.0-only.
+Earlier ad-hoc dev counts (121/138 ops; 144/161 space paths; 62/161 lengths ≤1 %; 21/28 unreachable agree)
+were reproduced and corrected: the ad-hoc check passed `step_free` but **dropped `closed_element_id`**, so
+closure routes were computed without their closure. With closures applied the old code gives 160/161 space
+paths, 73/161 lengths ≤1 % (157 ≤5 %, median error 1.06 %) and 28/28 unreachable agreement. 121/138 was an
+arithmetic slip: its own per-kind numbers (errand 3/19, what_if_door 0/2) give 120/138, which the harness confirms.
+The production rule changed none of these results.
 
-Precision routing (`navigation.py`) has its own physical contract and is not graded by these rules.
+## Known limits
 
-## Suggested minimal next step (not done)
-
-Switch `data.py` to the 1.1.0 kit, adopt the official door landing and tolerances in `challenge.py`
-(or call 1.1.0 `building_map.py` for graded answers), make the production/forklift rules opt-in, and
-add the v1.1.0 comparison above as a regression test with a 1 % threshold.
+- `osm-way360544293` needs ~22–28 s for the first official graph (the official per-space Floyd-Warshall on
+  its large halls); later routes take ~35 ms. Other buildings take < 1 s.
+- `README.md` (not edited here) still describes the 1.0.0 pin and the old test count.

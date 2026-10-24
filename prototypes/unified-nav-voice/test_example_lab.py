@@ -32,6 +32,14 @@ class ExampleLabTests(unittest.TestCase):
         self.assertIn('no language benchmark',result['comparison']['scope'])
         self.assertEqual(before,hashlib.sha256(ARCHIVE.read_bytes()).hexdigest())
 
+    def test_route_dependent_examples_match_kit_1_1_0_answers(self):
+        # errand / what_if_door answers changed in kit 1.1.0; the lab compares with the 1.1.0 files.
+        for kind in ('errand','what_if_door'):
+            example=next(q for q in self.service.examples() if q['kind']==kind)
+            result=self.service.example(example['building_id'],{'split':'dev','id':example['id']})
+            self.assertTrue(result['comparison']['matches_reference'],(kind,example['id'],result['formatted_answer']))
+            self.assertEqual(result['cost_model'],'official_kit_1_1_0')
+
     def test_answer_is_not_calculation_input(self):
         example=next(q for q in self.service.examples() if q['kind']=='largest_room')
         fake={'formatted_answer':'Answer: impossible','operation':example['kind'],'value':-1}
