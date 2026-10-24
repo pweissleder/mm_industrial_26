@@ -57,13 +57,13 @@ Requirements: Python 3.11 + [uv](https://docs.astral.sh/uv/), Node ≥ 22.12. On
 
 | What | Command | Result (24.10.2026) |
 |---|---|---|
-| Backend unit + integration (team + Phase A) | `cd backend && uv run pytest` | 243 passed, 3 skipped |
+| Backend unit + integration (team + Phase A) | `cd backend && uv run pytest` | 256 passed, 3 skipped |
 | Benchmark harness, kit 1.1.0, official scorer | `cd backend && uv run python scripts/nav_benchmark.py` | benchmark **655/655**, warm-up routes **1338/1338**, locate **553/553**, count **239/239** → `docs/reports/nav_benchmark_1_1_0.md` |
 | API matrix, 5 building families × 3, incl. negative cases | `python scripts/e2e/api_matrix.py --per-family 3` (running backend) | **226/226** → `docs/reports/e2e_api_matrix.json` |
 | Frontend | `cd frontend && npm run lint && npm test && npm run build` | 0 errors, 23 tests, build ok |
 | Browser E2E offline (no AI) | `node scripts/e2e/browser_e2e.mjs` (needs `playwright-core`, installed Chrome) | **10/10** → `docs/reports/browser/browser_e2e.json` + screenshots |
 | Browser E2E live: assistant + voice | `VOICE_WAV=… node scripts/e2e/browser_e2e.mjs --live` | **14/14** → `docs/reports/browser/browser_e2e_live.json`, screenshots 06–09 |
-| Multi-turn dialog matrix (live Claude) | `cd backend && uv run python scripts/dialog_sim.py --live` | see `docs/reports/dialog_sim_*.md` |
+| Multi-turn dialog matrix, 13 scenarios / 21 turns (live Claude Sonnet 5.5, effort medium) | `cd backend && uv run python scripts/dialog_sim.py --live --max-usd 1` (key in env) | **12/13 scenarios, 20/21 turns**, 0,23 $, Claude median 6,1 s → `docs/reports/dialog_sim_live_medium_v2.md`; only miss: one reply of 4 sentences (length check). First run before restoring the prototype's style rules: 8/21, all misses were length |
 
 The voice sample for the browser test is synthesised with the app's ElevenLabs client
 (`scripts/e2e/make_voice_sample.py`) and played by Chrome's fake microphone.
@@ -95,5 +95,6 @@ The voice sample for the browser test is synthesised with the app's ElevenLabs c
   opt-in (`unofficial`), never default.
 - Lint: `ruff`/`mypy` report pre-existing issues in team files `backend/scripts/navgraph_viz.py`
   and `backend/app/api/routes/buildings.py` (also on `main`); Phase A code is clean.
-- First live turn takes ~4–20 s (Claude, several tool rounds); voice STT/TTS each ~0.7 s.
+- Live turns take ~4–11 s (Claude median 6 s, several tool rounds); voice STT/TTS each ~0.7–0.9 s.
+- Total live API spend for all Phase A tests in this round: about 0.75 $ (estimate from token usage).
 - Real microphone test by a person is still open (automated test uses a synthetic voice).

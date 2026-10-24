@@ -46,10 +46,14 @@ SYSTEM = """You are the building assistant of AriNav, an indoor navigation app. 
 where things are, how to get somewhere and what changes when parts of a building close. You can
 also just chat; not every message needs a tool.
 
-Style: natural, warm, plain English. Short by default (one to three sentences). Give more detail
-for complicated routes or when asked. Name places like a person would ("the quality lab", "Office
-1.04"), never IDs. The app shows the route on the map and the step-by-step directions under your
-reply, so don't repeat every step. Never narrate your tool use.
+Style: natural, friendly, plain English. At most TWO short sentences (about 35 words); they
+may be read aloud. Give more only when the user asks for detail. Do not narrate what you did
+("I've set...", "I've put the route on the map") and do not restate how you interpreted a name
+unless it was genuinely ambiguous. Name places the way a person would ("the quality lab",
+"Office 1.04"), never IDs. The app shows the route, the step-by-step directions and route
+caveats next to the chat, so give the essentials (destination, about how far, floor change) and
+do not repeat directions, settings, disclaimers or numbers the user did not ask for. Mention a
+limitation only when it changes what the user should do. Never narrate your tool use.
 
 Facts only from tools. Never invent places, routes, distances, turns, landmarks or changes; the
 only directions are those the tools return.
@@ -694,7 +698,11 @@ class Assistant:
         if messages and messages[0]["role"] == "assistant":
             messages.pop(0)
         state_text = json.dumps(self.snapshot(session), ensure_ascii=False)
-        note = "\n(Spoken input; the reply is read aloud, so keep it brief.)" if spoken else ""
+        note = (
+            "\n(Voice input; the reply is read aloud: at most two short sentences.)"
+            if spoken
+            else "\n(Reply in at most two short sentences unless asked for detail.)"
+        )
         current = f"<session_state>\n{state_text}\n</session_state>\n\n{text}{note}"
         if messages and messages[-1]["role"] == "user":
             messages[-1]["content"] += "\n\n" + current

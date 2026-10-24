@@ -1,0 +1,2287 @@
+{
+  "summary": {
+    "label": "scripted",
+    "mode": "scripted",
+    "model": "claude-sonnet-5-5",
+    "effort": "medium",
+    "spoken": false,
+    "max_usd": 1.0,
+    "started_at": "2026-10-24T21:07:36+00:00",
+    "buildings": [
+      "proc-campus-dev-009",
+      "proc-factory-dev-003"
+    ],
+    "dataset_dirs": [
+      "C:\\Users\\noah3\\Documents\\Repositories\\mm_industrial_26-phase-a\\backend\\data\\datasets",
+      "C:\\Users\\noah3\\Documents\\HackathonTransfer\\SyneraKit-data\\dev"
+    ],
+    "missing_buildings": [],
+    "scenarios": 13,
+    "scenarios_run": 13,
+    "scenarios_passed": 0,
+    "scenarios_partial": 0,
+    "scenarios_skipped": 0,
+    "turns": 21,
+    "turns_run": 21,
+    "turns_passed": 0,
+    "turns_errored": 0,
+    "turns_skipped": 0,
+    "estimated_usd": 0.0,
+    "latency_ms": {
+      "claude_median": 0.0,
+      "claude_max": 0.0,
+      "tools_median": 0.0,
+      "wall_median": 10.8
+    },
+    "concise_1_2_sentences": 21,
+    "skipped": []
+  },
+  "results": [
+    {
+      "id": "coffee_nearest",
+      "title": "Coffee near me, then \"how do I get there?\"",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0000-coffee_nearest",
+      "turns": [
+        {
+          "index": 0,
+          "user": "I'm in Office 0.38. Where can I get a coffee?",
+          "input": {
+            "text": "I'm in Office 0.38. Where can I get a coffee?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S038",
+            "tools_any": [
+              "find_places",
+              "find_nearest"
+            ],
+            "mentions_nearest": "coffee",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "state_start": false,
+            "tools_any": false,
+            "mentions_nearest": false,
+            "mentions_nearest_expected": null,
+            "mentions_nearest_expected_cost_m": null,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.1,
+            "wall_ms": 10.5
+          }
+        },
+        {
+          "index": 1,
+          "user": "And how do I get there?",
+          "input": {
+            "text": "And how do I get there?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "tools": [
+              "plan_route"
+            ],
+            "route_from": "proc-factory-dev-003-F0-S038",
+            "route_to_nearest": "coffee",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "tools": false,
+            "route_from": false,
+            "route_to_nearest": false,
+            "route_to_nearest_expected": null,
+            "route_to_nearest_expected_cost_m": null,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.7,
+            "wall_ms": 10.3
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "toilet_unknown_start",
+      "title": "Nearest toilet without a known position",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0001-toilet_unknown_start",
+      "turns": [
+        {
+          "index": 0,
+          "user": "Where is the nearest toilet?",
+          "input": {
+            "text": "Where is the nearest toilet?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "mentions_any": [
+              "toilet"
+            ],
+            "asks": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "mentions_any": false,
+            "asks": false
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.7,
+            "wall_ms": 10.2
+          }
+        },
+        {
+          "index": 1,
+          "user": "I'm in the quality lab.",
+          "input": {
+            "text": "I'm in the quality lab.",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S021",
+            "tools": [
+              "plan_route"
+            ],
+            "route_to_nearest": "toilet",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "state_start": false,
+            "tools": false,
+            "route_to_nearest": false,
+            "route_to_nearest_expected": null,
+            "route_to_nearest_expected_cost_m": null,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.7,
+            "wall_ms": 10.4
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "break_relax",
+      "title": "Vague intent: somewhere to relax",
+      "building": "proc-campus-dev-009",
+      "session_id": "dialog-sim-0002-break_relax",
+      "turns": [
+        {
+          "index": 0,
+          "user": "I'm in Lab 0.02 and need a break. Where can I relax and get something to eat?",
+          "input": {
+            "text": "I'm in Lab 0.02 and need a break. Where can I relax and get something to eat?",
+            "ui": {
+              "building_id": "proc-campus-dev-009"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-campus-dev-009-F0-S002",
+            "mentions_any": [
+              "canteen",
+              "kitchen"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "state_start": false,
+            "mentions_any": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Forschungsbau 033",
+              "floors": [
+                {
+                  "id": "proc-campus-dev-009-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-campus-dev-009-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                },
+                {
+                  "id": "proc-campus-dev-009-F2",
+                  "level": 2,
+                  "name": "Floor 2"
+                },
+                {
+                  "id": "proc-campus-dev-009-F3",
+                  "level": 3,
+                  "name": "Floor 3"
+                },
+                {
+                  "id": "proc-campus-dev-009-F4",
+                  "level": 4,
+                  "name": "Floor 4"
+                },
+                {
+                  "id": "proc-campus-dev-009-F5",
+                  "level": 5,
+                  "name": "Floor 5"
+                }
+              ],
+              "precision_routing": false
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-campus-dev-009",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 19.2,
+            "wall_ms": 28.1
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "cnc_ambiguous",
+      "title": "Ambiguous machine name",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0003-cnc_ambiguous",
+      "turns": [
+        {
+          "index": 0,
+          "user": "Where is the CNC mill?",
+          "input": {
+            "text": "Where is the CNC mill?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "asks": true,
+            "mentions_any": [
+              "three",
+              "3"
+            ],
+            "no_route": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "asks": false,
+            "mentions_any": false,
+            "no_route": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.5,
+            "wall_ms": 10.8
+          }
+        },
+        {
+          "index": 1,
+          "user": "The B one. I am at hall access 0.19.",
+          "input": {
+            "text": "The B one. I am at hall access 0.19.",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "route_from": "proc-factory-dev-003-F0-S019",
+            "route_to": "proc-factory-dev-003-A00002",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "route_from": false,
+            "route_to": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.3,
+            "wall_ms": 11.2
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "stt_errors",
+      "title": "Speech-recognition errors in room names",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0004-stt_errors",
+      "turns": [
+        {
+          "index": 0,
+          "user": "How do I get from the hall axis zero point one nine to the quality lap?",
+          "input": {
+            "text": "How do I get from the hall axis zero point one nine to the quality lap?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "route_from": "proc-factory-dev-003-F0-S019",
+            "route_to": "proc-factory-dev-003-F0-S021",
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "route_from": false,
+            "route_to": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 9.5,
+            "wall_ms": 13.5
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "unknown_room",
+      "title": "Unknown room and floor",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0005-unknown_room",
+      "turns": [
+        {
+          "index": 0,
+          "user": "Take me to the cafeteria on floor 7.",
+          "input": {
+            "text": "Take me to the cafeteria on floor 7.",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "honest_missing": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "honest_missing": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.1,
+            "wall_ms": 10.7
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "facility_unavailable",
+      "title": "Facility that does not exist",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0006-facility_unavailable",
+      "turns": [
+        {
+          "index": 0,
+          "user": "Is there a gym or a shower here?",
+          "input": {
+            "text": "Is there a gym or a shower here?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "no_route": true,
+            "honest_missing": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "no_route": true,
+            "honest_missing": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.1,
+            "wall_ms": 11.1
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "closure_flow",
+      "title": "What-if, closure with confirmation, then undo",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0007-closure_flow",
+      "turns": [
+        {
+          "index": 0,
+          "user": "I'm in Meeting room 0.20. What would happen if the office corridor 0.16 were closed?",
+          "input": {
+            "text": "I'm in Meeting room 0.20. What would happen if the office corridor 0.16 were closed?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "tools_any": [
+              "preview_closure",
+              "plan_route"
+            ],
+            "previewed_closed": "proc-factory-dev-003-F0-S016",
+            "unchanged": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "tools_any": false,
+            "previewed_closed": false,
+            "unchanged": true,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.0,
+            "wall_ms": 10.6
+          }
+        },
+        {
+          "index": 1,
+          "user": "Okay, close the corridor for cleaning.",
+          "input": {
+            "text": "Okay, close the corridor for cleaning.",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "proposal": [
+              "close",
+              "proc-factory-dev-003-F0-S016"
+            ],
+            "unchanged": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "proposal": false,
+            "unchanged": true,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 11.8,
+            "wall_ms": 17.3
+          },
+          "confirmation": {
+            "approved": true,
+            "status": "no_proposal"
+          }
+        },
+        {
+          "index": 2,
+          "user": "How do I get to the quality lab now?",
+          "input": {
+            "text": "How do I get to the quality lab now?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "closed_now": "proc-factory-dev-003-F0-S016",
+            "route_unreachable": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "closed_now": false,
+            "route_unreachable": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 10.3,
+            "wall_ms": 14.6
+          }
+        },
+        {
+          "index": 3,
+          "user": "Cleaning is done, please open the corridor again.",
+          "input": {
+            "text": "Cleaning is done, please open the corridor again.",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "proposal": [
+              "open",
+              "proc-factory-dev-003-F0-S016"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "proposal": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 9.4,
+            "wall_ms": 13.7
+          },
+          "confirmation": {
+            "approved": true,
+            "status": "no_proposal"
+          }
+        },
+        {
+          "index": 4,
+          "user": "And now?",
+          "input": {
+            "text": "And now?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "route_found": true,
+            "route_to": "proc-factory-dev-003-F0-S021",
+            "short": true,
+            "open_now": "proc-factory-dev-003-F0-S016"
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "route_found": false,
+            "route_to": false,
+            "short": true,
+            "open_now": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 12.2,
+            "wall_ms": 16.0
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "wheelchair_floors",
+      "title": "Wheelchair user, upper floor",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0008-wheelchair_floors",
+      "turns": [
+        {
+          "index": 0,
+          "user": "I use a wheelchair. How do I get from hall access 0.19 to Office 1.04?",
+          "input": {
+            "text": "I use a wheelchair. How do I get from hall access 0.19 to Office 1.04?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "state_step_free": true,
+            "route_to": "proc-factory-dev-003-F1-S004",
+            "uses": "lift",
+            "mentions_any": [
+              "lift",
+              "elevator"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "state_step_free": false,
+            "route_to": false,
+            "uses": false,
+            "mentions_any": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.8,
+            "wall_ms": 10.2
+          }
+        },
+        {
+          "index": 1,
+          "user": "And then to the kitchen 1.07?",
+          "input": {
+            "text": "And then to the kitchen 1.07?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "expected": {
+            "route_from": "proc-factory-dev-003-F1-S004",
+            "route_to": "proc-factory-dev-003-F1-S007",
+            "state_step_free": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "route_from": false,
+            "route_to": false,
+            "state_step_free": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.7,
+            "wall_ms": 10.1
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "trolley_precision",
+      "title": "Wide trolley avoiding machines",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0009-trolley_precision",
+      "turns": [
+        {
+          "index": 0,
+          "user": "I'm pushing a 0.9 metre wide trolley from logistics zone H-C5 to warehouse zone H-A5. I need to stay clear of the machines.",
+          "input": {
+            "text": "I'm pushing a 0.9 metre wide trolley from logistics zone H-C5 to warehouse zone H-A5. I need to stay clear of the machines.",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "state_mode": "precision",
+            "state_width": 0.9,
+            "tools": [
+              "plan_route"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "state_mode": false,
+            "state_width": false,
+            "tools": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 7.6,
+            "wall_ms": 11.0
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "long_campus",
+      "title": "Long multi-floor route in a campus building",
+      "building": "proc-campus-dev-009",
+      "session_id": "dialog-sim-0010-long_campus",
+      "turns": [
+        {
+          "index": 0,
+          "user": "From the lecture hall 0.31 to Lab 2.08, please.",
+          "input": {
+            "text": "From the lecture hall 0.31 to Lab 2.08, please.",
+            "ui": {
+              "building_id": "proc-campus-dev-009"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "route_from": "proc-campus-dev-009-F0-S031",
+            "route_to": "proc-campus-dev-009-F2-S008",
+            "route_found": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "route_from": false,
+            "route_to": false,
+            "route_found": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Forschungsbau 033",
+              "floors": [
+                {
+                  "id": "proc-campus-dev-009-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-campus-dev-009-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                },
+                {
+                  "id": "proc-campus-dev-009-F2",
+                  "level": 2,
+                  "name": "Floor 2"
+                },
+                {
+                  "id": "proc-campus-dev-009-F3",
+                  "level": 3,
+                  "name": "Floor 3"
+                },
+                {
+                  "id": "proc-campus-dev-009-F4",
+                  "level": 4,
+                  "name": "Floor 4"
+                },
+                {
+                  "id": "proc-campus-dev-009-F5",
+                  "level": 5,
+                  "name": "Floor 5"
+                }
+              ],
+              "precision_routing": false
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-campus-dev-009",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 19.2,
+            "wall_ms": 28.5
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "benchmark_fact",
+      "title": "Building fact question",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0011-benchmark_fact",
+      "turns": [
+        {
+          "index": 0,
+          "user": "Which is the largest kitchen on floor 1, and how big is it?",
+          "input": {
+            "text": "Which is the largest kitchen on floor 1, and how big is it?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "tools": [
+              "building_fact"
+            ],
+            "mentions_any": [
+              "1.14"
+            ],
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "tools": false,
+            "mentions_any": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.8,
+            "wall_ms": 10.3
+          }
+        }
+      ],
+      "result": "fail"
+    },
+    {
+      "id": "missing_destination",
+      "title": "Route request without destination",
+      "building": "proc-factory-dev-003",
+      "session_id": "dialog-sim-0012-missing_destination",
+      "turns": [
+        {
+          "index": 0,
+          "user": "I am in Office 0.23. Can you show me the way?",
+          "input": {
+            "text": "I am in Office 0.23. Can you show me the way?",
+            "ui": {
+              "building_id": "proc-factory-dev-003"
+            },
+            "spoken": false
+          },
+          "context_before": null,
+          "expected": {
+            "state_start": "proc-factory-dev-003-F0-S023",
+            "no_route": true,
+            "asks": true,
+            "short": true
+          },
+          "passed": false,
+          "verdicts": {
+            "no_error": true,
+            "no_ids_in_reply": true,
+            "state_start": false,
+            "no_route": true,
+            "asks": false,
+            "short": true
+          },
+          "reply": "Scripted reply: this offline run only exercises the dialog harness.",
+          "status": "ok",
+          "error": null,
+          "phases": [],
+          "tools": [],
+          "ui": {},
+          "state": {
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "building": {
+              "name": "Fertigung Ost 27",
+              "floors": [
+                {
+                  "id": "proc-factory-dev-003-F0",
+                  "level": 0,
+                  "name": "Ground floor"
+                },
+                {
+                  "id": "proc-factory-dev-003-F1",
+                  "level": 1,
+                  "name": "Floor 1"
+                }
+              ],
+              "precision_routing": true
+            },
+            "start": null,
+            "destination": null,
+            "confirmed_closures": [],
+            "pending_proposals": [],
+            "last_route": null
+          },
+          "session_state": {
+            "building_id": "proc-factory-dev-003",
+            "start": null,
+            "destination": null,
+            "mode": "official",
+            "step_free": false,
+            "profile": "stationary",
+            "width_m": 0.6,
+            "safety_m": 0.05,
+            "last_route": null
+          },
+          "closed_after": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "cache_read_input_tokens": 0,
+            "cache_creation_input_tokens": 0,
+            "estimated_usd": 0.0,
+            "rounds": 1
+          },
+          "cost_usd": 0.0,
+          "timing_ms": {
+            "claude_ms": 0.0,
+            "tools_ms": 0.0,
+            "total_ms": 6.7,
+            "wall_ms": 10.2
+          }
+        }
+      ],
+      "result": "fail"
+    }
+  ]
+}
