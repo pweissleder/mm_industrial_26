@@ -1,7 +1,6 @@
 """Store uploaded files (building.json, 3D models, floor plans, …) in a dataset folder."""
 
 import re
-import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -29,20 +28,6 @@ def _dataset_dir(datasets_dir: Path, dataset: str) -> Path:
     if not DATASET_NAME.match(dataset):
         raise InvalidUploadError(f"Invalid dataset name '{dataset}'")
     return datasets_dir / dataset
-
-
-def dataset_name_taken(datasets_dir: Path, dataset: str) -> bool:
-    """True if a dataset folder of this name exists, ignoring case as some filesystems do."""
-    if not datasets_dir.is_dir():
-        return False
-    wanted = dataset.lower()
-    return any(p.is_dir() and p.name.lower() == wanted for p in datasets_dir.iterdir())
-
-
-def remove_dataset(datasets_dir: Path, dataset: str) -> None:
-    """Delete a dataset folder, e.g. one a failed upload had just created."""
-    if DATASET_NAME.match(dataset):
-        shutil.rmtree(datasets_dir / dataset, ignore_errors=True)
 
 
 def _file_name(filename: str) -> str:

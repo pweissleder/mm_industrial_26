@@ -4,9 +4,8 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import ValidationError
 
 from app.api.deps import RepositoryDep, SettingsDep
-from app.api.schemas import DatasetAvailability, DatasetList, IngestionRequest, IngestionResponse
-from app.ingestion import DatasetNotFoundError, dataset_name_taken, ingest_dataset, list_datasets
-from app.ingestion.service import DATASET_NAME
+from app.api.schemas import DatasetList, IngestionRequest, IngestionResponse
+from app.ingestion import DatasetNotFoundError, ingest_dataset, list_datasets
 
 router = APIRouter(tags=["ingestion"])
 
@@ -14,17 +13,6 @@ router = APIRouter(tags=["ingestion"])
 @router.get("/datasets", response_model=DatasetList)
 def get_datasets(settings: SettingsDep) -> DatasetList:
     return DatasetList(datasets=list_datasets(settings.datasets_dir))
-
-
-@router.get("/datasets/{dataset}/availability", response_model=DatasetAvailability)
-def get_availability(dataset: str, settings: SettingsDep) -> DatasetAvailability:
-    """Whether `dataset` is free for a new upload (`POST .../files?new=true`)."""
-    reason = None
-    if not DATASET_NAME.match(dataset) or len(dataset) > 200:
-        reason = "Use letters, digits, - and _ only, starting with a letter or digit."
-    elif dataset_name_taken(settings.datasets_dir, dataset):
-        reason = f"A location named '{dataset}' already exists."
-    return DatasetAvailability(dataset=dataset, available=reason is None, reason=reason)
 
 
 @router.post("/ingestions", response_model=IngestionResponse, status_code=status.HTTP_201_CREATED)

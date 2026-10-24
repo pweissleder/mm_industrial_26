@@ -1,11 +1,4 @@
-import {
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from 'react';
+import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   ASSET_COLORS,
   floorLabel,
@@ -161,48 +154,26 @@ function LocationTab({
               <span>{model.spaces.length} rooms</span>
               <span>{model.assets.length} assets</span>
             </div>
-            {summary && <Summary text={summary} />}
+            {summary && <p className="building-meta__summary">{summary}</p>}
           </div>
         )}
         {loading && <p className="muted">Loading building…</p>}
         {(sources.length > 0 || hqAvailable) && (
           <>
-            <span className="section__title" id="source-label">
+            <label className="section__title" htmlFor="source-select">
               3D source
-            </span>
-            <div className="segmented segmented--small" role="group" aria-labelledby="source-label">
-              <button
-                className="segmented__item"
-                aria-pressed={source === HQ_SOURCE}
-                disabled={!hqAvailable}
-                title={hqAvailable ? 'Model from the ingestion pipeline' : 'Not processed yet'}
-                onClick={() => onSource(HQ_SOURCE)}
-              >
-                High quality
-              </button>
-              <button
-                className="segmented__item"
-                aria-pressed={source === GENERATED_SOURCE}
-                title="Quick preview generated in the browser"
-                onClick={() => onSource(GENERATED_SOURCE)}
-              >
-                Preview
-              </button>
-            </div>
-            {sources.length > 0 && (
-              <div className="floor-picker" role="group" aria-label="Uploaded models">
+            </label>
+            <div className="select">
+              <select id="source-select" value={source} onChange={(e) => onSource(e.target.value)}>
+                {hqAvailable && <option value={HQ_SOURCE}>High quality (pipeline)</option>}
+                <option value={GENERATED_SOURCE}>Browser preview (low)</option>
                 {sources.map((s) => (
-                  <button
-                    key={s}
-                    className="chip"
-                    aria-pressed={source === s}
-                    onClick={() => onSource(s)}
-                  >
+                  <option key={s} value={s}>
                     {s}
-                  </button>
+                  </option>
                 ))}
-              </div>
-            )}
+              </select>
+            </div>
           </>
         )}
       </section>
@@ -296,44 +267,6 @@ function LocationTab({
             </div>
           )}
         </section>
-      )}
-    </>
-  );
-}
-
-/** Clamped to a few lines; when that cuts the text off, a click shows all of it. */
-function Summary({ text }: { text: string }) {
-  const ref = useRef<HTMLParagraphElement>(null);
-  const [expanded, setExpanded] = useState(false);
-  const [clipped, setClipped] = useState(false);
-
-  useLayoutEffect(() => {
-    setExpanded(false);
-    const el = ref.current;
-    if (!el) return;
-    const measure = () => setClipped(el.scrollHeight > el.clientHeight + 1);
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [text]);
-
-  const toggle = () => setExpanded((e) => !e);
-  return (
-    <>
-      <p
-        ref={ref}
-        className={`building-meta__summary${expanded ? ' building-meta__summary--open' : ''}${
-          clipped || expanded ? ' building-meta__summary--clickable' : ''
-        }`}
-        onClick={clipped || expanded ? toggle : undefined}
-      >
-        {text}
-      </p>
-      {(clipped || expanded) && (
-        <button type="button" className="building-meta__more" aria-expanded={expanded} onClick={toggle}>
-          {expanded ? 'Show less' : 'Show more'}
-        </button>
       )}
     </>
   );

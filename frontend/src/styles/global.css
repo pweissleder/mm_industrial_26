@@ -195,11 +195,6 @@ code {
   background: var(--gray-100);
 }
 
-.icon-btn[aria-pressed='true'] {
-  background: var(--navy);
-  color: #fff;
-}
-
 .icon-btn--sm {
   width: 28px;
   height: 28px;
@@ -231,8 +226,7 @@ code {
   background: #e6e7ec;
 }
 
-.chip[aria-checked='true'],
-.chip[aria-pressed='true'] {
+.chip[aria-checked='true'] {
   background: var(--navy);
   color: #fff;
 }
@@ -280,11 +274,6 @@ code {
   background: #fff;
   color: var(--navy);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-}
-
-.segmented__item:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
 }
 
 .segmented--small .segmented__item {
@@ -457,7 +446,7 @@ code {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #ec1c7f;
+  background: var(--orange);
   border: 2px solid #fff;
   transform: translateX(-50%);
 }
@@ -884,14 +873,6 @@ code {
   gap: 2px;
   padding: 5px;
   border-radius: var(--pill);
-}
-
-.viewer canvas[data-nav='pan'] {
-  cursor: grab;
-}
-
-.viewer canvas[data-nav='pan']:active {
-  cursor: grabbing;
 }
 
 .hud__sep {
@@ -1598,33 +1579,10 @@ code {
   margin: 8px 0 0;
   color: var(--ink-2);
   font-size: 13px;
-  line-height: 1.45;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-.building-meta__summary--open {
-  display: block;
-}
-
-.building-meta__summary--clickable {
-  cursor: pointer;
-}
-
-.building-meta__more {
-  margin-top: 4px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--blue);
-  font-size: 12.5px;
-  font-weight: 600;
-}
-
-.building-meta__more:hover {
-  text-decoration: underline;
 }
 
 .details__description {
@@ -1831,51 +1789,4 @@ code {
     animation: none !important;
     transition: none !important;
   }
-}
-
-/* Upload dialog: numbered steps, name first. */
-.step {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.step__head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--navy);
-}
-
-.step__num {
-  display: inline-grid;
-  place-items: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  background: var(--navy);
-  color: #fff;
-  font-size: 12px;
-}
-
-.name-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 18px;
-  font-size: 12.5px;
-}
-
-.name-status--muted {
-  color: var(--muted);
-}
-
-.name-status--good {
-  color: var(--good);
-}
-
-.name-status--bad {
-  color: var(--bad);
 }
