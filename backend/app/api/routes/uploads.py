@@ -1,20 +1,24 @@
 from typing import Annotated
 
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile, status
 from fastapi.responses import FileResponse
 from pydantic import ValidationError
 
 from app.api.deps import SettingsDep
 from app.api.schemas import DatasetFileList, DatasetFileOut, UploadResponse
+from app.config import Settings
 from app.ingestion import (
     DatasetNotFoundError,
     InvalidUploadError,
     dataset_file,
+    dataset_name_taken,
     list_files,
+    remove_dataset,
     save_upload,
 )
 
 router = APIRouter(prefix="/datasets/{dataset}/files", tags=["uploads"])
+NEW_DATASET = Query(description="Create a new dataset; 409 if the name is already taken.")
 
 
 @router.get("", response_model=DatasetFileList)
@@ -30,12 +34,33 @@ def get_files(dataset: str, settings: SettingsDep) -> DatasetFileList:
 
 @router.post("", response_model=UploadResponse, status_code=status.HTTP_201_CREATED)
 async def upload_files(
-    dataset: str, files: Annotated[list[UploadFile], File()], settings: SettingsDep
+    dataset: str,
+    files: Annotated[list[UploadFile], File()],
+    settings: SettingsDep,
+    new: Annotated[bool, NEW_DATASET] = False,
 ) -> UploadResponse:
     """Store files in `DATASETS_DIR/<dataset>/`; the dataset is created if it doesn't exist.
 
     Upload a `building.json` to make the dataset ingestible via `POST /api/ingestions`.
+    With `new=true` the name must be unused, and a failed upload leaves nothing behind.
     """
+    if new and dataset_name_taken(settings.datasets_dir, dataset):
+        raise HTTPException(
+            status.HTTP_409_CONFLICT, f"A location named '{dataset}' already exists"
+        )
+    try:
+        saved = await _save_all(dataset, files, settings)
+    except HTTPException:
+        if new:
+            remove_dataset(settings.datasets_dir, dataset)
+        raise
+    ingestible = (settings.datasets_dir / dataset / "building.json").is_file()
+    return UploadResponse(dataset=dataset, files=saved, ingestible=ingestible)
+
+
+async def _save_all(
+    dataset: str, files: list[UploadFile], settings: Settings
+) -> list[DatasetFileOut]:
     saved = []
     for upload in files:
         content = await upload.read(settings.max_upload_bytes + 1)
@@ -55,8 +80,7 @@ async def upload_files(
                 f"'{name}' is not a valid building.json: {exc.error_count()} error(s)",
             ) from exc
         saved.append(DatasetFileOut(name=f.name, size_bytes=f.size_bytes))
-    ingestible = (settings.datasets_dir / dataset / "building.json").is_file()
-    return UploadResponse(dataset=dataset, files=saved, ingestible=ingestible)
+    return saved
 
 
 @router.get("/{filename}", response_class=FileResponse)

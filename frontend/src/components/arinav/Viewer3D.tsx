@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { RoomGraphData } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import { BuildingScene } from './scene';
-import type { CameraAction, ObjectInfo, ViewSettings } from './view';
+import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 
 export interface CameraCommand {
   action: CameraAction;
@@ -20,6 +20,7 @@ interface Props {
   settings: ViewSettings;
   selection: Selection | null;
   camera: CameraCommand | null;
+  navMode: NavMode;
   /** Width (px) of a panel docked over the left edge; the view centres beside it. */
   insetLeft: number;
   onSelect: (selection: Selection | null, info?: ObjectInfo) => void;
@@ -33,6 +34,7 @@ export default function Viewer3D({
   settings,
   selection,
   camera,
+  navMode,
   insetLeft,
   onSelect,
 }: Props) {
@@ -78,6 +80,7 @@ export default function Viewer3D({
   useEffect(() => scene.current?.setSettings(settings), [settings]);
   useEffect(() => scene.current?.setGraph(graph), [graph]);
   useEffect(() => scene.current?.setSelection(selection), [selection]);
+  useEffect(() => scene.current?.setNavMode(navMode), [navMode]);
   useEffect(() => {
     if (camera) scene.current?.camera3d(camera.action);
   }, [camera]);
