@@ -355,7 +355,14 @@ export default function AriNavApp() {
         </section>
       )}
 
-      <ChatDock health={health} backendDown={backendDown} draft={draft} buildingId={buildingId} />
+      <ChatDock
+        health={health}
+        backendDown={backendDown}
+        draft={draft}
+        buildingId={buildingId}
+        model={viewModel}
+        onSelect={selectFromList}
+      />
 
       <UploadDialog
         open={uploadOpen}

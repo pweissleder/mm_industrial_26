@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ChatDock from './ChatDock';
+import ChatDock, { linkTargets, linkify } from './ChatDock';
+import type { BuildingModel } from '../../lib/building';
 import { api } from '../../lib/api';
 
 const health = {
@@ -77,5 +78,23 @@ describe('ChatDock', () => {
     await user.click(screen.getByRole('button', { name: 'Send' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('not answering');
+  });
+
+  it('links rooms and unique assets in replies, not shared names', () => {
+    const model = {
+      spaces: [{ id: 'sp-1', name: 'Print Lab', ref: '2.04' }],
+      assets: [
+        { id: 'a-1', name: '3D Printer' },
+        { id: 'a-2', name: 'Desk' },
+        { id: 'a-3', name: 'Desk' },
+      ],
+    } as unknown as BuildingModel;
+    const parts = linkify('The 3D printer is in Print Lab (2.04), by a Desk.', linkTargets(model));
+    expect(parts.filter((p) => typeof p !== 'string')).toEqual([
+      ['3D printer', { kind: 'asset', id: 'a-1' }],
+      ['Print Lab', { kind: 'space', id: 'sp-1' }],
+      ['2.04', { kind: 'space', id: 'sp-1' }],
+    ]);
+    expect(parts.join('')).toContain('by a Desk.');
   });
 });

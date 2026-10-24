@@ -70,6 +70,8 @@ interface Fly {
 }
 
 const GRAPH_LIFT = 0.6;
+/** Walking speed (m/s) for turning a hop's routing length into a time. */
+const WALK_SPEED = 1.4;
 const GRAPH_COLORS: Record<string, string> = {
   door: '#002478',
   opening: '#5a6b99',
@@ -119,13 +121,21 @@ export class BuildingScene {
   /** Nav-graph overlay, drawn over everything else. */
   private readonly graph = new THREE.Group();
   private graphData: RoomGraphData | null = null;
+  /** Edge index of each drawn graph line segment, and room id of each graph dot, for picking. */
+  private graphSegments: number[] = [];
+  private graphDotIds: string[] = [];
+  private readonly edgeTip: CSS2DObject;
+  /** Assets of the selected room, painted along with it. */
+  private litAssets: THREE.Object3D[] = [];
+  private readonly roomAssetMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.6, flatShading: true });
   private readonly pin: CSS2DObject;
   private readonly hoverTip: CSS2DObject;
   private readonly raycaster = new THREE.Raycaster();
   private readonly resizeObserver: ResizeObserver;
   private readonly unitBox = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
-  private readonly selectMat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.6 });
-  private readonly hoverMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.7 });
+  // flatShading: the pipeline's glTF ships no normals, so smooth shading would light it black.
+  private readonly selectMat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.6, flatShading: true });
+  private readonly hoverMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.7, flatShading: true });
 
   private grid: THREE.GridHelper | null = null;
   private floors: FloorView[] = [];
@@ -177,7 +187,10 @@ export class BuildingScene {
     this.hoverTip = makeLabel('', 'viewer__tip');
     this.hoverTip.center.set(0.5, 1.4);
     this.hoverTip.visible = false;
-    this.scene.add(this.pin, this.hoverTip);
+    this.edgeTip = makeLabel('', 'viewer__pin');
+    this.edgeTip.center.set(0.5, 1);
+    this.edgeTip.visible = false;
+    this.scene.add(this.pin, this.hoverTip, this.edgeTip);
 
     this.camera.position.set(60, 60, 60);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -270,6 +283,8 @@ export class BuildingScene {
 
   setSelection(selection: Selection | null, fly = true) {
     if (this.selection) this.restoreMaterial(this.objects.get(selKey(this.selection)));
+    for (const a of this.litAssets) this.restoreMaterial(a);
+    this.litAssets = [];
     this.selection = selection;
     this.highlight.clear();
     this.pin.visible = false;
@@ -282,7 +297,14 @@ export class BuildingScene {
       this.pin.position.copy(top);
       this.pin.element.textContent = obj.userData.title ?? '';
       this.pin.visible = true;
-      if (selection.kind === 'space') this.addOutline(obj);
+      if (selection.kind === 'space') {
+        this.addOutline(obj);
+        for (const a of this.model?.assets ?? []) {
+          const mesh = a.space_id === selection.id && this.objects.get(`asset:${a.id}`);
+          if (mesh) this.litAssets.push(mesh);
+        }
+        for (const a of this.litAssets) this.paint(a, this.roomAssetMat);
+      }
       if (fly) this.flyTo(box);
     }
     this.needsRender = true;
@@ -310,6 +332,7 @@ export class BuildingScene {
   private clear() {
     this.setHovered(null);
     this.selection = null;
+    this.litAssets = [];
     this.highlight.clear();
     this.pin.visible = false;
     for (const f of this.floors) for (const m of f.materials) m.dispose();
@@ -678,6 +701,9 @@ export class BuildingScene {
       }
     }
     this.graph.clear();
+    this.graphSegments = [];
+    this.graphDotIds = [];
+    this.edgeTip.visible = false;
     const data = this.graphData;
     if (!data || !this.settings.layers.graph || !this.floors.length) return;
 
@@ -701,7 +727,8 @@ export class BuildingScene {
       points.push(a.x, a.y, a.z, b.x, b.y, b.z);
       colors.push(color.r, color.g, color.b, color.r, color.g, color.b);
     };
-    for (const e of data.edges) {
+    for (const [i, e] of data.edges.entries()) {
+      const before = points.length;
       const hex = GRAPH_COLORS[e.closed ? 'closed' : e.kind] ?? GRAPH_COLORS.door;
       const [a, b] = [nodes.get(e.source), nodes.get(e.target)];
       if (e.position) {
@@ -714,6 +741,7 @@ export class BuildingScene {
       } else if (a && b) {
         segment(a.at, b.at, hex);
       }
+      for (let k = before; k < points.length; k += 6) this.graphSegments.push(i);
     }
     const lineGeo = new THREE.BufferGeometry();
     lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
@@ -742,7 +770,10 @@ export class BuildingScene {
             ? '#9a9db0'
             : spaceColor(n as unknown as Space),
       );
+      // Room fills are pastel; the dots need a stronger version of the same hue to stand out.
+      if (n.connected_to_outside && !n.closed) color.offsetHSL(0, 0.45, -0.3);
       dots.setColorAt(i++, color);
+      this.graphDotIds.push(id);
     }
     this.graph.add(lines, dots);
   }
@@ -956,9 +987,44 @@ export class BuildingScene {
     this.downAt = [e.clientX, e.clientY];
   };
 
+  /** The graph overlay is drawn on top, so it wins over the building underneath. */
+  private pickGraph(e: PointerEvent): THREE.Intersection | null {
+    if (!this.graph.children.length) return null;
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const ndc = new THREE.Vector2(
+      ((e.clientX - rect.left) / rect.width) * 2 - 1,
+      -((e.clientY - rect.top) / rect.height) * 2 + 1,
+    );
+    this.raycaster.setFromCamera(ndc, this.camera);
+    this.raycaster.params.Line.threshold = 0.3;
+    const hits = this.raycaster.intersectObjects(this.graph.children, false);
+    // Prefer a dot over the lines that meet at it.
+    return hits.find((h) => h.instanceId !== undefined) ?? hits[0] ?? null;
+  }
+
+  private showEdge(hit: THREE.Intersection) {
+    const e = this.graphData?.edges[this.graphSegments[(hit.index ?? 0) / 2]];
+    if (!e) return;
+    const name = e.name ?? `${e.kind} ${e.element.split('-').pop()}`;
+    const time = e.cost_m == null ? 'time unknown' : `~${Math.round(e.cost_m / WALK_SPEED)} s · ${e.cost_m.toFixed(1)} m`;
+    this.edgeTip.element.textContent = `${name}${e.closed ? ' (closed)' : ''}: ${time}`;
+    this.edgeTip.position.copy(hit.point);
+    this.edgeTip.visible = true;
+    this.needsRender = true;
+  }
+
   private handlePointerUp = (e: PointerEvent) => {
     if (!this.downAt || Math.hypot(e.clientX - this.downAt[0], e.clientY - this.downAt[1]) > 6) return;
     this.downAt = null;
+    this.edgeTip.visible = false;
+    this.needsRender = true;
+    const graphHit = this.pickGraph(e);
+    if (graphHit?.instanceId !== undefined) {
+      const id = this.graphDotIds[graphHit.instanceId];
+      if (this.objects.has(`space:${id}`)) this.onSelect({ kind: 'space', id });
+      return;
+    }
+    if (graphHit) return this.showEdge(graphHit);
     const obj = this.pick(e);
     if (obj && this.glb) {
       this.registerGlbObject(obj);
@@ -976,7 +1042,7 @@ export class BuildingScene {
   private setHovered(obj: THREE.Object3D | null) {
     if (obj === this.hovered) return;
     const isSelected = (o: THREE.Object3D) =>
-      this.selection && this.objects.get(selKey(this.selection)) === o;
+      (this.selection && this.objects.get(selKey(this.selection)) === o) || this.litAssets.includes(o);
     if (this.hovered && !isSelected(this.hovered)) this.restoreMaterial(this.hovered);
     this.hovered = obj;
     this.renderer.domElement.style.cursor = obj ? 'pointer' : '';

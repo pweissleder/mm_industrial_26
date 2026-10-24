@@ -53,6 +53,8 @@ def test_upload_creates_ingestible_dataset(client: TestClient, datasets_dir: Pat
     assert {"anchor", "floor_id", "elevation_m", "assets", "connected_to_outside"} <= room.keys()
     door = next(e for e in graph["edges"] if "position" in e)
     assert {"floor_id", "width_m", "closed"} <= door.keys()
+    assert all(e["cost_m"] is None or e["cost_m"] >= 0 for e in graph["edges"])
+    assert door["cost_m"] > 0
 
 
 def test_lists_and_serves_files(client: TestClient) -> None:

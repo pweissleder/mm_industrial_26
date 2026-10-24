@@ -158,6 +158,8 @@ export interface RoomGraphData {
     from_floor?: string;
     to_floor?: string;
     rise_m?: number;
+    /** Routing length of the hop (m, stairs/lifts as equivalent metres); null if it could not be measured. */
+    cost_m?: number | null;
   }[];
 }
 
