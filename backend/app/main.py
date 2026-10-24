@@ -25,6 +25,7 @@ from app.api.routes import (
 )
 from app.config import Settings, get_settings
 from app.guardrails import AnthropicInputClassifier, InputGuard
+from app.navigation import NavgraphNavigator, NavigatorFactory, NavigatorRegistry
 from app.pipeline.runner import PipelineRunner
 from app.storage import BuildingRepository, InMemoryBuildingRepository
 from app.tracing import configure_tracing
@@ -68,6 +69,7 @@ def create_app(
     model: BaseChatModel | None = None,
     managed_agent_runner: ManagedAgentRunner | None = None,
     building_repository: BuildingRepository | None = None,
+    navigator_factory: NavigatorFactory = NavgraphNavigator,
     pipeline_runner: PipelineRunner | None = None,
     input_guard: InputGuard | None = None,
 ) -> FastAPI:
@@ -76,7 +78,9 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.tracing_enabled = configure_tracing(settings)
-        app.state.building_repository = building_repository or InMemoryBuildingRepository()
+        repository = building_repository or InMemoryBuildingRepository()
+        app.state.building_repository = repository
+        app.state.navigators = NavigatorRegistry(repository, navigator_factory)
         guard = input_guard or create_input_guard(settings)
         app.state.graph = build_graph(model or create_chat_model(settings), guard=guard)
         runner = managed_agent_runner or create_managed_agent_runner(settings)

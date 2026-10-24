@@ -1,16 +1,32 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { api, datasetFileUrl, type HealthResponse, type UploadResponse } from '../../lib/api';
+import { api, datasetFileUrl, type RoomGraphData, type HealthResponse, type UploadResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import ChatDock, { type Draft } from './ChatDock';
 import DetailsCard from './DetailsCard';
-import { FitIcon, MinusIcon, PanelIcon, PlusIcon, TopIcon, CubeIcon, UploadIcon } from './Icons';
+import {
+  CubeIcon,
+  FitIcon,
+  MinusIcon,
+  OrbitIcon,
+  PanelIcon,
+  PanIcon,
+  PlusIcon,
+  TopIcon,
+  UploadIcon,
+} from './Icons';
 import Logo, { LogoMark } from './Logo';
 import { PipelineChip, PipelineDialog } from './PipelineStatus';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
-import { DEFAULT_VIEW, type CameraAction, type ObjectInfo, type ViewSettings } from './view';
+import {
+  DEFAULT_VIEW,
+  type CameraAction,
+  type NavMode,
+  type ObjectInfo,
+  type ViewSettings,
+} from './view';
 
 const LAST_DATASET = 'arinav:dataset';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
@@ -65,8 +81,10 @@ export default function AriNavApp() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [info, setInfo] = useState<ObjectInfo>();
   const [camera, setCamera] = useState<CameraCommand | null>(null);
+  const [navMode, setNavMode] = useState<NavMode>('orbit');
   const [sidebarOpen, setSidebarOpen] = useState(wide);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [graph, setGraph] = useState<RoomGraphData | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const isWide = useWide();
@@ -111,6 +129,20 @@ export default function AriNavApp() {
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
   const pipeline = usePipeline(dataset, buildingId, runRequest);
+
+  const graphOn = settings.layers.graph;
+  useEffect(() => {
+    setGraph(null);
+    if (!graphOn || !buildingId) return;
+    let live = true;
+    api
+      .buildingGraph(buildingId)
+      .then((g) => live && setGraph(g))
+      .catch(() => live && notify('Could not load the nav graph.'));
+    return () => {
+      live = false;
+    };
+  }, [graphOn, buildingId]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
   const wasBuilding = useRef(false);
@@ -231,9 +263,11 @@ export default function AriNavApp() {
         model={viewModel}
         hqUrl={showingHq ? hq.modelUrl : null}
         glbUrl={glbUrl}
+        graph={glbUrl ? null : graph}
         settings={settings}
         selection={selection}
         camera={camera}
+        navMode={navMode}
         insetLeft={isWide && sidebarOpen ? DOCKED_SIDEBAR_PX : 0}
         onSelect={handleSelect}
       />
@@ -292,6 +326,25 @@ export default function AriNavApp() {
       </div>
 
       <nav className="hud card" aria-label="Camera">
+        <button
+          className="icon-btn"
+          aria-pressed={navMode === 'orbit'}
+          onClick={() => setNavMode('orbit')}
+          aria-label="Orbit: drag to rotate"
+          title="Orbit — drag to rotate (right-drag or two fingers pan)"
+        >
+          <OrbitIcon />
+        </button>
+        <button
+          className="icon-btn"
+          aria-pressed={navMode === 'pan'}
+          onClick={() => setNavMode('pan')}
+          aria-label="Pan: drag to move"
+          title="Pan — drag to move (right-drag rotates)"
+        >
+          <PanIcon />
+        </button>
+        <span className="hud__sep" />
         <button className="icon-btn" onClick={() => runCamera('zoomIn')} aria-label="Zoom in">
           <PlusIcon />
         </button>
@@ -339,12 +392,18 @@ export default function AriNavApp() {
         </section>
       )}
 
-      <ChatDock health={health} backendDown={backendDown} draft={draft} />
+      <ChatDock
+        health={health}
+        backendDown={backendDown}
+        draft={draft}
+        buildingId={buildingId}
+        model={viewModel}
+        onSelect={selectFromList}
+      />
 
       <UploadDialog
         open={uploadOpen}
         datasets={datasets}
-        current={dataset}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />

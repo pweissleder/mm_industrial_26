@@ -1,9 +1,15 @@
+from typing import Any
+
+import networkx as nx
 from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import RepositoryDep
 from app.api.schemas import BuildingDetail, BuildingSummary, FloorOut
 from app.domain.building import BuildingFile
 from app.storage import BuildingRepository, StoredBuilding
+from navgraph.costs import OrganizerCost
+from navgraph.graph import RoomGraph
+from navgraph.model import OUTSIDE, Building
 
 router = APIRouter(prefix="/buildings", tags=["buildings"])
 
@@ -52,3 +58,29 @@ def get_building(building_id: str, repository: RepositoryDep) -> BuildingDetail:
 def get_building_model(building_id: str, repository: RepositoryDep) -> BuildingFile:
     """The full building (floors, spaces, openings, connectors, assets), e.g. for 3D rendering."""
     return _get(repository, building_id).data
+
+
+@router.get("/{building_id}/graph")
+def get_building_graph(building_id: str, repository: RepositoryDep) -> dict[str, Any]:
+    """The level-1 navgraph RoomGraph as node-link JSON, for the debug graph view."""
+    building = Building.from_dict(_get(repository, building_id).data.model_dump())
+    graph = RoomGraph(building).g
+    cost = OrganizerCost()
+    for a, b, e in graph.edges(data=True):
+        e["cost_m"] = _edge_cost(building, cost, a, b, e)
+    return nx.node_link_data(graph, edges="edges")
+
+
+def _edge_cost(building: Building, cost: OrganizerCost, a: str, b: str, e: dict[str, Any]) -> float | None:
+    """Routing length (m) of one hop: anchor -> door -> anchor, or the stair/lift ride."""
+    try:
+        if e["kind"] == "stairs":
+            return cost.stairs(e["rise_m"], e["floors"])
+        if e["kind"] == "lift":
+            return round(cost.lift_board() + cost.lift_ride(e["rise_m"], e["floors"]), 3)
+        door = e["position"]
+        return round(
+            sum(cost.walk(s, s.anchor, door) for s in (building.spaces[sid] for sid in (a, b) if sid != OUTSIDE)), 3
+        )
+    except Exception:  # degenerate room geometry: show the edge without a time
+        return None

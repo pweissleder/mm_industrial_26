@@ -4,6 +4,7 @@ from fastapi import Depends, HTTPException, Request, status
 
 from app.agent import AgentGraph, ManagedAgentGraph
 from app.config import Settings
+from app.navigation import NavigatorRegistry
 from app.storage import BuildingRepository
 
 
@@ -33,7 +34,13 @@ def get_managed_agent_graph(request: Request) -> ManagedAgentGraph:
     return graph
 
 
+def get_navigators(request: Request) -> NavigatorRegistry:
+    navigators: NavigatorRegistry = request.app.state.navigators
+    return navigators
+
+
 RepositoryDep = Annotated[BuildingRepository, Depends(get_repository)]
 SettingsDep = Annotated[Settings, Depends(get_app_settings)]
+NavigatorsDep = Annotated[NavigatorRegistry, Depends(get_navigators)]
 GraphDep = Annotated[AgentGraph, Depends(get_graph)]
 ManagedAgentGraphDep = Annotated[ManagedAgentGraph, Depends(get_managed_agent_graph)]

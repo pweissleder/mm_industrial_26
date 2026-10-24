@@ -14,6 +14,9 @@ class HealthResponse(BaseModel):
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     thread_id: str | None = Field(default=None, description="Omit to start a new conversation.")
+    building_id: str | None = Field(
+        default=None, description="Ingested building the agent reasons about; omit for plain chat."
+    )
 
 
 class GuardrailInfo(BaseModel):
@@ -32,6 +35,12 @@ class ChatResponse(BaseModel):
 
 class DatasetList(BaseModel):
     datasets: list[str]
+
+
+class DatasetAvailability(BaseModel):
+    dataset: str
+    available: bool = Field(description="True if a new dataset can be created under this name.")
+    reason: str | None = Field(default=None, description="Why the name can't be used.")
 
 
 class IngestionRequest(BaseModel):
