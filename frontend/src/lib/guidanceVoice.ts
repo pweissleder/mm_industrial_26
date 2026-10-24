@@ -46,6 +46,7 @@ export class GuidanceVoice {
   private readonly onChange?: (state: GuidanceVoiceState) => void;
   private current: AbortController | null = null;
   private pending: string | null = null;
+  private pendingPriority = 0;
   private suspended = false;
   private readonly keys = new Set<string>();
   private readonly cache = new Map<string, { pcm: string; rate: number }>();
@@ -73,15 +74,23 @@ export class GuidanceVoice {
    * becomes the single pending utterance (replacing an older pending one). Muted: remembered as
    * `last` (for repeat) but silent. Suspended: ignored entirely (the key is not consumed).
    */
-  say(key: string, text: string): void {
+  /**
+   * `priority`: a pending hint is replaced only by one of equal or higher priority, so a floor
+   * change or the arrival is not crowded out by a later turn or door hint at high speed.
+   */
+  say(key: string, text: string, priority = 0): void {
     const clean = text.trim();
     if (this.suspended || !clean || this.keys.has(key)) return;
     this.keys.add(key);
     if (this.keys.size > MAX_KEYS) this.keys.delete(this.keys.values().next().value as string);
     this.update({ last: clean });
     if (this.snapshot.muted) return;
-    if (this.current) this.pending = clean;
-    else this.start(clean);
+    if (this.current) {
+      if (this.pending === null || priority >= this.pendingPriority) {
+        this.pending = clean;
+        this.pendingPriority = priority;
+      }
+    } else this.start(clean);
   }
 
   /** Speaks the last text again right away (interrupting); does nothing when muted/suspended. */

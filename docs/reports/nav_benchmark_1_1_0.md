@@ -1,6 +1,6 @@
 # Navigation benchmark vs kit 1.1.0 answers
 
-`app.navigation.NavigationService` (backend), kit 1.1.0 (commit `dc03c447dbe5b2e5f82c7db0d72249931817d86d`); buildings from the kit ZIP via an in-memory BuildingRepository, questions from the verified kit checkout. Offline, deterministic, no model calls. Runtime 121.0 s (benchmark 78.5 s, routes 39.5 s, locate 2.1 s, count 0.8 s). Splits: train, dev. Sections: benchmark, routes, locate, count.
+`app.navigation.NavigationService` (backend), kit 1.1.0 (commit `dc03c447dbe5b2e5f82c7db0d72249931817d86d`); buildings from the kit ZIP via an in-memory BuildingRepository, questions from the verified kit checkout. Offline, deterministic, no model calls. Runtime 116.6 s (benchmark 80.3 s, routes 33.5 s, locate 2.0 s, count 0.8 s). Splits: train, dev. Sections: benchmark, routes, locate, count.
 
 | Section | Correct | Prototype reference |
 |---|---|---|

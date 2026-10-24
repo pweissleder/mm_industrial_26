@@ -83,6 +83,8 @@ export interface WalkerPose {
   floorId: string;
   position: Point;
   headingDeg: number;
+  /** Distance along the route (m): the part behind is drawn as done. */
+  distanceM?: number;
 }
 
 interface Preview {
@@ -201,6 +203,15 @@ export class BuildingScene {
   // Guidance: the walker figure, camera follow and a skippable route preview.
   private readonly walkerGroup = new THREE.Group();
   private walkerPose: WalkerPose | null = null;
+  private readonly doneGroup = new THREE.Group();
+  private doneDrawnAt = -1;
+  private readonly doneMat = new LineMaterial({
+    color: '#b8bcc8',
+    linewidth: 6,
+    depthTest: false,
+    transparent: true,
+    opacity: 0.95,
+  });
   private follow = false;
   private preview: Preview | null = null;
   private readonly routeMats = {
@@ -291,6 +302,7 @@ export class BuildingScene {
     this.scene.add(this.routeGroup);
     this.buildWalker();
     this.scene.add(this.walkerGroup);
+    this.scene.add(this.doneGroup);
 
     this.pin = makeLabel('', 'viewer__pin');
     this.pin.center.set(0.5, 1);
@@ -334,6 +346,8 @@ export class BuildingScene {
     this.clearRouteObjects();
     for (const m of Object.values(this.routeMats)) m.dispose();
     for (const m of Object.values(this.markerMats)) m.dispose();
+    this.clearDone();
+    this.doneMat.dispose();
     for (const m of [this.closedMat, this.diagnosisMat, this.highlightMat]) m.dispose();
     this.markerGeo.dispose();
     this.doorGeo.dispose();
@@ -412,6 +426,7 @@ export class BuildingScene {
 
   /** Draw a route (or clear it with null); `fit` flies the camera to it. */
   setRoute(route: RouteResponse | null, fit = false) {
+    this.clearDone();
     this.route = route;
     this.buildRoute();
     if (fit && route && this.routeGroup.children.length) {
@@ -433,7 +448,67 @@ export class BuildingScene {
       // Building frame is counter-clockwise from +x; toVec maps building +y to scene -z.
       this.walkerGroup.rotation.y = THREE.MathUtils.degToRad(pose.headingDeg);
     }
+    this.drawDone(pose?.distanceM ?? null);
     this.needsRender = true;
+  }
+
+  /** Grey out the part of the route already walked (rebuilt every half metre). */
+  private drawDone(distance: number | null) {
+    if (distance === null || !this.route?.waypoints?.length) {
+      if (this.doneDrawnAt !== -1) this.clearDone();
+      return;
+    }
+    if (this.doneDrawnAt >= 0 && Math.abs(distance - this.doneDrawnAt) < 0.5) return;
+    this.clearDone();
+    this.doneDrawnAt = distance;
+    const floorView = new Map(this.floors.map((fv) => [fv.floor.id, fv]));
+    const focus = this.settings.floor;
+    const y = (floorId: string) => {
+      const fv = floorView.get(floorId);
+      return (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + ROUTE_LIFT + 0.02;
+    };
+    const wps = this.route.waypoints;
+    let run: THREE.Vector3[] = [];
+    let floor = wps[0].floor_id;
+    const flush = () => {
+      const fv = floorView.get(floor);
+      if (run.length >= 2 && fv && (focus === 'all' || fv.floor.level <= focus)) {
+        const geo = new LineGeometry();
+        geo.setPositions(run.flatMap((v) => [v.x, v.y, v.z]));
+        const line = new Line2(geo, this.doneMat);
+        line.renderOrder = 12;
+        line.raycast = () => {};
+        this.doneGroup.add(line);
+      }
+      run = [];
+    };
+    for (let i = 0; i < wps.length; i++) {
+      const w = wps[i];
+      if (w.floor_id !== floor) {
+        flush();
+        floor = w.floor_id;
+      }
+      if (w.distance_m <= distance) {
+        run.push(toVec(w.position, y(w.floor_id)));
+        continue;
+      }
+      const prev = wps[i - 1];
+      if (prev && prev.floor_id === w.floor_id && w.distance_m > prev.distance_m) {
+        const t = (distance - prev.distance_m) / (w.distance_m - prev.distance_m);
+        const a = toVec(prev.position, y(w.floor_id));
+        run.push(a.lerp(toVec(w.position, y(w.floor_id)), Math.max(0, Math.min(1, t))));
+      }
+      break;
+    }
+    flush();
+  }
+
+  private clearDone() {
+    for (const child of [...this.doneGroup.children]) {
+      (child as Line2).geometry.dispose();
+      this.doneGroup.remove(child);
+    }
+    this.doneDrawnAt = -1;
   }
 
   setFollow(on: boolean) {
@@ -1397,6 +1472,7 @@ export class BuildingScene {
     this.renderer.setSize(w, h);
     this.labelRenderer.setSize(w, h);
     for (const m of Object.values(this.routeMats)) m.resolution.set(w, h);
+    this.doneMat.resolution.set(w, h);
     this.needsRender = true;
   }
 

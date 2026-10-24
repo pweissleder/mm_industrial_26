@@ -17,11 +17,11 @@
   "buildings": "~/Downloads/industrial-agents-hackathon-2026-main.zip"
  },
  "runtime_s": {
-  "benchmark": 78.53679339999508,
-  "routes": 39.51028650009539,
-  "locate": 2.0708021999016637,
-  "count": 0.8331991000304697,
-  "total": 121.02926019999722
+  "benchmark": 80.3005395999935,
+  "routes": 33.47061940051208,
+  "locate": 1.9751007999439025,
+  "count": 0.7547123000113061,
+  "total": 116.57628720000503
  },
  "headline": {
   "benchmark": {

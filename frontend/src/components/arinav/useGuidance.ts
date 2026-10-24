@@ -24,7 +24,7 @@ export interface PoseStore {
 }
 
 export interface GuidanceVoicePort {
-  say(key: string, text: string): void;
+  say(key: string, text: string, priority?: number): void;
   cancel(): void;
 }
 
@@ -116,7 +116,7 @@ export function useGuidance(args: {
       const p = snap.progress;
       pose.set(
         p && snap.status !== 'idle'
-          ? { floorId: p.floor_id, position: p.position, headingDeg: p.heading_deg }
+          ? { floorId: p.floor_id, position: p.position, headingDeg: p.heading_deg, distanceM: p.distance_m }
           : null,
       );
       const now = performance.now();
@@ -131,7 +131,11 @@ export function useGuidance(args: {
   const handle = useCallback(
     (events: SimEvent[]) => {
       for (const e of events) {
-        if (e.type === 'instruction') latest.current.voice?.say(e.key, e.instruction.text);
+        if (e.type === 'instruction') {
+          const k = e.instruction.kind;
+          const priority = k === 'arrive' ? 3 : k === 'stairs' || k === 'lift' || k === 'exit' ? 2 : 0;
+          latest.current.voice?.say(e.key, e.instruction.text, priority);
+        }
       }
       if (events.length) publish(true);
     },

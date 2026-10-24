@@ -299,3 +299,29 @@ describe('GuidanceVoice', () => {
     expect(states[1]).toMatchObject({ speed: 1, muted: true });
   });
 });
+
+describe('GuidanceVoice priority', () => {
+  it('keeps a pending floor change when a lower-priority hint arrives later', async () => {
+    const said: string[] = [];
+    let finish: () => void = () => {};
+    const port = {
+      synthesize: async (text: string) => ({ pcm: text, rate: 16000 }),
+      play: (pcm: string) => {
+        said.push(pcm);
+        return new Promise<void>((r) => (finish = r));
+      },
+      stop: () => {},
+    };
+    const voice = new GuidanceVoice(port);
+    voice.say('1', 'Go through the door.');
+    await Promise.resolve();
+    await Promise.resolve();
+    voice.say('2', 'Take the stairs down to Ground floor.', 2);
+    voice.say('3', 'Turn left.', 0);
+    finish();
+    await new Promise((r) => setTimeout(r, 0));
+    await new Promise((r) => setTimeout(r, 0));
+    expect(said).toContain('Take the stairs down to Ground floor.');
+    expect(said).not.toContain('Turn left.');
+  });
+});
