@@ -16,30 +16,58 @@ backend/   FastAPI app — app/main.py (factory), app/api (routes, schemas), app
            app/storage (storage interface + in-memory store), data/datasets (sample data)
 ```
 
-## Prerequisites
+Works the same on macOS, Windows and Linux. There are two ways to run it: everything in Docker, or each app natively with npm and uv.
 
-- [uv](https://docs.astral.sh/uv/) (installs/uses Python 3.11 from `backend/.python-version`)
-- Node.js ≥ 22.12 (CI uses 24)
-
-## Setup
+## Configuration
 
 ```bash
-make install
-cp backend/.env.example backend/.env   # add ANTHROPIC_API_KEY / LANGSMITH_API_KEY
+cp backend/.env.example backend/.env
 ```
 
-Without `ANTHROPIC_API_KEY` the agent runs in **offline mode** (echoes your message), so the whole stack works without keys.
+Add `ANTHROPIC_API_KEY` / `LANGSMITH_API_KEY` there. Without `ANTHROPIC_API_KEY` the agent runs in **offline mode** (echoes your message), so the whole stack works without keys. Both ways of running read this file.
 
-## Run locally
+## Run with Docker (both apps together)
+
+Needs [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine with Compose).
 
 ```bash
-make dev
+docker compose up --build
 ```
+
+Stop with Ctrl+C, or `docker compose down` if it runs detached (`-d`). Source folders are mounted into the containers, so code changes reload automatically (file watching uses polling, which is what works reliably on Windows and macOS bind mounts). After changing dependencies, rebuild with `--build`.
+
+## Run natively (each app on its own)
+
+Needs [uv](https://docs.astral.sh/uv/) (installs Python 3.11 from `backend/.python-version`) and Node.js ≥ 22.12. Use two terminals:
+
+```bash
+cd backend
+uv sync
+uv run poe dev
+```
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Backend tasks run through [Poe the Poet](https://poethepoet.natn.io/) (`uv run poe` lists them), the Python counterpart to `npm run`:
+
+| | Backend (`cd backend`) | Frontend (`cd frontend`) |
+|---|---|---|
+| Dev server with reload | `uv run poe dev` | `npm run dev` |
+| Tests | `uv run poe test` | `npm test` |
+| Lint + type-check | `uv run poe lint` | `npm run lint` |
+| Format | `uv run poe format` | — |
+| Live LangSmith test | `uv run poe test-live` | — |
+
+## URLs
 
 - Frontend: http://localhost:4321
 - Backend: http://localhost:8000 (OpenAPI docs at `/docs`)
 
-The browser only talks to the Astro dev server: it proxies `/api/*` to FastAPI (see `frontend/astro.config.mjs`), so there is no CORS in local dev. For split deployments, set `PUBLIC_API_BASE_URL` in the frontend and `CORS_ORIGINS` in the backend.
+The browser only talks to the Astro dev server: it proxies `/api/*` to FastAPI (`BACKEND_URL`, see `frontend/astro.config.mjs`; in Docker it points at the `backend` service), so there is no CORS in local dev. For split deployments, set `PUBLIC_API_BASE_URL` in the frontend and `CORS_ORIGINS` in the backend.
 
 ## Demo feature
 
@@ -57,6 +85,8 @@ Buildings use the starter kit's format (`building.json`: floors, spaces, opening
 
 One sample dataset ships in `backend/data/datasets/` (procedural factory "Fertigung Ost 27", CC0). To ingest any of the kit's 280 buildings without copying them, set `DATASETS_DIR=../problem_statement/industrial-agents-hackathon-2026/data/dev` (or `train`/`test`) in `backend/.env`.
 
+Try it from the OpenAPI docs at http://localhost:8000/docs, or with curl (macOS/Linux shells):
+
 ```bash
 curl -X POST localhost:8000/api/ingestions -H 'Content-Type: application/json' -d '{"dataset":"proc-factory-dev-003"}'
 ```
@@ -65,7 +95,7 @@ curl -X POST localhost:8000/api/ingestions -H 'Content-Type: application/json' -
 
 Set `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` (plus `LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com` for EU accounts) in `backend/.env`. On startup the backend exports these so every LangGraph run is traced to `LANGSMITH_PROJECT`; `/api/health` shows `tracing_enabled`. Each run is named after its endpoint (`chat`, `managed_agent_chat`) with the conversation's `thread_id` in its metadata, and ingestions are traced as `ingest_dataset`.
 
-`make test` checks tracing offline with a mocked LangSmith client. `make test-live` sends one real trace and reads it back from your project.
+`uv run poe test` checks tracing offline with a mocked LangSmith client. `uv run poe test-live` sends one real trace and reads it back from your project.
 
 ## Claude Managed Agents
 
@@ -74,17 +104,12 @@ Set `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` (plus `LANGSMITH_ENDPOINT=h
 The agent and environment are persistent resources: create them **once**, not per request.
 
 ```bash
-cd backend && uv run python -m scripts.setup_managed_agent
+cd backend
+uv run poe setup-managed-agent
 ```
 
 Put the printed `MANAGED_AGENT_ID` and `MANAGED_AGENT_ENVIRONMENT_ID` into `backend/.env`, then use `POST /api/managed-agent/chat` (same body as `/api/chat`). It returns 503 until configured. Running sessions show up in the Claude Console.
 
 ## Quality
 
-```bash
-make test       # pytest + vitest (offline)
-make test-live  # real LangSmith round trip
-make lint   # ruff, mypy, astro check
-```
-
-CI (`.github/workflows/ci.yml`) runs the same on every push and PR.
+CI (`.github/workflows/ci.yml`) runs lint, tests and the frontend build on Ubuntu, Windows and macOS, and starts the Docker Compose stack to check that the frontend reaches the backend. `.gitattributes` keeps line endings as LF so Windows checkouts behave the same in containers.

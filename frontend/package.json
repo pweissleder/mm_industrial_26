@@ -12,7 +12,7 @@
     "astro": "astro",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "astro check"
+    "lint": "astro check"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.1",

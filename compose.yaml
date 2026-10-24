@@ -1,0 +1,36 @@
+# Local development: both apps with hot reload. Run `docker compose up --build`.
+name: mm-industrial-26
+
+services:
+  backend:
+    build: ./backend
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    volumes:
+      # Source is mounted for hot reload; backend/.env is read from here too.
+      - ./backend:/app
+    environment:
+      # File events don't cross bind mounts reliably on Windows/macOS; poll instead.
+      WATCHFILES_FORCE_POLLING: "true"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "4321:4321"
+    volumes:
+      - ./frontend:/app
+      # Keep the container's Linux node_modules instead of the host's.
+      - /app/node_modules
+    environment:
+      BACKEND_URL: http://backend:8000
+      VITE_USE_POLLING: "true"
+    depends_on:
+      backend:
+        condition: service_healthy

@@ -1,7 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "backend", "runtimeExecutable": "make", "runtimeArgs": ["backend"], "port": 8000 },
-    { "name": "frontend", "runtimeExecutable": "make", "runtimeArgs": ["frontend"], "port": 4321 }
+    { "name": "backend", "runtimeExecutable": "uv", "runtimeArgs": ["run", "--directory", "backend", "poe", "dev"], "port": 8000 },
+    { "name": "frontend", "runtimeExecutable": "npm", "runtimeArgs": ["run", "--prefix", "frontend", "dev"], "port": 4321 }
   ]
 }
