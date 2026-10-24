@@ -12,6 +12,7 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from app.pipeline.agents.base import (
+    DATASET_IMAGE_NOTE,
     StageContext,
     agent_tool,
     as_json,
@@ -86,10 +87,12 @@ def run(ctx: StageContext) -> StageReport:
             path: Path | None = by_level.get(str(level))
             if path is None:
                 return [{"type": "text", "text": f"No floor {level}; have {sorted(by_level)}"}]
-            blocks = image_block(path, f"Generated plan, level {level}")
+            blocks = image_block(path, f"Generated plan, level {level} ({DATASET_IMAGE_NOTE})")
             dataset_plan = ctx.dataset_dir / f"floor_{level}_plain.png"
             if dataset_plan.is_file():
-                blocks += image_block(dataset_plan, f"Dataset plan, level {level}")
+                blocks += image_block(
+                    dataset_plan, f"Dataset plan, level {level} ({DATASET_IMAGE_NOTE})"
+                )
             return blocks
 
         review, usage = run_subagent(

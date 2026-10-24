@@ -9,7 +9,13 @@ from concurrent.futures import ThreadPoolExecutor
 
 from pydantic import BaseModel, Field
 
-from app.pipeline.agents.base import AgentError, StageContext, as_json, run_structured
+from app.pipeline.agents.base import (
+    AgentError,
+    StageContext,
+    dataset_json,
+    run_structured,
+    untrusted,
+)
 from app.pipeline.state import StageReport, Usage
 from app.pipeline.store import FloorMeta, LocationMetadata, SpaceMeta
 from app.pipeline.tools.stats import LocationStats, SpaceStats, compute_location_stats, space_brief
@@ -99,7 +105,7 @@ def run(ctx: StageContext) -> StageReport:
                 name="summarizer:building",
                 model=ctx.models.worker,
                 system=BUILDING_PROMPT,
-                user=f"Facts:\n{as_json(overview, limit=60_000)}",
+                user=f"Facts:\n{dataset_json(overview, limit=60_000)}",
                 output=BuildingText,
             )
         except AgentError as exc:
@@ -119,7 +125,7 @@ def run(ctx: StageContext) -> StageReport:
                     name="summarizer:spaces",
                     model=ctx.models.summary,
                     system=SPACES_PROMPT,
-                    user="\n".join(chunk),
+                    user=untrusted("\n".join(chunk)),
                     output=SpaceTexts,
                 )
             except AgentError as exc:

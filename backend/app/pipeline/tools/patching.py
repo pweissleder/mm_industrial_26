@@ -149,6 +149,28 @@ def deterministic_fixes(doc: dict[str, Any], issues: list[Issue]) -> list[FixTup
     fixes: list[FixTuple] = []
     idx = id_index(doc)
 
+    # First, while the pointers recorded by the check are still valid (removals below).
+    text_ops: list[dict[str, Any]] = []
+    text_ids: list[str] = []
+    for i in issues:
+        if i.issue_class != "suspicious_text":
+            continue
+        text_ops += [
+            {"op": "replace", "path": f"{i.details['pointer']}/{name}", "value": value}
+            for name, value in i.details["replacements"].items()
+        ]
+        text_ids.append(i.id)
+    if text_ops:
+        fixes.append(
+            (
+                text_ops,
+                f"Replace instruction-like text in {len(text_ids)} entities with neutral values "
+                "(possible prompt injection; the original stays in raw.json).",
+                text_ids,
+                "suspicious_text",
+            )
+        )
+
     rot_ops: list[dict[str, Any]] = []
     rot_ids: list[str] = []
     for i in issues:

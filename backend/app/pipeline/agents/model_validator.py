@@ -11,9 +11,10 @@ from typing import Any
 from pydantic import BaseModel, Field
 
 from app.pipeline.agents.base import (
+    DATASET_IMAGE_NOTE,
     StageContext,
     agent_tool,
-    as_json,
+    dataset_json,
     image_block,
     retry_note,
     run_subagent,
@@ -62,7 +63,7 @@ def run(ctx: StageContext) -> StageReport:
         @agent_tool
         def numeric_report() -> str:
             """The numeric validation report (counts, max errors, failures, warnings)."""
-            return as_json(report.model_dump(mode="json"))
+            return dataset_json(report.model_dump(mode="json"))
 
         @agent_tool
         def compare_floor(level: int) -> list[Any]:
@@ -75,9 +76,9 @@ def run(ctx: StageContext) -> StageReport:
             theirs = ctx.dataset_dir / f"floor_{level}_plain.png"
             if ours is None:
                 return [{"type": "text", "text": f"No floor {level}; have {sorted(by_level)}"}]
-            blocks = image_block(ours, f"Generated model, level {level}")
+            blocks = image_block(ours, f"Generated model, level {level} ({DATASET_IMAGE_NOTE})")
             if theirs.is_file():
-                blocks += image_block(theirs, f"Dataset plan, level {level}")
+                blocks += image_block(theirs, f"Dataset plan, level {level} ({DATASET_IMAGE_NOTE})")
             return blocks
 
         verdict, usage = run_subagent(

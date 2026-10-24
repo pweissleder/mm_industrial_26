@@ -20,6 +20,7 @@ from app.pipeline.agents.base import (
     StageContext,
     agent_tool,
     as_json,
+    dataset_json,
     image_block,
     retry_note,
     run_subagent,
@@ -92,7 +93,7 @@ def _create_one(
     @agent_tool
     def examples() -> str:
         """Names, category, footprint sizes and rooms of this type in the building."""
-        return as_json(type_examples(building, asset_type))
+        return dataset_json(type_examples(building, asset_type))
 
     @agent_tool
     def check_spec(spec: SpecArg) -> str:
@@ -114,7 +115,7 @@ def _create_one(
         if problems:
             return [{"type": "text", "text": as_json(problems)}]
         path = render_spec(spec, preview_dir / f"{asset_type}.png")
-        return image_block(path, f"Preview of {asset_type} (unit box)")
+        return image_block(path, "Preview of the spec (unit box)")
 
     @agent_tool
     def save_spec(spec: SpecArg) -> str:
@@ -140,7 +141,8 @@ def _create_one(
         model=ctx.models.worker,
         system=SYSTEM_PROMPT,
         user=(
-            f"Create the library model for asset type {asset_type!r}. Why: {reason}."
+            "Create the library model for the asset type below (`type` is the exact value "
+            f"for spec.type).\n{dataset_json({'type': asset_type, 'why': reason})}"
             f"{retry_note(ctx)}"
         ),
         tools=[examples, check_spec, preview_spec, save_spec],
