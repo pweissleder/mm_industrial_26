@@ -1,0 +1,10 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ChatDemo from '../components/ChatDemo';
+---
+
+<Layout title="Talk to Your Building">
+  <h1>Talk to Your Building</h1>
+  <p>Demo: an Astro page hosting a React island that talks to the FastAPI + LangGraph backend.</p>
+  <ChatDemo client:load />
+</Layout>

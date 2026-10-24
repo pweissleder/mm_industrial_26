@@ -1,0 +1,53 @@
+"""Application settings, loaded from environment variables and `.env`."""
+
+from functools import lru_cache
+from pathlib import Path
+
+from pydantic import Field, field_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    app_name: str = "mm-industrial-26 API"
+    environment: str = "development"
+
+    # Origins allowed to call the API directly (the Astro dev server proxies /api,
+    # so this only matters when the frontend talks to the backend cross-origin).
+    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:4321"])
+
+    anthropic_api_key: str | None = None
+    anthropic_model: str = "claude-opus-5-5"
+
+    # Claude Managed Agents; create both once with scripts/setup_managed_agent.py.
+    managed_agent_id: str | None = None
+    managed_agent_environment_id: str | None = None
+
+    # Folder whose subfolders are ingestible datasets (one building.json each).
+    datasets_dir: Path = BACKEND_DIR / "data" / "datasets"
+
+    # LangSmith; app.tracing exports these so LangChain/LangGraph pick them up.
+    langsmith_tracing: bool = False
+    langsmith_api_key: str | None = None
+    langsmith_project: str = "mm-industrial-26"
+    langsmith_endpoint: str = "https://api.smith.langchain.com"
+
+    @field_validator(
+        "anthropic_api_key",
+        "managed_agent_id",
+        "managed_agent_environment_id",
+        "langsmith_api_key",
+        mode="before",
+    )
+    @classmethod
+    def _blank_as_none(cls, value: object) -> object:
+        # `KEY=` in .env yields "", which should mean "not configured".
+        return value or None
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
