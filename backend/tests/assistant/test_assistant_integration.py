@@ -93,6 +93,12 @@ def test_nearest_exit_from_first_floor_ends_at_the_exit_door(
         "-F0"
     )
     assert any(t["kind"] in {"stairs", "lift"} for t in route["transitions"])
+    # Phase B contract: the waypoints' space sequence is the route's space_path.
+    spaces: list[str] = []
+    for point in route["waypoints"]:
+        if not spaces or spaces[-1] != point["space_id"]:
+            spaces.append(point["space_id"])
+    assert spaces == route["space_path"]
     assert out["phases"][-1] == "Showing directions"
     # Directions shown to people carry no element ids; the router's own lines stay available.
     assert route["directions"] and not any(B in line for line in route["directions"])

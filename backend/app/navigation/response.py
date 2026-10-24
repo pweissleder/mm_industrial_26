@@ -343,6 +343,9 @@ def waypoints(
 ) -> list[JSON]:
     """Phase B animation points along `path`: one per polyline vertex, door and floor change.
 
+    `space_id` is the space the walker is in on reaching the point (a door vertex keeps the space
+    before the door; the next point carries the space behind it).
+
     `distance_m` accumulates XY walking length plus the cost of each vertical move; `fraction` is
     `distance_m` over the total; `heading_deg` is the travel direction to the next point that has a
     different XY (0 deg = +x, counter-clockwise), kept through vertical moves.
@@ -350,7 +353,14 @@ def waypoints(
     elevation = {f["id"]: float(f.get("elevation_m") or 0.0) for f in building["floors"]}
     points: list[JSON] = []
 
-    def add(floor_id: str, xy: list[float], kind: str, step: float, element: str | None) -> None:
+    def add(
+        floor_id: str,
+        xy: list[float],
+        kind: str,
+        step: float,
+        element: str | None,
+        space_id: str | None = None,
+    ) -> None:
         if points:
             last = points[-1]
             if last["floor_id"] == floor_id and math.dist(last["position"], xy) <= SAME_POINT_M:
@@ -359,6 +369,8 @@ def waypoints(
                 return
         distance = (points[-1]["distance_m"] if points else 0.0) + step
         item: JSON = {"floor_id": floor_id, "position": xy, "kind": kind, "distance_m": distance}
+        if space_id is not None:
+            item["space_id"] = space_id
         if element is not None:
             item["element_id"] = element
         points.append(item)
@@ -373,6 +385,7 @@ def waypoints(
                 kind,
                 _step(points, entry["from_floor_id"], xy),
                 entry["element_id"],
+                entry.get("space_id"),
             )
             if points[-1]["floor_id"] == entry["from_floor_id"]:
                 points[-1]["kind"], points[-1]["element_id"] = kind, entry["element_id"]
@@ -382,16 +395,19 @@ def waypoints(
                 kind,
                 float(entry.get("cost_m") or 0.0),
                 entry["element_id"],
+                entry.get("to_space_id"),
             )
             continue
         for xy in entry["points"]:
-            add(entry["floor_id"], xy, "walk", _step(points, entry["floor_id"], xy), None)
+            step = _step(points, entry["floor_id"], xy)
+            add(entry["floor_id"], xy, "walk", step, None, entry.get("space_id"))
     if not points:
         for end in (start, target):
             if end.get("position") is not None and end.get("floor_id") is not None:
                 points.append(
                     {
                         "floor_id": end["floor_id"],
+                        "space_id": end.get("space_id"),
                         "position": end["position"],
                         "kind": "walk",
                         "distance_m": 0.0,

@@ -7,7 +7,7 @@
 // and the assistant's explicit offline state. --live adds real assistant turns (Claude) incl. an
 // exit route and an ambiguous follow-up; it costs a few cents.
 import { createRequire } from 'node:module';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const require = createRequire(import.meta.url);
@@ -18,6 +18,8 @@ const OUT = args.includes('--out') ? args[args.indexOf('--out') + 1] : 'docs/rep
 const BASE = process.env.ARINAV_URL || 'http://localhost:4321';
 const CHROME = process.env.CHROME_PATH || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 mkdirSync(OUT, { recursive: true });
+// Failure screenshots belong to one run; drop the previous run's.
+for (const f of readdirSync(OUT)) if (f.startsWith('fail-')) rmSync(join(OUT, f));
 
 const results = [];
 const consoleErrors = [];

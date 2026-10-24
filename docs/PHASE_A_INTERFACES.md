@@ -5,6 +5,13 @@ the building data from the `BuildingRepository` plus the RAM scenario (closures,
 The AriNav UI (manual actions), the Claude assistant tools and voice all call this service; nothing
 keeps a second copy. Restarting the backend clears scenarios (as the repository does today).
 
+The team's navgraph engine (Alex, `backend/navgraph`, `app.navigation.{base,navgraph_engine,registry}`)
+behind `/api/chat` and `/api/buildings/{id}/graph` reads the same repository and **mirrors** this
+scenario (`app.navigation.scenario_sync`): closures are copied in before every call and its write
+tools (`set_closed`, `add_door`, `move_asset`, builder tools, `save`) are not offered. The graph
+overlay shows the scenario closures. Routing answers in AriNav come from the vendored official
+kit 1.1.0 router; navgraph is not used for them.
+
 Ownership (separate modules, separate tests):
 
 | Area | Backend module | Routes | Tests |
@@ -68,16 +75,19 @@ the official route ends at the exit door (graph node `door:<id>`), never continu
   "path": [{"floor_id", "space_id", "kind": "walk" | "door" | "connector", "points": [[x, y], ...]}],
   "transitions": [{"kind": "door" | "stairs" | "lift", "element_id", "from_floor_id", "to_floor_id",
                    "position": [x, y], "schematic": bool, "cost_m": 7.0}],
-  "waypoints": [{"index", "floor_id", "elevation_m", "position": [x, y], "heading_deg",
+  "waypoints": [{"index", "floor_id", "space_id", "elevation_m", "position": [x, y], "heading_deg",
                  "kind": "start" | "walk" | "door" | "stairs" | "lift" | "target",
                  "element_id"?, "distance_m", "fraction"}],   // Phase B: camera/walker follows these
-  "directions": ["Walk about 12 m through the door into Office corridor 0.16.", ...],  // router text only
+  "directions": ["Walk about 12 m through the door into Office corridor 0.16.", ...],  // router text, ids removed
+  "directions_raw": [...],                 // the router's own lines (with element ids)
   "unreachable_reason"?: str, "diagnosis"?: {...}, "warnings": [...], "assumptions": [...],
   "elapsed_ms": 12.3 }
 ```
 
 `heading_deg`: direction of travel in the building XY frame (0° = +x, counter-clockwise).
 `fraction` = `distance_m` / total distance along `path` (vertical moves count their cost).
+`space_id` = the space the walker is in on reaching the point; the waypoints' space sequence equals
+`space_path`. Phase B builds on these fields: see `docs/PHASE_B_CONTRACT.md`.
 Schematic vertical moves have identical start/end XY and `schematic: true`.
 
 ## Assistant API (`/api/assistant`)
@@ -85,7 +95,7 @@ Schematic vertical moves have identical start/end XY and `schematic: true`.
 | Method & path | Body | Returns |
 |---|---|---|
 | `GET /api/assistant/status` | – | `{live, voice, model, effort, tts_speed: {min, max, default}}` |
-| `POST /api/assistant/turn` | `{session_id?, text, ui: UiState, speak?, voice?, tts_speed?}` | `TurnResponse` |
+| `POST /api/assistant/turn` | `{session_id?, text, ui: UiState, speak?, voice?, tts_speed?}` (no `session_id` on the first turn: the server creates one and returns it) | `TurnResponse` |
 | `POST /api/assistant/confirm` | `{session_id, proposal_id, approved}` | `{status: "applied"\|"cancelled", message, state}` |
 | `POST /api/assistant/reset` | `{session_id}` | `{status}` |
 | `POST /api/assistant/transcribe` | `{audio: base64 WAV 16 kHz mono, 0.1–10 s}` | `{text, stt_ms}` |
@@ -94,7 +104,7 @@ Schematic vertical moves have identical start/end XY and `schematic: true`.
 mode?: "official"|"precision", step_free?, profile?, width_m?, safety_m?}`.
 
 `TurnResponse`: `{session_id, reply, status, phases: ["Finding destinations", "Checking routes",
-"Showing directions", ...], ui: {route?: RouteResponse, route_error?, focus?: {kind, id},
+"Showing directions", ...], ui: {route?: RouteResponse, route_request?, route_error?, focus?: {kind, id},
 highlight?: [ids], endpoints?: {start, destination}, settings?, proposal?: {proposal_id, action,
 element_id, element_name, element_kind}, operation?, building_id?}, tools: [{tool, input, status,
 output, elapsed_ms}] /* developer mode */, usage: {input_tokens, output_tokens, cache_*,

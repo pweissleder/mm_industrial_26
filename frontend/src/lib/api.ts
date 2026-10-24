@@ -218,6 +218,8 @@ export interface RouteTransition {
 export interface RouteWaypoint {
   index: number;
   floor_id: string;
+  /** Space the walker is in on reaching this point (a door keeps the space before it). */
+  space_id?: string | null;
   elevation_m: number;
   position: Point;
   heading_deg: number;
@@ -251,7 +253,9 @@ export interface RouteResponse {
   path: RoutePathSegment[];
   transitions: RouteTransition[];
   waypoints?: RouteWaypoint[];
+  /** Router directions without element ids; `directions_raw` keeps the router's own lines. */
   directions: string[];
+  directions_raw?: string[];
   unreachable_reason?: string | null;
   diagnosis?: Diagnosis | null;
   warnings: string[];
