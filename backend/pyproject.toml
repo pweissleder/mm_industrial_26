@@ -6,10 +6,16 @@ requires-python = ">=3.11"
 dependencies = [
     "anthropic>=1.17.0",
     "fastapi>=0.162.0",
+    "jsonpatch>=1.36",
     "langchain-anthropic>=1.7.6",
     "langgraph>=1.2.17",
     "langsmith>=0.14.12",
+    "mapbox-earcut>=2.1.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
     "pydantic-settings>=2.16.1",
+    "shapely>=2.2.0",
+    "trimesh>=5.2.0",
     "uvicorn[standard]>=0.54.0",
 ]
 
@@ -21,6 +27,7 @@ dev = [
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
     "ruff>=0.17.2",
+    "types-shapely>=2.1.0.20260728",
 ]
 
 [tool.pytest.ini_options]
@@ -56,3 +63,14 @@ format = { sequence = [
     { cmd = "ruff check --fix ." },
 ], help = "Format and auto-fix" }
 setup-managed-agent = { cmd = "python -m scripts.setup_managed_agent", help = "Create the Managed Agent once" }
+ingest = { cmd = "python -m scripts.ingest", help = "Run the agentic ingestion pipeline on datasets" }
+
+# trimesh is only partially typed; geometry code calls its untyped helpers.
+[[tool.mypy.overrides]]
+module = ["app.pipeline.tools.geo3d.*"]
+disallow_untyped_calls = false
+warn_return_any = false
+
+[[tool.mypy.overrides]]
+module = ["jsonpatch", "trimesh.*"]
+ignore_missing_imports = true

@@ -1,0 +1,103 @@
+{
+ "spec": {
+  "type": "cnc_mill",
+  "category": "machine",
+  "description": "CNC mill: enclosure, head, control pendant and chip conveyor.",
+  "default_height_m": 2.4,
+  "primitives": [
+   {
+    "kind": "box",
+    "center": [
+     -0.125,
+     0.0,
+     0.4
+    ],
+    "size": [
+     0.75,
+     1.0,
+     0.8
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.15000000000000002,
+     0.25,
+     0.9
+    ],
+    "size": [
+     0.6,
+     0.5,
+     0.19999999999999996
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.1,
+     -0.48,
+     0.475
+    ],
+    "size": [
+     0.6000000000000001,
+     0.03999999999999998,
+     0.55
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.4,
+     -0.3,
+     0.7
+    ],
+    "size": [
+     0.2,
+     0.4,
+     0.29999999999999993
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.39,
+     -0.38,
+     0.275
+    ],
+    "size": [
+     0.06,
+     0.040000000000000036,
+     0.55
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.375,
+     0.25,
+     0.1
+    ],
+    "size": [
+     0.25,
+     0.5,
+     0.2
+    ]
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     -0.15,
+     -0.2,
+     0.8500000000000001
+    ],
+    "radius": 0.08,
+    "length": 0.09999999999999998,
+    "axis": "z"
+   }
+  ]
+ },
+ "provenance": "seed",
+ "run_id": null,
+ "version": 1,
+ "created_at": "2026-10-24T15:44:34.373298Z"
+}

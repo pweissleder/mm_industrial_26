@@ -1,0 +1,147 @@
+{
+ "spec": {
+  "type": "office_chair",
+  "category": "furniture",
+  "description": "Swivel chair: star base, gas column, seat and backrest.",
+  "default_height_m": 1.0,
+  "primitives": [
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.06
+    ],
+    "size": [
+     1.0,
+     0.12,
+     0.06
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.06
+    ],
+    "size": [
+     0.12,
+     1.0,
+     0.06
+    ]
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     0.0,
+     0.0,
+     0.27
+    ],
+    "radius": 0.07,
+    "length": 0.36,
+    "axis": "z"
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.5
+    ],
+    "size": [
+     0.9,
+     0.9,
+     0.10000000000000003
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.39,
+     0.775
+    ],
+    "size": [
+     0.8,
+     0.12,
+     0.44999999999999996
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.45999999999999996,
+     0.0,
+     0.6599999999999999
+    ],
+    "size": [
+     0.08000000000000002,
+     0.4,
+     0.07999999999999996
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.45999999999999996,
+     0.0,
+     0.6599999999999999
+    ],
+    "size": [
+     0.08000000000000002,
+     0.4,
+     0.07999999999999996
+    ]
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     -0.45,
+     0.0,
+     0.02
+    ],
+    "radius": 0.05,
+    "length": 0.04,
+    "axis": "z"
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     0.45,
+     0.0,
+     0.02
+    ],
+    "radius": 0.05,
+    "length": 0.04,
+    "axis": "z"
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     0.0,
+     -0.45,
+     0.02
+    ],
+    "radius": 0.05,
+    "length": 0.04,
+    "axis": "z"
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     0.0,
+     0.45,
+     0.02
+    ],
+    "radius": 0.05,
+    "length": 0.04,
+    "axis": "z"
+   }
+  ]
+ },
+ "provenance": "seed",
+ "run_id": null,
+ "version": 1,
+ "created_at": "2026-10-24T15:44:34.368422Z"
+}
