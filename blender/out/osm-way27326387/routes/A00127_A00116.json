@@ -1,0 +1,91 @@
+{
+  "from": {
+    "asset_id": "osm-way27326387-A00127",
+    "name": "Chair E11A-B",
+    "space_id": "osm-way27326387-F0-S017"
+  },
+  "to": {
+    "asset_id": "osm-way27326387-A00116",
+    "name": "Chair E06A",
+    "space_id": "osm-way27326387-F0-S014"
+  },
+  "step_free": false,
+  "length_m": 28.47,
+  "room_to_room_length_m": 27.48,
+  "element_path": [
+    "osm-way27326387-F0-O0048",
+    "osm-way27326387-F0-O0023",
+    "osm-way27326387-F0-O0037",
+    "osm-way27326387-F0-O0032"
+  ],
+  "space_path": [
+    "osm-way27326387-F0-S017",
+    "osm-way27326387-F0-S021",
+    "osm-way27326387-F0-S020",
+    "osm-way27326387-F0-S007",
+    "osm-way27326387-F0-S014"
+  ],
+  "spaces": {
+    "osm-way27326387-F0-S014": "Generic room E06A",
+    "osm-way27326387-F0-S017": "Generic room E11A",
+    "osm-way27326387-F0-S020": "Corridor E14",
+    "osm-way27326387-F0-S007": "Corridor E15",
+    "osm-way27326387-F0-S021": "Stairwell E13"
+  },
+  "points": [
+    {
+      "node": "osm-way27326387-A00127",
+      "x": 5.185,
+      "y": -9.29,
+      "z": 0.0
+    },
+    {
+      "node": "door:osm-way27326387-F0-O0048",
+      "x": 4.129,
+      "y": -9.077,
+      "z": 0.0
+    },
+    {
+      "node": "osm-way27326387-F0-S021",
+      "x": 3.2809785704012646,
+      "y": -7.6515,
+      "z": 0.0
+    },
+    {
+      "node": "door:osm-way27326387-F0-O0023",
+      "x": 1.18,
+      "y": -5.352,
+      "z": 0.0
+    },
+    {
+      "node": "osm-way27326387-F0-S020",
+      "x": -0.10064282163863791,
+      "y": 0.6724999999999999,
+      "z": 0.0
+    },
+    {
+      "node": "door:osm-way27326387-F0-O0037",
+      "x": -1.341,
+      "y": 6.708,
+      "z": 0.0
+    },
+    {
+      "node": "osm-way27326387-F0-S007",
+      "x": -0.6527886928435764,
+      "y": 7.6805,
+      "z": 0.0
+    },
+    {
+      "node": "door:osm-way27326387-F0-O0032",
+      "x": -3.151,
+      "y": 7.205,
+      "z": 0.0
+    },
+    {
+      "node": "osm-way27326387-A00116",
+      "x": -9.504,
+      "y": 8.864,
+      "z": 0.0
+    }
+  ]
+}

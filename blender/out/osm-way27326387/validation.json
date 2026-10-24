@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "total_failures": 0,
+  "dataset_warnings": [],
+  "categories": {
+    "assets": {
+      "checked": 184,
+      "n_failures": 0,
+      "max_error": {
+        "pos": 5.90033913815529e-07,
+        "z": 0.0,
+        "rot_deg": 1.147900144360392e-05,
+        "width": 1.4305114737211966e-07,
+        "depth": 7.152557368605983e-08
+      },
+      "missing": [],
+      "duplicates": {},
+      "extra": [],
+      "failures": []
+    },
+    "spaces": {
+      "checked": 61,
+      "n_failures": 0,
+      "max_error": {
+        "vert_xy": 5.619917867351956e-07,
+        "z": 0.0,
+        "vert_count_diff": 0.0
+      },
+      "missing": [],
+      "duplicates": {},
+      "extra": [],
+      "failures": []
+    },
+    "openings": {
+      "checked": 68,
+      "n_failures": 0,
+      "max_error": {
+        "pos": 4.769439571193902e-07,
+        "z": 0.0
+      },
+      "missing": [],
+      "duplicates": {},
+      "extra": [],
+      "failures": []
+    }
+  }
+}

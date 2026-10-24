@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Building Model Viewer</title>
+<style>
+  :root { --bg: #1b1d22; --panel: rgba(30, 33, 40, 0.92); --fg: #e6e8ec; --muted: #9aa1ad; --accent: #4f9cf9; --line: #343944; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 13px/1.4 system-ui, -apple-system, sans-serif; overflow: hidden; }
+  #app { position: fixed; inset: 0; }
+  .panel { position: fixed; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; backdrop-filter: blur(6px); }
+  #controls { top: 12px; left: 12px; width: 240px; max-height: calc(100% - 24px); overflow: auto; }
+  #info { top: 12px; right: 12px; width: 300px; max-height: calc(100% - 24px); overflow: auto; display: none; }
+  h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 12px 0 6px; }
+  h2:first-child { margin-top: 0; }
+  label { display: flex; align-items: center; gap: 6px; padding: 2px 0; cursor: pointer; }
+  select, button { width: 100%; background: #262a33; color: var(--fg); border: 1px solid var(--line); border-radius: 5px; padding: 5px 6px; font: inherit; }
+  button { cursor: pointer; margin-top: 4px; }
+  button:hover { border-color: var(--accent); }
+  .row { display: flex; gap: 6px; }
+  .row button { flex: 1; }
+  .floor { display: flex; align-items: center; justify-content: space-between; }
+  .floor a { color: var(--accent); cursor: pointer; font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 2px 0; vertical-align: top; word-break: break-all; }
+  td:first-child { color: var(--muted); padding-right: 8px; white-space: nowrap; word-break: normal; }
+  #info .title { font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+  #status { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); color: var(--muted); }
+  #drop { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(79, 156, 249, .15); border: 3px dashed var(--accent); font-size: 18px; pointer-events: none; }
+  .hint { color: var(--muted); font-size: 12px; margin-top: 10px; }
+  @media (max-width: 640px) { #controls { width: calc(100% - 24px); max-height: 40%; } #info { top: auto; bottom: 12px; left: 12px; right: 12px; width: auto; max-height: 40%; } }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="controls" class="panel">
+  <h2>Model</h2>
+  <select id="model"></select>
+  <h2>Route</h2>
+  <select id="route"><option value="">None</option></select>
+  <div id="routeInfo" class="hint" style="margin-top:6px"></div>
+  <h2>Floors</h2>
+  <div id="floors"></div>
+  <div class="row"><button id="allFloors">All floors</button></div>
+  <h2>Layers</h2>
+  <label><input type="checkbox" data-layer="walls" checked> Walls</label>
+  <label><input type="checkbox" data-layer="assets" checked> Assets</label>
+  <label><input type="checkbox" data-layer="openings" checked> Openings</label>
+  <label><input type="checkbox" data-layer="labels" checked> Labels</label>
+  <label><input type="checkbox" data-layer="connectors" checked> Connectors</label>
+  <h2>View</h2>
+  <div class="row"><button id="view3d">3D</button><button id="viewTop">Top</button></div>
+  <div class="hint">Click an object to inspect it. Drop a .glb file anywhere to open it.</div>
+</div>
+
+<div id="info" class="panel"></div>
+<div id="status">Loading…</div>
+<div id="drop">Drop .glb to open</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const OUT_DIR = '../out/';
+const $ = (id) => document.getElementById(id);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(innerWidth, innerHeight);
+$('app').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1b1d22);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x444455, 1.6));
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.position.set(30, 60, 20);
+scene.add(sun);
+
+const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.05, 5000);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+const grid = new THREE.GridHelper(200, 200, 0x3a3f4a, 0x2a2e36);
+scene.add(grid);
+
+const loader = new GLTFLoader();
+let root = null;
+let floors = [];          // [{ level, elevation, nodes: [] }]
+const layerState = { walls: true, assets: true, openings: true, labels: true, connectors: true };
+const floorVisible = new Map();
+let bounds = new THREE.Box3();
+
+// Layer of a top-level node, from its glTF extras / name (see blender/README.md "Scene structure").
+function layerOf(node) {
+  const x = node.userData || {};
+  if (x.asset_id) return 'assets';
+  if (x.opening_id) return 'openings';
+  if (x.connector_id) return 'connectors';
+  if (x.space_id) return 'spaces';
+  if (/^Walls/.test(node.name)) return 'walls';
+  if (/^Label/.test(node.name)) return 'labels';
+  return 'other';
+}
+
+function analyse(model) {
+  const nodes = [...model.children];
+  // Floor elevations from spaces (they carry floor_level); the slab top is the bbox max of the floor mesh.
+  const elev = new Map();
+  for (const n of nodes) {
+    const lvl = n.userData?.floor_level;
+    if (lvl === undefined || layerOf(n) !== 'spaces') continue;
+    const box = new THREE.Box3().setFromObject(n);
+    elev.set(lvl, Math.min(elev.get(lvl) ?? Infinity, box.max.y));
+  }
+  floors = [...elev.entries()].sort((a, b) => a[1] - b[1]).map(([level, elevation]) => ({ level, elevation, nodes: [] }));
+  for (const n of nodes) {
+    n.userData.layer = layerOf(n);
+    if (n.userData.layer === 'connectors') continue; // spans floors
+    let f = floors.find((f) => f.level === n.userData.floor_level);
+    if (!f) {
+      // Labels/openings have no floor_level: pick the highest floor at or below the object.
+      const y = new THREE.Box3().setFromObject(n).min.y + 0.3;
+      f = [...floors].reverse().find((f) => f.elevation <= y) ?? floors[0];
+    }
+    f?.nodes.push(n);
+    n.userData.floor = f?.level;
+  }
+}
+
+function applyVisibility() {
+  if (!root) return;
+  for (const n of root.children) {
+    const { layer, floor } = n.userData;
+    const layerOn = layerState[layer] ?? true;
+    const floorOn = floor === undefined ? true : floorVisible.get(floor) !== false;
+    n.visible = layerOn && floorOn;
+  }
+}
+
+function buildFloorUI() {
+  const box = $('floors');
+  box.innerHTML = '';
+  floorVisible.clear();
+  for (const f of [...floors].reverse()) {
+    floorVisible.set(f.level, true);
+    const row = document.createElement('div');
+    row.className = 'floor';
+    row.innerHTML = `<label><input type="checkbox" checked> Level ${f.level} <span style="color:var(--muted)">(${f.elevation.toFixed(1)} m)</span></label><a>solo</a>`;
+    const cb = row.querySelector('input');
+    cb.onchange = () => { floorVisible.set(f.level, cb.checked); applyVisibility(); };
+    row.querySelector('a').onclick = () => {
+      for (const [lvl] of floorVisible) floorVisible.set(lvl, lvl === f.level);
+      box.querySelectorAll('input').forEach((el, i) => (el.checked = [...floors].reverse()[i].level === f.level));
+      applyVisibility();
+    };
+    box.appendChild(row);
+  }
+}
+
+$('allFloors').onclick = () => {
+  for (const [lvl] of floorVisible) floorVisible.set(lvl, true);
+  $('floors').querySelectorAll('input').forEach((el) => (el.checked = true));
+  applyVisibility();
+};
+document.querySelectorAll('[data-layer]').forEach((cb) => {
+  cb.onchange = () => { layerState[cb.dataset.layer] = cb.checked; applyVisibility(); };
+});
+
+function frame(top = false) {
+  const size = bounds.getSize(new THREE.Vector3());
+  const center = bounds.getCenter(new THREE.Vector3());
+  const d = Math.max(size.x, size.z) * 1.1 + size.y;
+  controls.target.copy(center);
+  if (top) camera.position.set(center.x, center.y + d * 1.3, center.z + 0.001);
+  else camera.position.set(center.x + d * 0.7, center.y + d * 0.7, center.z + d * 0.7);
+  camera.up.set(0, 1, 0);
+  controls.update();
+}
+$('view3d').onclick = () => frame(false);
+$('viewTop').onclick = () => frame(true);
+
+function show(gltfScene, name) {
+  if (root) { scene.remove(root); clearSelection(); clearRoute(); }
+  root = gltfScene;
+  scene.add(root);
+  analyse(root);
+  buildFloorUI();
+  applyVisibility();
+  bounds = new THREE.Box3().setFromObject(root);
+  grid.position.set(bounds.getCenter(new THREE.Vector3()).x, bounds.min.y - 0.01, bounds.getCenter(new THREE.Vector3()).z);
+  frame(false);
+  const count = (l) => root.children.filter((n) => n.userData.layer === l).length;
+  $('status').textContent = `${name} · ${floors.length} floors · ${count('spaces')} spaces · ${count('openings')} openings · ${count('assets')} assets`;
+}
+
+function loadUrl(url) {
+  $('status').textContent = `Loading ${url}…`;
+  loader.load(url, (g) => { show(g.scene, url.replace(OUT_DIR, '')); loadRoutes(url); }, undefined,
+    (e) => ($('status').textContent = `Failed to load ${url}: ${e.message || e}`));
+}
+
+// Routes: JSON files from blender/route_assets.py in <model dir>/routes/.
+// Dataset (x, y, elevation) -> glTF/three (x, elevation, -y).
+const toThree = (p, lift = 0.25) => new THREE.Vector3(p.x, p.z + lift, -p.y);
+let routeGroup = null, routeMarker = null, routeCurve = null, routeAssets = [];
+const routeMat = new THREE.MeshBasicMaterial({ color: 0xff2d55 });
+const routeGhost = new THREE.MeshBasicMaterial({ color: 0xff2d55, transparent: true, opacity: 0.35, depthTest: false });
+const assetMat = (color) => new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.6 });
+
+function clearRoute() {
+  if (routeGroup) scene.remove(routeGroup);
+  for (const { mesh, material } of routeAssets) mesh.material = material;
+  routeGroup = routeMarker = routeCurve = null;
+  routeAssets = [];
+  $('routeInfo').innerHTML = '';
+}
+
+function drawRoute(r) {
+  clearRoute();
+  routeGroup = new THREE.Group();
+  const pts = r.points.map((p) => toThree(p));
+  routeCurve = new THREE.CurvePath();
+  for (let i = 1; i < pts.length; i++) routeCurve.add(new THREE.LineCurve3(pts[i - 1], pts[i]));
+  const tube = new THREE.TubeGeometry(routeCurve, pts.length * 40, 0.12, 8, false);
+  routeGroup.add(new THREE.Mesh(tube, routeMat));
+  const ghost = new THREE.Mesh(tube, routeGhost); // stays visible through walls
+  ghost.renderOrder = 10;
+  routeGroup.add(ghost);
+  r.points.forEach((p, i) => {
+    const end = i === 0 || i === r.points.length - 1;
+    const isDoor = !end && r.element_path.includes(p.node);
+    if (!end && !isDoor) return;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(end ? 0.35 : 0.2, 16, 12),
+      new THREE.MeshBasicMaterial({ color: i === 0 ? 0x34c759 : end ? 0xff3b30 : 0xffffff, depthTest: false }));
+    m.position.copy(toThree(p, end ? 1.6 : 0.25));
+    m.renderOrder = 11;
+    routeGroup.add(m);
+    if (end) { // pin from the floor up to the ball
+      const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.35), m.material);
+      pin.position.copy(toThree(p, 0.9));
+      routeGroup.add(pin);
+    }
+  });
+  routeMarker = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffcc00, depthTest: false }));
+  routeMarker.renderOrder = 12;
+  routeGroup.add(routeMarker);
+  scene.add(routeGroup);
+
+  // Light up the start and end assets.
+  root?.traverse((o) => {
+    let top = o; while (top.parent && top.parent !== root) top = top.parent;
+    const id = top.userData?.asset_id;
+    if (o.isMesh && (id === r.from.asset_id || id === r.to.asset_id)) {
+      routeAssets.push({ mesh: o, material: o.material });
+      o.material = assetMat(id === r.from.asset_id ? 0x34c759 : 0xff3b30);
+    }
+  });
+
+  // Show only the floors the route passes through.
+  const elevs = new Set(r.points.map((p) => p.z));
+  const rev = [...floors].reverse();
+  for (const f of floors) floorVisible.set(f.level, [...elevs].some((z) => Math.abs(z - f.elevation) < 0.5));
+  $('floors').querySelectorAll('input').forEach((el, i) => (el.checked = floorVisible.get(rev[i].level)));
+  applyVisibility();
+
+  const steps = r.space_path.filter((s, i, a) => s !== a[i - 1]).map((s) => r.spaces[s]);
+  $('routeInfo').innerHTML =
+    `<div style="color:var(--fg);font-size:13px"><b style="color:#34c759">●</b> ${r.from.name} → <b style="color:#ff3b30">●</b> ${r.to.name}</div>` +
+    `<div style="color:var(--fg);font-size:18px;font-weight:600;margin:4px 0">${r.length_m.toFixed(2)} m</div>` +
+    `<ol style="margin:4px 0;padding-left:18px">${steps.map((s) => `<li>${s}</li>`).join('')}</ol>` +
+    `${r.element_path.length} doors${r.step_free ? ' · step-free' : ''}`;
+}
+
+async function loadRoutes(modelUrl) {
+  clearRoute();
+  const dir = modelUrl.slice(0, modelUrl.lastIndexOf('/') + 1) + 'routes/';
+  let files = [];
+  try {
+    const res = await fetch(dir);
+    if (res.ok) files = [...(await res.text()).matchAll(/href="([^"]+\.json)"/g)].map((m) => dir + m[1]);
+  } catch { /* no routes */ }
+  const requested = new URLSearchParams(location.search).get('route');
+  if (requested && !files.includes(requested)) files.unshift(requested);
+  $('route').innerHTML = '<option value="">None</option>' +
+    files.map((f) => `<option value="${f}">${decodeURIComponent(f.slice(dir.length).replace('.json', ''))}</option>`).join('');
+  const pick = requested || files[0];
+  if (pick) { $('route').value = pick; selectRoute(pick); }
+}
+
+async function selectRoute(url) {
+  if (!url) return clearRoute();
+  try { drawRoute(await (await fetch(url)).json()); }
+  catch (e) { $('routeInfo').textContent = `Failed to load route: ${e.message}`; }
+}
+$('route').onchange = () => selectRoute($('route').value);
+
+// Find every <out>/<building>/model.glb via the dev server's directory listing.
+async function discover() {
+  const urls = [];
+  try {
+    const html = await (await fetch(OUT_DIR)).text();
+    const dirs = [...html.matchAll(/href="([^"?/][^"]*\/)"/g)].map((m) => m[1]);
+    for (const d of dirs) {
+      const sub = await (await fetch(OUT_DIR + d)).text();
+      for (const m of sub.matchAll(/href="([^"]+\.glb)"/g)) urls.push(OUT_DIR + d + m[1]);
+    }
+  } catch { /* no listing available */ }
+  return urls;
+}
+
+const sel = $('model');
+sel.onchange = () => { history.replaceState(null, '', `?model=${encodeURIComponent(sel.value)}`); loadUrl(sel.value); };
+const urls = await discover();
+const requested = new URLSearchParams(location.search).get('model');
+if (requested && !urls.includes(requested)) urls.unshift(requested);
+sel.innerHTML = urls.map((u) => `<option value="${u}">${decodeURIComponent(u.replace(OUT_DIR, ''))}</option>`).join('');
+if (urls.length) { sel.value = requested || urls[0]; loadUrl(sel.value); }
+else $('status').textContent = `No .glb found under ${OUT_DIR}. Drop a .glb file here.`;
+
+// Drag & drop a local .glb.
+addEventListener('dragover', (e) => { e.preventDefault(); $('drop').style.display = 'flex'; });
+addEventListener('dragleave', (e) => { if (!e.relatedTarget) $('drop').style.display = 'none'; });
+addEventListener('drop', async (e) => {
+  e.preventDefault();
+  $('drop').style.display = 'none';
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  loader.parse(await file.arrayBuffer(), '', (g) => show(g.scene, file.name), (err) => ($('status').textContent = `Failed: ${err.message}`));
+});
+
+// Picking.
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let selected = null, savedMaterial = null;
+const highlight = new THREE.MeshStandardMaterial({ color: 0xffcc33, emissive: 0x664400 });
+
+function clearSelection() {
+  if (selected) selected.material = savedMaterial;
+  selected = null;
+  $('info').style.display = 'none';
+}
+
+let downAt = null;
+renderer.domElement.addEventListener('pointerdown', (e) => (downAt = [e.clientX, e.clientY]));
+renderer.domElement.addEventListener('pointerup', (e) => {
+  if (!root || !downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) return;
+  pointer.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  raycaster.setFromCamera(pointer, camera);
+  const hit = raycaster.intersectObject(root, true).find((h) => {
+    for (let o = h.object; o; o = o.parent) if (!o.visible) return false;
+    return h.object.isMesh;
+  });
+  clearSelection();
+  if (!hit) return;
+  let top = hit.object;
+  while (top.parent && top.parent !== root) top = top.parent;
+  selected = hit.object;
+  savedMaterial = selected.material;
+  selected.material = highlight;
+  const rows = Object.entries(top.userData).filter(([k]) => !['layer', 'floor', 'name'].includes(k))
+    .map(([k, v]) => `<tr><td>${k}</td><td>${typeof v === 'number' ? +v.toFixed(3) : Array.isArray(v) ? v.join(', ') : v}</td></tr>`).join('');
+  $('info').innerHTML = `<div class="title">${top.userData.name ?? top.name}</div><table>${rows || '<tr><td>no properties</td></tr>'}</table>`;
+  $('info').style.display = 'block';
+});
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+renderer.setAnimationLoop((t) => {
+  if (routeCurve) routeMarker.position.copy(routeCurve.getPointAt((t / 6000) % 1)).y += 0.05;
+  controls.update();
+  renderer.render(scene, camera);
+});
+</script>
+</body>
+</html>
