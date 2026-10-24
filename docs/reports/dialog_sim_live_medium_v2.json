@@ -12,8 +12,8 @@
       "proc-factory-dev-003"
     ],
     "dataset_dirs": [
-      "C:\\Users\\noah3\\Documents\\Repositories\\mm_industrial_26-phase-a\\backend\\data\\datasets",
-      "C:\\Users\\noah3\\Documents\\HackathonTransfer\\SyneraKit-data\\dev"
+      "~\\Documents\\Repositories\\mm_industrial_26-phase-a\\backend\\data\\datasets",
+      "~\\Documents\\HackathonTransfer\\SyneraKit-data\\dev"
     ],
     "missing_buildings": [],
     "scenarios": 13,
