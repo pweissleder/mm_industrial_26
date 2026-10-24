@@ -21,6 +21,7 @@ import {
   type Selection,
   type Space,
 } from '../../lib/building';
+import type { RoomGraphData } from '../../lib/api';
 import type { CameraAction, ObjectInfo, ViewSettings } from './view';
 
 const SLAB = 0.15;
@@ -68,6 +69,17 @@ interface Fly {
   duration: number;
 }
 
+const GRAPH_LIFT = 0.6;
+const GRAPH_COLORS: Record<string, string> = {
+  door: '#002478',
+  opening: '#5a6b99',
+  entrance: '#12a594',
+  stairs: '#fb7928',
+  lift: '#fb7928',
+  closed: '#e5484d',
+  cut: '#e5484d',
+};
+
 const toVec = ([x, y]: Point, z = 0) => new THREE.Vector3(x, z, -y);
 const selKey = (s: Selection) => `${s.kind}:${s.id}`;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -104,6 +116,9 @@ export class BuildingScene {
   private readonly root = new THREE.Group();
   private readonly connectors = new THREE.Group();
   private readonly highlight = new THREE.Group();
+  /** Nav-graph overlay, drawn over everything else. */
+  private readonly graph = new THREE.Group();
+  private graphData: RoomGraphData | null = null;
   private readonly pin: CSS2DObject;
   private readonly hoverTip: CSS2DObject;
   private readonly raycaster = new THREE.Raycaster();
@@ -154,7 +169,7 @@ export class BuildingScene {
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(2048, 2048);
     this.sun.shadow.bias = -0.0005;
-    this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight);
+    this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight, this.graph);
 
     this.pin = makeLabel('', 'viewer__pin');
     this.pin.center.set(0.5, 1);
@@ -245,6 +260,12 @@ export class BuildingScene {
     this.settings = settings;
     if (rebuildConnectors && this.model && !this.hq) this.buildConnectors(this.model);
     this.applySettings();
+  }
+
+  setGraph(data: RoomGraphData | null) {
+    this.graphData = data;
+    this.buildGraph();
+    this.needsRender = true;
   }
 
   setSelection(selection: Selection | null, fly = true) {
@@ -648,6 +669,84 @@ export class BuildingScene {
     }
   }
 
+  /** Rooms as dots at their anchor, doors as lines through the door, stairs/lifts as risers. */
+  private buildGraph() {
+    for (const o of this.graph.children) {
+      if (o instanceof THREE.Mesh || o instanceof THREE.LineSegments) {
+        o.geometry.dispose();
+        (o.material as THREE.Material).dispose();
+      }
+    }
+    this.graph.clear();
+    const data = this.graphData;
+    if (!data || !this.settings.layers.graph || !this.floors.length) return;
+
+    const focus = this.settings.floor;
+    const yOf = (floorId: string | undefined) => {
+      const fv = this.floors.find((f) => f.floor.id === floorId);
+      if (!fv || (focus !== 'all' && fv.floor.level > focus)) return null;
+      return fv.floor.elevation_m + this.floorOffset(fv) + GRAPH_LIFT;
+    };
+    const nodes = new Map<string, { at: THREE.Vector3; floor?: string }>();
+    for (const n of data.nodes) {
+      const y = yOf(n.floor_id);
+      if (n.anchor && y !== null) nodes.set(n.id, { at: toVec(n.anchor, y), floor: n.floor_id });
+    }
+
+    const points: number[] = [];
+    const colors: number[] = [];
+    const color = new THREE.Color();
+    const segment = (a: THREE.Vector3, b: THREE.Vector3, hex: string) => {
+      color.set(hex);
+      points.push(a.x, a.y, a.z, b.x, b.y, b.z);
+      colors.push(color.r, color.g, color.b, color.r, color.g, color.b);
+    };
+    for (const e of data.edges) {
+      const hex = GRAPH_COLORS[e.closed ? 'closed' : e.kind] ?? GRAPH_COLORS.door;
+      const [a, b] = [nodes.get(e.source), nodes.get(e.target)];
+      if (e.position) {
+        // Through the door itself; an entrance has only its inside end.
+        const y = yOf(e.floor_id);
+        if (y === null) continue;
+        const door = toVec(e.position, y);
+        if (a) segment(a.at, door, hex);
+        if (b) segment(door, b.at, hex);
+      } else if (a && b) {
+        segment(a.at, b.at, hex);
+      }
+    }
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+    lineGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const lines = new THREE.LineSegments(
+      lineGeo,
+      new THREE.LineBasicMaterial({ vertexColors: true, depthTest: false, transparent: true }),
+    );
+    lines.renderOrder = 1000;
+
+    const dots = new THREE.InstancedMesh(
+      new THREE.SphereGeometry(0.35, 12, 8),
+      new THREE.MeshBasicMaterial({ depthTest: false, transparent: true }),
+      nodes.size,
+    );
+    dots.renderOrder = 1001;
+    const byId = new Map(data.nodes.map((n) => [n.id, n]));
+    let i = 0;
+    for (const [id, { at }] of nodes) {
+      const n = byId.get(id)!;
+      dots.setMatrixAt(i, new THREE.Matrix4().setPosition(at));
+      color.set(
+        !n.connected_to_outside
+          ? GRAPH_COLORS.cut
+          : n.closed
+            ? '#9a9db0'
+            : spaceColor(n as unknown as Space),
+      );
+      dots.setColorAt(i++, color);
+    }
+    this.graph.add(lines, dots);
+  }
+
   private floorOffset(fv: FloorView | undefined): number {
     return fv ? this.floors.indexOf(fv) * this.settings.explode * EXPLODE_GAP : 0;
   }
@@ -703,6 +802,7 @@ export class BuildingScene {
     this.root.traverse((o) => {
       if (o instanceof THREE.Mesh && o.material instanceof THREE.Material) o.material.needsUpdate = true;
     });
+    this.buildGraph();
     this.updateGridAndShadows();
     if (this.selection) this.setSelection(this.selection, false);
     this.needsRender = true;

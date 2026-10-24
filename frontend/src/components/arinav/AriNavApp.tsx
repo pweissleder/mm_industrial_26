@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { api, datasetFileUrl, type HealthResponse, type UploadResponse } from '../../lib/api';
+import { api, datasetFileUrl, type RoomGraphData, type HealthResponse, type UploadResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import ChatDock, { type Draft } from './ChatDock';
 import DetailsCard from './DetailsCard';
-import GraphDialog from './GraphDialog';
 import { FitIcon, MinusIcon, PanelIcon, PlusIcon, TopIcon, CubeIcon, UploadIcon } from './Icons';
 import Logo, { LogoMark } from './Logo';
 import { PipelineChip, PipelineDialog } from './PipelineStatus';
@@ -68,7 +67,7 @@ export default function AriNavApp() {
   const [camera, setCamera] = useState<CameraCommand | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(wide);
   const [uploadOpen, setUploadOpen] = useState(false);
-  const [graphOpen, setGraphOpen] = useState(false);
+  const [graph, setGraph] = useState<RoomGraphData | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const isWide = useWide();
@@ -113,6 +112,20 @@ export default function AriNavApp() {
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
   const pipeline = usePipeline(dataset, buildingId, runRequest);
+
+  const graphOn = settings.layers.graph;
+  useEffect(() => {
+    setGraph(null);
+    if (!graphOn || !buildingId) return;
+    let live = true;
+    api
+      .buildingGraph(buildingId)
+      .then((g) => live && setGraph(g))
+      .catch(() => live && notify('Could not load the nav graph.'));
+    return () => {
+      live = false;
+    };
+  }, [graphOn, buildingId]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
   const wasBuilding = useRef(false);
@@ -233,6 +246,7 @@ export default function AriNavApp() {
         model={viewModel}
         hqUrl={showingHq ? hq.modelUrl : null}
         glbUrl={glbUrl}
+        graph={glbUrl ? null : graph}
         settings={settings}
         selection={selection}
         camera={camera}
@@ -289,7 +303,6 @@ export default function AriNavApp() {
           selection={selection}
           onSelect={selectFromList}
           onCamera={runCamera}
-          onOpenGraph={buildingId ? () => setGraphOpen(true) : undefined}
           onClose={() => setSidebarOpen(false)}
         />
       </div>
@@ -350,14 +363,6 @@ export default function AriNavApp() {
         current={dataset}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
-      />
-
-      <GraphDialog
-        open={graphOpen}
-        buildingId={buildingId}
-        model={model}
-        onClose={() => setGraphOpen(false)}
-        onSelect={selectFromList}
       />
 
       <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />

@@ -1,4 +1,4 @@
-import type { BuildingModel } from './building';
+import type { BuildingModel, Floor, Point } from './building';
 
 const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL ?? '';
 
@@ -114,15 +114,50 @@ export interface LocationRecord {
 
 /** navgraph's level-1 RoomGraph (networkx node-link JSON); ids are space ids plus "outside". */
 export interface RoomGraphData {
-  nodes: { id: string; kind: 'space' | 'outside'; name: string; level?: number; area_m2?: number }[];
+  graph: { building: Record<string, unknown>; floors: Floor[]; closed: string[] };
+  nodes: {
+    id: string;
+    kind: 'space' | 'outside';
+    name: string;
+    /** False when no door chain leads outside: usually a missing door or connector. */
+    connected_to_outside: boolean;
+    ref?: string | null;
+    type?: string;
+    room_type?: string;
+    floor_id?: string;
+    level?: number;
+    elevation_m?: number;
+    area_m2?: number;
+    centroid?: Point;
+    /** A point guaranteed inside the room, where routes start and end. */
+    anchor?: Point;
+    circulation?: boolean;
+    production_bay?: boolean;
+    synthetic?: boolean;
+    closed?: boolean;
+    assets?: { id: string; name: string; type: string; category: string; position: Point }[];
+  }[];
   edges: {
     source: string;
     target: string;
     key: string;
+    /** door | opening | entrance | stairs | lift */
     kind: string;
+    element: string;
     step_free: boolean;
+    synthetic: boolean;
+    closed: boolean;
+    // Openings
     width_m?: number;
+    floor_id?: string;
+    position?: Point;
+    entrance?: boolean;
+    // Stair / lift hops
+    name?: string;
     floors?: number;
+    from_floor?: string;
+    to_floor?: string;
+    rise_m?: number;
   }[];
 }
 

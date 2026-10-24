@@ -41,8 +41,6 @@ interface Props {
   selection: Selection | null;
   onSelect: (selection: Selection) => void;
   onCamera: (action: CameraAction) => void;
-  /** Opens the debug room-graph view; absent while no stored building is loaded. */
-  onOpenGraph?: () => void;
   onClose: () => void;
 }
 
@@ -315,7 +313,7 @@ function LocationRow(props: {
   );
 }
 
-function ViewTab({ settings, onSettings, onCamera, onOpenGraph }: Props) {
+function ViewTab({ settings, onSettings, onCamera }: Props) {
   const set = <K extends keyof ViewSettings>(key: K, value: ViewSettings[K]) =>
     onSettings({ ...settings, [key]: value });
 
@@ -412,13 +410,6 @@ function ViewTab({ settings, onSettings, onCamera, onOpenGraph }: Props) {
             Stairs & lifts
           </li>
         </ul>
-      </section>
-
-      <section className="section">
-        <span className="section__title">Developer</span>
-        <button className="btn btn--ghost btn--sm" onClick={onOpenGraph} disabled={!onOpenGraph}>
-          Room graph
-        </button>
       </section>
     </>
   );

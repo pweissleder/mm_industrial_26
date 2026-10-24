@@ -51,18 +51,36 @@ class RoomGraph:
         return self._g
 
     def _build(self) -> nx.MultiGraph:
+        """Every fact the Building holds, so the graph alone is enough to inspect or draw it."""
         b, g = self.b, nx.MultiGraph()
+        g.graph.update(building=b.meta, floors=[vars(f).copy() for f in b.floors_by_level()],
+                       closed=sorted(b.closed))
         g.add_node(OUTSIDE, kind="outside", name="Outside")
         for s in b.spaces.values():
-            g.add_node(s.id, kind="space", name=s.name, type=s.type, room_type=s.room_type,
-                       floor_id=s.floor_id, level=b.floors[s.floor_id].level, area_m2=round(s.area_m2, 2))
+            f = b.floors[s.floor_id]
+            g.add_node(s.id, kind="space", name=s.name, ref=s.ref, type=s.type, room_type=s.room_type,
+                       floor_id=s.floor_id, level=f.level, elevation_m=f.elevation_m,
+                       area_m2=round(s.area_m2, 2), centroid=s.centroid, anchor=s.anchor,
+                       circulation=s.is_circulation, production_bay=s.is_production_bay,
+                       synthetic=s.synthetic, closed=b.is_closed(s.id),
+                       assets=[{"id": a.id, "name": a.name, "type": a.type, "category": a.category,
+                                "position": a.position} for a in map(b.assets.get, s.asset_ids)])
         for o in b.openings.values():
             a, c = o.space_ids
-            g.add_edge(a, c, key=o.id, kind=o.kind, element=o.id, width_m=o.width_m, step_free=o.step_free)
+            g.add_edge(a, c, key=o.id, kind=o.kind, element=o.id, width_m=o.width_m, step_free=o.step_free,
+                       floor_id=o.floor_id, position=o.position, entrance=o.is_entrance,
+                       synthetic=o.synthetic, closed=b.is_closed(o.id))
         for c in b.connectors.values():
             for (fa, sa), (fb, sb) in itertools.pairwise(c.stops):
-                g.add_edge(sa, sb, key=f"{c.id}:{fa}->{fb}", kind=c.kind, element=c.id,
-                           step_free=c.step_free, floors=abs(b.floors[fb].level - b.floors[fa].level))
+                ffa, ffb = b.floors[fa], b.floors[fb]
+                g.add_edge(sa, sb, key=f"{c.id}:{fa}->{fb}", kind=c.kind, element=c.id, name=c.name,
+                           step_free=c.step_free, floors=abs(ffb.level - ffa.level),
+                           from_floor=fa, to_floor=fb, rise_m=round(abs(ffb.elevation_m - ffa.elevation_m), 2),
+                           synthetic=c.synthetic, closed=b.is_closed(c.id))
+        # Plain connectivity (ignores closures and profiles): a False here is usually a missing door.
+        linked = nx.node_connected_component(g, OUTSIDE)
+        for n, data in g.nodes(data=True):
+            data["connected_to_outside"] = n in linked
         return g
 
     # -- queries -----------------------------------------------------------------------------
