@@ -1,0 +1,92 @@
+{
+ "spec": {
+  "type": "desk",
+  "category": "furniture",
+  "description": "Desk with top, two side panels and a modesty panel.",
+  "default_height_m": 0.75,
+  "primitives": [
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.96
+    ],
+    "size": [
+     1.0,
+     1.0,
+     0.07999999999999996
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.47,
+     0.0,
+     0.46
+    ],
+    "size": [
+     0.06,
+     0.92,
+     0.92
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.47,
+     0.0,
+     0.46
+    ],
+    "size": [
+     0.06,
+     0.92,
+     0.92
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.43000000000000005,
+     0.66
+    ],
+    "size": [
+     0.88,
+     0.06,
+     0.52
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.32,
+     0.0,
+     0.54
+    ],
+    "size": [
+     0.24,
+     0.8,
+     0.07999999999999996
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.32,
+     0.0,
+     0.24000000000000002
+    ],
+    "size": [
+     0.24,
+     0.8,
+     0.08000000000000002
+    ]
+   }
+  ]
+ },
+ "provenance": "seed",
+ "run_id": null,
+ "version": 1,
+ "created_at": "2026-10-24T15:44:34.368839Z"
+}

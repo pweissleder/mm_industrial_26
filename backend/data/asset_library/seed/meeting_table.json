@@ -1,0 +1,66 @@
+{
+ "spec": {
+  "type": "meeting_table",
+  "category": "furniture",
+  "description": "Large conference table on two panel pedestals.",
+  "default_height_m": 0.75,
+  "primitives": [
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.97
+    ],
+    "size": [
+     1.0,
+     1.0,
+     0.06000000000000005
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     -0.29000000000000004,
+     0.0,
+     0.47
+    ],
+    "size": [
+     0.06,
+     0.6,
+     0.94
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.29000000000000004,
+     0.0,
+     0.47
+    ],
+    "size": [
+     0.06,
+     0.6,
+     0.94
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.0,
+     0.05
+    ],
+    "size": [
+     0.64,
+     0.08,
+     0.1
+    ]
+   }
+  ]
+ },
+ "provenance": "seed",
+ "run_id": null,
+ "version": 1,
+ "created_at": "2026-10-24T15:44:34.369133Z"
+}

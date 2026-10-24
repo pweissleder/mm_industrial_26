@@ -31,6 +31,15 @@ class Settings(BaseSettings):
     # Per-file limit for POST /api/datasets/{dataset}/files.
     max_upload_bytes: int = 50_000_000
 
+    # Ingestion pipeline: JSON workspace, asset library seed, and per-role models.
+    workspace_dir: Path = BACKEND_DIR / "data" / "workspace"
+    asset_library_seed_dir: Path = BACKEND_DIR / "data" / "asset_library" / "seed"
+    pipeline_orchestrator_model: str = "claude-opus-5-5"
+    pipeline_validator_model: str = "claude-opus-5-5"
+    pipeline_worker_model: str = "claude-sonnet-5-5"
+    pipeline_summary_model: str = "claude-haiku-5-5"
+    pipeline_max_retries: int = 2
+
     # LangSmith; app.tracing exports these so LangChain/LangGraph pick them up.
     langsmith_tracing: bool = False
     langsmith_api_key: str | None = None

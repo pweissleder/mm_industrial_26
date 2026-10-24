@@ -14,8 +14,17 @@ from app.agent import (
     build_graph,
     build_managed_agent_graph,
 )
-from app.api.routes import buildings, chat, health, ingestion, managed_agent, uploads
+from app.api.routes import (
+    buildings,
+    chat,
+    health,
+    ingestion,
+    managed_agent,
+    pipeline,
+    uploads,
+)
 from app.config import Settings, get_settings
+from app.pipeline.runner import PipelineRunner
 from app.storage import BuildingRepository, InMemoryBuildingRepository
 from app.tracing import configure_tracing
 
@@ -48,6 +57,7 @@ def create_app(
     model: BaseChatModel | None = None,
     managed_agent_runner: ManagedAgentRunner | None = None,
     building_repository: BuildingRepository | None = None,
+    pipeline_runner: PipelineRunner | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
 
@@ -58,7 +68,11 @@ def create_app(
         app.state.graph = build_graph(model or create_chat_model(settings))
         runner = managed_agent_runner or create_managed_agent_runner(settings)
         app.state.managed_agent_graph = runner and build_managed_agent_graph(runner)
+        app.state.pipeline_runner = pipeline_runner or PipelineRunner.from_settings(
+            settings, repository=app.state.building_repository
+        )
         yield
+        await app.state.pipeline_runner.wait()
 
     app = FastAPI(title=settings.app_name, lifespan=lifespan)
     app.state.settings = settings
@@ -75,6 +89,7 @@ def create_app(
     app.include_router(ingestion.router, prefix="/api")
     app.include_router(buildings.router, prefix="/api")
     app.include_router(uploads.router, prefix="/api")
+    app.include_router(pipeline.router, prefix="/api")
     return app
 
 

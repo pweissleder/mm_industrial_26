@@ -220,3 +220,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ingestion pipeline output (locations, runs, asset library, memory)
+backend/data/workspace/

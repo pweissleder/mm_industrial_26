@@ -1,0 +1,110 @@
+{
+ "spec": {
+  "type": "stove",
+  "category": "equipment",
+  "description": "Cooker: four hobs, control panel and oven door.",
+  "default_height_m": 0.9,
+  "primitives": [
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.04999999999999999,
+     0.45
+    ],
+    "size": [
+     1.0,
+     0.9,
+     0.9
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     -0.45,
+     0.35
+    ],
+    "size": [
+     1.0,
+     0.09999999999999998,
+     0.5
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     -0.45,
+     0.53
+    ],
+    "size": [
+     0.8,
+     0.09999999999999998,
+     0.06000000000000005
+    ]
+   },
+   {
+    "kind": "box",
+    "center": [
+     0.0,
+     0.45,
+     0.95
+    ],
+    "size": [
+     1.0,
+     0.09999999999999998,
+     0.09999999999999998
+    ]
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     -0.25,
+     -0.2,
+     0.925
+    ],
+    "radius": 0.15,
+    "length": 0.04999999999999993,
+    "axis": "z"
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     -0.25,
+     0.15,
+     0.925
+    ],
+    "radius": 0.15,
+    "length": 0.04999999999999993,
+    "axis": "z"
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     0.25,
+     -0.2,
+     0.925
+    ],
+    "radius": 0.15,
+    "length": 0.04999999999999993,
+    "axis": "z"
+   },
+   {
+    "kind": "cylinder",
+    "center": [
+     0.25,
+     0.15,
+     0.925
+    ],
+    "radius": 0.15,
+    "length": 0.04999999999999993,
+    "axis": "z"
+   }
+  ]
+ },
+ "provenance": "seed",
+ "run_id": null,
+ "version": 1,
+ "created_at": "2026-10-24T15:44:34.372463Z"
+}

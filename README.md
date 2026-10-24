@@ -112,6 +112,45 @@ Try it from the OpenAPI docs at http://localhost:8000/docs, or with curl (macOS/
 curl -X POST localhost:8000/api/ingestions -H 'Content-Type: application/json' -d '{"dataset":"proc-factory-dev-003"}'
 ```
 
+## Agentic ingestion pipeline
+
+`backend/app/pipeline/` turns a dataset into a **location**: a validated and cleaned building, a to-scale 3D model (`model.glb`) and metadata per building, floor and space. A LangGraph graph runs fixed stages. After each stage, an orchestrator gate (Opus) decides whether to proceed, retry the stage that caused a problem, ask a human, or abort.
+
+| # | Stage | Tools (deterministic) | Agent |
+|---|---|---|---|
+| 1 | Raw validation | 21 issue checks, JSON-patch with re-validation, per-floor translate, overlap trim | Sonnet fixes every open issue in the cleaned copy (the raw file is never touched) or accepts it with a reason; lessons go to `memory/source_quirks.json` |
+| 2 | Relationship graph build + validate | — | **skeletons**, implemented later |
+| 3.1 | Floorplan | trimesh/shapely: slabs, space floors, walls with door gaps, connectors | Sonnet reviews stats + plan images |
+| 3.2 | Equipment | one instanced mesh per asset type from the asset library | Sonnet flags types with missing or implausible models |
+| 3.3 | Variant creator | declarative specs (box/cylinder/prism in the unit box), validation, preview | Sonnet designs a spec per missing type; saved to the library and reused across locations |
+| 3.4 | 3D validator | GLB re-read and compared node by node (1 mm / 0.1°), plan renders | Opus compares the plans with the dataset's floor images and attributes deviations to a stage |
+| 4 | Summarizer | areas, equipment, step-free access per space | Sonnet writes building and floor text; Haiku writes space descriptions |
+
+Without `ANTHROPIC_API_KEY` (or with `--offline`), only the deterministic tools run, so the whole pipeline works and is tested offline. A failed stage then pauses the run for review.
+
+```bash
+cd backend
+uv run poe ingest proc-factory-dev-003            # asks in the terminal when a run needs review
+uv run poe ingest --all --datasets-dir ../problem_statement/industrial-agents-hackathon-2026/data/dev --offline --on-review accept_with_warnings
+```
+
+| Endpoint | What it does |
+|---|---|
+| `POST /api/pipeline-runs` `{"dataset", "force"?}` | Starts a run in the background (202) and returns its `RunRecord` |
+| `GET /api/pipeline-runs[/{run_id}]` | Run status, per-stage progress, orchestrator decisions, token usage per agent |
+| `POST /api/pipeline-runs/{run_id}/resume` `{"review_id", "option", "note"?}` | Answers a `needs_review` run. `pending_review` holds the prompt for a frontend: title, message, issues, artifacts, and the options `accept_with_warnings`, `retry` or `abort` |
+| `GET /api/locations[/{id}]`, `GET /api/locations/{id}/model.glb` | Locations, their metadata, and the 3D model |
+
+State lives as JSON in `backend/data/workspace/` (gitignored):
+- `locations/<id>/`: `raw.json`, `building.json` (cleaned), `patches.json`, `issues.json`, `location.json` (pillar status and metadata), `3d/` and `reports/`
+- `runs/`
+- `asset_library/`: overrides of the committed seeds in `backend/data/asset_library/seed/`
+- `memory/`
+
+Re-running an unchanged input is skipped unless you pass `force`.
+
+Paused runs can only be resumed while the backend process is alive, because the LangGraph checkpointer is in memory.
+
 ## LangSmith tracing
 
 Set `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` (plus `LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com` for EU accounts) in `backend/.env`. On startup the backend exports these so every LangGraph run is traced to `LANGSMITH_PROJECT`; `/api/health` shows `tracing_enabled`. Each run is named after its endpoint (`chat`, `managed_agent_chat`) with the conversation's `thread_id` in its metadata, and ingestions are traced as `ingest_dataset`.
