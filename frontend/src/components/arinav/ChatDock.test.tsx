@@ -111,6 +111,44 @@ describe('ChatDock', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('not answering');
   });
 
+  it('starts over after an error with a fresh thread', async () => {
+    const chat = vi
+      .spyOn(api, 'chat')
+      .mockResolvedValueOnce({ reply: 'First.', thread_id: 't1', building_changed: false })
+      .mockRejectedValueOnce(new Error('down'))
+      .mockResolvedValue({ reply: 'Fresh.', thread_id: 't2', building_changed: false });
+    const user = userEvent.setup();
+
+    render(<ChatDock health={health} backendDown={false} draft={null} />);
+    await user.type(screen.getByLabelText('Message'), 'one');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+    await screen.findByText('First.');
+    await user.type(screen.getByLabelText('Message'), 'two');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+    await screen.findByRole('alert');
+
+    await user.click(screen.getByRole('button', { name: /Start over/ }));
+    expect(screen.queryByText('First.')).not.toBeInTheDocument();
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
+    await user.type(screen.getByLabelText('Message'), 'three');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+    expect(chat).toHaveBeenLastCalledWith('three', undefined, null);
+  });
+
+  it('offers a new conversation when the building changes', async () => {
+    vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1', building_changed: false });
+    const user = userEvent.setup();
+
+    const { rerender } = render(<ChatDock health={health} backendDown={false} draft={null} buildingId="b1" />);
+    await user.click(screen.getByRole('button', { name: 'Which rooms are on floor 1?' }));
+    await screen.findByText('Here.');
+    rerender(<ChatDock health={health} backendDown={false} draft={null} buildingId="b2" />);
+
+    await user.click(screen.getByRole('button', { name: 'Start new conversation' }));
+    expect(screen.queryByText('Here.')).not.toBeInTheDocument();
+  });
+
   it('links rooms and unique assets in replies, not shared names', () => {
     const model = {
       spaces: [{ id: 'sp-1', name: 'Print Lab', ref: '2.04' }],

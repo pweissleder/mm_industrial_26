@@ -17,6 +17,7 @@ import {
   type Selection,
 } from '../../lib/building';
 import {
+  ChevronIcon,
   CloseIcon,
   CodeIcon,
   CubeIcon,
@@ -429,8 +430,7 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
         </div>
       </section>
 
-      <section className="section">
-        <span className="section__title">Layers</span>
+      <CollapsibleSection title="Layers">
         <div className="toggle-list">
           {LAYERS.map((l) => (
             <Switch
@@ -441,10 +441,9 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
             />
           ))}
         </div>
-      </section>
+      </CollapsibleSection>
 
-      <section className="section">
-        <span className="section__title">Detail settings</span>
+      <CollapsibleSection title="Detail settings">
         <Slider
           label="Explode floors"
           value={settings.explode}
@@ -486,7 +485,7 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
           <Switch label="Shadows" checked={settings.shadows} onChange={(v) => set('shadows', v)} />
           <Switch label="Ground grid" checked={settings.grid} onChange={(v) => set('grid', v)} />
         </div>
-      </section>
+      </CollapsibleSection>
 
       <section className="section">
         <span className="section__title">Legend</span>
@@ -504,6 +503,19 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
         </ul>
       </section>
     </>
+  );
+}
+
+/** A settings section that starts folded; the header toggles it. */
+function CollapsibleSection({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <details className="section section--collapsible">
+      <summary className="section__title section__toggle">
+        {title}
+        <ChevronIcon width={16} height={16} className="section__chevron" aria-hidden="true" />
+      </summary>
+      <div className="section__content">{children}</div>
+    </details>
   );
 }
 

@@ -35,8 +35,8 @@ const WALL_INSET = 0.06;
 const EXPLODE_GAP = 12;
 const GHOST_OPACITY = 0.12;
 const ACCENT = new THREE.Color('#fb7928');
-/** Selection colour: a vivid magenta that no room, asset or connector colour comes close to. */
-const SELECT = new THREE.Color('#ec1c7f');
+/** Selection colour: the brand orange (--orange). */
+const SELECT = new THREE.Color('#fb7928');
 /** Rooms, doors, stairs and lifts the agent has closed. */
 const CLOSED_COLOR = '#e5484d';
 const OPEN_TYPES = new Set(['hall', 'corridor']);
@@ -126,6 +126,21 @@ function makeLabel(text: string, className: string): CSS2DObject {
   return new CSS2DObject(el);
 }
 
+/** A room's name pill, remembering the room's size so it only shows once the room is big enough on screen. */
+function makeRoomLabel(space: Space, elevation: number): CSS2DObject {
+  const text = space.ref || space.name;
+  const label = makeLabel(text, 'viewer__label');
+  label.position.copy(toVec(centroid(space.polygon), elevation + 0.3));
+  const xs = space.polygon.map((p) => p[0]);
+  const ys = space.polygon.map((p) => p[1]);
+  label.userData.roomSize = Math.sqrt(
+    (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys)),
+  );
+  // Roughly the pill's width in px (10.5px semibold text plus padding).
+  label.userData.pillPx = text.length * 6.5 + 16;
+  return label;
+}
+
 export class BuildingScene {
   private readonly renderer: THREE.WebGLRenderer;
   private readonly labelRenderer: CSS2DRenderer;
@@ -147,7 +162,7 @@ export class BuildingScene {
   private litAssets: THREE.Object3D[] = [];
   // A selected room's equipment, a lighter tint of the selection colour.
   private readonly roomAssetMat = new THREE.MeshStandardMaterial({
-    color: '#f5b3d2',
+    color: '#fdc9a6',
     roughness: 0.6,
     flatShading: true,
   });
@@ -165,7 +180,7 @@ export class BuildingScene {
     flatShading: true,
   });
   private readonly hoverMat = new THREE.MeshStandardMaterial({
-    color: '#f7a3c9',
+    color: '#fdba8c',
     roughness: 0.7,
     flatShading: true,
   });
@@ -436,7 +451,8 @@ export class BuildingScene {
       const box = new THREE.Box3().setFromObject(obj);
       let top = box.max.y;
       if (selection.kind === 'space') top = this.addRoomVolume(selection.id, box);
-      else if (selection.kind !== 'connector') this.addBoxOutline(box);
+      // Doors are thin and hide in walls; equipment is painted, which is enough.
+      else if (selection.kind === 'opening') this.addBoxOutline(box);
       const anchor = box.getCenter(new THREE.Vector3());
       anchor.y = top + 0.3;
       this.pin.position.copy(anchor);
@@ -692,9 +708,7 @@ export class BuildingScene {
       mesh.add(edges);
       spaceGroup.add(mesh);
 
-      const label = makeLabel(s.ref || s.name, 'viewer__label');
-      label.position.copy(toVec(centroid(s.polygon), floor.elevation_m + 0.3));
-      labels.add(label);
+      labels.add(makeRoomLabel(s, floor.elevation_m));
     }
 
     // Walls: one unit-height mesh per floor, scaled to the chosen wall height.
@@ -824,9 +838,7 @@ export class BuildingScene {
             child.userData.roomColor = `#${(child.material as THREE.MeshStandardMaterial).color.getHexString()}`;
           }
           if (space && space.polygon.length >= 3) {
-            const label = makeLabel(space.ref || space.name, 'viewer__label');
-            label.position.copy(toVec(centroid(space.polygon), floor.elevation_m + 0.3));
-            labels.add(label);
+            labels.add(makeRoomLabel(space, floor.elevation_m));
           }
         } else if (kind === 'asset') {
           this.register(child, { kind: 'asset', id }, assetById.get(id)?.name ?? id);
@@ -1272,9 +1284,31 @@ export class BuildingScene {
     if (this.controls.update() || this.needsRender) {
       this.needsRender = false;
       this.renderer.render(this.scene, this.camera);
+      this.cullRoomLabels();
       this.labelRenderer.render(this.scene, this.camera);
     }
   };
+
+  /**
+   * Show a room's pill only when the room looks wider on screen than the pill itself, so a
+   * distant overview (and small phone screens) isn't buried under overlapping labels.
+   */
+  private cullRoomLabels() {
+    const h = this.container.clientHeight;
+    if (!h) return;
+    const pxPerUnit = h / 2 / Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
+    const margin = this.container.clientWidth < 640 ? 2.6 : 2;
+    const at = new THREE.Vector3();
+    for (const fv of this.floors) {
+      if (!fv.labels.visible) continue;
+      for (const label of fv.labels.children) {
+        const { roomSize, pillPx } = label.userData as { roomSize?: number; pillPx?: number };
+        if (!roomSize || !pillPx) continue;
+        const dist = this.camera.position.distanceTo(label.getWorldPosition(at));
+        label.visible = (roomSize / dist) * pxPerUnit >= pillPx * margin;
+      }
+    }
+  }
 
   // ---------------------------------------------------------------- picking
 
@@ -1440,7 +1474,7 @@ export class BuildingScene {
     return box.max.y + height;
   }
 
-  /** A box around a selected asset or door, drawn through walls so it can't hide. */
+  /** A box around a selected door, drawn through walls so it can't hide. */
   private addBoxOutline(box: THREE.Box3) {
     const padded = box.clone().expandByScalar(0.08);
     const size = padded.getSize(new THREE.Vector3());

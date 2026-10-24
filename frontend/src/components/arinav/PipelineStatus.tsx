@@ -18,6 +18,8 @@ const STAGES: [string, string][] = [
 const stageLabel = (stage: string | null | undefined) =>
   STAGES.find(([id]) => id === stage)?.[1] ?? stage ?? '';
 const isImage = (path: string) => /\.(png|jpe?g|svg)$/i.test(path);
+/** How long the "HQ ready" chip stays before it gets out of the way. */
+export const READY_CHIP_MS = 10_000;
 
 function progress(run: RunRecord): string {
   const done = STAGES.filter(([id]) => ['passed', 'skipped'].includes(run.stages[id]?.status)).length;
@@ -25,7 +27,16 @@ function progress(run: RunRecord): string {
 }
 
 export function PipelineChip({ state, onOpen }: { state: PipelineState; onOpen: () => void }) {
-  if (state.phase === 'idle') return null;
+  // Once ready, the HQ badge in the top bar says it all; the chip only adds clutter.
+  const ready = state.phase === 'ready';
+  const [settled, setSettled] = useState(false);
+  useEffect(() => {
+    setSettled(false);
+    if (!ready) return;
+    const timer = window.setTimeout(() => setSettled(true), READY_CHIP_MS);
+    return () => window.clearTimeout(timer);
+  }, [ready]);
+  if (state.phase === 'idle' || (ready && settled)) return null;
   const [tone, label, title] =
     state.phase === 'not_built'
       ? [

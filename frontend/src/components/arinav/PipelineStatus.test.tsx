@@ -1,9 +1,9 @@
-import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { api, type LocationRecord, type RunRecord } from '../../lib/api';
 import type { BuildingModel } from '../../lib/building';
-import { PipelineChip, PipelineDialog } from './PipelineStatus';
+import { PipelineChip, PipelineDialog, READY_CHIP_MS } from './PipelineStatus';
 import { usePipeline, type Pipeline } from './usePipeline';
 
 beforeAll(() => {
@@ -108,6 +108,22 @@ describe('usePipeline', () => {
 
     await waitFor(() => expect(result.current.state).toMatchObject({ phase: 'failed', message: 'boom' }));
     expect(start).not.toHaveBeenCalled();
+  });
+});
+
+describe('PipelineChip', () => {
+  it('gets out of the way a while after the HQ model is ready', () => {
+    vi.useFakeTimers();
+    try {
+      const hq = {} as Extract<Pipeline['state'], { phase: 'ready' }>['hq'];
+      render(<PipelineChip state={{ phase: 'ready', run: null, hq }} onOpen={() => {}} />);
+      expect(screen.getByRole('button', { name: /HQ ready/ })).toBeInTheDocument();
+
+      act(() => vi.advanceTimersByTime(READY_CHIP_MS));
+      expect(screen.queryByRole('button', { name: /HQ ready/ })).not.toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

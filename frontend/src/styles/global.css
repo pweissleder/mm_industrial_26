@@ -457,7 +457,7 @@ code {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #ec1c7f;
+  background: var(--orange);
   border: 2px solid #fff;
   transform: translateX(-50%);
 }
@@ -598,6 +598,38 @@ code {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.section__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.section__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.section__toggle:hover {
+  color: var(--ink-2);
+}
+
+.section__chevron {
+  transition: transform 0.2s;
+}
+
+.section--collapsible[open] .section__chevron {
+  transform: rotate(180deg);
+}
+
+.section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .building-meta {
@@ -900,6 +932,11 @@ code {
   background: var(--line);
 }
 
+/* Floor rail: phones only, bottom right above the chat. */
+.floor-rail {
+  display: none;
+}
+
 /* Details of the selected element. */
 .details {
   position: absolute;
@@ -1117,11 +1154,14 @@ code {
 
 .chat__suggestions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
   padding: 4px 2px;
   justify-content: center;
+}
+
+.chat__suggestions > .chip {
+  flex: none;
 }
 
 .chat__bar {
@@ -1373,6 +1413,12 @@ code {
   background: var(--orange-50);
   color: var(--orange-600);
   box-shadow: inset 0 0 0 1px rgba(251, 121, 40, 0.35);
+}
+
+.quality--button {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
 }
 
 .quality--hq {
@@ -1696,6 +1742,13 @@ code {
     display: inline-grid;
   }
 
+  /* Overlaying the map, the sheet is opaque so the scene doesn't show through. */
+  .sidebar {
+    background: #fff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .scrim {
     display: block;
     position: absolute;
@@ -1787,11 +1840,53 @@ code {
     transform: none;
   }
 
+  .floor-rail {
+    position: absolute;
+    z-index: 10;
+    right: var(--gutter);
+    bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 110px) + 8px);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 40dvh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 4px;
+    border-radius: 14px;
+  }
+
+  .floor-rail__item {
+    min-width: 40px;
+    height: 36px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .floor-rail__item[aria-checked='true'] {
+    background: var(--orange-50);
+    color: var(--orange-600);
+    box-shadow: inset 0 0 0 1px rgba(251, 121, 40, 0.35);
+  }
+
+  /* The details sheet and the open panel cover the bottom; the rail steps aside. */
+  .app--selection .floor-rail,
+  .app--sidebar .floor-rail,
+  .app:has(.chat__panel) .floor-rail {
+    display: none;
+  }
+
   .details {
     left: var(--gutter);
     right: var(--gutter);
     width: auto;
-    bottom: calc(var(--gutter) + var(--safe-b) + 66px);
+    bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 56px) + 8px);
     max-height: 42dvh;
     padding: 14px;
   }
@@ -1817,11 +1912,22 @@ code {
     display: none;
   }
 
+  /* One swipeable row, edge to edge; the end spacer keeps the last chip clear of the edge. */
   .chat__suggestions {
+    flex-wrap: nowrap;
     justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
     margin: 0 calc(-1 * var(--gutter));
-    padding: 4px var(--gutter);
+    padding: 4px var(--gutter) 8px;
     width: calc(100% + 2 * var(--gutter));
+    scroll-padding-inline: var(--gutter);
+  }
+
+  .chat__suggestions::after {
+    content: '';
+    flex: none;
+    width: 1px;
   }
 
   .chat__status {

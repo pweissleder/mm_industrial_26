@@ -9,7 +9,7 @@ import {
   type TurnResponse,
   type UploadResponse,
 } from '../../lib/api';
-import type { BuildingModel, Selection } from '../../lib/building';
+import { floorLabel, type BuildingModel, type Selection } from '../../lib/building';
 import {
   elementLabel,
   endpointFromSelection,
@@ -127,6 +127,7 @@ export default function AriNavApp() {
   const [pick, setPick] = useState<Pick | null>(null);
   const [exactPoint, setExactPoint] = useState(false);
   const isWide = useWide();
+  const appRef = useRef<HTMLDivElement>(null);
   const nav = useNavigation(buildingId);
   const developer = mode === 'developer';
 
@@ -261,6 +262,14 @@ export default function AriNavApp() {
     [hqBuilding, modelClosed],
   );
   const viewModel = showingHq && hqModel ? hqModel : model;
+  // Floor rail entries, top floor first under "All", as in the sidebar's floor picker.
+  const floorChoices = useMemo(() => {
+    const floors = [...(viewModel?.floors ?? [])].sort((a, b) => b.level - a.level);
+    type Choice = { key: string; level: ViewSettings['floor']; label: string; title: string };
+    const all: Choice = { key: 'all', level: 'all', label: 'All', title: 'All floors' };
+    const choices = floors.map((f): Choice => ({ key: f.id, level: f.level, label: floorLabel(f), title: f.name }));
+    return floors.length > 1 ? [all, ...choices] : [];
+  }, [viewModel]);
 
   useEffect(() => {
     api
@@ -283,6 +292,18 @@ export default function AriNavApp() {
       })
       .catch(() => setLoading(false));
   }, [openDataset]);
+
+  // The chat dock grows with suggestions and context chips; overlays above it follow --chat-h.
+  useEffect(() => {
+    const app = appRef.current;
+    const chat = app?.querySelector<HTMLElement>('.chat');
+    if (!app || !chat) return;
+    const observer = new ResizeObserver(() =>
+      app.style.setProperty('--chat-h', `${chat.offsetHeight}px`),
+    );
+    observer.observe(chat);
+    return () => observer.disconnect();
+  }, []);
 
   const changeMode = (next: AppMode) => {
     setMode(next);
@@ -506,6 +527,7 @@ export default function AriNavApp() {
 
   return (
     <div
+      ref={appRef}
       className={`app${sidebarOpen ? ' app--sidebar' : ''}${selection ? ' app--selection' : ''}${pick ? ' app--picking' : ''}`}
     >
       <Viewer3D
@@ -540,11 +562,20 @@ export default function AriNavApp() {
             {model.building.name}
           </span>
         )}
-        {quality && (
-          <span className={`quality quality--${quality.tone}`} title={quality.title}>
-            {quality.label}
-          </span>
-        )}
+        {quality &&
+          (showingHq ? (
+            <button
+              className={`quality quality--${quality.tone} quality--button`}
+              title={`${quality.title}. Show processing details`}
+              onClick={() => setPipelineOpen(true)}
+            >
+              {quality.label}
+            </button>
+          ) : (
+            <span className={`quality quality--${quality.tone}`} title={quality.title}>
+              {quality.label}
+            </span>
+          ))}
         <span className="topbar__spacer" />
         <div className="segmented segmented--small mode-toggle" role="group" aria-label="Mode">
           <button
@@ -655,6 +686,24 @@ export default function AriNavApp() {
           <FitIcon />
         </button>
       </nav>
+
+      {/* Phones: quick floor switching without opening the panel (hidden on wider screens). */}
+      {!glbUrl && floorChoices.length > 0 && (
+        <div className="floor-rail card" role="radiogroup" aria-label="Floor">
+          {floorChoices.map((f) => (
+            <button
+              key={f.key}
+              role="radio"
+              aria-checked={settings.floor === f.level}
+              className="floor-rail__item"
+              title={f.title}
+              onClick={() => setSettings((s) => ({ ...s, floor: f.level }))}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {pickHint && (
         <div className="pick-banner card" role="status">

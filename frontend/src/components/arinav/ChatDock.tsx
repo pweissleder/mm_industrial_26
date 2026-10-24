@@ -47,7 +47,7 @@ type Entry =
       audio?: { pcm: string; rate: number };
     }
   | { id: number; role: 'proposal'; proposal: Proposal; state: ProposalState }
-  | { id: number; role: 'notice'; text: string };
+  | { id: number; role: 'notice'; text: string; offerReset?: boolean };
 
 type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never) : never;
 
@@ -198,6 +198,8 @@ export default function ChatDock({
   const busy = pending !== false;
   // Async callers (transcription, drafts) can't rely on the `busy` of their render.
   const busyRef = useRef(false);
+  // Bumped by a reset, so replies still in flight from the old conversation are dropped.
+  const epoch = useRef(0);
   const targets = useMemo(() => (model ? linkTargets(model) : new Map<string, Selection>()), [model]);
 
   const renderReply = (text: string): ReactNode =>
@@ -211,8 +213,28 @@ export default function ChatDock({
       ),
     );
 
-  // A thread's memory belongs to one building, so a new building starts a new thread.
-  useEffect(() => setThreadId(undefined), [buildingId]);
+  // A thread's memory belongs to one building, so a new building starts a new thread; an
+  // assistant session can span buildings, so offer to start over instead of wiping the log.
+  const seenBuilding = useRef(buildingId);
+  useEffect(() => {
+    setThreadId(undefined);
+    const previous = seenBuilding.current;
+    seenBuilding.current = buildingId;
+    if (!previous || !buildingId || previous === buildingId) return;
+    setEntries((prev) =>
+      prev.some((e) => e.role === 'user')
+        ? [
+            ...prev,
+            {
+              id: nextId.current++,
+              role: 'notice',
+              text: 'You switched buildings. Start a new conversation for a clean context?',
+              offerReset: true,
+            },
+          ]
+        : prev,
+    );
+  }, [buildingId]);
 
   const live = !!assistant;
   const canSpeak = live && !!assistant?.voice;
@@ -253,12 +275,15 @@ export default function ChatDock({
   }, [pending]);
 
   async function sendLegacy(text: string) {
+    const started = epoch.current;
     try {
       const { reply, thread_id, guardrail, building_changed } = await api.chat(text, threadId, buildingId);
+      if (started !== epoch.current) return;
       setThreadId(thread_id);
       if (building_changed) onBuildingChanged?.();
       push({ role: 'assistant', text: reply, guardrail });
     } catch {
+      if (started !== epoch.current) return;
       setError('The building is not answering. Is the backend running?');
     }
   }
@@ -266,6 +291,7 @@ export default function ChatDock({
   async function sendTurn(text: string, viaVoice: boolean) {
     const sessionId = read(session, SESSION_KEY) ?? undefined;
     const wantSpeech = viaVoice || (speak && canSpeak);
+    const started = epoch.current;
     try {
       const turn = await api.assistantTurn({
         ...(sessionId && { session_id: sessionId }),
@@ -275,6 +301,7 @@ export default function ChatDock({
         voice: viaVoice,
         ...(wantSpeech && ttsSpeed !== undefined && { tts_speed: ttsSpeed }),
       });
+      if (started !== epoch.current) return;
       if (turn.session_id) write(session, SESSION_KEY, turn.session_id);
       const audio = turn.audio_pcm16
         ? { pcm: turn.audio_pcm16, rate: turn.sample_rate ?? 16000 }
@@ -287,7 +314,8 @@ export default function ChatDock({
       onTurn?.(turn);
       if (audio) void voice.play(audio.pcm, audio.rate);
     } catch {
-      setError('The assistant is not answering right now. Please try again.');
+      if (started !== epoch.current) return;
+      setError('The assistant is not answering right now. Please try again, or start a new conversation.');
     }
   }
 
@@ -300,12 +328,15 @@ export default function ChatDock({
     setPending('thinking');
     setError(null);
     voice.stopPlayback();
+    const started = epoch.current;
     try {
       if (live) await sendTurn(text, viaVoice);
       else await sendLegacy(text);
     } finally {
-      busyRef.current = false;
-      setPending(false);
+      if (started === epoch.current) {
+        busyRef.current = false;
+        setPending(false);
+      }
     }
   }
 
@@ -316,11 +347,15 @@ export default function ChatDock({
     setPending('transcribing');
     setError(null);
     let text = '';
+    const started = epoch.current;
     try {
       text = (await api.assistantTranscribe(wav)).text.trim();
     } catch {
-      setError('Could not transcribe the recording. Please try again or type your question.');
+      if (started === epoch.current) {
+        setError('Could not transcribe the recording. Please try again or type your question.');
+      }
     }
+    if (started !== epoch.current) return;
     busyRef.current = false;
     setPending(false);
     if (!text) return;
@@ -386,10 +421,15 @@ export default function ChatDock({
     }
   }
 
-  async function newConversation() {
+  /** Start over: forget the server-side session or thread and drop any reply still on its way. */
+  function newConversation() {
     const sessionId = read(session, SESSION_KEY);
+    epoch.current++;
+    busyRef.current = false;
+    setPending(false);
     voice.stopPlayback();
-    if (sessionId) await api.assistantReset(sessionId).catch(() => undefined);
+    // Fire and forget: a backend that is down must not block starting over.
+    if (sessionId) void api.assistantReset(sessionId).catch(() => undefined);
     write(session, SESSION_KEY, null);
     setThreadId(undefined);
     setEntries([]);
@@ -451,15 +491,14 @@ export default function ChatDock({
             <span className={`status status--${statusTone}`} role="status">
               {status}
             </span>
-            {live && (
-              <button
-                className="btn btn--ghost btn--sm chat__new"
-                onClick={() => void newConversation()}
-                disabled={busy}
-              >
-                New conversation
-              </button>
-            )}
+            <button
+              className="btn btn--ghost btn--sm chat__new"
+              onClick={newConversation}
+              title="Clear the conversation and start a fresh session"
+            >
+              <ReplayIcon width={14} height={14} />
+              <span className="chat__new-label">New conversation</span>
+            </button>
             <button className="icon-btn" onClick={() => setOpen(false)} aria-label="Minimise chat">
               <ChevronIcon />
             </button>
@@ -481,6 +520,11 @@ export default function ChatDock({
                 return (
                   <li key={m.id} className="chat__msg chat__msg--notice">
                     {m.text}
+                    {m.offerReset && (
+                      <button className="chip chat__reset-chip" onClick={newConversation}>
+                        Start new conversation
+                      </button>
+                    )}
                   </li>
                 );
               }
@@ -556,9 +600,12 @@ export default function ChatDock({
             </div>
           )}
           {error && (
-            <p className="chat__error" role="alert">
-              {error}
-            </p>
+            <div className="chat__error" role="alert">
+              <span>{error}</span>
+              <button className="chip chat__reset-chip" onClick={newConversation}>
+                <ReplayIcon width={13} height={13} /> Start over
+              </button>
+            </div>
           )}
         </div>
       )}

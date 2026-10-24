@@ -167,8 +167,9 @@ export const CodeIcon = (p: P) => (
 
 export const OrbitIcon = (p: P) => (
   <Icon {...p}>
-    <ellipse cx="12" cy="12" rx="9" ry="4" />
-    <path d="M17.5 4.5 21 8l-3.5 3.5" transform="rotate(20 12 12)" />
+    {/* A circular arrow around the pivot: drag rotates the view. */}
+    <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+    <path d="M20 4v4h-4" />
     <circle cx="12" cy="12" r="1.6" />
   </Icon>
 );

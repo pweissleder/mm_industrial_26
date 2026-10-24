@@ -123,6 +123,35 @@
 
 .chat__new {
   margin-left: auto;
+  gap: 6px;
+}
+
+.chat__reset-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 6px auto 0;
+}
+
+.chat__msg--notice .chat__reset-chip {
+  display: flex;
+}
+
+.chat__error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.chat__error .chat__reset-chip {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .chat__new-label {
+    display: none;
+  }
 }
 
 .phases {
