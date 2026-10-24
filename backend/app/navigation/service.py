@@ -89,19 +89,19 @@ class _Entry:
 
     @property
     def spaces(self) -> dict[str, JSON]:
-        return self.bmap.spaces  # type: ignore[no-any-return]
+        return self.bmap.spaces
 
     @property
     def openings(self) -> dict[str, JSON]:
-        return self.bmap.openings  # type: ignore[no-any-return]
+        return self.bmap.openings
 
     @property
     def connectors(self) -> dict[str, JSON]:
-        return self.bmap.connectors  # type: ignore[no-any-return]
+        return self.bmap.connectors
 
     @property
     def assets(self) -> dict[str, JSON]:
-        return self.bmap.assets  # type: ignore[no-any-return]
+        return self.bmap.assets
 
     def element_kind(self, element_id: str) -> str | None:
         if element_id in self.spaces:
@@ -346,7 +346,10 @@ class NavigationService:
         """Candidates of `category` ranked by OFFICIAL walking cost from `origin` (single-source
         Dijkstra on the official graph with closures/step-free); unreachable ones are omitted.
         Categories: `exit`, `room_type:<t>`, `asset_type:<t>`, `query:<words>`."""
-        return self.nearest_from(building_id, origin, category, step_free, limit)["results"]
+        results: list[JSON] = self.nearest_from(building_id, origin, category, step_free, limit)[
+            "results"
+        ]
+        return results
 
     def nearest_from(
         self,
@@ -613,7 +616,7 @@ class NavigationService:
         if profile not in PROFILES:
             raise NavigationError("invalid_input", "profile must be stationary, all or none")
         assumptions: list[str] = []
-        legacy = {
+        legacy: JSON = {
             "start": self._precision_endpoint(entry, start, closed, assumptions),
             "target": self._precision_endpoint(entry, target, closed, assumptions),
             "profile": profile,
@@ -689,11 +692,11 @@ class NavigationService:
                 "diagnostic_failure": True,
             }
             diagnosed = error
-        category = (diagnosed.details.get("diagnosis") or {}).get("category")
+        category = str((diagnosed.details.get("diagnosis") or {}).get("category") or "")
         diagnosed.details["status"] = {"unsupported": "unsupported", "closed": "blocked"}.get(
             category, "unreachable"
         )
-        return diagnosed  # type: ignore[no-any-return]
+        return diagnosed
 
     # ------------------------------------------------------------ scenario
 
@@ -831,7 +834,7 @@ class NavigationService:
     # ------------------------------------------------------------ benchmark operations
 
     def operation_specs(self) -> list[JSON]:
-        return operations.operation_specs()  # type: ignore[no-any-return]
+        return operations.operation_specs()
 
     def operation(self, building_id: str, operation: str, arguments: JSON) -> JSON:
         """One of the nine benchmark operations on the building with the scenario closures

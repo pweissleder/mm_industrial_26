@@ -135,6 +135,13 @@ export function useNavigation(buildingId: string | null): Navigation {
     void refresh();
   }, [buildingId, refresh]);
 
+  // The scenario is shared (assistant, other tabs, developers): reload it when the window regains focus.
+  useEffect(() => {
+    const onFocus = () => void refresh();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, [refresh]);
+
   const reset = useCallback(() => {
     setStart(null);
     setTarget(null);
@@ -361,8 +368,10 @@ export function useNavigation(buildingId: string | null): Navigation {
           setHighlight(ui.operation.ids.map(String));
         }
       }
+      // The scenario may have changed (confirmed proposal, another tab or the developer panel).
+      void refresh();
     },
-    [],
+    [refresh],
   );
 
   const ui = useMemo(

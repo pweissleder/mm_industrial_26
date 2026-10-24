@@ -5,6 +5,7 @@ router (official text) or from the checked precision segments, never from a lang
 """
 
 import math
+import re
 from typing import Any
 
 JSON = dict[str, Any]
@@ -97,7 +98,8 @@ def official_response(result: JSON, building: JSON) -> JSON:
         "element_path": result["element_path"],
         "path": path,
         "transitions": ordered,
-        "directions": result["directions"],
+        "directions": readable_directions(result["directions"], building),
+        "directions_raw": result["directions"],
         "legs": [
             {k: leg[k] for k in ("index", "space_path", "element_path", "cost_m", "walk_m")}
             | {"vertical_cost_m": leg["vertical_cost_m"]}
@@ -119,6 +121,29 @@ def official_response(result: JSON, building: JSON) -> JSON:
         else []
     )
     return response
+
+
+def readable_directions(lines: list[str], building: JSON) -> list[str]:
+    """The router's direction lines without element ids ("Office 1.04 [b-F1-S004]" ->
+    "Office 1.04", "the exit b-F0-O0018 of ..." -> "the exit of ..."); the wording and numbers
+    stay the official router's. The original lines remain in `directions_raw`."""
+    ids = {
+        item["id"]
+        for key in ("spaces", "openings", "vertical_connectors", "assets")
+        for item in building.get(key, [])
+    }
+
+    def bracket(match: re.Match[str]) -> str:
+        return "" if match.group(1) in ids else match.group(0)
+
+    def bare(match: re.Match[str]) -> str:
+        return "" if match.group(1) in ids else match.group(0)
+
+    out = []
+    for line in lines:
+        text = re.sub(r" \[([^\]\s]+)\]", bracket, line)
+        out.append(re.sub(r" ([^\s,.;:()\[\]]+)", bare, text))
+    return out
 
 
 def _connector_entry(kind: str, element_id: str, move: JSON) -> JSON:

@@ -58,6 +58,16 @@ def test_status_reports_live_assistant_and_no_voice_without_key(
     assert status["live"] is True and status["voice"] is False
 
 
+def test_first_turn_without_session_id_gets_one(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    with make_client(settings, datasets_dir, ["Hello! How can I help?"]) as client:
+        ingest(client)
+        response = client.post("/api/assistant/turn", json={"text": "hi", "ui": {"building_id": B}})
+    assert response.status_code == 200, response.text
+    assert len(response.json()["session_id"]) >= 8
+
+
 def test_nearest_exit_from_first_floor_ends_at_the_exit_door(
     settings: Settings, datasets_dir: Path, ingest: Any
 ) -> None:
@@ -84,6 +94,9 @@ def test_nearest_exit_from_first_floor_ends_at_the_exit_door(
     )
     assert any(t["kind"] in {"stairs", "lift"} for t in route["transitions"])
     assert out["phases"][-1] == "Showing directions"
+    # Directions shown to people carry no element ids; the router's own lines stay available.
+    assert route["directions"] and not any(B in line for line in route["directions"])
+    assert any(B in line for line in route["directions_raw"])
 
 
 def test_ambiguous_follow_up_ends_with_a_question_not_a_limit_message(

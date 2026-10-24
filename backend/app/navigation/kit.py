@@ -124,12 +124,13 @@ def kit_file(relative: str) -> bytes:
                 {"path": relative},
             )
         return content
+    member: bytes | None
     try:
-        content = read_member(relative)
+        member = read_member(relative)
     except NavigationError:
-        content = None
-    if content is not None and git_blob_id(content, normalise_crlf=False) == expected:
-        return content
+        member = None
+    if member is not None and git_blob_id(member, normalise_crlf=False) == expected:
+        return member
     raise NavigationError(
         "source_unavailable",
         f"{relative} of kit {KIT_VERSION} is neither checked out nor identical in the ZIP",

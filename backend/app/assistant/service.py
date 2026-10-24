@@ -71,6 +71,9 @@ Understanding requests
 - Keep restrictions (step-free, width) for the rest of the conversation unless changed.
 - Few tool calls: prefer find_nearest with and_route over separate search + route; don't repeat
   a search you already have; use building_fact only for explicit fact questions.
+- "Closest", "nearer" and "farther" only from walking distances the tools return; never call
+  another option closer than the one they rank first. Mention alternatives only when useful,
+  with their distance.
 
 Routing modes: "official" (default) = the official kit 1.1.0 route rules for any building:
 door to door, 15 cm from walls, furniture ignored, stairs and lift costs. "precision" = an
@@ -384,7 +387,12 @@ class Assistant:
         results = self.navigation.nearest(
             state["building_id"], state["start"], category, step_free, 5
         )
-        out: JSON = {"from": self.describe(self._data(session), state["start"]), "results": results}
+        out: JSON = {
+            "from": self.describe(self._data(session), state["start"]),
+            "results": results,
+            "ranking": "Sorted by official walking distance (walk_cost_m); the first is the "
+            "closest. Any other result is farther.",
+        }
         if not results:
             out["note"] = "Nothing reachable of that kind. Say so and offer an alternative."
             return out

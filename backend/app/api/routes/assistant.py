@@ -2,6 +2,7 @@
 
 import base64
 import binascii
+import secrets
 from time import perf_counter
 from typing import Any
 
@@ -17,7 +18,10 @@ STALE = {"revision_conflict", "stale_revision"}
 
 
 class TurnRequest(BaseModel):
-    session_id: str = Field(min_length=8, max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    # Optional on the first turn (contract): the server starts a session and returns its id.
+    session_id: str | None = Field(
+        default=None, min_length=8, max_length=64, pattern=r"^[A-Za-z0-9_-]+$"
+    )
     text: str = Field(min_length=1, max_length=2000)
     ui: dict[str, Any] = Field(default_factory=dict)
     speak: bool = False
@@ -73,13 +77,14 @@ def assistant_status(request: Request) -> dict[str, Any]:
 @router.post("/turn")
 def turn(body: TurnRequest, request: Request) -> dict[str, Any]:
     assistant = _assistant(request)
+    session_id = body.session_id or secrets.token_urlsafe(16)
     try:
-        value = assistant.turn(body.session_id, body.text, body.ui, body.voice)
+        value = assistant.turn(session_id, body.text, body.ui, body.voice)
     except AssistantError as error:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, str(error)) from None
     except NavigationError as error:
         raise _nav_error(error) from None
-    value["session_id"] = body.session_id
+    value["session_id"] = session_id
     value["audio_pcm16"], value["sample_rate"] = None, SAMPLE_RATE
     voice = _voice(request)
     if body.speak and voice is not None and value["reply"]:

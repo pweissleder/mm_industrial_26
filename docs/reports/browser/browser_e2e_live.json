@@ -1,0 +1,130 @@
+{
+ "generated": "2026-10-24T20:56:43.150Z",
+ "base": "http://localhost:4321",
+ "live": true,
+ "passed": 14,
+ "total": 14,
+ "results": [
+  {
+   "name": "app_loads",
+   "pass": true,
+   "ms": 2222,
+   "detail": {
+    "buildings": 40
+   }
+  },
+  {
+   "name": "open_campus_building",
+   "pass": true,
+   "ms": 2116,
+   "detail": {
+    "name": "Laborgebäude 025"
+   }
+  },
+  {
+   "name": "sidebar_search_room",
+   "pass": true,
+   "ms": 63,
+   "detail": {
+    "hits": 50
+   }
+  },
+  {
+   "name": "developer_route_multifloor_to_exit_door",
+   "pass": true,
+   "ms": 2984,
+   "detail": {
+    "start": "Corridor 3.01",
+    "target": "Exit from Corridor 0.01",
+    "floors": 4,
+    "length_m": 55.81,
+    "factsHasOk": true
+   }
+  },
+  {
+   "name": "nearest_exit_button",
+   "pass": true,
+   "ms": 72,
+   "detail": null
+  },
+  {
+   "name": "scenario_close_select_and_reset",
+   "pass": true,
+   "ms": 1260,
+   "detail": null
+  },
+  {
+   "name": "factory_precision_route_and_asset",
+   "pass": true,
+   "ms": 5132,
+   "detail": {
+    "target": "CNC mill H-A1-A",
+    "official_m": 35.66,
+    "precision": "ok",
+    "precision_m": 36.042
+   }
+  },
+  {
+   "name": "nav_graph_layer_loads",
+   "pass": true,
+   "ms": 1850,
+   "detail": null
+  },
+  {
+   "name": "assistant_mode_state",
+   "pass": true,
+   "ms": 549,
+   "detail": {
+    "status": "Claude · live · voice"
+   }
+  },
+  {
+   "name": "live_exit_route_from_first_floor",
+   "pass": true,
+   "ms": 9226,
+   "detail": {
+    "reply": "The nearest exit is the one from Warehouse zone H-C2, about 77 m away. The route goes down the office staircase to the ground floor. It then goes through the production zone and along the main aisles to the exit.\n\nIf you'd rather stay close to the offices, there's also an exit from Office corridor 0.16. It's about 85 m by the official route. I've set your start to Office 1.04 and cleared the old destination.",
+    "usd": 0.02567,
+    "total_ms": 7972.6
+   }
+  },
+  {
+   "name": "live_ambiguous_follow_up",
+   "pass": true,
+   "ms": 4935,
+   "detail": {
+    "reply": "I'm not sure what you mean by \"the connection from there, the bigger one\". Do you mean one of these?\n\n- **The stairs or lift** between Floor 1 and the ground floor, starting from Office 1.04. If so, which one is bigger?\n- **A different exit** than the Warehouse zone H-C2 one. Do you want a larger or wider exit?\n- **A wider route** for a trolley or wheelchair. If so, tell me the width you need.",
+    "status": "ok",
+    "rounds": 1,
+    "usd": 0.00486
+   }
+  },
+  {
+   "name": "live_closure_needs_confirmation",
+   "pass": true,
+   "ms": 7460,
+   "detail": {
+    "element": "Office lift",
+    "revision": 1
+   }
+  },
+  {
+   "name": "live_voice_push_to_talk",
+   "pass": true,
+   "ms": 12288,
+   "detail": {
+    "transcript": "I am in office 1.04. Where is the nearest exit?",
+    "stt_ms": 656.4,
+    "reply": "The nearest exit is the one in Warehouse zone H-C2, about 77 metres away. You take the office staircase down to the ground floor. Then you go through the production zone and along the main aisles to the exit.\n\nThe session shows no confirmed closures, so the office lift may not be closed. That doesn't affect this route, because it uses the stairs.",
+    "tts_ms": 696.8,
+    "total_ms": 3828.4,
+    "route": "ok"
+   }
+  },
+  {
+   "name": "no_console_errors",
+   "pass": true,
+   "detail": []
+  }
+ ]
+}

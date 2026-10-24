@@ -34,8 +34,16 @@ async function step(name, fn) {
   }
 }
 
-const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+// VOICE_WAV: a 16 kHz WAV that Chrome's fake microphone plays (scripts/e2e/make_voice_sample.py).
+const VOICE_WAV = process.env.VOICE_WAV;
+const chromeArgs = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
+if (VOICE_WAV) {
+  chromeArgs.push('--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream', `--use-file-for-fake-audio-capture=${VOICE_WAV}`);
+}
+const browser = await chromium.launch({ executablePath: CHROME, headless: true, args: chromeArgs });
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+await context.grantPermissions(['microphone'], { origin: BASE });
+const page = await context.newPage();
 page.on('console', (m) => m.type() === 'error' && consoleErrors.push(m.text()));
 page.on('pageerror', (e) => consoleErrors.push('pageerror: ' + e.message));
 const navResponses = [];
@@ -224,6 +232,38 @@ if (LIVE) {
     await page.request.post(BASE + '/api/nav/proc-factory-dev-003/scenario', { data: { action: 'reset', expected_revision: state.revision } });
     return { element: proposal.element_name, revision: state.revision };
   });
+
+  if (VOICE_WAV) {
+    await step('live_voice_push_to_talk', async () => {
+      const n = turns.length;
+      const transcripts = [];
+      const onResp = async (r) => {
+        if (r.url().endsWith('/api/assistant/transcribe')) {
+          try { transcripts.push({ status: r.status(), body: await r.json() }); } catch { /* ignore */ }
+        }
+      };
+      page.on('response', onResp);
+      const talk = page.getByRole('button', { name: 'Hold to talk' });
+      const box = await talk.boundingBox();
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+      await page.mouse.down();
+      await page.waitForTimeout(5200);
+      await page.mouse.up();
+      for (let i = 0; i < 360 && turns.length === n; i++) await page.waitForTimeout(250);
+      page.off('response', onResp);
+      const stt = transcripts.at(-1);
+      if (!stt || stt.status !== 200) throw new Error('transcription failed: ' + JSON.stringify(stt));
+      const t = turns.at(-1);
+      if (!t || turns.length === n) throw new Error('no assistant turn after speech');
+      await page.waitForTimeout(1500);
+      const shown = await page.locator('.chat__msg--user').last().innerText();
+      await shot('09-live-voice');
+      if (!/office/i.test(stt.body.text) || !/exit/i.test(stt.body.text)) throw new Error('unexpected transcript: ' + stt.body.text);
+      if (!shown.includes(stt.body.text.slice(0, 12))) throw new Error('transcript not shown as the user message');
+      if (!t.body.audio_pcm16) throw new Error('no spoken reply: ' + (t.body.voice_error || 'missing audio'));
+      return { transcript: stt.body.text, stt_ms: stt.body.stt_ms, reply: t.body.reply, tts_ms: t.body.timing_ms?.tts_ms, total_ms: t.body.timing_ms?.total_ms, route: t.body.ui?.route?.status };
+    });
+  }
 }
 
 const relevantErrors = consoleErrors.filter((e) => !/favicon|DevTools|WebGL|GPU stall|GroupMarkerNotSet/i.test(e));

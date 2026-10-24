@@ -1,42 +1,26 @@
 {
- "generated": "2026-10-24T22:32:17",
+ "generated": "2026-10-24T22:50:59",
  "seed": 20261024,
  "buildings": [
   "osm-way22744230",
   "osm-way27326387",
+  "osm-way27917482",
   "proc-campus-dev-000",
   "proc-campus-dev-001",
+  "proc-campus-dev-002",
   "proc-factory-dev-003",
   "proc-factory-dev-004",
+  "proc-factory-dev-005",
   "resplan-14509",
   "resplan-1465",
+  "resplan-15179",
   "swiss-1689",
-  "swiss-1785"
+  "swiss-1785",
+  "swiss-203"
  ],
- "passed": 150,
- "total": 151,
- "failures": [
-  {
-   "building": "proc-campus-dev-001",
-   "check": "route_to_exit_ends_at_door",
-   "pass": false,
-   "request": {
-    "mode": "official",
-    "start": {
-     "kind": "space",
-     "id": "proc-campus-dev-001-F3-S014"
-    },
-    "target": {
-     "kind": "opening",
-     "id": "proc-campus-dev-001-F0-O0023"
-    }
-   },
-   "detail": {
-    "http": 200,
-    "status": "ok"
-   }
-  }
- ],
+ "passed": 226,
+ "total": 226,
+ "failures": [],
  "checks": [
   {
    "building": "osm-way22744230",
@@ -425,7 +409,202 @@
    "check": "elapsed_s",
    "pass": true,
    "request": null,
-   "detail": 34.9
+   "detail": 34.7
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "ingest",
+   "pass": true,
+   "request": {
+    "dataset": "osm-way27917482"
+   },
+   "detail": 201
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "state",
+   "pass": true,
+   "request": null,
+   "detail": {
+    "official": true,
+    "precision": false,
+    "precision_reason": "Precise navigation currently supports verified procedural factory/campus coordinates only"
+   }
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "search_room_by_name",
+   "pass": true,
+   "request": "Generic room 01.12.033A",
+   "detail": null
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "search_asset",
+   "pass": true,
+   "request": "Desk 01.12.056-A",
+   "detail": null
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "search_exit",
+   "pass": true,
+   "request": "exit",
+   "detail": 5
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "route_room_room_multifloor",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27917482-F3-S306"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27917482-F-1-S080"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok",
+    "length_m": 131.85
+   }
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "route_to_exit_ends_at_door",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27917482-F3-S306"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "osm-way27917482-F0-O1771"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "nearest_exit_sorted",
+   "pass": true,
+   "request": "osm-way27917482-F3-S306",
+   "detail": [
+    4.23,
+    12.12,
+    30.29
+   ]
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "route_to_asset",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27917482-F3-S306"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "osm-way27917482-A03988"
+    }
+   },
+   "detail": "ok"
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "route_from_point",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "osm-way27917482-F-1-S080",
+     "position": [
+      -87.6095,
+      30.7805
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27917482-F3-S306"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "precision_ok_or_clean_refusal",
+   "pass": true,
+   "request": {
+    "mode": "precision",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27917482-F-1-S080"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27917482-F-1-S110"
+    }
+   },
+   "detail": {
+    "http": 422,
+    "status": "geometry_unsupported"
+   }
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "scenario_close_stale409_reset",
+   "pass": true,
+   "request": "osm-way27917482-V01",
+   "detail": [
+    200,
+    409,
+    200
+   ]
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "negative_unknown_place_422",
+   "pass": true,
+   "request": "nope",
+   "detail": {
+    "error": {
+     "code": "unknown_place",
+     "message": "start: no space with id 'nope'",
+     "details": {
+      "kind": "space",
+      "id": "nope"
+     }
+    }
+   }
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "negative_bad_mode_422",
+   "pass": true,
+   "request": "teleport",
+   "detail": 422
+  },
+  {
+   "building": "osm-way27917482",
+   "check": "elapsed_s",
+   "pass": true,
+   "request": null,
+   "detail": 45.4
   },
   {
    "building": "proc-campus-dev-000",
@@ -451,14 +630,14 @@
    "building": "proc-campus-dev-000",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Office 1.02",
+   "request": "Lab 4.22",
    "detail": null
   },
   {
    "building": "proc-campus-dev-000",
    "check": "search_asset",
    "pass": true,
-   "request": "Seminar table 4.02-C",
+   "request": "Sink 1.20-A",
    "detail": null
   },
   {
@@ -476,17 +655,17 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F4-S011"
+     "id": "proc-campus-dev-000-F4-S016"
     },
     "target": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F0-S024"
+     "id": "proc-campus-dev-000-F0-S020"
     }
    },
    "detail": {
     "http": 200,
     "status": "ok",
-    "length_m": 60.92
+    "length_m": 93.77
    }
   },
   {
@@ -497,7 +676,7 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F4-S011"
+     "id": "proc-campus-dev-000-F4-S016"
     },
     "target": {
      "kind": "opening",
@@ -513,10 +692,10 @@
    "building": "proc-campus-dev-000",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "proc-campus-dev-000-F4-S011",
+   "request": "proc-campus-dev-000-F4-S016",
    "detail": [
-    81.37,
-    84.53
+    103.34,
+    106.48
    ]
   },
   {
@@ -527,11 +706,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F4-S011"
+     "id": "proc-campus-dev-000-F4-S016"
     },
     "target": {
      "kind": "asset",
-     "id": "proc-campus-dev-000-A00919"
+     "id": "proc-campus-dev-000-A00293"
     }
    },
    "detail": "ok"
@@ -544,15 +723,15 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "proc-campus-dev-000-F0-S024",
+     "space_id": "proc-campus-dev-000-F0-S020",
      "position": [
       11.4,
-      -57.085
+      -12.89
      ]
     },
     "target": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F4-S011"
+     "id": "proc-campus-dev-000-F4-S016"
     }
    },
    "detail": {
@@ -568,11 +747,11 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F0-S024"
+     "id": "proc-campus-dev-000-F0-S020"
     },
     "target": {
      "kind": "space",
-     "id": "proc-campus-dev-000-F0-S024"
+     "id": "proc-campus-dev-000-F0-S006"
     }
    },
    "detail": {
@@ -645,14 +824,14 @@
    "building": "proc-campus-dev-001",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Office 3.24",
+   "request": "Kitchen 0.09",
    "detail": null
   },
   {
    "building": "proc-campus-dev-001",
    "check": "search_asset",
    "pass": true,
-   "request": "Chair 1.25-B",
+   "request": "Lab bench 3.02-A",
    "detail": null
   },
   {
@@ -670,28 +849,28 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F3-S014"
+     "id": "proc-campus-dev-001-F3-S003"
     },
     "target": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F0-S018"
+     "id": "proc-campus-dev-001-F0-S008"
     }
    },
    "detail": {
     "http": 200,
     "status": "ok",
-    "length_m": 67.23
+    "length_m": 58.38
    }
   },
   {
    "building": "proc-campus-dev-001",
    "check": "route_to_exit_ends_at_door",
-   "pass": false,
+   "pass": true,
    "request": {
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F3-S014"
+     "id": "proc-campus-dev-001-F3-S003"
     },
     "target": {
      "kind": "opening",
@@ -707,10 +886,10 @@
    "building": "proc-campus-dev-001",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "proc-campus-dev-001-F3-S014",
+   "request": "proc-campus-dev-001-F3-S003",
    "detail": [
-    53.37,
-    56.4
+    49.23,
+    52.26
    ]
   },
   {
@@ -721,11 +900,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F3-S014"
+     "id": "proc-campus-dev-001-F3-S003"
     },
     "target": {
      "kind": "asset",
-     "id": "proc-campus-dev-001-A00293"
+     "id": "proc-campus-dev-001-A00515"
     }
    },
    "detail": "ok"
@@ -738,15 +917,15 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "proc-campus-dev-001-F0-S018",
+     "space_id": "proc-campus-dev-001-F0-S008",
      "position": [
-      34.39,
-      11.4
+      29.75,
+      3.0
      ]
     },
     "target": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F3-S014"
+     "id": "proc-campus-dev-001-F3-S003"
     }
    },
    "detail": {
@@ -762,11 +941,11 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F0-S018"
+     "id": "proc-campus-dev-001-F0-S008"
     },
     "target": {
      "kind": "space",
-     "id": "proc-campus-dev-001-F0-S006"
+     "id": "proc-campus-dev-001-F0-S009"
     }
    },
    "detail": {
@@ -816,6 +995,200 @@
    "detail": 35.0
   },
   {
+   "building": "proc-campus-dev-002",
+   "check": "ingest",
+   "pass": true,
+   "request": {
+    "dataset": "proc-campus-dev-002"
+   },
+   "detail": 201
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "state",
+   "pass": true,
+   "request": null,
+   "detail": {
+    "official": true,
+    "precision": true,
+    "precision_reason": null
+   }
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "search_room_by_name",
+   "pass": true,
+   "request": "Seminar room 1.07",
+   "detail": null
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "search_asset",
+   "pass": true,
+   "request": "Chair 1.23-K",
+   "detail": null
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "search_exit",
+   "pass": true,
+   "request": "exit",
+   "detail": 2
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "route_room_room_multifloor",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F3-S006"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F0-S012"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok",
+    "length_m": 49.17
+   }
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "route_to_exit_ends_at_door",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F3-S006"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-002-F0-O0020"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "nearest_exit_sorted",
+   "pass": true,
+   "request": "proc-campus-dev-002-F3-S006",
+   "detail": [
+    51.7,
+    56.37
+   ]
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "route_to_asset",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F3-S006"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "proc-campus-dev-002-A00035"
+    }
+   },
+   "detail": "ok"
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "route_from_point",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-campus-dev-002-F0-S012",
+     "position": [
+      6.065,
+      11.4
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F3-S006"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "precision_ok_or_clean_refusal",
+   "pass": true,
+   "request": {
+    "mode": "precision",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F0-S012"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-002-F0-S020"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "scenario_close_stale409_reset",
+   "pass": true,
+   "request": "proc-campus-dev-002-V01",
+   "detail": [
+    200,
+    409,
+    200
+   ]
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "negative_unknown_place_422",
+   "pass": true,
+   "request": "nope",
+   "detail": {
+    "error": {
+     "code": "unknown_place",
+     "message": "start: no space with id 'nope'",
+     "details": {
+      "kind": "space",
+      "id": "nope"
+     }
+    }
+   }
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "negative_bad_mode_422",
+   "pass": true,
+   "request": "teleport",
+   "detail": 422
+  },
+  {
+   "building": "proc-campus-dev-002",
+   "check": "elapsed_s",
+   "pass": true,
+   "request": null,
+   "detail": 34.9
+  },
+  {
    "building": "proc-factory-dev-003",
    "check": "ingest",
    "pass": true,
@@ -839,14 +1212,14 @@
    "building": "proc-factory-dev-003",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Office 1.30",
+   "request": "Server room 1.12",
    "detail": null
   },
   {
    "building": "proc-factory-dev-003",
    "check": "search_asset",
    "pass": true,
-   "request": "Curing oven H-A3",
+   "request": "Chair 0.27-E",
    "detail": null
   },
   {
@@ -864,17 +1237,17 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F1-S030"
+     "id": "proc-factory-dev-003-F1-S014"
     },
     "target": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F0-S034"
+     "id": "proc-factory-dev-003-F0-S035"
     }
    },
    "detail": {
     "http": 200,
     "status": "ok",
-    "length_m": 82.76
+    "length_m": 77.38
    }
   },
   {
@@ -885,7 +1258,7 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F1-S030"
+     "id": "proc-factory-dev-003-F1-S014"
     },
     "target": {
      "kind": "opening",
@@ -901,11 +1274,11 @@
    "building": "proc-factory-dev-003",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "proc-factory-dev-003-F1-S030",
+   "request": "proc-factory-dev-003-F1-S014",
    "detail": [
-    133.11,
-    141.09,
-    145.13
+    122.59,
+    130.57,
+    134.61
    ]
   },
   {
@@ -916,11 +1289,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F1-S030"
+     "id": "proc-factory-dev-003-F1-S014"
     },
     "target": {
      "kind": "asset",
-     "id": "proc-factory-dev-003-A00073"
+     "id": "proc-factory-dev-003-A00448"
     }
    },
    "detail": "ok"
@@ -933,15 +1306,15 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "proc-factory-dev-003-F0-S034",
+     "space_id": "proc-factory-dev-003-F0-S035",
      "position": [
       9.5,
-      8.675
+      13.809999999999999
      ]
     },
     "target": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F1-S030"
+     "id": "proc-factory-dev-003-F1-S014"
     }
    },
    "detail": {
@@ -957,11 +1330,11 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F0-S034"
+     "id": "proc-factory-dev-003-F0-S035"
     },
     "target": {
      "kind": "space",
-     "id": "proc-factory-dev-003-F0-S029"
+     "id": "proc-factory-dev-003-F0-S021"
     }
    },
    "detail": {
@@ -1008,7 +1381,7 @@
    "check": "elapsed_s",
    "pass": true,
    "request": null,
-   "detail": 34.9
+   "detail": 35.1
   },
   {
    "building": "proc-factory-dev-004",
@@ -1034,14 +1407,14 @@
    "building": "proc-factory-dev-004",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Kitchen 1.13",
+   "request": "Locker room 0.30",
    "detail": null
   },
   {
    "building": "proc-factory-dev-004",
    "check": "search_asset",
    "pass": true,
-   "request": "Kitchen counter 1.15",
+   "request": "Hand dryer 0.20",
    "detail": null
   },
   {
@@ -1059,17 +1432,17 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F1-S009"
+     "id": "proc-factory-dev-004-F1-S006"
     },
     "target": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F0-S019"
+     "id": "proc-factory-dev-004-F0-S025"
     }
    },
    "detail": {
     "http": 200,
     "status": "ok",
-    "length_m": 58.07
+    "length_m": 34.76
    }
   },
   {
@@ -1080,11 +1453,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F1-S009"
+     "id": "proc-factory-dev-004-F1-S006"
     },
     "target": {
      "kind": "opening",
-     "id": "proc-factory-dev-004-F0-O0018"
+     "id": "proc-factory-dev-004-F0-O0039"
     }
    },
    "detail": {
@@ -1096,11 +1469,11 @@
    "building": "proc-factory-dev-004",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "proc-factory-dev-004-F1-S009",
+   "request": "proc-factory-dev-004-F1-S006",
    "detail": [
-    78.54,
-    99.47,
-    105.75
+    64.08,
+    85.0,
+    91.29
    ]
   },
   {
@@ -1111,11 +1484,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F1-S009"
+     "id": "proc-factory-dev-004-F1-S006"
     },
     "target": {
      "kind": "asset",
-     "id": "proc-factory-dev-004-A00045"
+     "id": "proc-factory-dev-004-A00060"
     }
    },
    "detail": "ok"
@@ -1128,15 +1501,15 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "proc-factory-dev-004-F0-S019",
+     "space_id": "proc-factory-dev-004-F0-S025",
      "position": [
-      -17.27,
-      2.5
+      -8.49,
+      9.5
      ]
     },
     "target": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F1-S009"
+     "id": "proc-factory-dev-004-F1-S006"
     }
    },
    "detail": {
@@ -1152,11 +1525,11 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F0-S019"
+     "id": "proc-factory-dev-004-F0-S025"
     },
     "target": {
      "kind": "space",
-     "id": "proc-factory-dev-004-F0-S022"
+     "id": "proc-factory-dev-004-F0-S026"
     }
    },
    "detail": {
@@ -1206,6 +1579,201 @@
    "detail": 34.9
   },
   {
+   "building": "proc-factory-dev-005",
+   "check": "ingest",
+   "pass": true,
+   "request": {
+    "dataset": "proc-factory-dev-005"
+   },
+   "detail": 201
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "state",
+   "pass": true,
+   "request": null,
+   "detail": {
+    "official": true,
+    "precision": true,
+    "precision_reason": null
+   }
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "search_room_by_name",
+   "pass": true,
+   "request": "Office 0.29",
+   "detail": null
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "search_asset",
+   "pass": true,
+   "request": "Filing cabinet 2.15-A",
+   "detail": null
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "search_exit",
+   "pass": true,
+   "request": "exit",
+   "detail": 4
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "route_room_room_multifloor",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F2-S035"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F0-S034"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok",
+    "length_m": 146.95
+   }
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "route_to_exit_ends_at_door",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F2-S035"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-factory-dev-005-F0-O0023"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "nearest_exit_sorted",
+   "pass": true,
+   "request": "proc-factory-dev-005-F2-S035",
+   "detail": [
+    168.65,
+    174.61,
+    212.61
+   ]
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "route_to_asset",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F2-S035"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "proc-factory-dev-005-A00717"
+    }
+   },
+   "detail": "ok"
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "route_from_point",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-factory-dev-005-F0-S034",
+     "position": [
+      2.5,
+      55.230000000000004
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F2-S035"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "precision_ok_or_clean_refusal",
+   "pass": true,
+   "request": {
+    "mode": "precision",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F0-S034"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-005-F0-S038"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "scenario_close_stale409_reset",
+   "pass": true,
+   "request": "proc-factory-dev-005-V01",
+   "detail": [
+    200,
+    409,
+    200
+   ]
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "negative_unknown_place_422",
+   "pass": true,
+   "request": "nope",
+   "detail": {
+    "error": {
+     "code": "unknown_place",
+     "message": "start: no space with id 'nope'",
+     "details": {
+      "kind": "space",
+      "id": "nope"
+     }
+    }
+   }
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "negative_bad_mode_422",
+   "pass": true,
+   "request": "teleport",
+   "detail": 422
+  },
+  {
+   "building": "proc-factory-dev-005",
+   "check": "elapsed_s",
+   "pass": true,
+   "request": null,
+   "detail": 35.2
+  },
+  {
    "building": "resplan-14509",
    "check": "ingest",
    "pass": true,
@@ -1229,14 +1797,14 @@
    "building": "resplan-14509",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Bedroom 0.02",
+   "request": "Living room 0.01",
    "detail": null
   },
   {
    "building": "resplan-14509",
    "check": "search_asset",
    "pass": true,
-   "request": "Coffee machine 0.06",
+   "request": "Coffee table 0.01",
    "detail": null
   },
   {
@@ -1308,7 +1876,7 @@
     },
     "target": {
      "kind": "asset",
-     "id": "resplan-14509-A00011"
+     "id": "resplan-14509-A00003"
     }
    },
    "detail": "ok"
@@ -1349,7 +1917,7 @@
     },
     "target": {
      "kind": "space",
-     "id": "resplan-14509-F0-S004"
+     "id": "resplan-14509-F0-S003"
     }
    },
    "detail": {
@@ -1396,7 +1964,7 @@
    "check": "elapsed_s",
    "pass": true,
    "request": null,
-   "detail": 34.7
+   "detail": 34.8
   },
   {
    "building": "resplan-1465",
@@ -1422,14 +1990,14 @@
    "building": "resplan-1465",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Living room 0.01",
+   "request": "Bathroom 0.05",
    "detail": null
   },
   {
    "building": "resplan-1465",
    "check": "search_asset",
    "pass": true,
-   "request": "TV stand 0.01",
+   "request": "Nightstand 0.02",
    "detail": null
   },
   {
@@ -1447,17 +2015,17 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "resplan-1465-F0-S004"
+     "id": "resplan-1465-F0-S002"
     },
     "target": {
      "kind": "space",
-     "id": "resplan-1465-F0-S002"
+     "id": "resplan-1465-F0-S001"
     }
    },
    "detail": {
     "http": 200,
     "status": "ok",
-    "length_m": 21.41
+    "length_m": 7.23
    }
   },
   {
@@ -1468,7 +2036,7 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "resplan-1465-F0-S004"
+     "id": "resplan-1465-F0-S002"
     },
     "target": {
      "kind": "opening",
@@ -1484,9 +2052,9 @@
    "building": "resplan-1465",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "resplan-1465-F0-S004",
+   "request": "resplan-1465-F0-S002",
    "detail": [
-    23.94
+    13.19
    ]
   },
   {
@@ -1497,11 +2065,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "resplan-1465-F0-S004"
+     "id": "resplan-1465-F0-S002"
     },
     "target": {
      "kind": "asset",
-     "id": "resplan-1465-A00032"
+     "id": "resplan-1465-A00034"
     }
    },
    "detail": "ok"
@@ -1514,20 +2082,20 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "resplan-1465-F0-S002",
+     "space_id": "resplan-1465-F0-S001",
      "position": [
-      18.8,
-      12.5985
+      15.512500000000001,
+      10.409714285714285
      ]
     },
     "target": {
      "kind": "space",
-     "id": "resplan-1465-F0-S004"
+     "id": "resplan-1465-F0-S002"
     }
    },
    "detail": {
-    "http": 200,
-    "status": "ok"
+    "http": 422,
+    "status": "invalid_input"
    }
   },
   {
@@ -1538,11 +2106,11 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "resplan-1465-F0-S002"
+     "id": "resplan-1465-F0-S001"
     },
     "target": {
      "kind": "space",
-     "id": "resplan-1465-F0-S004"
+     "id": "resplan-1465-F0-S002"
     }
    },
    "detail": {
@@ -1592,6 +2160,199 @@
    "detail": 34.9
   },
   {
+   "building": "resplan-15179",
+   "check": "ingest",
+   "pass": true,
+   "request": {
+    "dataset": "resplan-15179"
+   },
+   "detail": 201
+  },
+  {
+   "building": "resplan-15179",
+   "check": "state",
+   "pass": true,
+   "request": null,
+   "detail": {
+    "official": true,
+    "precision": false,
+    "precision_reason": "Precise navigation currently supports verified procedural factory/campus coordinates only"
+   }
+  },
+  {
+   "building": "resplan-15179",
+   "check": "search_room_by_name",
+   "pass": true,
+   "request": "Bathroom 0.05",
+   "detail": null
+  },
+  {
+   "building": "resplan-15179",
+   "check": "search_asset",
+   "pass": true,
+   "request": "Washing machine 0.08",
+   "detail": null
+  },
+  {
+   "building": "resplan-15179",
+   "check": "search_exit",
+   "pass": true,
+   "request": "exit",
+   "detail": 1
+  },
+  {
+   "building": "resplan-15179",
+   "check": "route_room_room",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S010"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S002"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok",
+    "length_m": 11.84
+   }
+  },
+  {
+   "building": "resplan-15179",
+   "check": "route_to_exit_ends_at_door",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S010"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "resplan-15179-F0-O0012"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "resplan-15179",
+   "check": "nearest_exit_sorted",
+   "pass": true,
+   "request": "resplan-15179-F0-S010",
+   "detail": [
+    10.1
+   ]
+  },
+  {
+   "building": "resplan-15179",
+   "check": "route_to_asset",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S010"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "resplan-15179-A00020"
+    }
+   },
+   "detail": "ok"
+  },
+  {
+   "building": "resplan-15179",
+   "check": "route_from_point",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "resplan-15179-F0-S002",
+     "position": [
+      9.553333333333333,
+      13.643666666666666
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S010"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "resplan-15179",
+   "check": "precision_ok_or_clean_refusal",
+   "pass": true,
+   "request": {
+    "mode": "precision",
+    "start": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S002"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-15179-F0-S003"
+    }
+   },
+   "detail": {
+    "http": 422,
+    "status": "geometry_unsupported"
+   }
+  },
+  {
+   "building": "resplan-15179",
+   "check": "scenario_close_stale409_reset",
+   "pass": true,
+   "request": "resplan-15179-F0-O0001",
+   "detail": [
+    200,
+    409,
+    200
+   ]
+  },
+  {
+   "building": "resplan-15179",
+   "check": "negative_unknown_place_422",
+   "pass": true,
+   "request": "nope",
+   "detail": {
+    "error": {
+     "code": "unknown_place",
+     "message": "start: no space with id 'nope'",
+     "details": {
+      "kind": "space",
+      "id": "nope"
+     }
+    }
+   }
+  },
+  {
+   "building": "resplan-15179",
+   "check": "negative_bad_mode_422",
+   "pass": true,
+   "request": "teleport",
+   "detail": 422
+  },
+  {
+   "building": "resplan-15179",
+   "check": "elapsed_s",
+   "pass": true,
+   "request": null,
+   "detail": 34.8
+  },
+  {
    "building": "swiss-1689",
    "check": "ingest",
    "pass": true,
@@ -1615,14 +2376,14 @@
    "building": "swiss-1689",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Kitchen 2.45 (apartment 22)",
+   "request": "Bedroom 2.58 (apartment 23)",
    "detail": null
   },
   {
    "building": "swiss-1689",
    "check": "search_asset",
    "pass": true,
-   "request": "Plant 3.11-A",
+   "request": "Sofa -1.38",
    "detail": null
   },
   {
@@ -1640,17 +2401,17 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "swiss-1689-F3-S052"
+     "id": "swiss-1689-F3-S006"
     },
     "target": {
      "kind": "space",
-     "id": "swiss-1689-F-1-S004"
+     "id": "swiss-1689-F-1-S027"
     }
    },
    "detail": {
     "http": 200,
-    "status": "unreachable",
-    "length_m": null
+    "status": "ok",
+    "length_m": 47.3
    }
   },
   {
@@ -1661,7 +2422,7 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "swiss-1689-F3-S052"
+     "id": "swiss-1689-F3-S006"
     },
     "target": {
      "kind": "opening",
@@ -1677,11 +2438,11 @@
    "building": "swiss-1689",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "swiss-1689-F3-S052",
+   "request": "swiss-1689-F3-S006",
    "detail": [
-    31.4,
-    34.98,
-    43.36
+    28.33,
+    31.91,
+    40.29
    ]
   },
   {
@@ -1692,14 +2453,14 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "swiss-1689-F3-S052"
+     "id": "swiss-1689-F3-S006"
     },
     "target": {
      "kind": "asset",
-     "id": "swiss-1689-A00050"
+     "id": "swiss-1689-A00150"
     }
    },
-   "detail": "ok"
+   "detail": "unreachable"
   },
   {
    "building": "swiss-1689",
@@ -1709,20 +2470,20 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "swiss-1689-F-1-S004",
+     "space_id": "swiss-1689-F-1-S027",
      "position": [
-      -18.28175,
-      0.35875
+      17.3335,
+      -5.857
      ]
     },
     "target": {
      "kind": "space",
-     "id": "swiss-1689-F3-S052"
+     "id": "swiss-1689-F3-S006"
     }
    },
    "detail": {
     "http": 200,
-    "status": "unreachable"
+    "status": "ok"
    }
   },
   {
@@ -1733,7 +2494,7 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "swiss-1689-F-1-S004"
+     "id": "swiss-1689-F-1-S027"
     },
     "target": {
      "kind": "space",
@@ -1810,14 +2571,14 @@
    "building": "swiss-1785",
    "check": "search_room_by_name",
    "pass": true,
-   "request": "Bathroom 2.20 (apartment 11)",
+   "request": "Bedroom 2.12 (apartment 10)",
    "detail": null
   },
   {
    "building": "swiss-1785",
    "check": "search_asset",
    "pass": true,
-   "request": "Dining chair 0.01-A",
+   "request": "TV stand 2.23",
    "detail": null
   },
   {
@@ -1835,17 +2596,17 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "swiss-1785-F2-S016"
+     "id": "swiss-1785-F2-S020"
     },
     "target": {
      "kind": "space",
-     "id": "swiss-1785-F0-S030"
+     "id": "swiss-1785-F0-S024"
     }
    },
    "detail": {
     "http": 200,
-    "status": "unreachable",
-    "length_m": null
+    "status": "ok",
+    "length_m": 27.41
    }
   },
   {
@@ -1856,25 +2617,25 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "swiss-1785-F2-S016"
+     "id": "swiss-1785-F2-S020"
     },
     "target": {
      "kind": "opening",
-     "id": "swiss-1785-F0-O0109"
+     "id": "swiss-1785-F0-O0110"
     }
    },
    "detail": {
     "http": 200,
-    "status": "unreachable"
+    "status": "ok"
    }
   },
   {
    "building": "swiss-1785",
    "check": "nearest_exit_sorted",
    "pass": true,
-   "request": "swiss-1785-F2-S016",
+   "request": "swiss-1785-F2-S020",
    "detail": [
-    22.92
+    23.55
    ]
   },
   {
@@ -1885,11 +2646,11 @@
     "mode": "official",
     "start": {
      "kind": "space",
-     "id": "swiss-1785-F2-S016"
+     "id": "swiss-1785-F2-S020"
     },
     "target": {
      "kind": "asset",
-     "id": "swiss-1785-A00007"
+     "id": "swiss-1785-A00145"
     }
    },
    "detail": "ok"
@@ -1902,20 +2663,20 @@
     "mode": "official",
     "start": {
      "kind": "point",
-     "space_id": "swiss-1785-F0-S030",
+     "space_id": "swiss-1785-F0-S024",
      "position": [
-      1.8752499999999999,
-      -5.11625
+      -0.6255000000000001,
+      14.285
      ]
     },
     "target": {
      "kind": "space",
-     "id": "swiss-1785-F2-S016"
+     "id": "swiss-1785-F2-S020"
     }
    },
    "detail": {
     "http": 200,
-    "status": "unreachable"
+    "status": "ok"
    }
   },
   {
@@ -1926,11 +2687,11 @@
     "mode": "precision",
     "start": {
      "kind": "space",
-     "id": "swiss-1785-F0-S030"
+     "id": "swiss-1785-F0-S024"
     },
     "target": {
      "kind": "space",
-     "id": "swiss-1785-F0-S004"
+     "id": "swiss-1785-F0-S007"
     }
    },
    "detail": {
@@ -1974,6 +2735,200 @@
   },
   {
    "building": "swiss-1785",
+   "check": "elapsed_s",
+   "pass": true,
+   "request": null,
+   "detail": 34.9
+  },
+  {
+   "building": "swiss-203",
+   "check": "ingest",
+   "pass": true,
+   "request": {
+    "dataset": "swiss-203"
+   },
+   "detail": 201
+  },
+  {
+   "building": "swiss-203",
+   "check": "state",
+   "pass": true,
+   "request": null,
+   "detail": {
+    "official": true,
+    "precision": false,
+    "precision_reason": "Precise navigation currently supports verified procedural factory/campus coordinates only"
+   }
+  },
+  {
+   "building": "swiss-203",
+   "check": "search_room_by_name",
+   "pass": true,
+   "request": "Kitchen 1.06 (apartment 5)",
+   "detail": null
+  },
+  {
+   "building": "swiss-203",
+   "check": "search_asset",
+   "pass": true,
+   "request": "Wardrobe 3.13",
+   "detail": null
+  },
+  {
+   "building": "swiss-203",
+   "check": "search_exit",
+   "pass": true,
+   "request": "exit",
+   "detail": 4
+  },
+  {
+   "building": "swiss-203",
+   "check": "route_room_room_multifloor",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-203-F3-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-203-F0-S029"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok",
+    "length_m": 33.05
+   }
+  },
+  {
+   "building": "swiss-203",
+   "check": "route_to_exit_ends_at_door",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-203-F3-S007"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "swiss-203-F0-O0140"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "swiss-203",
+   "check": "nearest_exit_sorted",
+   "pass": true,
+   "request": "swiss-203-F3-S007",
+   "detail": [
+    28.03,
+    29.93
+   ]
+  },
+  {
+   "building": "swiss-203",
+   "check": "route_to_asset",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-203-F3-S007"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "swiss-203-A00369"
+    }
+   },
+   "detail": "ok"
+  },
+  {
+   "building": "swiss-203",
+   "check": "route_from_point",
+   "pass": true,
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "swiss-203-F0-S029",
+     "position": [
+      -5.49275,
+      7.6105
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-203-F3-S007"
+    }
+   },
+   "detail": {
+    "http": 200,
+    "status": "ok"
+   }
+  },
+  {
+   "building": "swiss-203",
+   "check": "precision_ok_or_clean_refusal",
+   "pass": true,
+   "request": {
+    "mode": "precision",
+    "start": {
+     "kind": "space",
+     "id": "swiss-203-F0-S029"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-203-F0-S004"
+    }
+   },
+   "detail": {
+    "http": 422,
+    "status": "geometry_unsupported"
+   }
+  },
+  {
+   "building": "swiss-203",
+   "check": "scenario_close_stale409_reset",
+   "pass": true,
+   "request": "swiss-203-V01",
+   "detail": [
+    200,
+    409,
+    200
+   ]
+  },
+  {
+   "building": "swiss-203",
+   "check": "negative_unknown_place_422",
+   "pass": true,
+   "request": "nope",
+   "detail": {
+    "error": {
+     "code": "unknown_place",
+     "message": "start: no space with id 'nope'",
+     "details": {
+      "kind": "space",
+      "id": "nope"
+     }
+    }
+   }
+  },
+  {
+   "building": "swiss-203",
+   "check": "negative_bad_mode_422",
+   "pass": true,
+   "request": "teleport",
+   "detail": 422
+  },
+  {
+   "building": "swiss-203",
    "check": "elapsed_s",
    "pass": true,
    "request": null,
