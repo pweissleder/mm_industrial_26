@@ -17,9 +17,13 @@ import {
   type AppMode,
   type SimulatedLocation,
 } from '../../lib/nav';
+import { GuidanceVoice, type GuidanceVoiceState } from '../../lib/guidanceVoice';
+import type { Names } from '../../lib/simulation';
+import { createSpeechPort } from '../../lib/voice';
 import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
+import GuidancePanel from './GuidancePanel';
 import {
   CodeIcon,
   CubeIcon,
@@ -39,6 +43,7 @@ import { PipelineChip, PipelineDialog } from './PipelineStatus';
 import type { PickHit } from './scene';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
+import { useGuidance } from './useGuidance';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
@@ -261,6 +266,63 @@ export default function AriNavApp() {
     [hqBuilding, modelClosed],
   );
   const viewModel = showingHq && hqModel ? hqModel : model;
+
+  // ---- Phase B: virtual navigation along the backend route, with spoken hints -------------
+  const speechPort = useMemo(() => createSpeechPort(), []);
+  const [voiceState, setVoiceState] = useState<GuidanceVoiceState | null>(null);
+  const guideVoice = useMemo(
+    () => new GuidanceVoice(speechPort, { speed: 1.1, onChange: setVoiceState }),
+    [speechPort],
+  );
+  useEffect(
+    () => () => {
+      guideVoice.cancel();
+      speechPort.dispose();
+    },
+    [guideVoice, speechPort],
+  );
+  const voiceAvailable = !!assistant?.voice;
+  useEffect(() => {
+    // Without voice on the server, hints stay silent instead of failing each time.
+    if (assistant && !assistant.voice) guideVoice.setMuted(true);
+  }, [assistant, guideVoice]);
+  const names = useMemo<Names>(() => {
+    const spaces = new Map(viewModel?.spaces.map((x) => [x.id, x.name]) ?? []);
+    const floors = new Map(viewModel?.floors.map((f) => [f.id, f.name]) ?? []);
+    const t = nav.route?.target;
+    return {
+      space: (id) => (id ? (spaces.get(id) ?? null) : null),
+      floor: (id) => (id ? (floors.get(id) ?? null) : null),
+      target: t
+        ? t.kind === 'point'
+          ? `the chosen point in ${spaces.get(t.space_id) ?? 'the room'}`
+          : elementLabel(t.id ?? t.space_id, viewModel)
+        : null,
+    };
+  }, [viewModel, nav.route]);
+  const guidance = useGuidance({
+    buildingId,
+    route: nav.route,
+    names,
+    scenarioRevision: nav.state?.revision,
+    settings: nav.settings,
+    onRoute: nav.showRoute,
+    voice: guideVoice,
+  });
+  const [guidanceHidden, setGuidanceHidden] = useState(false);
+  useEffect(() => setGuidanceHidden(false), [nav.route]);
+  // While navigating, focus the floor the person is on (higher floors hidden, lower ghosted).
+  const walkerFloor = guidance.navigating ? guidance.snapshot.progress?.floor_id : undefined;
+  useEffect(() => {
+    if (!walkerFloor) return;
+    const level = viewModel?.floors.find((f) => f.id === walkerFloor)?.level;
+    if (level !== undefined) setSettings((s) => (s.floor === level ? s : { ...s, floor: level }));
+  }, [walkerFloor, viewModel]);
+  const wasNavigating = useRef(false);
+  useEffect(() => {
+    if (wasNavigating.current && !guidance.navigating) setSettings((s) => ({ ...s, floor: 'all' }));
+    wasNavigating.current = guidance.navigating;
+  }, [guidance.navigating]);
 
   useEffect(() => {
     api
@@ -532,6 +594,9 @@ export default function AriNavApp() {
         highlight={nav.highlight}
         diagnosis={nav.diagnosis}
         closed={closed}
+        walker={guidance.pose}
+        guidanceCamera={guidance.camera}
+        onPreviewDone={guidance.previewDone}
       />
 
       <header className="topbar card">
@@ -704,6 +769,26 @@ export default function AriNavApp() {
           </button>
           {backendDown && <p className="form-error">The backend is not reachable on /api.</p>}
         </section>
+      )}
+
+      {!guidanceHidden && (
+        <GuidancePanel
+          guidance={guidance}
+          developer={developer}
+          destination={names.target}
+          floorName={names.floor}
+          scenarioRevision={nav.state?.revision}
+          voice={voiceState ?? guideVoice.state}
+          voiceAvailable={voiceAvailable}
+          onMute={() => {
+            speechPort.unlock();
+            guideVoice.setMuted(!guideVoice.state.muted);
+          }}
+          onRepeat={() => guideVoice.repeat()}
+          onVoiceSpeed={(v) => guideVoice.setSpeed(v)}
+          onUnlockAudio={() => speechPort.unlock()}
+          onClose={() => setGuidanceHidden(true)}
+        />
       )}
 
       <ChatDock

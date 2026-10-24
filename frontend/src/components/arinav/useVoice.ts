@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { VoiceIO } from '../../lib/voice';
+import { stopAllPlayback, VoiceIO } from '../../lib/voice';
 
 /** Push-to-talk and reply playback for the chat; callbacks may change between renders. */
 export function useVoice(handlers: { onAudio: (wav: string) => void; onError: (message: string) => void }) {
@@ -28,6 +28,8 @@ export function useVoice(handlers: { onAudio: (wav: string) => void; onError: (m
   }, []);
 
   const start = useCallback(async () => {
+    // Silence every reply and guidance hint first: the microphone must never record our speech.
+    stopAllPlayback();
     try {
       const started = await voice().start(stop);
       setRecording(started && voice().isRecording);

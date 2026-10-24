@@ -657,4 +657,18 @@ export const api = {
     request<{ status: string }>('/assistant/reset', post({ session_id: sessionId })),
   assistantTranscribe: (audio: string) =>
     request<TranscribeResponse>('/assistant/transcribe', post({ audio })),
+  /** Short spoken navigation hint (<= 240 chars); 503 when voice is off, 502 on TTS failure. */
+  speak: (text: string, speed: number, signal?: AbortSignal) =>
+    request<SpeakResponse>('/assistant/speak', { ...post({ text, speed }), signal }),
 };
+
+export interface SpeakResponse {
+  /** base64 16-bit little-endian mono PCM. */
+  audio_pcm16: string;
+  sample_rate: number;
+  /** The speed actually used (clamped server-side to the TTS range). */
+  speed: number;
+  /** True when served from the server's in-process hint cache. */
+  cached: boolean;
+  tts_ms: number;
+}

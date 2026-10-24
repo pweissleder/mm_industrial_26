@@ -78,6 +78,23 @@ const HQ_LAYERS: Record<string, 'spaces' | 'walls' | 'assets' | 'openings'> = {
   opening: 'openings',
 };
 
+/** The simulated person (Phase B guidance): floor, XY in the building frame, heading (deg). */
+export interface WalkerPose {
+  floorId: string;
+  position: Point;
+  headingDeg: number;
+}
+
+interface Preview {
+  points: THREE.Vector3[];
+  /** Cumulative length at each point, for constant-speed travel. */
+  lengths: number[];
+  start: number;
+  duration: number;
+  offset: THREE.Vector3;
+  onDone?: () => void;
+}
+
 interface Fly {
   fromPos: THREE.Vector3;
   toPos: THREE.Vector3;
@@ -181,6 +198,11 @@ export class BuildingScene {
   private readonly highlightMat = new THREE.MeshStandardMaterial({ color: '#ffc61a', roughness: 0.6, flatShading: true });
   // Route: shared materials and marker geometry, so a redraw allocates only line buffers.
   private readonly routeGroup = new THREE.Group();
+  // Guidance: the walker figure, camera follow and a skippable route preview.
+  private readonly walkerGroup = new THREE.Group();
+  private walkerPose: WalkerPose | null = null;
+  private follow = false;
+  private preview: Preview | null = null;
   private readonly routeMats = {
     official: new LineMaterial({
       color: ROUTE_COLORS.official,
@@ -267,6 +289,8 @@ export class BuildingScene {
     this.sun.shadow.bias = -0.0005;
     this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight, this.graph);
     this.scene.add(this.routeGroup);
+    this.buildWalker();
+    this.scene.add(this.walkerGroup);
 
     this.pin = makeLabel('', 'viewer__pin');
     this.pin.center.set(0.5, 1);
@@ -400,6 +424,122 @@ export class BuildingScene {
   }
 
   /** Elements the assistant points at (yellow). */
+  /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
+  setWalker(pose: WalkerPose | null) {
+    this.walkerPose = pose;
+    this.walkerGroup.visible = !!pose && !!this.floors.length;
+    if (pose) {
+      this.walkerGroup.position.copy(this.walkerPoint(pose));
+      // Building frame is counter-clockwise from +x; toVec maps building +y to scene -z.
+      this.walkerGroup.rotation.y = THREE.MathUtils.degToRad(pose.headingDeg);
+    }
+    this.needsRender = true;
+  }
+
+  setFollow(on: boolean) {
+    this.follow = on;
+    if (on && this.walkerPose) {
+      const p = this.walkerPoint(this.walkerPose);
+      const dir = this.camera.position.clone().sub(this.controls.target).normalize();
+      if (dir.y < 0.5) dir.setY(0.5).normalize();
+      this.startFly(p.clone().add(dir.multiplyScalar(26)), p);
+    }
+  }
+
+  /** The whole building, follow off. */
+  overview() {
+    this.follow = false;
+    this.cancelPreview();
+    this.frame('iso', true);
+  }
+
+  /** Fly the camera along the route once (the walker does not move); `onDone` when finished. */
+  startPreview(route: RouteResponse, durationMs: number, onDone?: () => void) {
+    this.cancelPreview();
+    const floorView = new Map(this.floors.map((fv) => [fv.floor.id, fv]));
+    const points = (route.waypoints ?? []).map((w) => {
+      const fv = floorView.get(w.floor_id);
+      return toVec(w.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + ROUTE_LIFT);
+    });
+    if (points.length < 2) {
+      onDone?.();
+      return;
+    }
+    const lengths = [0];
+    for (let i = 1; i < points.length; i++) lengths.push(lengths[i - 1] + points[i].distanceTo(points[i - 1]));
+    const dir = this.camera.position.clone().sub(this.controls.target).normalize();
+    if (dir.y < 0.55) dir.setY(0.55).normalize();
+    this.fly = null;
+    this.preview = { points, lengths, start: performance.now(), duration: durationMs, offset: dir.multiplyScalar(30), onDone };
+    this.needsRender = true;
+  }
+
+  cancelPreview() {
+    const done = this.preview?.onDone;
+    this.preview = null;
+    done?.();
+  }
+
+  get previewing() {
+    return this.preview !== null;
+  }
+
+  private walkerPoint(pose: WalkerPose): THREE.Vector3 {
+    const fv = this.floors.find((f) => f.floor.id === pose.floorId);
+    return toVec(pose.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + 0.02);
+  }
+
+  private buildWalker() {
+    // A simple, readable figure: body, head and a direction arrow; drawn on top of walls.
+    const mat = (color: string) =>
+      new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true, opacity: 0.95 });
+    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 1.2, 20), mat('#fb7928'));
+    body.position.y = 0.6;
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 14), mat('#fb7928'));
+    head.position.y = 1.5;
+    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 16), mat('#002478'));
+    arrow.rotation.z = -Math.PI / 2; // tip along +x (the heading direction)
+    arrow.position.set(0.85, 0.15, 0);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.8, 32), mat('#fb7928'));
+    ring.rotation.x = -Math.PI / 2;
+    ring.position.y = 0.03;
+    for (const m of [body, head, arrow, ring]) {
+      m.renderOrder = 13;
+      m.raycast = () => {};
+      this.walkerGroup.add(m);
+    }
+    // Readable at building scale (rooms are tens of metres across).
+    this.walkerGroup.scale.setScalar(1.6);
+    this.walkerGroup.visible = false;
+  }
+
+  private stepGuidanceCamera(now: number) {
+    const pv = this.preview;
+    if (pv) {
+      const t = Math.min(1, (now - pv.start) / pv.duration);
+      const total = pv.lengths[pv.lengths.length - 1] || 1;
+      const d = easeInOut(t) * total;
+      let i = 1;
+      while (i < pv.lengths.length - 1 && pv.lengths[i] < d) i++;
+      const span = pv.lengths[i] - pv.lengths[i - 1] || 1;
+      const p = pv.points[i - 1].clone().lerp(pv.points[i], (d - pv.lengths[i - 1]) / span);
+      this.controls.target.lerp(p, 0.2);
+      this.camera.position.lerp(this.controls.target.clone().add(pv.offset), 0.2);
+      this.needsRender = true;
+      if (t >= 1) this.cancelPreview();
+      return;
+    }
+    if (this.follow && this.walkerPose && !this.fly) {
+      const p = this.walkerPoint(this.walkerPose);
+      const delta = p.sub(this.controls.target).multiplyScalar(0.08);
+      if (delta.lengthSq() > 1e-6) {
+        this.controls.target.add(delta);
+        this.camera.position.add(delta);
+        this.needsRender = true;
+      }
+    }
+  }
+
   setHighlight(ids: readonly string[]) {
     this.highlightIds = [...ids];
     this.applyOverlays();
@@ -1261,6 +1401,7 @@ export class BuildingScene {
   }
 
   private tick = (now: number) => {
+    this.stepGuidanceCamera(now);
     if (this.fly) {
       const t = Math.min(1, (now - this.fly.start) / this.fly.duration);
       const k = easeInOut(t);

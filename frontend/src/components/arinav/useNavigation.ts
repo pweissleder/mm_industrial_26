@@ -78,6 +78,8 @@ export interface Navigation {
   updateSettings: (patch: Partial<NavSettings>) => void;
   computeRoute: (overrides?: { start?: Endpoint; target?: Endpoint }) => Promise<void>;
   clearRoute: () => void;
+  /** Show a route computed elsewhere (e.g. a guidance reroute) without moving the camera. */
+  showRoute: (route: RouteResponse) => void;
   scenario: (action: 'close' | 'open' | 'reset', elementId?: string) => Promise<void>;
   previewClosure: (elementIds: string[]) => Promise<void>;
   nearestExit: () => Promise<void>;
@@ -163,6 +165,11 @@ export function useNavigation(buildingId: string | null): Navigation {
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
   }, [refresh]);
+
+  const showRoute = useCallback((route: RouteResponse) => {
+    setRouteView({ route, fit: false, nonce: Date.now() });
+    setRouteFailure(null);
+  }, []);
 
   const reset = useCallback(() => {
     setStart(null);
@@ -421,6 +428,7 @@ export function useNavigation(buildingId: string | null): Navigation {
   const diagnosis = useMemo(() => diagnosisIds(routeFailure?.diagnosis), [routeFailure]);
 
   return {
+    showRoute,
     state,
     unavailable,
     start,

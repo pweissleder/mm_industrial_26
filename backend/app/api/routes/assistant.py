@@ -1,8 +1,12 @@
-"""Assistant endpoints: one conversation turn, human confirmation, reset, speech-to-text."""
+"""Assistant endpoints: one conversation turn, human confirmation, reset, speech-to-text and
+short spoken navigation hints."""
 
 import base64
 import binascii
+import math
 import secrets
+import threading
+from collections import OrderedDict
 from time import perf_counter
 from typing import Any
 
@@ -15,6 +19,9 @@ from app.assistant.voice import SAMPLE_RATE, TTS_SPEED, ElevenLabsVoice, VoiceEr
 
 router = APIRouter(prefix="/assistant", tags=["assistant"])
 STALE = {"revision_conflict", "stale_revision"}
+SPEAK_SPEED = 1.1  # guidance hints default slightly faster than chat replies
+SPEAK_CACHE_SIZE = 256
+_cache_lock = threading.Lock()
 
 
 class TurnRequest(BaseModel):
@@ -41,6 +48,49 @@ class ResetRequest(BaseModel):
 
 class TranscribeRequest(BaseModel):
     audio: str = Field(max_length=700_000, description="Base64 WAV, 16 kHz mono, 0.1-10 s")
+
+
+class SpeakRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=240)
+    # Out-of-range speeds are clamped to TTS_SPEED rather than rejected (hints must never fail).
+    speed: float = Field(default=SPEAK_SPEED, allow_inf_nan=False)
+
+
+class SpeechCache:
+    """Small thread-safe LRU of synthesized hints keyed by (text, speed rounded to 0.01)."""
+
+    def __init__(self, size: int = SPEAK_CACHE_SIZE) -> None:
+        self.size = size
+        self.items: OrderedDict[tuple[str, float], str] = OrderedDict()
+        self.lock = threading.Lock()
+
+    def get(self, key: tuple[str, float]) -> str | None:
+        with self.lock:
+            value = self.items.get(key)
+            if value is not None:
+                self.items.move_to_end(key)
+            return value
+
+    def put(self, key: tuple[str, float], value: str) -> None:
+        with self.lock:
+            self.items[key] = value
+            self.items.move_to_end(key)
+            while len(self.items) > self.size:
+                self.items.popitem(last=False)
+
+
+def _speech_cache(request: Request) -> SpeechCache:
+    with _cache_lock:
+        cache: SpeechCache | None = getattr(request.app.state, "speech_cache", None)
+        if cache is None:
+            cache = request.app.state.speech_cache = SpeechCache()
+        return cache
+
+
+def clamp_speed(speed: float) -> float:
+    if not math.isfinite(speed):
+        return SPEAK_SPEED
+    return round(min(TTS_SPEED["max"], max(TTS_SPEED["min"], speed)), 2)
 
 
 def _assistant(request: Request) -> Assistant:
@@ -110,6 +160,39 @@ def confirm(body: ConfirmRequest, request: Request) -> dict[str, Any]:
 def reset(body: ResetRequest, request: Request) -> dict[str, str]:
     _assistant(request).reset(body.session_id)
     return {"status": "reset"}
+
+
+@router.post("/speak")
+def speak(body: SpeakRequest, request: Request) -> dict[str, Any]:
+    """Short guidance hint (door, turn, floor change, arrival) as 16-bit PCM; cached per app."""
+    voice = _voice(request)
+    if voice is None:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE, "Voice is off: no ElevenLabs key on the server."
+        )
+    text = spoken(body.text)
+    if not text:
+        raise HTTPException(422, "Text must not be empty.")
+    speed = clamp_speed(body.speed)
+    cache = _speech_cache(request)
+    key = (text, speed)
+    began = perf_counter()
+    audio = cache.get(key)
+    cached = audio is not None
+    if audio is None:
+        try:
+            pcm = voice.synthesize(text, speed)
+        except VoiceError as error:
+            raise HTTPException(status.HTTP_502_BAD_GATEWAY, str(error)) from None
+        audio = base64.b64encode(pcm).decode("ascii")
+        cache.put(key, audio)
+    return {
+        "audio_pcm16": audio,
+        "sample_rate": SAMPLE_RATE,
+        "speed": speed,
+        "cached": cached,
+        "tts_ms": round((perf_counter() - began) * 1000, 1),
+    }
 
 
 @router.post("/transcribe")

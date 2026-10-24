@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import { BuildingScene, type PickHit } from './scene';
+import type { PoseStore } from './useGuidance';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 
 export interface CameraCommand {
@@ -14,6 +15,14 @@ export interface RouteView {
   route: RouteResponse;
   fit: boolean;
   nonce: number;
+}
+
+/** Guidance camera: follow the walker, building overview, or a one-off route preview. */
+export interface GuidanceCameraCommand {
+  action: 'follow' | 'free' | 'overview' | 'preview' | 'cancel_preview';
+  nonce: number;
+  route?: RouteResponse;
+  durationMs?: number;
 }
 
 const NONE: readonly string[] = [];
@@ -38,6 +47,11 @@ interface Props {
   highlight?: readonly string[];
   diagnosis?: readonly string[];
   closed?: readonly string[];
+  /** The simulated person (Phase B guidance), updated per frame outside React rendering. */
+  walker?: PoseStore | null;
+  guidanceCamera?: GuidanceCameraCommand | null;
+  /** The route preview finished or was skipped. */
+  onPreviewDone?: () => void;
 }
 
 export default function Viewer3D({
@@ -55,11 +69,16 @@ export default function Viewer3D({
   highlight = NONE,
   diagnosis = NONE,
   closed = NONE,
+  walker = null,
+  guidanceCamera = null,
+  onPreviewDone,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const scene = useRef<BuildingScene | null>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const onPreviewDoneRef = useRef(onPreviewDone);
+  onPreviewDoneRef.current = onPreviewDone;
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -107,6 +126,24 @@ export default function Viewer3D({
   useEffect(() => scene.current?.setHighlight(highlight), [highlight]);
   useEffect(() => scene.current?.setDiagnosis(diagnosis), [diagnosis]);
   useEffect(() => scene.current?.setClosed(closed), [closed]);
+  useEffect(() => {
+    const current = scene.current;
+    if (!current || !walker) return;
+    current.setWalker(walker.get());
+    return walker.subscribe(() => current.setWalker(walker.get()));
+  }, [walker, model]);
+  useEffect(() => {
+    const current = scene.current;
+    if (!current || !guidanceCamera) return;
+    const c = guidanceCamera;
+    if (c.action === 'follow') current.setFollow(true);
+    else if (c.action === 'free') current.setFollow(false);
+    else if (c.action === 'overview') current.overview();
+    else if (c.action === 'cancel_preview') current.cancelPreview();
+    else if (c.action === 'preview' && c.route) {
+      current.startPreview(c.route, c.durationMs ?? 6000, () => onPreviewDoneRef.current?.());
+    }
+  }, [guidanceCamera]);
 
   return (
     <div className="viewer" ref={container} aria-label="3D building view" role="img">
