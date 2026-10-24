@@ -1,0 +1,576 @@
+<title>Navgraph Explorer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: floor plans as drawing sheets on the left, a control/inspector rail on the right; the pipeline strip is the legend for every layer. */
+:root {
+  --bg:#E8ECEA; --panel:#F7F8F6; --ink:#1B2226; --muted:#5C676D; --rule:#C4CCC9; --plan:#FFFFFF; --wall:#2B3438;
+  --room:#DAE2E8; --corridor:#EFEBD9; --hall:#E0E5D3; --bay:#EBDACB; --stair:#D9D2EB; --lift:#CBE3E6; --outdoor:#D9E8D3;
+  --l1:#3949AB; --l2:#00796B; --route:#E0520A; --search:#E9A400; --closed:#C62828; --door:#7A5546; --ok:#2E7D32;
+  --f-display:"Barlow Condensed","Arial Narrow",sans-serif; --f-body:"Barlow",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#0F1315; --panel:#171E21; --ink:#E1E7E5; --muted:#93A0A6; --rule:#2C363B; --plan:#13191C; --wall:#9AA7AD;
+  --room:#22303A; --corridor:#2F2C20; --hall:#252C21; --bay:#36291E; --stair:#2B2738; --lift:#1D3337; --outdoor:#1E2B1D;
+  --l1:#93A3FF; --l2:#4DB6AC; --route:#FF8A3D; --search:#FFC940; --closed:#EF5350; --door:#C9B2A8; --ok:#81C784; color-scheme:dark } }
+:root[data-theme="dark"] {
+  --bg:#0F1315; --panel:#171E21; --ink:#E1E7E5; --muted:#93A0A6; --rule:#2C363B; --plan:#13191C; --wall:#9AA7AD;
+  --room:#22303A; --corridor:#2F2C20; --hall:#252C21; --bay:#36291E; --stair:#2B2738; --lift:#1D3337; --outdoor:#1E2B1D;
+  --l1:#93A3FF; --l2:#4DB6AC; --route:#FF8A3D; --search:#FFC940; --closed:#EF5350; --door:#C9B2A8; --ok:#81C784; color-scheme:dark }
+html,body{height:auto}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.45}
+.wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 20px}
+h1{font-family:var(--f-display);font-weight:700;font-size:28px;letter-spacing:.01em;margin:0;text-wrap:balance}
+h2{font-family:var(--f-display);font-weight:600;font-size:15px;letter-spacing:.08em;text-transform:uppercase;margin:0;color:var(--muted)}
+h3{font-family:var(--f-display);font-weight:600;font-size:19px;margin:0}
+.sub{color:var(--muted);font-family:var(--f-mono);font-size:12px}
+.badge{font-family:var(--f-mono);font-size:12px;padding:2px 8px;border-radius:3px;border:1px solid var(--rule)}
+.badge.ok{color:var(--ok);border-color:var(--ok)} .badge.bad{color:var(--closed);border-color:var(--closed)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:16px;align-items:start}
+@media (max-width:1000px){.main{grid-template-columns:minmax(0,1fr)}}
+.floors{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:12px;min-width:0}
+.sheet{background:var(--plan);border:1px solid var(--rule);min-width:0;display:grid}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;border-bottom:1px solid var(--rule);gap:8px}
+.sheet-h b{font-family:var(--f-display);font-size:17px;font-weight:600}
+.sheet svg{width:100%;height:auto;aspect-ratio:1/1;max-width:100%;touch-action:none;cursor:crosshair;display:block}
+.rail{display:grid;gap:12px;min-width:0}
+.card{background:var(--panel);border:1px solid var(--rule);padding:12px;display:grid;gap:10px;min-width:0}
+.pipe{display:grid;gap:0}
+.stage{display:grid;grid-template-columns:22px 1fr;gap:0 8px;padding:6px 6px;border-radius:3px;cursor:pointer;border:1px solid transparent;text-align:left;background:none;color:inherit;font:inherit}
+.stage:hover,.stage:focus-visible{border-color:var(--rule);outline:none}
+.stage.on{background:color-mix(in oklab,var(--panel) 80%,var(--ink))}
+.stage .dot{width:12px;height:12px;border-radius:50%;margin-top:4px;grid-row:span 2}
+.stage .t{font-family:var(--f-display);font-weight:600;font-size:16px}
+.stage .t code{font-family:var(--f-mono);font-size:12px;font-weight:400;color:var(--muted)}
+.stage .d{color:var(--muted);font-size:13px}
+.arrow{margin-left:11px;border-left:1px dashed var(--rule);height:8px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+label.chk{display:inline-flex;gap:4px;align-items:center;font-size:13px;cursor:pointer}
+button.b,select,input[type=number]{font:inherit;font-size:13px;color:var(--ink);background:var(--plan);border:1px solid var(--rule);border-radius:3px;padding:4px 8px}
+button.b{cursor:pointer} button.b:hover{border-color:var(--ink)} button.b.on{background:var(--ink);color:var(--plan);border-color:var(--ink)}
+button.b:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--l1);outline-offset:1px}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:13px}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-family:var(--f-mono);font-size:12px;overflow-wrap:anywhere}
+.tbl{overflow:auto;max-height:260px;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+th{font-family:var(--f-display);font-weight:600;font-size:13px;text-align:left;color:var(--muted);position:sticky;top:0;background:var(--panel);padding:3px 6px;border-bottom:1px solid var(--rule)}
+td{padding:2px 6px;border-bottom:1px solid color-mix(in oklab,var(--rule) 50%,transparent);font-family:var(--f-mono);font-size:11.5px;vertical-align:top}
+td.n{text-align:right} tr.hl td{background:color-mix(in oklab,var(--route) 18%,transparent)} tbody tr:hover td{background:color-mix(in oklab,var(--l2) 14%,transparent)}
+.chip{display:inline-block;font-family:var(--f-mono);font-size:11px;padding:1px 6px;border-radius:10px;border:1px solid var(--rule);color:var(--muted)}
+.chip.warn{color:var(--route);border-color:var(--route)} .chip.bad{color:var(--closed);border-color:var(--closed)} .chip.good{color:var(--ok);border-color:var(--ok)}
+.big{font-family:var(--f-display);font-weight:700;font-size:30px;line-height:1}
+.note{color:var(--muted);font-size:12.5px}
+.trail{font-family:var(--f-mono);font-size:11.5px;display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+.trail span.s{padding:1px 5px;border:1px solid var(--rule);border-radius:3px;cursor:pointer}
+.trail span.e{color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--search)}
+svg text{font-family:var(--f-mono);pointer-events:none}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:-1px;border:1px solid var(--wall)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1 id="title">Navgraph Explorer</h1>
+    <span class="sub" id="bstats"></span>
+    <span class="badge" id="check">checking against Python…</span>
+  </header>
+  <div class="main">
+    <div class="floors" id="floors"></div>
+    <div class="rail">
+      <section class="card">
+        <h2>How the data is combined</h2>
+        <div class="pipe" id="pipe"></div>
+        <div class="row" id="layers"></div>
+      </section>
+      <section class="card">
+        <h2>Route</h2>
+        <div class="row">
+          <span class="note">Click on map:</span>
+          <button class="b" data-mode="inspect">Inspect</button>
+          <button class="b" data-mode="start">Set start</button>
+          <button class="b" data-mode="goal">Set goal</button>
+          <button class="b" data-mode="close">Close / open</button>
+        </div>
+        <div class="row">
+          <label for="profile" class="note">Profile</label>
+          <select id="profile"><option value="walk">walk</option><option value="step_free">step_free</option><option value="forklift">forklift (≥ 3 m, halls)</option><option value="wide_load">wide_load</option></select>
+          <input id="width" type="number" min="0" step="0.1" value="1.2" aria-label="minimum door width in metres" style="width:70px" hidden>
+          <span class="note" id="closedlist"></span>
+        </div>
+        <div id="routeout"></div>
+        <div id="replay" class="row" hidden>
+          <button class="b" id="play">Play search</button>
+          <span class="note" id="kinfo"></span>
+          <input type="range" id="k" min="0" value="0" aria-label="search step">
+        </div>
+      </section>
+      <section class="card" id="inspector"></section>
+    </div>
+  </div>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const OUT = D.outside;
+const by = (xs) => Object.fromEntries(xs.map(x => [x.id, x]));
+const S = by(D.spaces), O = by(D.openings), C = by(D.connectors), F = by(D.floors), A = by(D.assets);
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const short = (id) => id === OUT ? "outside" : id.replace(D.building.id + "-", "");
+const nm = (sid) => sid === OUT ? "Outside" : S[sid].name;
+const m = (x) => Number.isFinite(x) ? x.toFixed(2) + " m" : "∞";
+
+// ===================== routing: a port of navgraph/graph.py NavGraph =====================
+function makeProfile(name, width, closed) {
+  const p = { name, step_free:false, min_width:0, allow_stairs:true, allow_lifts:true, allow_outside:false,
+              can_enter:() => true, no_pass:(s) => s.bay, closed };
+  if (name === "step_free") p.step_free = true;
+  if (name === "forklift") Object.assign(p, { min_width:3, allow_stairs:false, allow_lifts:false, can_enter:(s) => s.forklift });
+  if (name === "wide_load") Object.assign(p, { step_free:true, min_width:+width || 0 });
+  return p;
+}
+// rules.Profile.opening_ok / connector_ok / space_ok, why = reason it fails (for the inspector)
+function openingWhy(p, o) {
+  if (p.closed.has(o.id)) return "closed";
+  if (p.step_free && !o.step_free) return "has a step";
+  if (o.width + 1e-9 < p.min_width) return `${o.width} m < ${p.min_width} m`;
+  return "";
+}
+function connectorWhy(p, c) {
+  if (p.closed.has(c.id)) return "closed";
+  if (c.kind === "stairs") return !p.allow_stairs ? "no stairs for " + p.name : p.step_free ? "stairs are not step-free" : "";
+  if (c.kind === "lift") return !p.allow_lifts ? "no lifts for " + p.name : (c.step_free || !p.step_free) ? "" : "lift not step-free";
+  return "unknown kind";
+}
+function spaceWhy(p, s) { return p.closed.has(s.id) ? "closed" : !p.can_enter(s) ? "not enterable for " + p.name : ""; }
+const okO = (p, o) => !openingWhy(p, o), okC = (p, c) => !connectorWhy(p, c), okS = (p, s) => !spaceWhy(p, s);
+
+const key = (n) => n.join("|");
+const ptKey = (n) => n[0] === "door" ? n[1] : "A";           // which exported point of the space a node sits on
+const spaceOfPt = (n) => n[0] === "anchor" ? n[1] : n[2];
+function nodeXY(n) { return n[0] === "door" ? O[n[1]].pos : S[spaceOfPt(n)].anchor; }
+function nodeFloor(n) { return n[0] === "door" ? O[n[1]].floor : S[spaceOfPt(n)].floor; }
+function walkW(sid, a, b) {
+  if (a === b) return 0;
+  const w = S[sid].walk, e = w[a + "|" + b] || w[b + "|" + a];
+  return e ? e[0] : Infinity;
+}
+function walkPath(sid, a, b) {
+  if (a === b) return [];
+  const w = S[sid].walk; let e = w[a + "|" + b];
+  if (e) return e[1];
+  e = w[b + "|" + a];
+  return e ? e[1].slice().reverse() : [];
+}
+function rise(s1, s2) { return Math.abs(F[S[s2].floor].elevation_m - F[S[s1].floor].elevation_m); }
+
+function* spaceTargets(sid, src, p) {                         // NavGraph._space_targets (goal=None)
+  const s = S[sid];
+  if (!okS(p, s)) return;
+  const sp = ptKey(src), fromAnchor = src[0] === "anchor", sk = key(src);
+  if (!(fromAnchor || !p.no_pass(s))) return;               // production bay: you may arrive, never cross
+  for (const oid of s.openings) {
+    const n = ["door", oid];
+    if (key(n) === sk || !okO(p, O[oid])) continue;
+    yield [n, walkW(sid, sp, oid), { kind:"walk", space:sid, a:sp, b:oid }];
+  }
+  for (const cid of s.stops) {
+    const n = ["land", cid, sid];
+    if (key(n) === sk || !okC(p, C[cid])) continue;
+    yield [n, walkW(sid, sp, "A"), { kind:"walk", space:sid, a:sp, b:"A" }];
+  }
+}
+function* edges(n, p) {                                        // NavGraph._edges
+  if (n[0] === "anchor") yield* spaceTargets(n[1], n, p);
+  else if (n[0] === "door") {
+    for (const sid of O[n[1]].spaces) if (sid !== OUT) yield* spaceTargets(sid, n, p);  // outside: forbidden by OrganizerCost
+  } else {
+    const [kind, cid, sid] = n, c = C[cid], ids = c.stops.map(s => s[1]), i = ids.indexOf(sid);
+    if (kind === "land") {
+      yield* spaceTargets(sid, n, p);
+      if (c.kind === "lift") yield [["car", cid, sid], D.cost.lift_wait_m, { kind:"lift_board", space:sid, el:cid }];
+      else for (const j of [i - 1, i + 1]) if (j >= 0 && j < ids.length && okS(p, S[ids[j]]))
+        yield [["land", cid, ids[j]], D.cost.stairs_per_m * rise(sid, ids[j]), { kind:"stairs", space:ids[j], el:cid }];
+    } else {                                                   // car = standing inside the lift
+      yield [["land", cid, sid], 0, { kind:"lift_exit", space:sid, el:cid }];
+      for (const j of [i - 1, i + 1]) if (j >= 0 && j < ids.length && okS(p, S[ids[j]]))
+        yield [["car", cid, ids[j]], D.cost.lift_per_m * rise(sid, ids[j]), { kind:"lift_ride", space:ids[j], el:cid }];
+    }
+  }
+}
+function* edgesMulti(n, p, goals) {                            // NavGraph._edges_multi: offer goal anchors
+  yield* edges(n, p);
+  const sids = n[0] === "door" ? O[n[1]].spaces.filter(s => s !== OUT) : n[0] === "land" ? [n[2]] : [];
+  for (const sid of sids) if (goals.has(sid) && okS(p, S[sid]))
+    yield [["anchor", sid], walkW(sid, ptKey(n), "A"), { kind:"walk", space:sid, a:ptKey(n), b:"A" }];
+}
+class Heap {                                                   // min-heap on (d, tie) like heapq
+  constructor() { this.a = []; }
+  get size() { return this.a.length; }
+  lt(x, y) { return x[0] < y[0] || (x[0] === y[0] && x[1] < y[1]); }
+  push(x) { const a = this.a; a.push(x); let i = a.length - 1;
+    while (i > 0) { const j = (i - 1) >> 1; if (!this.lt(a[i], a[j])) break; [a[i], a[j]] = [a[j], a[i]]; i = j; } }
+  pop() { const a = this.a, top = a[0], last = a.pop();
+    if (a.length) { a[0] = last; let i = 0;
+      for (;;) { const l = 2 * i + 1, r = l + 1; let k = i;
+        if (l < a.length && this.lt(a[l], a[k])) k = l; if (r < a.length && this.lt(a[r], a[k])) k = r;
+        if (k === i) break; [a[i], a[k]] = [a[k], a[i]]; i = k; } }
+    return top; }
+}
+function dijkstra(start, goal, p) {                            // NavGraph._dijkstra, plus a log of settled nodes
+  const goals = new Set([goal]), src = ["anchor", start];
+  const dist = new Map([[key(src), 0]]), prev = new Map(), nodes = new Map([[key(src), src]]), pops = [];
+  const h = new Heap(); let tie = 1; h.push([0, 0, src]);
+  while (h.size) {
+    const [d, , u] = h.pop(), ku = key(u);
+    if (d > (dist.get(ku) ?? Infinity)) continue;
+    pops.push(ku);
+    if (u[0] === "anchor" && u[1] !== start) { if (goals.has(u[1])) return { dist, prev, nodes, pops, hit:ku }; continue; }
+    for (const [v, w, step] of edgesMulti(u, p, goals)) {
+      const nd = d + w, kv = key(v);
+      if (nd < (dist.get(kv) ?? Infinity) - 1e-12) {
+        dist.set(kv, nd); prev.set(kv, [ku, { ...step, w }]); nodes.set(kv, v); h.push([nd, tie++, v]);
+      }
+    }
+  }
+  return { dist, prev, nodes, pops, hit:null };
+}
+function route(start, goal, p) {                               // NavGraph.route + _build_route
+  for (const sid of [start, goal]) { const why = spaceWhy(p, S[sid]); if (why) return { reachable:false, reason:`${S[sid].name}: ${why}` }; }
+  if (start === goal) return { reachable:true, length:0, spaces:[start], elements:[], steps:[], search:null };
+  const r = dijkstra(start, goal, p);
+  if (!r.hit) return { reachable:false, reason:`no ${p.name} route under the current rules and closures`, search:r };
+  const hops = []; let n = r.hit;
+  while (r.prev.has(n)) { const [u, st] = r.prev.get(n); hops.push([u, st, n]); n = u; }
+  hops.reverse();
+  const spaces = [start], elements = []; let pending = null;
+  for (const [, st, v] of hops) {
+    if (st.kind === "walk") { if (st.space !== spaces.at(-1)) { if (pending) elements.push(pending); spaces.push(st.space); } pending = null; }
+    else if (st.kind === "stairs" || st.kind === "lift_ride") { elements.push(st.el); spaces.push(st.space); pending = null; }
+    if (v.startsWith("door|")) pending = v.slice(5);
+  }
+  return { reachable:true, length:r.dist.get(r.hit), spaces, elements, steps:hops.map(h => h[1]), search:r };
+}
+
+// ===================== state =====================
+const st = { mode:"inspect", sel:null, start:null, goal:null, profile:"walk", width:1.2, closed:new Set(),
+             layers:{ l0:true, assets:false, labels:true, l1:true, l2:false, nav:false }, res:null, k:0, hoverPair:null, view:{} };
+const profile = () => makeProfile(st.profile, st.width, st.closed);
+
+// ===================== self-check against the Python router =====================
+(function check() {
+  let ok = 0, same = 0; const bad = [];
+  for (const ref of D.reference_routes) {
+    const r = route(ref.start, ref.goal, makeProfile(ref.profile, 0, new Set()));
+    const good = r.reachable === ref.reachable && (!ref.reachable || Math.abs(r.length - ref.length_m) < 1e-3);
+    ok += good; if (good && (!ref.reachable || r.spaces.join() === ref.spaces.join())) same++;
+    if (!good) bad.push(ref);
+  }
+  const el = document.getElementById("check"), n = D.reference_routes.length;
+  el.textContent = `browser router = Python NavGraph.route on ${ok}/${n} routes (${same} identical space lists)`;
+  el.className = "badge " + (ok === n ? "ok" : "bad");
+  if (bad.length) console.warn("route mismatches", bad);
+})();
+
+// ===================== drawing =====================
+const NS = "http://www.w3.org/2000/svg";
+const fill = (s) => s.bay ? "var(--bay)" : ({ room:"var(--room)", corridor:"var(--corridor)", hall:"var(--hall)", stair:"var(--stair)", lift:"var(--lift)", outdoor:"var(--outdoor)" }[s.type] || "var(--room)");
+const P = (p) => `${p[0]},${-p[1]}`;                           // plan y points up, SVG y points down
+const pts = (ps) => ps.map(P).join(" ");
+const floorsBox = {};
+for (const f of D.floors) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const s of D.spaces) if (s.floor === f.id) for (const [x, y] of s.polygon) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, -y); y1 = Math.max(y1, -y); }
+  const pad = 3, w = x1 - x0 + 2 * pad, h = y1 - y0 + 2 * pad, side = Math.max(w, h);
+  floorsBox[f.id] = [x0 - pad - (side - w) / 2, y0 - pad - (side - h) / 2, side, side];
+  st.view[f.id] = floorsBox[f.id].slice();
+}
+
+const floorsEl = document.getElementById("floors"), svgs = {};
+for (const f of D.floors) {
+  const n = D.spaces.filter(s => s.floor === f.id).length;
+  const sheet = document.createElement("div"); sheet.className = "sheet";
+  sheet.innerHTML = `<div class="sheet-h"><span><b>${esc(f.name)}</b> <span class="sub">level ${f.level} · +${f.elevation_m} m · ${n} spaces</span></span>
+    <button class="b" data-reset="${f.id}" title="Reset zoom">Fit</button></div>`;
+  const svg = document.createElementNS(NS, "svg");
+  svg.dataset.floor = f.id;
+  svg.innerHTML = `<defs><pattern id="hatch-${f.level}" width="1" height="1" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="1" height="1" fill="var(--plan)"/><line x1="0" y1="0" x2="0" y2="1" stroke="var(--closed)" stroke-width="0.35"/></pattern></defs><g class="base"></g><g class="over"></g>`;
+  sheet.appendChild(svg); floorsEl.appendChild(sheet); svgs[f.id] = svg;
+  setupZoom(svg, f.id);
+}
+document.querySelectorAll("[data-reset]").forEach(b => b.onclick = () => { st.view[b.dataset.reset] = floorsBox[b.dataset.reset].slice(); applyView(b.dataset.reset); });
+function applyView(fid) { svgs[fid].setAttribute("viewBox", st.view[fid].join(" ")); }
+
+function setupZoom(svg, fid) {
+  applyView(fid);
+  let drag = null;
+  const toPlan = (e) => { const r = svg.getBoundingClientRect(), v = st.view[fid]; return [v[0] + (e.clientX - r.left) / r.width * v[2], v[1] + (e.clientY - r.top) / r.height * v[3]]; };
+  svg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const [px, py] = toPlan(e), v = st.view[fid], z = Math.exp(e.deltaY * 0.0015);
+    const nw = Math.min(Math.max(v[2] * z, 4), floorsBox[fid][2] * 2);
+    const k = nw / v[2];
+    st.view[fid] = [px - (px - v[0]) * k, py - (py - v[1]) * k, nw, nw];
+    applyView(fid);
+  }, { passive:false });
+  svg.addEventListener("pointerdown", (e) => { drag = { x:e.clientX, y:e.clientY, v:st.view[fid].slice(), moved:false }; });
+  svg.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 4) return;
+    if (!drag.moved) svg.setPointerCapture(e.pointerId);
+    drag.moved = true;
+    const r = svg.getBoundingClientRect(), v = drag.v;
+    st.view[fid] = [v[0] - dx / r.width * v[2], v[1] - dy / r.height * v[3], v[2], v[3]];
+    applyView(fid);
+  });
+  svg.addEventListener("pointerup", (e) => {
+    const moved = drag && drag.moved; drag = null;
+    if (moved) return;
+    const t = e.target.closest("[data-id]");
+    if (t) onPick(t.dataset.kind, t.dataset.id);
+  });
+}
+
+function onPick(kind, id) {
+  if (st.mode === "close") { st.closed.has(id) ? st.closed.delete(id) : st.closed.add(id); recompute(); return; }
+  if ((st.mode === "start" || st.mode === "goal") && kind === "space") { st[st.mode] = id; recompute(); return; }
+  st.sel = { kind, id }; renderAll();
+}
+
+function renderBase(fid) {
+  const p = profile(), L = st.layers, sel = st.sel, out = [];
+  const lvl = F[fid].level, r = st.view[fid] ? floorsBox[fid][2] / 90 : 1;   // r: marker size in metres
+  const spaces = D.spaces.filter(s => s.floor === fid);
+  const inRoute = new Set(st.res && st.res.reachable ? st.res.spaces : []);
+  for (const s of spaces) {
+    const why = spaceWhy(p, s), isSel = sel && sel.kind === "space" && sel.id === s.id;
+    const f = st.closed.has(s.id) ? `url(#hatch-${lvl})` : fill(s);
+    const op = L.l0 ? (why ? 0.45 : 1) : 0.35;
+    out.push(`<polygon data-kind="space" data-id="${s.id}" points="${pts(s.polygon)}" fill="${f}" fill-opacity="${op}" stroke="${isSel ? "var(--ink)" : "var(--wall)"}" stroke-width="${isSel ? 2.2 : 0.8}" vector-effect="non-scaling-stroke"><title>${esc(s.name)} · ${s.type}/${s.room_type} · ${s.area} m²${s.bay ? " · production bay: destination only" : ""}${why ? " · " + why : ""}</title></polygon>`);
+    if (inRoute.has(s.id) && !L.l2) out.push(`<polygon points="${pts(s.polygon)}" fill="var(--route)" fill-opacity="0.10" stroke="none" pointer-events="none"/>`);
+  }
+  if (L.l2) for (const s of spaces) {
+    for (const part of s.walkable) out.push(`<polygon points="${pts(part)}" fill="var(--l2)" fill-opacity="0.10" stroke="var(--l2)" stroke-width="0.8" stroke-dasharray="3 2" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+    for (const c of s.corners) out.push(`<rect x="${c[0] - r * 0.25}" y="${-c[1] - r * 0.25}" width="${r * 0.5}" height="${r * 0.5}" fill="var(--l2)" pointer-events="none"/>`);
+  }
+  if (L.assets) for (const s of spaces) for (const aid of s.assets) { const a = A[aid];
+    out.push(`<circle cx="${a.pos[0]}" cy="${-a.pos[1]}" r="${r * 0.22}" fill="var(--muted)" fill-opacity="0.7" data-kind="asset" data-id="${aid}"><title>${esc(a.name)} (${a.category}/${a.type})</title></circle>`); }
+  if (L.nav) {                                                   // glued L2 graph: every walk edge of every space
+    for (const s of spaces) for (const [k] of Object.entries(s.walk)) {
+      const [a, b] = k.split("|"), pa = a === "A" ? s.anchor : O[a].pos, pb = b === "A" ? s.anchor : O[b].pos;
+      const usable = okS(p, s) && (a === "A" || okO(p, O[a])) && (b === "A" || okO(p, O[b])) && (!s.bay || a === "A" || b === "A");
+      out.push(`<line x1="${pa[0]}" y1="${-pa[1]}" x2="${pb[0]}" y2="${-pb[1]}" stroke="${usable ? "var(--l2)" : "var(--closed)"}" stroke-opacity="${usable ? 0.45 : 0.25}" stroke-width="0.7" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+    }
+  }
+  if (L.l1) {                                                    // room graph: anchor → door → anchor
+    for (const e of D.l1_edges) {
+      if (!O[e.element]) continue;
+      const o = O[e.element]; if (o.floor !== fid) continue;
+      const why = openingWhy(p, o), seg = [];
+      for (const sid of o.spaces) seg.push(sid === OUT ? null : S[sid].anchor);
+      const a = seg[0] || [o.pos[0] + (o.pos[0] - seg[1][0]) * 0.25, o.pos[1] + (o.pos[1] - seg[1][1]) * 0.25];
+      const b = seg[1] || [o.pos[0] + (o.pos[0] - seg[0][0]) * 0.25, o.pos[1] + (o.pos[1] - seg[0][1]) * 0.25];
+      out.push(`<polyline points="${pts([a, o.pos, b])}" fill="none" stroke="${why ? "var(--closed)" : "var(--l1)"}" stroke-width="${why ? 1 : 1.4}" stroke-dasharray="${why ? "3 3" : o.kind === "entrance" ? "6 3" : ""}" stroke-opacity="0.8" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+    }
+    for (const s of spaces) {
+      const why = spaceWhy(p, s);
+      out.push(`<circle cx="${s.anchor[0]}" cy="${-s.anchor[1]}" r="${r * (s.circulation ? 0.5 : 0.7)}" fill="${why ? "var(--plan)" : s.bay ? "var(--route)" : "var(--l1)"}" stroke="var(--l1)" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+    }
+  }
+  for (const o of D.openings) if (o.floor === fid) {           // openings (doors) are clickable in every view
+    const why = openingWhy(p, o), isSel = sel && sel.kind === "opening" && sel.id === o.id;
+    const rr = r * (0.35 + o.width * 0.15);
+    out.push(`<circle data-kind="opening" data-id="${o.id}" cx="${o.pos[0]}" cy="${-o.pos[1]}" r="${rr}" fill="${st.closed.has(o.id) ? "var(--closed)" : o.kind === "entrance" ? "var(--ok)" : "var(--door)"}" fill-opacity="${o.step_free ? 1 : 0.25}" stroke="${isSel ? "var(--ink)" : o.step_free ? "none" : "var(--door)"}" stroke-width="${isSel ? 2.5 : 1.2}" vector-effect="non-scaling-stroke"><title>${o.kind} ${short(o.id)} · ${o.width} m${o.step_free ? "" : " · step"} · ${o.spaces.map(nm).join(" ↔ ")}${why ? " · blocked: " + why : ""}</title></circle>`);
+  }
+  for (const c of D.connectors) for (const [f, sid] of c.stops) if (f === fid) {
+    const a = S[sid].anchor, why = connectorWhy(p, c), s = r * 1.6, isSel = sel && sel.kind === "connector" && sel.id === c.id;
+    const others = c.stops.filter(x => x[0] !== fid).map(x => "L" + F[x[0]].level).join(",");
+    out.push(`<g data-kind="connector" data-id="${c.id}"><rect x="${a[0] - s / 2}" y="${-a[1] - s / 2}" width="${s}" height="${s}" fill="${why ? "var(--plan)" : c.kind === "lift" ? "var(--l2)" : "var(--l1)"}" stroke="${why ? "var(--closed)" : isSel ? "var(--ink)" : "var(--plan)"}" stroke-width="${isSel ? 2.5 : 1.5}" vector-effect="non-scaling-stroke"><title>${esc(c.name)} (${c.kind}) → ${others}${why ? " · blocked: " + why : ""}</title></rect>
+      <text x="${a[0] + s * 0.7}" y="${-a[1] + s * 0.3}" font-size="${r * 1.3}" fill="var(--ink)">${c.kind === "lift" ? "lift" : "stairs"} ↕ ${others}</text></g>`);
+  }
+  if (st.layers.labels) for (const s of spaces) if (!s.circulation && s.area > 12)
+    out.push(`<text x="${s.centroid[0]}" y="${-s.centroid[1] + r * 1.6}" font-size="${r * 1.05}" fill="var(--muted)" text-anchor="middle">${esc(s.ref || "")}</text>`);
+  if (sel && sel.kind === "space" && S[sel.id].floor === fid) out.push(interiorDetail(S[sel.id], r));
+  svgs[fid].querySelector(".base").innerHTML = out.join("");
+}
+
+function interiorDetail(s, r) {                                   // RoomInterior of the selected space
+  const out = [];
+  for (const part of s.walkable) out.push(`<polygon points="${pts(part)}" fill="none" stroke="var(--l2)" stroke-width="1.2" stroke-dasharray="4 2" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+  for (const [k, [w, path]] of Object.entries(s.walk)) {
+    const hl = st.hoverPair === k;
+    out.push(`<polyline points="${pts(path)}" fill="none" stroke="${hl ? "var(--route)" : "var(--l2)"}" stroke-width="${hl ? 3 : 1.2}" stroke-opacity="${hl ? 1 : 0.6}" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+  }
+  for (const [oid, lp] of Object.entries(s.landing)) {
+    const o = O[oid].pos;
+    out.push(`<line x1="${o[0]}" y1="${-o[1]}" x2="${lp[0]}" y2="${-lp[1]}" stroke="var(--ink)" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="none"/><circle cx="${lp[0]}" cy="${-lp[1]}" r="${r * 0.22}" fill="var(--ink)" pointer-events="none"/>`);
+  }
+  for (const c of s.corners) out.push(`<rect x="${c[0] - r * 0.3}" y="${-c[1] - r * 0.3}" width="${r * 0.6}" height="${r * 0.6}" fill="var(--l2)" pointer-events="none"/>`);
+  out.push(`<circle cx="${s.anchor[0]}" cy="${-s.anchor[1]}" r="${r * 0.8}" fill="var(--plan)" stroke="var(--ink)" stroke-width="2" vector-effect="non-scaling-stroke" pointer-events="none"/><circle cx="${s.anchor[0]}" cy="${-s.anchor[1]}" r="${r * 0.3}" fill="var(--ink)" pointer-events="none"/>`);
+  return out.join("");
+}
+
+function renderOver(fid) {                                        // search replay + route
+  const out = [], res = st.res, r = floorsBox[fid][2] / 90;
+  for (const [sid, tag] of [[st.start, "S"], [st.goal, "G"]]) if (sid && S[sid].floor === fid) {
+    const a = S[sid].anchor;
+    out.push(`<circle cx="${a[0]}" cy="${-a[1]}" r="${r * 1.5}" fill="var(--ink)" pointer-events="none"/><text x="${a[0]}" y="${-a[1] + r * 0.55}" font-size="${r * 1.5}" fill="var(--plan)" text-anchor="middle" font-weight="500">${tag}</text>`);
+  }
+  if (res && res.search) {
+    const sr = res.search, k = st.k, done = k >= sr.pops.length, settled = sr.pops.slice(0, k);
+    const maxD = Math.max(1e-9, ...settled.map(n => sr.dist.get(n)));
+    if (!done) for (const kn of settled) {
+      const pv = sr.prev.get(kn); if (!pv) continue;
+      const u = sr.nodes.get(pv[0]), v = sr.nodes.get(kn);
+      if (nodeFloor(v) !== fid || nodeFloor(u) !== fid) continue;
+      const a = nodeXY(u), b = nodeXY(v);
+      out.push(`<line x1="${a[0]}" y1="${-a[1]}" x2="${b[0]}" y2="${-b[1]}" stroke="var(--search)" stroke-width="1.5" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+    }
+    settled.forEach((kn, i) => {
+      const n = sr.nodes.get(kn); if (nodeFloor(n) !== fid) return;
+      const [x, y] = nodeXY(n), t = Math.round(100 * sr.dist.get(kn) / maxD), cur = i === k - 1 && !done;
+      out.push(`<circle cx="${x}" cy="${-y}" r="${r * (cur ? 1.1 : 0.55)}" fill="color-mix(in oklab, var(--search) ${100 - t}%, var(--l1))" stroke="${cur ? "var(--ink)" : "none"}" stroke-width="2" vector-effect="non-scaling-stroke" fill-opacity="${done ? 0.35 : 0.95}" pointer-events="none"><title>${kn} · ${m(sr.dist.get(kn))}</title></circle>`);
+    });
+    if (done && res.reachable) {
+      const path = [];
+      for (const s of res.steps) if (s.kind === "walk" && S[s.space].floor === fid) {
+        const seg = walkPath(s.space, s.a, s.b);
+        if (path.length && seg.length && Math.hypot(path.at(-1)[0] - seg[0][0], path.at(-1)[1] - seg[0][1]) < 1e-6) path.push(...seg.slice(1)); else { if (path.length) path.push(null); path.push(...seg); }
+      }
+      const runs = []; let cur = [];
+      for (const pnt of path) { if (pnt === null) { runs.push(cur); cur = []; } else cur.push(pnt); }
+      runs.push(cur);
+      for (const run of runs) if (run.length > 1) out.push(`<polyline points="${pts(run)}" fill="none" stroke="var(--route)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" pointer-events="none"/>`);
+    }
+  }
+  svgs[fid].querySelector(".over").innerHTML = out.join("");
+}
+
+// ===================== side panels =====================
+const STAGES = [
+  { id:"l0", color:"var(--wall)", t:"Building", code:"model.py", d:"building.json as typed facts: spaces (polygons), openings, connectors, assets. Edits and closures bump a version.", set:{ l0:true, assets:true, labels:true, l1:false, l2:false, nav:false } },
+  { id:"l1", color:"var(--l1)", t:"RoomGraph · L1", code:"graph.py", d:"One node per space, one edge per door/opening and per stair or lift hop. Used for reachability and the space list the scorer checks.", set:{ l0:true, assets:false, labels:true, l1:true, l2:false, nav:false } },
+  { id:"l2", color:"var(--l2)", t:"RoomInterior · L2", code:"geometry.py + costs.py", d:"Inside each space: outline shrunk 15 cm (dashed), reflex corners (squares), door landings 30 cm in, anchor. Walk = geodesic around corners.", set:{ l0:true, assets:false, labels:false, l1:false, l2:true, nav:false } },
+  { id:"nav", color:"var(--search)", t:"NavGraph + Profile + CostModel", code:"graph.py · rules.py · costs.py", d:"All interiors glued at shared doors. The Profile removes edges (red), the CostModel weighs them. Dijkstra runs here.", set:{ l0:true, assets:false, labels:false, l1:false, l2:false, nav:true } },
+  { id:"route", color:"var(--route)", t:"Route", code:"Route.spaces / elements / steps", d:"The search result reported back in L1 terms: the ordered space list the organizers validate and measure.", set:{ l0:true, assets:false, labels:true, l1:false, l2:false, nav:false } },
+];
+function renderPipe() {
+  const ctr = { l0:`${D.spaces.length} spaces · ${D.openings.length} openings · ${D.connectors.length} connectors · ${D.assets.length} assets`,
+    l1:`${D.spaces.length + 1} nodes · ${D.l1_edges.length} edges`,
+    l2:`${D.spaces.reduce((a, s) => a + s.corners.length, 0)} corners · ${D.spaces.reduce((a, s) => a + Object.keys(s.walk).length, 0)} walk distances`,
+    nav:`${D.openings.length} door + ${D.spaces.length} anchor + ${D.connectors.reduce((a, c) => a + c.stops.length * (c.kind === "lift" ? 2 : 1), 0)} stop nodes`,
+    route: st.res && st.res.reachable ? `${st.res.spaces.length} spaces · ${m(st.res.length)}` : "—" };
+  const cur = STAGES.find(s => Object.entries(s.set).every(([k, v]) => st.layers[k] === v));
+  document.getElementById("pipe").innerHTML = STAGES.map((s, i) => `${i ? '<div class="arrow"></div>' : ""}<button class="stage${cur === s ? " on" : ""}" data-stage="${i}"><span class="dot" style="background:${s.color}"></span><span class="t">${s.t} <code>${s.code}</code></span><span class="d">${s.d}<br><span class="sub">${ctr[s.id]}</span></span></button>`).join("");
+  document.querySelectorAll("[data-stage]").forEach(b => b.onclick = () => { Object.assign(st.layers, STAGES[+b.dataset.stage].set); renderAll(); });
+  const names = { l0:"plan", assets:"assets", labels:"labels", l1:"L1 graph", l2:"L2 walkable", nav:"L2 edges" };
+  document.getElementById("layers").innerHTML = Object.keys(names).map(k => `<label class="chk"><input type="checkbox" id="ly-${k}" ${st.layers[k] ? "checked" : ""}>${names[k]}</label>`).join("");
+  for (const k of Object.keys(names)) document.getElementById("ly-" + k).onchange = (e) => { st.layers[k] = e.target.checked; renderAll(); };
+}
+
+function renderRoute() {
+  document.querySelectorAll("[data-mode]").forEach(b => b.classList.toggle("on", b.dataset.mode === st.mode));
+  document.getElementById("width").hidden = st.profile !== "wide_load";
+  document.getElementById("closedlist").innerHTML = st.closed.size ? "closed: " + [...st.closed].map(id => `<span class="chip bad">${esc(short(id))}</span>`).join(" ") : "";
+  const res = st.res, el = document.getElementById("routeout");
+  const head = `<div class="trail"><span class="note">from</span> <b>${st.start ? esc(nm(st.start)) : "—"}</b> <span class="note">to</span> <b>${st.goal ? esc(nm(st.goal)) : "—"}</b></div>`;
+  if (!res) { el.innerHTML = head + `<p class="note">Pick a start and a goal on the map.</p>`; document.getElementById("replay").hidden = true; return; }
+  if (!res.reachable) { el.innerHTML = head + `<div class="big" style="color:var(--closed)">unreachable</div><p class="note">${esc(res.reason)}</p>`; }
+  else {
+    let cum = 0;
+    const rows = res.steps.map(s => { cum += s.w; return `<tr><td>${s.kind}</td><td>${esc(short(s.space))}</td><td>${s.el ? esc(short(s.el)) : s.kind === "walk" ? esc((s.a === "A" ? "anchor" : short(s.a)) + " → " + (s.b === "A" ? "anchor" : short(s.b))) : ""}</td><td class="n">${s.w.toFixed(2)}</td><td class="n">${cum.toFixed(2)}</td></tr>`; }).join("");
+    const trail = res.spaces.map((sid, i) => `${i ? `<span class="e">─${res.elements[i - 1] ? esc(short(res.elements[i - 1])) : ""}→</span>` : ""}<span class="s" data-goto="${sid}" title="${esc(nm(sid))}">${esc(S[sid].ref || short(sid))}</span>`).join("");
+    el.innerHTML = head + `<div class="row" style="align-items:baseline;gap:12px"><span class="big">${res.length.toFixed(2)} m</span><span class="note">profile ${esc(st.profile)} · cost ${esc(D.cost.name)} (${esc(D.cost.label)})</span></div>
+      <div><h2 style="margin-bottom:4px">Route.spaces → what the scorer checks</h2><div class="trail">${trail}</div></div>
+      <div><h2 style="margin-bottom:4px">Route.steps → how the length adds up</h2><div class="tbl"><table><thead><tr><th>kind</th><th>space</th><th>element / walk</th><th>m</th><th>Σ m</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    el.querySelectorAll("[data-goto]").forEach(x => x.onclick = () => { st.sel = { kind:"space", id:x.dataset.goto }; renderAll(); });
+  }
+  const sr = res.search, rp = document.getElementById("replay");
+  rp.hidden = !sr;
+  if (sr) { const k = document.getElementById("k"); k.max = sr.pops.length; k.value = st.k;
+    document.getElementById("kinfo").textContent = `Dijkstra settled ${Math.min(st.k, sr.pops.length)} / ${sr.pops.length} nodes${st.k < sr.pops.length ? " · now: " + sr.pops[st.k - 1]?.split("|").map(short).join(" ") : ""}`; }
+}
+
+function usableTag(why) { return why ? `<span class="chip bad">blocked: ${esc(why)}</span>` : `<span class="chip good">usable</span>`; }
+function renderInspector() {
+  const el = document.getElementById("inspector"), sel = st.sel, p = profile();
+  if (!sel) { el.innerHTML = `<h2>Inspector</h2><p class="note">Click a space, door or stair/lift marker to see its record and how each layer sees it.</p>`; return; }
+  if (sel.kind === "space") {
+    const s = S[sel.id], nb = D.l1_edges.filter(e => e.a === s.id || e.b === s.id);
+    const nbRows = nb.map(e => { const other = e.a === s.id ? e.b : e.a, why = O[e.element] ? openingWhy(p, O[e.element]) : connectorWhy(p, C[e.element]) || (other !== OUT ? spaceWhy(p, S[other]) : "");
+      return `<tr><td>${esc(e.kind)}</td><td>${esc(short(e.element))}</td><td>${esc(nm(other))}</td><td>${why ? `<span class="chip bad">${esc(why)}</span>` : "✓"}</td></tr>`; }).join("");
+    const label = (k) => k === "A" ? "anchor" : `${O[k].kind} → ${esc(nm(O[k].spaces.find(x => x !== s.id) ?? s.id))}`;
+    const pairs = Object.entries(s.walk).sort((a, b) => a[1][0] - b[1][0]).map(([k, [w, path]]) => { const [a, b] = k.split("|");
+      return `<tr data-pair="${k}"${st.hoverPair === k ? ' class="hl"' : ""}><td>${label(a)}</td><td>${label(b)}</td><td class="n">${w.toFixed(2)}</td><td class="n">${path.length - 2}</td></tr>`; }).join("");
+    el.innerHTML = `<h2>Inspector · Space</h2><h3>${esc(s.name)}</h3>
+      <div class="row"><span class="chip">${s.type}</span><span class="chip">${s.room_type}</span>${s.bay ? '<span class="chip warn">production bay: destination only</span>' : ""}${s.forklift ? '<span class="chip">forklift space</span>' : ""}${s.circulation ? '<span class="chip">circulation</span>' : ""}${usableTag(spaceWhy(p, s))}</div>
+      <dl class="kv"><dt>id</dt><dd>${esc(s.id)}</dd><dt>floor</dt><dd>${esc(F[s.floor].name)}</dd><dt>area</dt><dd>${s.area} m²</dd><dt>anchor</dt><dd>${s.anchor.join(", ")} (route start/end)</dd><dt>assets</dt><dd>${s.assets.length}${s.assets.length ? ": " + s.assets.slice(0, 6).map(a => esc(A[a].name)).join(", ") + (s.assets.length > 6 ? " …" : "") : ""}</dd></dl>
+      <div class="row"><button class="b" data-act="start">Set as start</button><button class="b" data-act="goal">Set as goal</button><button class="b" data-act="close">${st.closed.has(s.id) ? "Reopen" : "Close"}</button></div>
+      <div><h2 style="margin-bottom:4px">L1 · edges of this node</h2><div class="tbl"><table><thead><tr><th>kind</th><th>element</th><th>to</th><th>${esc(p.name)}</th></tr></thead><tbody>${nbRows}</tbody></table></div></div>
+      <div><h2 style="margin-bottom:4px">L2 · RoomInterior.door_matrix</h2><p class="note">Walking distance between every pair of points in this space (OrganizerCost.walk). Hover a row to draw its path.</p><div class="tbl"><table><thead><tr><th>from</th><th>to</th><th>m</th><th>turns</th></tr></thead><tbody>${pairs}</tbody></table></div></div>`;
+    el.querySelectorAll("[data-pair]").forEach(tr => { tr.onmouseenter = () => { st.hoverPair = tr.dataset.pair; renderBase(s.floor); tr.classList.add("hl"); }; tr.onmouseleave = () => { st.hoverPair = null; renderBase(s.floor); tr.classList.remove("hl"); }; });
+  } else if (sel.kind === "opening") {
+    const o = O[sel.id];
+    el.innerHTML = `<h2>Inspector · Opening</h2><h3>${esc(o.kind)} ${esc(short(o.id))}</h3><div class="row">${usableTag(openingWhy(p, o))}</div>
+      <dl class="kv"><dt>joins</dt><dd>${o.spaces.map(x => esc(nm(x))).join(" ↔ ")}</dd><dt>width</dt><dd>${o.width} m</dd><dt>step-free</dt><dd>${o.step_free}</dd><dt>position</dt><dd>${o.pos.join(", ")}</dd>
+      <dt>L1</dt><dd>one edge ${o.spaces.map(short).join(" — ")}</dd><dt>L2</dt><dd>node door|${esc(short(o.id))}: walk edges into both spaces${o.spaces.includes(OUT) ? "; outside side is forbidden by the cost model" : ""}</dd></dl>
+      <div class="row"><button class="b" data-act="close">${st.closed.has(o.id) ? "Reopen" : "Close"}</button></div>`;
+  } else if (sel.kind === "connector") {
+    const c = C[sel.id];
+    el.innerHTML = `<h2>Inspector · Connector</h2><h3>${esc(c.name)}</h3><div class="row"><span class="chip">${c.kind}</span>${usableTag(connectorWhy(p, c))}</div>
+      <dl class="kv"><dt>stops</dt><dd>${c.stops.map(([f, s]) => esc(`${F[f].name}: ${nm(s)}`)).join("<br>")}</dd><dt>step-free</dt><dd>${c.step_free}</dd>
+      <dt>cost</dt><dd>${c.kind === "lift" ? `board ${D.cost.lift_wait_m} m once per ride + ${D.cost.lift_per_m} m per metre risen` : `${D.cost.stairs_per_m} m per metre climbed`}</dd>
+      <dt>L2 nodes</dt><dd>${c.kind === "lift" ? "land|… (at the stop) and car|… (inside the lift) per stop" : "land|… per stop, linked floor to floor"}</dd></dl>
+      <div class="row"><button class="b" data-act="close">${st.closed.has(c.id) ? "Reopen" : "Close"}</button></div>`;
+  } else if (sel.kind === "asset") {
+    const a = A[sel.id];
+    el.innerHTML = `<h2>Inspector · Asset</h2><h3>${esc(a.name)}</h3><dl class="kv"><dt>type</dt><dd>${esc(a.category)}/${esc(a.type)}</dd><dt>in</dt><dd>${esc(nm(a.space))}</dd><dt>position</dt><dd>${a.pos.join(", ")}</dd><dt>routing</dt><dd>not an obstacle; a route to it ends at its room's anchor</dd></dl>`;
+  }
+  el.querySelectorAll("[data-act]").forEach(b => b.onclick = () => {
+    const act = b.dataset.act;
+    if (act === "close") { st.closed.has(sel.id) ? st.closed.delete(sel.id) : st.closed.add(sel.id); } else st[act] = sel.id;
+    recompute();
+  });
+}
+
+function renderAll() { for (const f of D.floors) { renderBase(f.id); renderOver(f.id); } renderPipe(); renderRoute(); renderInspector(); }
+function recompute() {
+  st.res = st.start && st.goal ? route(st.start, st.goal, profile()) : null;
+  st.k = st.res && st.res.search ? st.res.search.pops.length : 0;
+  stopPlay(); renderAll();
+}
+
+// ===================== controls =====================
+document.querySelectorAll("[data-mode]").forEach(b => b.onclick = () => { st.mode = b.dataset.mode; renderRoute(); });
+document.getElementById("profile").onchange = (e) => { st.profile = e.target.value; recompute(); };
+document.getElementById("width").oninput = (e) => { st.width = +e.target.value; recompute(); };
+document.getElementById("k").oninput = (e) => { st.k = +e.target.value; stopPlay(); for (const f of D.floors) renderOver(f.id); renderRoute(); };
+let timer = null;
+function stopPlay() { clearInterval(timer); timer = null; document.getElementById("play").textContent = "Play search"; }
+document.getElementById("play").onclick = () => {
+  if (timer) return stopPlay();
+  const n = st.res.search.pops.length;
+  if (st.k >= n) st.k = 0;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("play").textContent = "Pause";
+  timer = setInterval(() => {
+    st.k = reduce ? n : Math.min(n, st.k + Math.max(1, Math.round(n / 120)));
+    for (const f of D.floors) renderOver(f.id); renderRoute();
+    if (st.k >= n) stopPlay();
+  }, 40);
+};
+
+// ===================== opening state: an example cross-floor route =====================
+document.getElementById("title").textContent = D.building.name + " · Navgraph";
+document.getElementById("bstats").textContent = `${D.building.id} · ${D.floors.length} floors · cost model ${D.cost.name}`;
+{
+  const pick = D.reference_routes.filter(r => r.profile === "walk" && r.reachable).sort((a, b) =>
+    (new Set(b.spaces.map(s => S[s].floor)).size - new Set(a.spaces.map(s => S[s].floor)).size) || (b.spaces.length - a.spaces.length))[0];
+  if (pick) { st.start = pick.start; st.goal = pick.goal; st.sel = { kind:"space", id:pick.start }; }
+  recompute();
+}
+</script>

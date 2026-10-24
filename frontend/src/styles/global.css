@@ -1028,6 +1028,18 @@ code {
   border-bottom-left-radius: 5px;
 }
 
+.chat__link {
+  border: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
 .chat__typing {
   display: flex;
   gap: 4px;

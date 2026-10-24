@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import ChatDock from './ChatDock';
+import ChatDock, { linkTargets, linkify } from './ChatDock';
+import type { BuildingModel } from '../../lib/building';
 import { api } from '../../lib/api';
 
 const health = {
@@ -31,11 +32,11 @@ describe('ChatDock', () => {
 
     expect(await screen.findByText('Room 2.04, second floor.')).toBeInTheDocument();
     expect(screen.getByText('Where is the 3D printer?')).toBeInTheDocument();
-    expect(chat).toHaveBeenCalledWith('Where is the 3D printer?', undefined);
+    expect(chat).toHaveBeenCalledWith('Where is the 3D printer?', undefined, null);
 
     await user.type(screen.getByLabelText('Message'), 'And the lift?');
     await user.click(screen.getByRole('button', { name: 'Send' }));
-    expect(chat).toHaveBeenLastCalledWith('And the lift?', 't1');
+    expect(chat).toHaveBeenLastCalledWith('And the lift?', 't1', null);
   });
 
   it('sends a suggestion with one tap', async () => {
@@ -45,8 +46,18 @@ describe('ChatDock', () => {
     render(<ChatDock health={health} backendDown={false} draft={null} />);
     await user.click(screen.getByRole('button', { name: 'Which rooms are on floor 1?' }));
 
-    expect(chat).toHaveBeenCalledWith('Which rooms are on floor 1?', undefined);
+    expect(chat).toHaveBeenCalledWith('Which rooms are on floor 1?', undefined, null);
     expect(await screen.findByText('Here.')).toBeInTheDocument();
+  });
+
+  it('sends the selected building so the agent gets its navgraph tools', async () => {
+    const chat = vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1' });
+    const user = userEvent.setup();
+
+    render(<ChatDock health={health} backendDown={false} draft={null} buildingId="b1" />);
+    await user.click(screen.getByRole('button', { name: 'Which rooms are on floor 1?' }));
+
+    expect(chat).toHaveBeenCalledWith('Which rooms are on floor 1?', undefined, 'b1');
   });
 
   it('prefills the input from a draft', () => {
@@ -67,5 +78,23 @@ describe('ChatDock', () => {
     await user.click(screen.getByRole('button', { name: 'Send' }));
 
     expect(await screen.findByRole('alert')).toHaveTextContent('not answering');
+  });
+
+  it('links rooms and unique assets in replies, not shared names', () => {
+    const model = {
+      spaces: [{ id: 'sp-1', name: 'Print Lab', ref: '2.04' }],
+      assets: [
+        { id: 'a-1', name: '3D Printer' },
+        { id: 'a-2', name: 'Desk' },
+        { id: 'a-3', name: 'Desk' },
+      ],
+    } as unknown as BuildingModel;
+    const parts = linkify('The 3D printer is in Print Lab (2.04), by a Desk.', linkTargets(model));
+    expect(parts.filter((p) => typeof p !== 'string')).toEqual([
+      ['3D printer', { kind: 'asset', id: 'a-1' }],
+      ['Print Lab', { kind: 'space', id: 'sp-1' }],
+      ['2.04', { kind: 'space', id: 'sp-1' }],
+    ]);
+    expect(parts.join('')).toContain('by a Desk.');
   });
 });

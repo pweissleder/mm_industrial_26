@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type SubmitEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode, type SubmitEvent } from 'react';
 import { api, type HealthResponse } from '../../lib/api';
+import type { BuildingModel, Selection } from '../../lib/building';
 import { LogoMark } from './Logo';
 import { ChevronIcon, SendIcon, SparkleIcon } from './Icons';
 
@@ -17,6 +18,32 @@ interface Props {
   health: HealthResponse | null;
   backendDown: boolean;
   draft: Draft | null;
+  buildingId?: string | null;
+  /** The shown building; rooms and assets it names in replies become links. */
+  model?: BuildingModel | null;
+  onSelect?: (sel: Selection) => void;
+}
+
+/** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
+export function linkTargets(model: BuildingModel): Map<string, Selection> {
+  const found = new Map<string, Selection | null>();
+  const add = (label: string | null | undefined, sel: Selection) => {
+    if (!label || label.length < 2) return;
+    const key = label.toLowerCase();
+    const prev = found.get(key);
+    found.set(key, prev === undefined || (prev && prev.id === sel.id) ? sel : null);
+  };
+  for (const s of model.spaces) for (const l of [s.name, s.ref, s.id]) add(l, { kind: 'space', id: s.id });
+  for (const a of model.assets) for (const l of [a.name, a.id]) add(l, { kind: 'asset', id: a.id });
+  return new Map([...found].filter((e): e is [string, Selection] => e[1] !== null));
+}
+
+/** Split text into plain strings and [matched text, selection] pairs, longest names first. */
+export function linkify(text: string, targets: Map<string, Selection>): (string | [string, Selection])[] {
+  if (!targets.size) return [text];
+  const esc = [...targets.keys()].sort((a, b) => b.length - a.length).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const re = new RegExp(`(?<![\\w-])(${esc.join('|')})(?![\\w-])`, 'gi');
+  return text.split(re).map((part, i) => (i % 2 ? [part, targets.get(part.toLowerCase())!] : part));
 }
 
 const SUGGESTIONS = [
@@ -25,7 +52,7 @@ const SUGGESTIONS = [
   'Which rooms are on floor 1?',
 ];
 
-export default function ChatDock({ health, backendDown, draft }: Props) {
+export default function ChatDock({ health, backendDown, draft, buildingId = null, model = null, onSelect }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [threadId, setThreadId] = useState<string>();
@@ -34,6 +61,21 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
   const [open, setOpen] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLOListElement>(null);
+  const targets = useMemo(() => (model ? linkTargets(model) : new Map<string, Selection>()), [model]);
+
+  const renderReply = (text: string): ReactNode =>
+    linkify(text, targets).map((part, i) =>
+      typeof part === 'string' ? (
+        part
+      ) : (
+        <button key={i} type="button" className="chat__link" onClick={() => onSelect?.(part[1])}>
+          {part[0]}
+        </button>
+      ),
+    );
+
+  // A thread's memory belongs to one building, so a new building starts a new thread.
+  useEffect(() => setThreadId(undefined), [buildingId]);
 
   useEffect(() => {
     if (!draft) return;
@@ -54,7 +96,7 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
     setPending(true);
     setError(null);
     try {
-      const { reply, thread_id } = await api.chat(text, threadId);
+      const { reply, thread_id } = await api.chat(text, threadId, buildingId);
       setThreadId(thread_id);
       setMessages((prev) => [...prev, { role: 'assistant', text: reply }]);
     } catch {
@@ -96,7 +138,7 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
           <ol className="chat__log" aria-label="Conversation" ref={logRef}>
             {messages.map((m, i) => (
               <li key={i} className={`chat__msg chat__msg--${m.role}`}>
-                {m.text}
+                {m.role === 'assistant' && onSelect ? renderReply(m.text) : m.text}
               </li>
             ))}
             {pending && (

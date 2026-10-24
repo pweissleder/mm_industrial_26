@@ -48,7 +48,8 @@ def test_offline_run_builds_location(runner: PipelineRunner) -> None:
     assert record.status == RunStatus.COMPLETED, record
     assert record.location_id == DATASET
     assert record.stages["raw_validation"].status == "passed"
-    assert record.stages["graph_build"].status == "skipped"
+    assert record.stages["graph_build"].status == "passed"
+    assert record.stages["graph_validate"].status == "passed"
     assert record.stages["model_validate"].status == "passed"
     assert record.stages["summarize"].status == "passed"
 
@@ -56,7 +57,7 @@ def test_offline_run_builds_location(runner: PipelineRunner) -> None:
     location = store.get(DATASET)
     assert location is not None and location.metadata is not None
     assert location.pillars["assets_3d"].status == "done"
-    assert location.pillars["graph"].status == "skipped"
+    assert location.pillars["graph"].status == "done"
     building = store.read_building(DATASET)
     assert set(location.metadata.spaces) == {s["id"] for s in building["spaces"]}
     assert location.metadata.summary
