@@ -56,3 +56,17 @@ jobs:
         run: docker compose logs
       - if: always()
         run: docker compose down
+
+  compose-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f compose.prod.yaml up --build --detach --wait
+      - name: nginx serves the app and proxies /api to the backend
+        run: |
+          curl --fail --retry 10 --retry-delay 3 --retry-all-errors http://localhost:8080/ | grep -q AriNav
+          curl --fail http://localhost:8080/api/health
+      - if: failure()
+        run: docker compose -f compose.prod.yaml logs
+      - if: always()
+        run: docker compose -f compose.prod.yaml down -v

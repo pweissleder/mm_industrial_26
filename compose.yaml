@@ -6,7 +6,7 @@ services:
     build: ./backend
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ports:
-      - "8000:8000"
+      - "${BACKEND_PORT:-8000}:8000"
     volumes:
       # Source is mounted for hot reload; backend/.env is read from here too.
       - ./backend:/app
@@ -21,9 +21,11 @@ services:
       start_period: 5s
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: dev
     ports:
-      - "4321:4321"
+      - "${FRONTEND_PORT:-4321}:4321"
     volumes:
       - ./frontend:/app
       # Keep the container's Linux node_modules instead of the host's.

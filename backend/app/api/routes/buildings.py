@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, status
 
 from app.api.deps import RepositoryDep
 from app.api.schemas import BuildingDetail, BuildingSummary, FloorOut
-from app.storage import StoredBuilding
+from app.domain.building import BuildingFile
+from app.storage import BuildingRepository, StoredBuilding
 
 router = APIRouter(prefix="/buildings", tags=["buildings"])
 
@@ -19,6 +20,13 @@ def _summary(stored: StoredBuilding) -> BuildingSummary:
     )
 
 
+def _get(repository: BuildingRepository, building_id: str) -> StoredBuilding:
+    stored = repository.get(building_id)
+    if stored is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Building '{building_id}' not found")
+    return stored
+
+
 @router.get("", response_model=list[BuildingSummary])
 def list_buildings(repository: RepositoryDep) -> list[BuildingSummary]:
     return [_summary(b) for b in repository.list()]
@@ -26,9 +34,7 @@ def list_buildings(repository: RepositoryDep) -> list[BuildingSummary]:
 
 @router.get("/{building_id}", response_model=BuildingDetail)
 def get_building(building_id: str, repository: RepositoryDep) -> BuildingDetail:
-    stored = repository.get(building_id)
-    if stored is None:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Building '{building_id}' not found")
+    stored = _get(repository, building_id)
     data = stored.data
     return BuildingDetail(
         **_summary(stored).model_dump(),
@@ -40,3 +46,9 @@ def get_building(building_id: str, repository: RepositoryDep) -> BuildingDetail:
         space_count=len(data.spaces),
         asset_count=len(data.assets),
     )
+
+
+@router.get("/{building_id}/model", response_model=BuildingFile)
+def get_building_model(building_id: str, repository: RepositoryDep) -> BuildingFile:
+    """The full building (floors, spaces, openings, connectors, assets), e.g. for 3D rendering."""
+    return _get(repository, building_id).data

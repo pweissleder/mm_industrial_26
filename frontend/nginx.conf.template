@@ -1,0 +1,32 @@
+# Production: serve the static Astro build and proxy /api to FastAPI on the same
+# origin, as the dev server does. ${BACKEND_URL} is filled in at container start.
+server {
+    listen 80;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    # Asset uploads; the backend enforces its own per-file limit (MAX_UPLOAD_BYTES).
+    client_max_body_size 200m;
+
+    gzip on;
+    gzip_types text/css application/javascript application/json image/svg+xml model/gltf+json;
+
+    location /api/ {
+        proxy_pass ${BACKEND_URL};
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # Agent replies can take a while.
+        proxy_read_timeout 300s;
+        proxy_request_buffering off;
+    }
+
+    location /_astro/ {
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

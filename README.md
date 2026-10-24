@@ -34,7 +34,17 @@ Needs [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Dock
 docker compose up --build
 ```
 
-Stop with Ctrl+C, or `docker compose down` if it runs detached (`-d`). Source folders are mounted into the containers, so code changes reload automatically (file watching uses polling, which is what works reliably on Windows and macOS bind mounts). After changing dependencies, rebuild with `--build`.
+Stop with Ctrl+C, or `docker compose down` if it runs detached (`-d`). Source folders are mounted into the containers, so code changes reload automatically (file watching uses polling, which is what works reliably on Windows and macOS bind mounts). After changing dependencies, rebuild with `--build` (the frontend container also reinstalls on start when `package-lock.json` no longer matches its `node_modules` volume). Set `FRONTEND_PORT` / `BACKEND_PORT` to use other host ports.
+
+## Run the live version (Docker)
+
+`compose.prod.yaml` builds the frontend statically and serves it with nginx, which also proxies `/api` to the backend (same origin, so no CORS). The backend runs without reload, reads `backend/.env` if present, and keeps `data/datasets` (including uploads) in the named volume `datasets`, seeded with the bundled samples on first start.
+
+```bash
+docker compose -f compose.prod.yaml up --build -d
+```
+
+Open http://localhost:8080 (change with `ARINAV_PORT`). Ingested buildings are still in memory, but the app re-ingests the selected dataset on load, so a restart loses nothing visible. Stop with `docker compose -f compose.prod.yaml down` (add `-v` to also delete uploads).
 
 ## Run natively (each app on its own)
 
@@ -69,9 +79,19 @@ Backend tasks run through [Poe the Poet](https://poethepoet.natn.io/) (`uv run p
 
 The browser only talks to the Astro dev server: it proxies `/api/*` to FastAPI (`BACKEND_URL`, see `frontend/astro.config.mjs`; in Docker it points at the `backend` service), so there is no CORS in local dev. For split deployments, set `PUBLIC_API_BASE_URL` in the frontend and `CORS_ORIGINS` in the backend.
 
-## Demo feature
+## AriNav web app
 
-`POST /api/chat` `{ message, thread_id? }` runs a one-node LangGraph agent with per-thread memory and returns `{ reply, thread_id }`. The React island `ChatDemo` (on `/`) checks `GET /api/health` and lets you chat with it.
+The frontend is **AriNav** (after Ariadne and her thread), one React island on `/` (`frontend/src/components/arinav/`), styled after synera.ai and responsive down to phones:
+
+- **3D view** (centre): three.js renders any ingested `building.json` (room slabs coloured by type, walls with door gaps, assets as boxes by category, stairs/lifts as tubes), or an uploaded `.glb`. Click or tap to inspect; the camera flies to the selection.
+- **Location** (left panel): building picker, floor focus (higher floors hidden, lower ones ghosted), search over rooms and assets, room list.
+- **View** (left panel): camera presets, layer toggles, explode floors, wall height, room colours, shadows, grid.
+- **Chat** (bottom): talks to the agent via `POST /api/chat` `{ message, thread_id? }` (one-node LangGraph agent with per-thread memory, returns `{ reply, thread_id }`).
+- **Upload assets** (top right): sends files to the backend, which stores them in `DATASETS_DIR/<dataset>/`; a `building.json` is ingested and opened right away.
+- **Two qualities** (tag next to the building name): every building first shows the **Low** preview generated in the browser. The [ingestion pipeline](#agentic-ingestion-pipeline) runs in the background, on every upload and on opening a dataset that was never processed (a failed run is not restarted on its own). Once it has published a model, the view switches to **HQ**: the pipeline's `model.glb` with the cleaned `building.json` and room descriptions, still clickable and filterable by floor. The preview stays available under *3D source*.
+- **Processing** (chip in the top bar): stage progress of the run. When the pipeline asks for a review, a dialog opens with the issues, plan previews and a note field, and answers with *Accept with warnings*, *Retry stage* or *Abort run*. Failed runs can be retried and finished ones rebuilt from the same dialog.
+
+On tablets the panel slides over the view; on phones it becomes a bottom sheet.
 
 ## Data ingestion and storage
 
@@ -82,6 +102,9 @@ Buildings use the starter kit's format (`building.json`: floors, spaces, opening
 | `GET /api/datasets` | Lists ingestible datasets (subfolders of `DATASETS_DIR` that contain a `building.json`) |
 | `POST /api/ingestions` `{"dataset": "proc-factory-dev-003"}` | Validates and stores that dataset; re-ingesting replaces the building |
 | `GET /api/buildings`, `GET /api/buildings/{id}` | Ingested buildings, with floors and counts |
+| `GET /api/buildings/{id}/model` | The full building (spaces, openings, connectors, assets), used for 3D rendering |
+| `POST /api/datasets/{dataset}/files` (multipart, field `files`) | Stores uploads in `DATASETS_DIR/<dataset>/`, creating the dataset; a `building.json` is validated first. Allowed: `.json .glb .gltf .png .jpg .svg .csv .pdf .txt .md`, up to `MAX_UPLOAD_BYTES` (50 MB) each |
+| `GET /api/datasets/{dataset}/files`, `GET /api/datasets/{dataset}/files/{name}` | Lists or downloads a dataset's files (e.g. a `.glb` for the viewer) |
 
 One sample dataset ships in `backend/data/datasets/` (procedural factory "Fertigung Ost 27", CC0). To ingest any of the kit's 280 buildings without copying them, set `DATASETS_DIR=../problem_statement/industrial-agents-hackathon-2026/data/dev` (or `train`/`test`) in `backend/.env`.
 
@@ -90,6 +113,47 @@ Try it from the OpenAPI docs at http://localhost:8000/docs, or with curl (macOS/
 ```bash
 curl -X POST localhost:8000/api/ingestions -H 'Content-Type: application/json' -d '{"dataset":"proc-factory-dev-003"}'
 ```
+
+## Agentic ingestion pipeline
+
+`backend/app/pipeline/` turns a dataset into a **location**: a validated and cleaned building, a to-scale 3D model (`model.glb`) and metadata per building, floor and space. A LangGraph graph runs fixed stages. After each stage, an orchestrator gate (Opus) decides whether to proceed, retry the stage that caused a problem, ask a human, or abort.
+
+| # | Stage | Tools (deterministic) | Agent |
+|---|---|---|---|
+| 1 | Raw validation | 21 issue checks, JSON-patch with re-validation, per-floor translate, overlap trim | Sonnet fixes every open issue in the cleaned copy (the raw file is never touched) or accepts it with a reason; lessons go to `memory/source_quirks.json` |
+| 2 | Relationship graph build + validate | — | **skeletons**, implemented later |
+| 3.1 | Floorplan | trimesh/shapely: slabs, space floors, walls with door gaps, connectors | Sonnet reviews stats + plan images |
+| 3.2 | Equipment | one instanced mesh per asset type from the asset library | Sonnet flags types with missing or implausible models |
+| 3.3 | Variant creator | declarative specs (box/cylinder/prism in the unit box), validation, preview | Sonnet designs a spec per missing type; saved to the library and reused across locations |
+| 3.4 | 3D validator | GLB re-read and compared node by node (1 mm / 0.1°), plan renders | Opus compares the plans with the dataset's floor images and attributes deviations to a stage |
+| 4 | Summarizer | areas, equipment, step-free access per space | Sonnet writes building and floor text; Haiku writes space descriptions |
+
+Without `ANTHROPIC_API_KEY` (or with `--offline`), only the deterministic tools run, so the whole pipeline works and is tested offline. A failed stage then pauses the run for review.
+
+```bash
+cd backend
+uv run poe ingest proc-factory-dev-003            # asks in the terminal when a run needs review
+uv run poe ingest --all --datasets-dir ../problem_statement/industrial-agents-hackathon-2026/data/dev --offline --on-review accept_with_warnings
+```
+
+| Endpoint | What it does |
+|---|---|
+| `POST /api/pipeline-runs` `{"dataset", "force"?}` | Starts a run in the background (202) and returns its `RunRecord` |
+| `GET /api/pipeline-runs[/{run_id}]` | Run status, per-stage progress, orchestrator decisions, token usage per agent; `?dataset=` filters the list (newest first) |
+| `POST /api/pipeline-runs/{run_id}/resume` `{"review_id", "option", "note"?}` | Answers a `needs_review` run. `pending_review` holds the prompt for a frontend: title, message, issues, artifacts, and the options `accept_with_warnings`, `retry` or `abort` |
+| `GET /api/locations[/{id}]`, `GET /api/locations/{id}/model.glb` | Locations (`has_model` in the list), their metadata, and the 3D model |
+| `GET /api/locations/{id}/building` | The cleaned `building.json` |
+| `GET /api/locations/{id}/files/{path}` | An image or model the pipeline wrote, e.g. a review's `3d/previews/plan_floor_0.png` |
+
+State lives as JSON in `backend/data/workspace/` (gitignored):
+- `locations/<id>/`: `raw.json`, `building.json` (cleaned), `patches.json`, `issues.json`, `location.json` (pillar status and metadata), `3d/` and `reports/`
+- `runs/`
+- `asset_library/`: overrides of the committed seeds in `backend/data/asset_library/seed/`
+- `memory/`
+
+Re-running an unchanged input is skipped unless you pass `force`.
+
+Paused runs can only be resumed while the backend process is alive, because the LangGraph checkpointer is in memory.
 
 ## LangSmith tracing
 
