@@ -95,3 +95,36 @@ def test_rejects_oversized_file(client: TestClient) -> None:
     big = b"0" * 1_000_001
     response = client.post("/api/datasets/d1/files", files=[("files", ("a.csv", big, "text/csv"))])
     assert response.status_code == 413
+
+
+def test_availability(client: TestClient, datasets_dir: Path) -> None:
+    (datasets_dir / "Hall-3").mkdir()
+
+    assert client.get("/api/datasets/plant-2/availability").json() == {
+        "dataset": "plant-2",
+        "available": True,
+        "reason": None,
+    }
+    taken = client.get("/api/datasets/hall-3/availability").json()
+    assert taken["available"] is False
+    assert "already exists" in taken["reason"]
+    assert client.get("/api/datasets/-bad/availability").json()["available"] is False
+
+
+def test_new_upload_refuses_taken_name(client: TestClient, datasets_dir: Path) -> None:
+    (datasets_dir / "d1").mkdir()
+    files = [("files", ("notes.txt", b"hi", "text/plain"))]
+
+    assert client.post("/api/datasets/D1/files?new=true", files=files).status_code == 409
+    assert client.post("/api/datasets/d2/files?new=true", files=files).status_code == 201
+    assert (datasets_dir / "d2" / "notes.txt").read_bytes() == b"hi"
+
+
+def test_failed_new_upload_leaves_no_dataset(client: TestClient, datasets_dir: Path) -> None:
+    files = [
+        ("files", ("notes.txt", b"hi", "text/plain")),
+        ("files", ("run.sh", b"x", "text/plain")),
+    ]
+
+    assert client.post("/api/datasets/d1/files?new=true", files=files).status_code == 422
+    assert list(datasets_dir.iterdir()) == []

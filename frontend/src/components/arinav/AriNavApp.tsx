@@ -3,14 +3,30 @@ import { api, datasetFileUrl, type HealthResponse, type UploadResponse } from '.
 import type { BuildingModel, Selection } from '../../lib/building';
 import ChatDock, { type Draft } from './ChatDock';
 import DetailsCard from './DetailsCard';
-import { FitIcon, MinusIcon, PanelIcon, PlusIcon, TopIcon, CubeIcon, UploadIcon } from './Icons';
+import {
+  CubeIcon,
+  FitIcon,
+  MinusIcon,
+  OrbitIcon,
+  PanelIcon,
+  PanIcon,
+  PlusIcon,
+  TopIcon,
+  UploadIcon,
+} from './Icons';
 import Logo, { LogoMark } from './Logo';
 import { PipelineChip, PipelineDialog } from './PipelineStatus';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
-import { DEFAULT_VIEW, type CameraAction, type ObjectInfo, type ViewSettings } from './view';
+import {
+  DEFAULT_VIEW,
+  type CameraAction,
+  type NavMode,
+  type ObjectInfo,
+  type ViewSettings,
+} from './view';
 
 const LAST_DATASET = 'arinav:dataset';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
@@ -65,6 +81,7 @@ export default function AriNavApp() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [info, setInfo] = useState<ObjectInfo>();
   const [camera, setCamera] = useState<CameraCommand | null>(null);
+  const [navMode, setNavMode] = useState<NavMode>('orbit');
   const [sidebarOpen, setSidebarOpen] = useState(wide);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
@@ -234,6 +251,7 @@ export default function AriNavApp() {
         settings={settings}
         selection={selection}
         camera={camera}
+        navMode={navMode}
         insetLeft={isWide && sidebarOpen ? DOCKED_SIDEBAR_PX : 0}
         onSelect={handleSelect}
       />
@@ -292,6 +310,25 @@ export default function AriNavApp() {
       </div>
 
       <nav className="hud card" aria-label="Camera">
+        <button
+          className="icon-btn"
+          aria-pressed={navMode === 'orbit'}
+          onClick={() => setNavMode('orbit')}
+          aria-label="Orbit: drag to rotate"
+          title="Orbit — drag to rotate (right-drag or two fingers pan)"
+        >
+          <OrbitIcon />
+        </button>
+        <button
+          className="icon-btn"
+          aria-pressed={navMode === 'pan'}
+          onClick={() => setNavMode('pan')}
+          aria-label="Pan: drag to move"
+          title="Pan — drag to move (right-drag rotates)"
+        >
+          <PanIcon />
+        </button>
+        <span className="hud__sep" />
         <button className="icon-btn" onClick={() => runCamera('zoomIn')} aria-label="Zoom in">
           <PlusIcon />
         </button>
@@ -344,7 +381,6 @@ export default function AriNavApp() {
       <UploadDialog
         open={uploadOpen}
         datasets={datasets}
-        current={dataset}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />

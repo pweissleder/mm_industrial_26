@@ -32,6 +32,9 @@ export const DEFAULT_VIEW: ViewSettings = {
   grid: true,
 };
 
+/** What a one-finger / left-button drag does in the 3D view. */
+export type NavMode = 'orbit' | 'pan';
+
 export type CameraAction = 'iso' | 'top' | 'front' | 'zoomIn' | 'zoomOut' | 'fit';
 
 /** Properties of an object picked in an uploaded GLB (its glTF extras). */

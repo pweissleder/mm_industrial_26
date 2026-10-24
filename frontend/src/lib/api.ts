@@ -41,6 +41,12 @@ export interface DatasetFile {
   size_bytes: number;
 }
 
+export interface DatasetAvailability {
+  dataset: string;
+  available: boolean;
+  reason: string | null;
+}
+
 export interface UploadResponse {
   dataset: string;
   files: DatasetFile[];
@@ -168,10 +174,13 @@ export const api = {
     request<{ files: DatasetFile[] }>(`/datasets/${encodeURIComponent(dataset)}/files`).then(
       (r) => r.files,
     ),
+  datasetAvailability: (dataset: string) =>
+    request<DatasetAvailability>(`/datasets/${encodeURIComponent(dataset)}/availability`),
+  /** Creates a new dataset; fails with 409 if the name is already taken. */
   upload: (dataset: string, files: File[]) => {
     const body = new FormData();
     for (const f of files) body.append('files', f, f.name);
-    return request<UploadResponse>(`/datasets/${encodeURIComponent(dataset)}/files`, {
+    return request<UploadResponse>(`/datasets/${encodeURIComponent(dataset)}/files?new=true`, {
       method: 'POST',
       body,
     });

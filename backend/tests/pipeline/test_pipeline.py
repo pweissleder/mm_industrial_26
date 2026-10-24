@@ -335,3 +335,17 @@ def test_summarizer_maps_short_space_ids_from_the_model(pipeline_settings: Setti
     assert space_brief(next(iter(stats.spaces.values()))).split(" | ")[0] != next(
         iter(stats.spaces)
     )
+
+
+def test_offline_summary_describes_what_the_site_is_for() -> None:
+    from app.domain.building import BuildingFile
+    from app.pipeline.agents.summarizer import _building_template
+    from app.pipeline.tools.stats import compute_location_stats
+
+    raw = (BACKEND_DIR / "data" / "datasets" / DATASET / "building.json").read_text()
+    text = _building_template(compute_location_stats(BuildingFile.model_validate_json(raw)))
+
+    assert text.summary.startswith("Fertigung Ost 27 is a two-storey production site for ")
+    assert "CNC milling" in text.summary and "injection moulding" in text.summary
+    assert "forklift" not in text.summary
+    assert text.floors[1].description.startswith("Floor 1: offices")
