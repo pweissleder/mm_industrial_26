@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Synera · Navigation Lab</title><link rel='stylesheet' href='/style.css'><script defer src='/app.js'></script><script defer src='/assistant.js'></script></head>
+<body>
+<header><div><span class='eyebrow'>LOCAL PROTOTYPE</span><h1>Navigation <em>Lab</em></h1></div><p>Explore checked model routes, the official challenge rules and the original starter-kit reference separately. Not a survey, safety certification or full accessibility check.</p></header>
+<section class='topbar'><label>Building<select id='building' aria-label='Building'></select></label><label>Map floor<select id='floor' aria-label='Map floor'></select></label><p id='source-status' aria-live='polite'>Loading official kit …</p></section>
+<nav aria-label='Sections'><button class='active' data-tab='navigate'>Navigate</button><button data-tab='inspect'>Inspect building</button><button data-tab='benchmark'>Benchmark</button></nav>
+<div id='error' role='alert' hidden></div>
+<main>
+<aside class='controls'>
+<section id='assistant' aria-label='Assistant'></section>
+<section id='tab-navigate'>
+<h2>Calculate route</h2>
+<p id='precision-support' class='note'></p>
+<details class='demos'><summary>One-click demos (factory 003)</summary><div class='demo-row'><button id='demo-direct'>Reception A · direct</button><button id='demo-desk'>Reception B · detour</button><button id='demo-cnc'>CNC access · S001</button><button id='demo-rooms'>Multi-room · office → office</button><button id='demo-floors'>Floors · step-free, schematic</button></div><p id='demo-note' class='note'></p></details>
+<label>Calculation mode<select id='model' aria-label='Calculation mode'><option value='precise'>Precision routing · obstacles &amp; clearance</option><option value='challenge'>Official challenge routing · organizer rules</option><option value='reference'>Starter-kit reference · room anchors</option></select></label>
+<fieldset><legend>Start</legend><label>Location type<select id='start-kind' aria-label='Start location type'><option value='space'>Room · checked interior point</option><option value='asset'>Machine / asset · access candidate</option><option value='door'>Door · room-side approach</option><option value='point'>Coordinate (advanced)</option></select></label>
+<input id='start-search' type='search' aria-label='Filter start' placeholder='Filter room / asset …'>
+<label id='start-space-wrap'>Start room<select id='start-space' aria-label='Start room'></select></label><label id='start-asset-wrap' hidden>Start asset<select id='start-asset' aria-label='Start asset'></select></label><label id='start-door-wrap' hidden>Start door<select id='start-door' aria-label='Start door'></select></label></fieldset>
+<fieldset><legend>Target</legend><label>Location type<select id='target-kind' aria-label='Target location type'><option value='space'>Room · checked interior point</option><option value='asset'>Machine / asset · access candidate</option><option value='door'>Door · room-side approach</option><option value='point'>Coordinate (advanced)</option></select></label>
+<input id='target-search' type='search' aria-label='Filter target' placeholder='Filter room / asset …'>
+<label id='target-space-wrap'>Target room<select id='target-space' aria-label='Target room'></select></label><label id='target-asset-wrap' hidden>Target asset<select id='target-asset' aria-label='Target asset'></select></label><label id='target-door-wrap' hidden>Target door<select id='target-door' aria-label='Target door'></select></label></fieldset>
+<label id='profile-wrap'>Obstacle profile<select id='profile' aria-label='Obstacle profile'><option value='stationary'>A · plausible stationary machines / shelves</option><option value='all'>B · extended static floor snapshot</option></select></label>
+<div id='size-wrap' class='xy'><label>Person width (m)<input id='width' aria-label='Person width' type='number' min='0.1' max='2' step='.05' value='0.6'></label><label>Safety (m)<input id='safety' aria-label='Safety margin' type='number' min='0' max='1' step='.01' value='0.05'></label></div>
+<label class='check'><input id='step-free' type='checkbox'>Require step-free route</label><label id='schematic-wrap' class='check'><input id='schematic' type='checkbox' checked>Allow schematic floor changes</label><label id='forklift-wrap' class='check' hidden><input id='forklift' type='checkbox'>Forklift (partial rules)</label>
+<details id='advanced'><summary>Advanced · coordinates</summary><p class='note'>X/Y in metres (Y up), used only for type “Coordinate”. Map click mode “Set start/target coordinate” fills them in; the point may lie inside an obstacle and is only checked during calculation.</p>
+<div id='start-xy' class='xy' hidden><label>Start X (m)<input id='start-x' aria-label='Start X' type='number' step='any' value='1'></label><label>Start Y (m)<input id='start-y' aria-label='Start Y' type='number' step='any' value='1'></label></div>
+<div id='target-xy' class='xy' hidden><label>Target X (m)<input id='target-x' aria-label='Target X' type='number' step='any' value='4'></label><label>Target Y (m)<input id='target-y' aria-label='Target Y' type='number' step='any' value='4'></label></div></details>
+<button id='route' class='primary'>Calculate route</button><button id='analyze'>Free area in start room</button>
+<p id='precision-note' class='note'>Clearance of the person's centre c = half width + safety. 0.60 m is a demo value. Profile A ignores many furnishings; profile B uses a static snapshot. No kinematics, turning radii or verified operating side. Map floor only changes the view, never start or target.</p>
+<p id='challenge-note' class='note' hidden>Challenge mode follows the organizer's routing rules on the room graph. Cost is the rule-based cost, not a clearance check. Forklift rules are only partly modelled.</p>
+</section>
+<section id='tab-inspect' hidden>
+<h2>Inspect building</h2>
+<label>Element type<select id='explore-type' aria-label='Element type'><option value='rooms'>Rooms</option><option value='doors'>Doors / openings</option><option value='assets'>Assets / machines</option><option value='connectors'>Lifts / stairs</option></select></label>
+<input id='explore-search' type='search' aria-label='Search elements' placeholder='Search by name, type or ID …'>
+<select id='explore-list' size='10' aria-label='Element list'></select><p id='explore-count' class='note'></p>
+<p class='note'>Selecting shows the source JSON below the map and opens the map card with “Set as start”, “Set as target”, “Inspect”. Purple marks come from failure diagnosis, yellow marks from benchmark results.</p>
+<details id='tab-scenario' open><summary>Change scenario · in memory only</summary><p class='note'>All tabs of this server share this state. Original files are not changed.</p><label>Element<select id='scenario-element' aria-label='Scenario element'></select></label><div class='xy'><button id='close'>Close</button><button id='open'>Open</button></div><label>First room<select id='new-first' aria-label='First room'></select></label><label>Second room<select id='new-second' aria-label='Second room'></select></label><button id='add-door'>Add reference door in memory</button><p class='note'>The reference tool checks proximity only, not structural feasibility. The precision router checks such doors again and rejects invalid connections.</p><button id='reset'>Reset all scenarios</button><pre id='scenario-status'></pre></details>
+</section>
+<section id='tab-benchmark' hidden>
+<h2>Benchmark · reference tools</h2>
+<p class='note'>Nine deterministic tools with structured inputs, no language parser. Public train/dev examples only; no test split.</p>
+<fieldset><legend>Examples</legend><label>Dataset<select id='example-split' aria-label='Dataset'><option value='dev'>Dev</option><option value='train'>Train</option></select></label><label>Filter operation<select id='example-op' aria-label='Filter operation'></select></label><input id='example-search' type='search' aria-label='Search examples' placeholder='Search question or ID …'>
+<select id='example-list' size='6' aria-label='Example list'></select><p id='example-count' class='note'></p>
+<div class='xy'><button id='example-load'>Load example</button><button id='example-check'>Check example</button></div>
+<p id='example-question' class='question'></p><pre id='example-expected'></pre><p id='example-status' class='note'></p>
+<p class='note'>“Check example” compares with the unchanged reference answer (not a product oracle). “Run operation” recomputes from the form values below.</p></fieldset>
+<label>Operation<select id='operation' aria-label='Operation'></select></label><div id='operation-fields'></div><button id='compute' class='primary'>Run operation</button><p class='note'>Train/dev tool tests are not an end-to-end language benchmark.</p>
+</section>
+</aside>
+<section class='visual'>
+<div class='map-toolbar'><label>Map click<select id='click-mode' aria-label='Map click'><option value='info'>Inspect element</option><option value='start'>Set start coordinate</option><option value='target'>Set target coordinate</option></select></label><label>View<select id='view-mode' aria-label='View'><option value='2d'>2D map</option><option value='iso'>2.5D isometric (view only)</option></select></label><button id='fit'>Fit</button>
+<label class='check'><input id='rooms-layer' type='checkbox' checked>Rooms</label><label class='check'><input id='assets-layer' type='checkbox' checked>Assets</label><label class='check'><input id='doors-layer' type='checkbox' checked>Doors</label><label class='check'><input id='connectors-layer' type='checkbox' checked>Lifts / stairs</label><label class='check'><input id='free-layer' type='checkbox' checked>Free area / buffer</label><label class='check'><input id='diag-layer' type='checkbox' checked>Diagnosis</label><label class='check'><input id='reference-layer' type='checkbox'>Reference line · unchecked</label></div>
+<div id='result-summary' role='status'>Choose a room, start and target.</div>
+<div id='chips' class='chips'></div>
+<div id='diagnosis' hidden><strong>Diagnosis</strong><p id='diag-summary'></p><ul id='diag-list'></ul></div>
+<div class='mapwrap'>
+<svg id='map' role='img' aria-label='Navigation map'></svg>
+<svg id='iso' role='img' aria-label='Isometric floor view' hidden></svg>
+<div id='action-card' hidden><select id='card-hits' aria-label='Hits' hidden></select><strong id='card-title'></strong><div id='card-meta' class='note'></div><div><button id='card-start'>Set as start</button><button id='card-target'>Set as target</button><button id='card-inspect'>Inspect</button><button id='card-close' aria-label='Close'>×</button></div><p id='card-note' class='note'></p></div>
+</div>
+<div class='legend'><span class='swatch room-key'>Room source</span><span class='swatch asset-key'>Original footprint</span><span class='swatch buffer-key'>Derived buffer</span><span class='swatch free-key'>Permitted area</span><span class='swatch route-key'>Calculated route</span><span class='swatch ref-key'>Reference line (may be invalid)</span><span class='swatch start-key'>Start (S)</span><span class='swatch goal-key'>Target (T)</span></div>
+<ul id='facts' hidden></ul><ul id='warnings' hidden></ul>
+<p id='model-note' class='note'>Mouse wheel: zoom · drag: pan · X/Y in metres, Y up</p>
+<div class='detail-grid'><details open><summary>Calculation / model assumptions (full JSON)</summary><pre id='result'>No calculation yet.</pre></details><details id='selection-details'><summary>Source data / selected element</summary><pre id='selected'></pre><p class='note'>Map click inspects the source data. For machine access use “Set as target” in the map card; “Set target coordinate” only sets a point, which may lie inside an obstacle.</p></details><details><summary>Original map for comparison</summary><img id='original' alt='Unchanged original map'><p class='note'>Static source image. Changes and derived data appear only on the interactive map.</p></details></div>
+</section></main><footer>Loopback app · no data persistence</footer>
+</body></html>
