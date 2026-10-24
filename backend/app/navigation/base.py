@@ -23,5 +23,14 @@ class BuildingNavigator(Protocol):
         """Run a tool and return its JSON result. Never raises; errors come back as JSON."""
         ...
 
+    @property
+    def version(self) -> int:
+        """Bumped by every edit (closures, added/moved things, new doors)."""
+        ...
+
+    def snapshot(self) -> dict[str, Any]:
+        """The building as it is now, edits included, in building.json format."""
+        ...
+
 
 NavigatorFactory = Callable[[BuildingFile], BuildingNavigator]

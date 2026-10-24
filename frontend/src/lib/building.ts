@@ -19,6 +19,7 @@ export interface Space {
   name: string;
   ref: string;
   polygon: Point[];
+  closed?: boolean;
 }
 
 export interface Opening {
@@ -29,6 +30,7 @@ export interface Opening {
   position: Point;
   width_m: number;
   step_free: boolean;
+  closed?: boolean;
 }
 
 export interface VerticalConnector {
@@ -38,6 +40,7 @@ export interface VerticalConnector {
   floor_ids: string[];
   space_ids: string[];
   step_free: boolean;
+  closed?: boolean;
 }
 
 export interface Asset {
@@ -58,6 +61,8 @@ export interface BuildingModel {
   openings: Opening[];
   vertical_connectors: VerticalConnector[];
   assets: Asset[];
+  /** Summary of the per-element `closed` flags (rooms, doors, stairs, lifts closed until reopened). */
+  closed?: string[];
 }
 
 /** `object` is a node of an uploaded GLB rather than an element of building.json. */

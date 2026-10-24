@@ -21,6 +21,8 @@ export interface ChatResponse {
   reply: string;
   thread_id: string;
   guardrail?: GuardrailInfo | null;
+  /** The agent edited the building (closures, things added/moved/removed, doors). */
+  building_changed: boolean;
 }
 
 export interface IngestionResponse {

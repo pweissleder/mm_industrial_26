@@ -19,6 +19,7 @@ import {
   type Floor,
   type Point,
   type Selection,
+  type SelectionKind,
   type Space,
 } from '../../lib/building';
 import type { RoomGraphData } from '../../lib/api';
@@ -32,6 +33,8 @@ const GHOST_OPACITY = 0.12;
 const ACCENT = new THREE.Color('#fb7928');
 /** Selection colour: a vivid magenta that no room, asset or connector colour comes close to. */
 const SELECT = new THREE.Color('#ec1c7f');
+/** Rooms, doors, stairs and lifts the agent has closed. */
+const CLOSED_COLOR = '#e5484d';
 const OPEN_TYPES = new Set(['hall', 'corridor']);
 const OPENING_COLORS: Record<string, string> = {
   door: '#55648a',
@@ -250,6 +253,7 @@ export class BuildingScene {
     this.clear();
     this.model = model;
     if (model) this.build(model);
+    this.markClosed();
     this.applySettings();
     if (!keepCamera) this.frame('iso', false);
   }
@@ -264,6 +268,7 @@ export class BuildingScene {
     this.model = model;
     this.hq = true;
     this.buildHq(gltf.scene, model);
+    this.markClosed();
     this.applySettings();
     if (!keepCamera) this.frame('iso', false);
   }
@@ -290,7 +295,10 @@ export class BuildingScene {
   setSettings(settings: ViewSettings) {
     const rebuildConnectors = settings.explode !== this.settings.explode;
     this.settings = settings;
-    if (rebuildConnectors && this.model && !this.hq) this.buildConnectors(this.model);
+    if (rebuildConnectors && this.model && !this.hq) {
+      this.buildConnectors(this.model);
+      this.markClosed(['connector']);
+    }
     this.applySettings();
   }
 
@@ -618,6 +626,28 @@ export class BuildingScene {
     }
   }
 
+  /** Paint closed elements red with their own material copy, so ghosting and selection still work. */
+  private markClosed(kinds: SelectionKind[] = ['space', 'opening', 'connector']) {
+    for (const id of this.model?.closed ?? []) {
+      for (const kind of kinds) {
+        const obj = this.objects.get(`${kind}:${id}`);
+        if (!obj) continue;
+        const fv = this.floors.find((f) => f.group.getObjectById(obj.id));
+        obj.userData.closed = true;
+        obj.traverse((o) => {
+          const base = o.userData.baseMaterial;
+          if (!(o instanceof THREE.Mesh) || !(base instanceof THREE.MeshStandardMaterial)) return;
+          const red = base.clone();
+          red.color.set(CLOSED_COLOR);
+          o.material = o.userData.baseMaterial = red;
+          o.userData.closed = true;
+          fv?.materials.push(red);
+        });
+        obj.userData.title = `${String(obj.userData.title ?? id).replace(/ \(closed\)$/, '')} (closed)`;
+      }
+    }
+  }
+
   private nearestEdgeAngle([px, py]: Point, polygon: Point[]): number {
     let best = Infinity;
     let angle = 0;
@@ -858,7 +888,9 @@ export class BuildingScene {
       for (const mesh of fv.spaces.children) {
         const material = mesh.userData.baseMaterial as THREE.MeshStandardMaterial | undefined;
         if (!material || !mesh.userData.roomColor) continue;
-        material.color.set(s.colorBy === 'room' ? mesh.userData.roomColor : '#eef0f4');
+        material.color.set(
+          mesh.userData.closed ? CLOSED_COLOR : s.colorBy === 'room' ? mesh.userData.roomColor : '#eef0f4',
+        );
       }
     }
     // The model's stair/lift shafts span storeys, so they can't follow exploded floors.

@@ -23,6 +23,8 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any, Callable
 
+from shapely.geometry import Point as ShapelyPoint
+
 from . import analysis as A
 from .builder import BuildingBuilder
 from .costs import CostModel, DatasetCost, OrganizerCost
@@ -464,18 +466,61 @@ class BuildingIntelligence:
         return {"count": r["count"], "improved": [self.b.spaces[s].name for s in r["improved"]][:60],
                 "door_position": [round(v, 2) for v in r["door_position"]]}
 
-    @tool("Record that a thing now lives in another room ('the drill press is now in 0.21').",
-          asset={**S, "required": True}, to_space={**S, "required": True})
-    def move_asset(self, asset: str, to_space: str) -> dict:
+    @tool("Create a thing (furniture, fixture, machine, equipment) in a room. Without x/y it is placed "
+          "at the room's anchor point; x/y (metres, building frame) must lie inside the room.",
+          name={**S, "required": True}, type={**S, "required": True, "description": "snake_case, e.g. cnc_mill, desk"},
+          space={**S, "required": True},
+          category={"type": "string", "enum": ["furniture", "fixture", "machine", "equipment"]},
+          x=N, y=N, width_m=N, depth_m=N, rotation_deg=N)
+    def add_asset(self, name: str, type: str, space: str, category: str = "equipment", x: float | None = None,
+                  y: float | None = None, width_m: float = 0.6, depth_m: float = 0.6, rotation_deg: float = 0) -> dict:
+        sid = self.resolve_space(space)
+        a = self.builder.add_asset(sid, name, type, category, self._position_in(sid, x, y))
+        a.footprint = {"width_m": width_m, "depth_m": depth_m, "rotation_deg": rotation_deg}
+        return {"added": a.id, "name": a.name, "in": self._space_brief(self.b.spaces[sid]),
+                "position": [round(v, 2) for v in a.position]}
+
+    @tool("Move or re-position a thing: to another room ('the drill press is now in 0.21') and/or to an exact "
+          "x/y point (metres) inside its room, optionally rotated.",
+          asset={**S, "required": True}, to_space=S, x=N, y=N, rotation_deg=N)
+    def move_asset(self, asset: str, to_space: str | None = None, x: float | None = None, y: float | None = None,
+                   rotation_deg: float | None = None) -> dict:
         b = self.b
-        aid = asset if asset in b.assets else next((a.id for a in b.assets.values() if a.name.lower() == asset.lower()), None)
+        aid = self._asset(asset)
+        sid = self.resolve_space(to_space) if to_space else b.assets[aid].space_id
+        keep = b.assets[aid].position if sid == b.assets[aid].space_id and x is None else None
+        a = b.move_asset(aid, sid, self._position_in(sid, x, y) or keep)
+        if rotation_deg is not None:
+            a.footprint = {**a.footprint, "rotation_deg": rotation_deg}
+        return {"asset": a.name, "now_in": self._space_brief(b.spaces[a.space_id]),
+                "position": [round(v, 2) for v in a.position]}
+
+    @tool("Delete a thing from the building.", asset={**S, "required": True})
+    def remove_asset(self, asset: str) -> dict:
+        a = self.b.remove_asset(self._asset(asset))
+        return {"removed": a.id, "name": a.name, "was_in": self._space_brief(self.b.spaces[a.space_id])}
+
+    def _asset(self, ref: str) -> str:
+        b = self.b
+        aid = ref if ref in b.assets else next((a.id for a in b.assets.values() if a.name.lower() == ref.lower()), None)
         if aid is None:
-            hits = self.find(asset, kind="asset")["results"]
+            hits = self.find(ref, kind="asset")["results"]
             if len(hits) != 1:
-                raise ToolError("ambiguous" if hits else "not_found", reference=asset, candidates=hits[:12])
+                raise ToolError("ambiguous" if hits else "not_found", reference=ref, candidates=hits[:12])
             aid = hits[0]["id"]
-        a = b.move_asset(aid, self.resolve_space(to_space))
-        return {"asset": a.name, "now_in": self._space_brief(b.spaces[a.space_id])}
+        return aid
+
+    def _position_in(self, space_id: str, x: float | None, y: float | None) -> tuple[float, float] | None:
+        if x is None and y is None:
+            return None
+        if x is None or y is None:
+            raise ToolError("need_both_x_and_y")
+        s = self.b.spaces[space_id]
+        if not s.polygon.contains(ShapelyPoint(x, y)):
+            minx, miny, maxx, maxy = s.polygon.bounds
+            raise ToolError("outside_room", space=s.name, anchor=[round(v, 2) for v in s.anchor],
+                            bounds=[round(v, 2) for v in (minx, miny, maxx, maxy)])
+        return (float(x), float(y))
 
     @tool("Create a floor (for building a new building from plans).", level={"type": "integer", "required": True},
           name=S, elevation_m=N, height_m=N)

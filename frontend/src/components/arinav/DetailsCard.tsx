@@ -131,6 +131,9 @@ export default function DetailsCard({
   const d = describe(model, selection, info, spaceMeta);
   if (!d) return null;
   const floor = d.floor;
+  // Closing goes through the agent (its set_closed tool), so the chat explains what changes.
+  const closable = selection.kind === 'space' || selection.kind === 'opening' || selection.kind === 'connector';
+  const isClosed = !!model?.closed?.includes(selection.id);
   return (
     <section className="details card" aria-label="Selection details">
       <header className="details__head">
@@ -156,6 +159,14 @@ export default function DetailsCard({
         <button className="btn btn--primary btn--sm" onClick={() => onAsk(`How do I get to ${d.title}?`)}>
           <ChatIcon width={16} height={16} /> Ask AriNav
         </button>
+        {closable && (
+          <button
+            className="btn btn--ghost btn--sm"
+            onClick={() => onAsk(`${isClosed ? 'Reopen' : 'Close'} ${d.title} (${selection.id}).`)}
+          >
+            {isClosed ? 'Reopen' : 'Close'}
+          </button>
+        )}
         {floor && (
           <button className="btn btn--ghost btn--sm" onClick={() => onFocusFloor(floor.level)}>
             <LayersIcon width={16} height={16} /> Show floor

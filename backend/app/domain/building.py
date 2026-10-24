@@ -39,6 +39,7 @@ class SpaceIn(_Strict):
     ref: str
     polygon: list[Point]
     synthetic: bool
+    closed: bool = False
 
 
 class OpeningIn(_Strict):
@@ -50,6 +51,7 @@ class OpeningIn(_Strict):
     width_m: float
     step_free: bool
     synthetic: bool
+    closed: bool = False
 
 
 class VerticalConnectorIn(_Strict):
@@ -60,6 +62,7 @@ class VerticalConnectorIn(_Strict):
     space_ids: list[str]
     step_free: bool
     synthetic: bool
+    closed: bool = False
 
 
 class AssetIn(_Strict):
@@ -81,4 +84,4 @@ class BuildingFile(_Strict):
     openings: list[OpeningIn]
     vertical_connectors: list[VerticalConnectorIn]
     assets: list[AssetIn]
-    closed: list[str] = []  # lasting closures saved by navgraph; absent in starter-kit files
+    closed: list[str] = []  # summary of the per-element `closed` flags; absent in starter-kit files

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, datasetFileUrl, type RoomGraphData, type HealthResponse, type UploadResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import ChatDock, { type Draft } from './ChatDock';
@@ -130,6 +130,17 @@ export default function AriNavApp() {
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
   const pipeline = usePipeline(dataset, buildingId, runRequest);
 
+  // Bumped when the agent edits the building, to refetch the nav graph.
+  const [edits, setEdits] = useState(0);
+  const reloadModel = useCallback(() => {
+    if (!buildingId) return;
+    api
+      .buildingModel(buildingId)
+      .then(setModel)
+      .catch(() => notify('Could not reload the building after the change.'));
+    setEdits((n) => n + 1);
+  }, [buildingId, notify]);
+
   const graphOn = settings.layers.graph;
   useEffect(() => {
     setGraph(null);
@@ -142,7 +153,7 @@ export default function AriNavApp() {
     return () => {
       live = false;
     };
-  }, [graphOn, buildingId]);
+  }, [graphOn, buildingId, edits]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
   const wasBuilding = useRef(false);
@@ -184,7 +195,11 @@ export default function AriNavApp() {
   }, [reviewId]);
 
   const showingHq = source === HQ_SOURCE && !!hq;
-  const viewModel = showingHq ? hq.building : model;
+  // The HQ model is baked, so only closures (painted red) follow the agent's edits there.
+  const hqBuilding = hq?.building;
+  const closed = model?.closed;
+  const hqModel = useMemo(() => hqBuilding && { ...hqBuilding, closed }, [hqBuilding, closed]);
+  const viewModel = showingHq && hqModel ? hqModel : model;
 
   useEffect(() => {
     api
@@ -399,6 +414,7 @@ export default function AriNavApp() {
         buildingId={buildingId}
         model={viewModel}
         onSelect={selectFromList}
+        onBuildingChanged={reloadModel}
       />
 
       <UploadDialog

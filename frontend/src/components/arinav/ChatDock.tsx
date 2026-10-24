@@ -29,6 +29,8 @@ interface Props {
   /** The shown building; rooms and assets it names in replies become links. */
   model?: BuildingModel | null;
   onSelect?: (sel: Selection) => void;
+  /** The agent changed the building; reload it so the 3D view shows the edit. */
+  onBuildingChanged?: () => void;
 }
 
 /** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
@@ -57,9 +59,10 @@ const SUGGESTIONS = [
   'Where is the nearest fire extinguisher?',
   'Route from the lobby to the 3D printer',
   'Which rooms are on floor 1?',
+  'Close the lift and route me to floor 1 step-free',
 ];
 
-export default function ChatDock({ health, backendDown, draft, buildingId = null, model = null, onSelect }: Props) {
+export default function ChatDock({ health, backendDown, draft, buildingId = null, model = null, onSelect, onBuildingChanged }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [threadId, setThreadId] = useState<string>();
@@ -103,8 +106,9 @@ export default function ChatDock({ health, backendDown, draft, buildingId = null
     setPending(true);
     setError(null);
     try {
-      const { reply, thread_id, guardrail } = await api.chat(text, threadId, buildingId);
+      const { reply, thread_id, guardrail, building_changed } = await api.chat(text, threadId, buildingId);
       setThreadId(thread_id);
+      if (building_changed) onBuildingChanged?.();
       setMessages((prev) => [...prev, { role: 'assistant', text: reply, guardrail }]);
     } catch {
       setError('The building is not answering. Is the backend running?');

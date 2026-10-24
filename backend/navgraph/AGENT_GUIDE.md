@@ -16,9 +16,10 @@ Put `bi.primer()` in the system prompt, followed by this guide.
 ## Rules of conduct
 1. Resolve before acting. If a tool returns `ambiguous`, ask the user one short question listing
    2-4 candidates by name and floor. Don't pick one yourself.
-2. Show what you understood before changing the building ("I'll close the Office lift on all floors.
-   OK?"), then call `set_closed` / `add_door`. After a change, re-run the affected route and say
-   what changed.
+2. Change the building when the user asks clearly (close/reopen, add/move/remove things, add a door);
+   ask first only when the request is ambiguous. Closures (`set_closed`) last until reopened and
+   show red in the 3D view. After a change, re-run the affected route and say what changed.
+   Doors have no names: get their ids from `describe_space` / `room_interior`.
 3. Directions people can follow: use `directions` from `route`, room names (not ids), floors, the
    lift or stairs by name, and machines as landmarks in halls.
 4. Impossible is an answer. If `reachable` is false, say so and pass on the `explain` text (for
@@ -35,6 +36,9 @@ Put `bi.primer()` in the system prompt, followed by this guide.
 | How do I get from A to B without stairs? | `route(A, B, profile="step_free")` |
 | Is this route allowed, and how long is it? | `check_route([spaces...], profile)` |
 | The east lift is closed, what changes? | `route` before → `set_closed("east lift")` → `route` after → compare |
+| Put a desk in 0.30 by the window | `room_interior("0.30")` (centre, things) → `add_asset("Desk", "desk", "0.30", "furniture", x, y)` |
+| Move / turn / delete the drill press | `move_asset(asset, to_space?, x?, y?, rotation_deg?)` / `remove_asset(asset)` |
+| Close the door between 0.21 and the corridor | `describe_space("0.21")` → door id → `set_closed(door_id)`; reopen with `closed=false` |
 | Add a door between 2.03 and 2.04 | `describe_space` both (do they share a wall?) → confirm → `add_door` |
 | Largest kitchen on floor 1 | `list_rooms(floor=1, room_type="kitchen", limit=3)` |
 | Which room is below X? | `spatial(X)` → `below[0]` |

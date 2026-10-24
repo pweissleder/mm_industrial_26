@@ -31,6 +31,9 @@ class ChatResponse(BaseModel):
     guardrail: GuardrailInfo | None = Field(
         default=None, description="Set when the input guardrail rejected the message."
     )
+    building_changed: bool = Field(
+        default=False, description="The agent edited the building; refetch its model and graph."
+    )
 
 
 class DatasetList(BaseModel):

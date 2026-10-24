@@ -88,3 +88,60 @@ def test_chat_with_ingested_building(settings: Settings) -> None:
 
     assert response.json()["reply"] == "Hello from the factory."
     assert "route" in model.bound_tools
+
+
+def test_asset_crud_and_closures() -> None:
+    nav = NavgraphNavigator(BuildingFile.model_validate_json(SAMPLE.read_bytes()))
+    call = lambda tool, **args: json.loads(nav.call(tool, args))  # noqa: E731
+    v0 = nav.version
+
+    added = call("add_asset", name="Test bench", type="bench", space="0.23", category="fixture")
+    assert added["added"] in {a["id"] for a in nav.snapshot()["assets"]}
+    anchor = added["position"]
+    assert (
+        call("add_asset", name="X", type="x", space="0.23", x=9999, y=9999)["error"]
+        == "outside_room"
+    )
+
+    moved = call("move_asset", asset="Test bench", x=anchor[0], y=anchor[1], rotation_deg=45)
+    assert moved["position"] == anchor
+    assert call("remove_asset", asset=added["added"])["removed"] == added["added"]
+    assert added["added"] not in {a["id"] for a in nav.snapshot()["assets"]}
+
+    before = call("route", start="0.23", goal="1.08")
+    lift = next(c for c in nav.snapshot()["vertical_connectors"] if c["kind"] == "lift")
+    call("set_closed", element=lift["id"])
+    assert lift["id"] in nav.snapshot()["closed"]
+    assert next(c for c in nav.snapshot()["vertical_connectors"] if c["id"] == lift["id"])["closed"]
+    door = call("describe_space", space="0.23")["doors"][0]
+    call("set_closed", element=door["id"])
+    assert next(o for o in nav.snapshot()["openings"] if o["id"] == door["id"])["closed"]
+    assert call("describe_space", space="0.23")["doors"][0]["closed"]
+    call("set_closed", element=door["id"], closed=False)
+    assert call("route", start="0.23", goal="1.08", profile="step_free") != before
+    call("set_closed", element=lift["id"], closed=False)
+    assert nav.snapshot()["closed"] == []
+    assert nav.version > v0
+
+
+def test_chat_edits_show_in_model(settings: Settings) -> None:
+    model = ToolFakeModel(
+        messages=iter(
+            [
+                AIMessage(
+                    "", tool_calls=[{"name": "set_closed", "args": {"element": "0.23"}, "id": "c1"}]
+                ),
+                AIMessage("Closed 0.23."),
+            ]
+        )
+    )
+    with TestClient(create_app(settings, model=model)) as client:
+        client.post("/api/ingestions", json={"dataset": DATASET})
+        body = {"message": "Close 0.23", "building_id": DATASET}
+        reply = client.post("/api/chat", json=body).json()
+        closed = client.get(f"/api/buildings/{DATASET}/model").json()["closed"]
+        graph = client.get(f"/api/buildings/{DATASET}/graph").json()
+
+    assert reply["building_changed"] is True
+    assert len(closed) == 1
+    assert graph["graph"]["closed"] == closed
