@@ -41,6 +41,7 @@ addopts = "-m 'not live'"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["navgraph", "navgraph_checks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "ASYNC"]
@@ -74,7 +75,7 @@ disallow_untyped_calls = false
 warn_return_any = false
 
 [[tool.mypy.overrides]]
-module = ["jsonpatch", "trimesh.*"]
+module = ["jsonpatch", "networkx", "trimesh.*"]
 ignore_missing_imports = true
 
 # Navigation: the vendored official kit 1.1.0 modules stay byte-identical, so they are not checked.
@@ -89,3 +90,8 @@ disallow_untyped_defs = false
 disallow_incomplete_defs = false
 disallow_untyped_calls = false
 warn_return_any = false
+
+# navgraph/ is vendored from the industrial-agents-hackathon-2026 repo; keep it as-is.
+[[tool.mypy.overrides]]
+module = ["navgraph", "navgraph.*"]
+ignore_errors = true

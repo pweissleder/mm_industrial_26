@@ -5,6 +5,7 @@ import {
   type AssistantStatus,
   type ConfirmResponse,
   type HealthResponse,
+  type RoomGraphData,
   type TurnResponse,
   type UploadResponse,
 } from '../../lib/api';
@@ -104,6 +105,7 @@ export default function AriNavApp() {
   const [camera, setCamera] = useState<CameraCommand | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(wide);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [graph, setGraph] = useState<RoomGraphData | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [pick, setPick] = useState<Pick | null>(null);
@@ -157,6 +159,20 @@ export default function AriNavApp() {
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
   const pipeline = usePipeline(dataset, buildingId, runRequest);
+
+  const graphOn = settings.layers.graph;
+  useEffect(() => {
+    setGraph(null);
+    if (!graphOn || !buildingId) return;
+    let live = true;
+    api
+      .buildingGraph(buildingId)
+      .then((g) => live && setGraph(g))
+      .catch(() => live && notify('Could not load the nav graph.'));
+    return () => {
+      live = false;
+    };
+  }, [graphOn, buildingId]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
   const wasBuilding = useRef(false);
@@ -449,6 +465,7 @@ export default function AriNavApp() {
         model={viewModel}
         hqUrl={showingHq ? hq.modelUrl : null}
         glbUrl={glbUrl}
+        graph={glbUrl ? null : graph}
         settings={settings}
         selection={selection}
         camera={camera}
@@ -625,6 +642,9 @@ export default function AriNavApp() {
         onPick={(purpose, reply) => setPick({ kind: purpose, reply })}
         onUseSelectionAsLocation={() => selection && void setLocationFrom(selection, true)}
         onClearSimulated={() => nav.setSimulated(null)}
+        buildingId={buildingId}
+        model={viewModel}
+        onSelect={selectFromList}
       />
 
       <UploadDialog

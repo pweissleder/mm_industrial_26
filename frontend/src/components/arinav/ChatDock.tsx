@@ -1,4 +1,13 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type SubmitEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+  type SubmitEvent,
+} from 'react';
 import {
   api,
   type AssistantStatus,
@@ -8,6 +17,7 @@ import {
   type TurnResponse,
   type UiState,
 } from '../../lib/api';
+import type { BuildingModel, Selection } from '../../lib/building';
 import { replyAsks, type SimulatedLocation } from '../../lib/nav';
 import { voiceSupported } from '../../lib/voice';
 import { AssistantReply, ProposalCard, type ProposalState } from './ChatReply';
@@ -65,6 +75,32 @@ interface Props {
   onPick?: (purpose: PickPurpose, reply: boolean) => void;
   onUseSelectionAsLocation?: () => void;
   onClearSimulated?: () => void;
+  buildingId?: string | null;
+  /** The shown building; rooms and assets it names in replies become links. */
+  model?: BuildingModel | null;
+  onSelect?: (sel: Selection) => void;
+}
+
+/** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
+export function linkTargets(model: BuildingModel): Map<string, Selection> {
+  const found = new Map<string, Selection | null>();
+  const add = (label: string | null | undefined, sel: Selection) => {
+    if (!label || label.length < 2) return;
+    const key = label.toLowerCase();
+    const prev = found.get(key);
+    found.set(key, prev === undefined || (prev && prev.id === sel.id) ? sel : null);
+  };
+  for (const s of model.spaces) for (const l of [s.name, s.ref, s.id]) add(l, { kind: 'space', id: s.id });
+  for (const a of model.assets) for (const l of [a.name, a.id]) add(l, { kind: 'asset', id: a.id });
+  return new Map([...found].filter((e): e is [string, Selection] => e[1] !== null));
+}
+
+/** Split text into plain strings and [matched text, selection] pairs, longest names first. */
+export function linkify(text: string, targets: Map<string, Selection>): (string | [string, Selection])[] {
+  if (!targets.size) return [text];
+  const esc = [...targets.keys()].sort((a, b) => b.length - a.length).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const re = new RegExp(`(?<![\\w-])(${esc.join('|')})(?![\\w-])`, 'gi');
+  return text.split(re).map((part, i) => (i % 2 ? [part, targets.get(part.toLowerCase())!] : part));
 }
 
 const SUGGESTIONS = [
@@ -126,6 +162,9 @@ export default function ChatDock({
   onPick,
   onUseSelectionAsLocation,
   onClearSimulated,
+  buildingId = null,
+  model = null,
+  onSelect,
 }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [input, setInput] = useState('');
@@ -146,6 +185,21 @@ export default function ChatDock({
   const busy = pending !== false;
   // Async callers (transcription, drafts) can't rely on the `busy` of their render.
   const busyRef = useRef(false);
+  const targets = useMemo(() => (model ? linkTargets(model) : new Map<string, Selection>()), [model]);
+
+  const renderReply = (text: string): ReactNode =>
+    linkify(text, targets).map((part, i) =>
+      typeof part === 'string' ? (
+        part
+      ) : (
+        <button key={i} type="button" className="chat__link" onClick={() => onSelect?.(part[1])}>
+          {part[0]}
+        </button>
+      ),
+    );
+
+  // A thread's memory belongs to one building, so a new building starts a new thread.
+  useEffect(() => setThreadId(undefined), [buildingId]);
 
   const live = !!assistant;
   const canSpeak = live && !!assistant?.voice;
@@ -187,7 +241,7 @@ export default function ChatDock({
 
   async function sendLegacy(text: string) {
     try {
-      const { reply, thread_id } = await api.chat(text, threadId);
+      const { reply, thread_id } = await api.chat(text, threadId, buildingId);
       setThreadId(thread_id);
       push({ role: 'assistant', text: reply });
     } catch {
@@ -431,6 +485,7 @@ export default function ChatDock({
                 <li key={m.id} className="chat__msg chat__msg--assistant">
                   <AssistantReply
                     text={m.text}
+                    renderText={onSelect ? renderReply : undefined}
                     turn={m.turn}
                     developer={developer}
                     canReplay={!!audio}

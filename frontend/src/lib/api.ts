@@ -1,4 +1,4 @@
-import type { BuildingModel, Point } from './building';
+import type { BuildingModel, Floor, Point } from './building';
 
 const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL ?? '';
 
@@ -425,6 +425,57 @@ export interface TranscribeResponse {
   stt_ms: number;
 }
 
+/** navgraph's level-1 RoomGraph (networkx node-link JSON); ids are space ids plus "outside". */
+export interface RoomGraphData {
+  graph: { building: Record<string, unknown>; floors: Floor[]; closed: string[] };
+  nodes: {
+    id: string;
+    kind: 'space' | 'outside';
+    name: string;
+    /** False when no door chain leads outside: usually a missing door or connector. */
+    connected_to_outside: boolean;
+    ref?: string | null;
+    type?: string;
+    room_type?: string;
+    floor_id?: string;
+    level?: number;
+    elevation_m?: number;
+    area_m2?: number;
+    centroid?: Point;
+    /** A point guaranteed inside the room, where routes start and end. */
+    anchor?: Point;
+    circulation?: boolean;
+    production_bay?: boolean;
+    synthetic?: boolean;
+    closed?: boolean;
+    assets?: { id: string; name: string; type: string; category: string; position: Point }[];
+  }[];
+  edges: {
+    source: string;
+    target: string;
+    key: string;
+    /** door | opening | entrance | stairs | lift */
+    kind: string;
+    element: string;
+    step_free: boolean;
+    synthetic: boolean;
+    closed: boolean;
+    // Openings
+    width_m?: number;
+    floor_id?: string;
+    position?: Point;
+    entrance?: boolean;
+    // Stair / lift hops
+    name?: string;
+    floors?: number;
+    from_floor?: string;
+    to_floor?: string;
+    rise_m?: number;
+    /** Routing length of the hop (m, stairs/lifts as equivalent metres); null if it could not be measured. */
+    cost_m?: number | null;
+  }[];
+}
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
@@ -501,16 +552,18 @@ export const locationModelUrl = (id: string, version: string) =>
 
 export const api = {
   health: () => request<HealthResponse>('/health'),
-  chat: (message: string, threadId?: string) =>
+  chat: (message: string, threadId?: string, buildingId?: string | null) =>
     request<ChatResponse>('/chat', {
       method: 'POST',
-      body: JSON.stringify({ message, thread_id: threadId }),
+      // building_id gives the agent that building's navgraph tools; without it the agent is blind.
+      body: JSON.stringify({ message, thread_id: threadId, building_id: buildingId ?? undefined }),
     }),
   datasets: () => request<{ datasets: string[] }>('/datasets').then((r) => r.datasets),
   ingest: (dataset: string) =>
     request<IngestionResponse>('/ingestions', { method: 'POST', body: JSON.stringify({ dataset }) }),
   buildings: () => request<BuildingSummary[]>('/buildings'),
   buildingModel: (id: string) => request<BuildingModel>(`/buildings/${encodeURIComponent(id)}/model`),
+  buildingGraph: (id: string) => request<RoomGraphData>(`/buildings/${encodeURIComponent(id)}/graph`),
   datasetFiles: (dataset: string) =>
     request<{ files: DatasetFile[] }>(`/datasets/${encodeURIComponent(dataset)}/files`).then(
       (r) => r.files,

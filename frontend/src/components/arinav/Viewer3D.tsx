@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { RouteResponse } from '../../lib/api';
+import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import { BuildingScene, type PickHit } from './scene';
 import type { CameraAction, ObjectInfo, ViewSettings } from './view';
@@ -24,6 +24,8 @@ interface Props {
   hqUrl: string | null;
   /** An uploaded GLB, shown as is (wins over both). */
   glbUrl: string | null;
+  /** Nav-graph overlay, drawn when the graph layer is on. */
+  graph: RoomGraphData | null;
   settings: ViewSettings;
   selection: Selection | null;
   camera: CameraCommand | null;
@@ -41,6 +43,7 @@ export default function Viewer3D({
   model,
   hqUrl,
   glbUrl,
+  graph,
   settings,
   selection,
   camera,
@@ -91,6 +94,7 @@ export default function Viewer3D({
 
   useEffect(() => scene.current?.setInsetLeft(insetLeft), [insetLeft]);
   useEffect(() => scene.current?.setSettings(settings), [settings]);
+  useEffect(() => scene.current?.setGraph(graph), [graph]);
   useEffect(() => scene.current?.setSelection(selection), [selection]);
   useEffect(() => {
     if (camera) scene.current?.camera3d(camera.action);

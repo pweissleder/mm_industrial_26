@@ -24,7 +24,7 @@ import {
   type Selection,
   type Space,
 } from '../../lib/building';
-import type { RouteResponse } from '../../lib/api';
+import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import { routeDrawing } from './routeGeometry';
 import type { CameraAction, ObjectInfo, ViewSettings } from './view';
 
@@ -82,6 +82,19 @@ interface Fly {
   duration: number;
 }
 
+const GRAPH_LIFT = 0.6;
+/** Walking speed (m/s) for turning a hop's routing length into a time. */
+const WALK_SPEED = 1.4;
+const GRAPH_COLORS: Record<string, string> = {
+  door: '#002478',
+  opening: '#5a6b99',
+  entrance: '#12a594',
+  stairs: '#fb7928',
+  lift: '#fb7928',
+  closed: '#e5484d',
+  cut: '#e5484d',
+};
+
 const toVec = ([x, y]: Point, z = 0) => new THREE.Vector3(x, z, -y);
 const selKey = (s: Selection) => `${s.kind}:${s.id}`;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
@@ -118,22 +131,34 @@ export class BuildingScene {
   private readonly root = new THREE.Group();
   private readonly connectors = new THREE.Group();
   private readonly highlight = new THREE.Group();
+  /** Nav-graph overlay, drawn over everything else. */
+  private readonly graph = new THREE.Group();
+  private graphData: RoomGraphData | null = null;
+  /** Edge index of each drawn graph line segment, and room id of each graph dot, for picking. */
+  private graphSegments: number[] = [];
+  private graphDotIds: string[] = [];
+  private readonly edgeTip: CSS2DObject;
+  /** Assets of the selected room, painted along with it. */
+  private litAssets: THREE.Object3D[] = [];
+  private readonly roomAssetMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.6, flatShading: true });
   private readonly pin: CSS2DObject;
   private readonly hoverTip: CSS2DObject;
   private readonly raycaster = new THREE.Raycaster();
   private readonly resizeObserver: ResizeObserver;
   private readonly unitBox = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
-  private readonly selectMat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.6 });
-  private readonly hoverMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.7 });
+  // flatShading: the pipeline's glTF ships no normals, so smooth shading would light it black.
+  private readonly selectMat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.6, flatShading: true });
+  private readonly hoverMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.7, flatShading: true });
   // Overlays painted over an element's own material: closed > diagnosis > highlight.
   private readonly closedMat = new THREE.MeshStandardMaterial({
     color: '#d93b3b',
     roughness: 0.8,
+    flatShading: true,
     transparent: true,
     opacity: 0.55,
   });
-  private readonly diagnosisMat = new THREE.MeshStandardMaterial({ color: '#e0115f', roughness: 0.6 });
-  private readonly highlightMat = new THREE.MeshStandardMaterial({ color: '#ffc61a', roughness: 0.6 });
+  private readonly diagnosisMat = new THREE.MeshStandardMaterial({ color: '#e0115f', roughness: 0.6, flatShading: true });
+  private readonly highlightMat = new THREE.MeshStandardMaterial({ color: '#ffc61a', roughness: 0.6, flatShading: true });
   // Route: shared materials and marker geometry, so a redraw allocates only line buffers.
   private readonly routeGroup = new THREE.Group();
   private readonly routeMats = {
@@ -220,7 +245,7 @@ export class BuildingScene {
     this.sun.castShadow = true;
     this.sun.shadow.mapSize.set(2048, 2048);
     this.sun.shadow.bias = -0.0005;
-    this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight);
+    this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight, this.graph);
     this.scene.add(this.routeGroup);
 
     this.pin = makeLabel('', 'viewer__pin');
@@ -229,7 +254,10 @@ export class BuildingScene {
     this.hoverTip = makeLabel('', 'viewer__tip');
     this.hoverTip.center.set(0.5, 1.4);
     this.hoverTip.visible = false;
-    this.scene.add(this.pin, this.hoverTip);
+    this.edgeTip = makeLabel('', 'viewer__pin');
+    this.edgeTip.center.set(0.5, 1);
+    this.edgeTip.visible = false;
+    this.scene.add(this.pin, this.hoverTip, this.edgeTip);
 
     this.camera.position.set(60, 60, 60);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -364,8 +392,16 @@ export class BuildingScene {
     this.applyOverlays();
   }
 
+  setGraph(data: RoomGraphData | null) {
+    this.graphData = data;
+    this.buildGraph();
+    this.needsRender = true;
+  }
+
   setSelection(selection: Selection | null, fly = true) {
     if (this.selection) this.restoreMaterial(this.lookup(this.selection));
+    for (const a of this.litAssets) this.restoreMaterial(a);
+    this.litAssets = [];
     this.selection = selection;
     this.highlight.clear();
     this.pin.visible = false;
@@ -378,7 +414,14 @@ export class BuildingScene {
       this.pin.position.copy(top);
       this.pin.element.textContent = obj.userData.title ?? '';
       this.pin.visible = true;
-      if (selection.kind === 'space') this.addOutline(obj);
+      if (selection.kind === 'space') {
+        this.addOutline(obj);
+        for (const a of this.model?.assets ?? []) {
+          const mesh = a.space_id === selection.id && this.objects.get(`asset:${a.id}`);
+          if (mesh) this.litAssets.push(mesh);
+        }
+        for (const a of this.litAssets) this.paint(a, this.roomAssetMat);
+      }
       if (fly) this.flyTo(box);
     }
     this.needsRender = true;
@@ -412,6 +455,7 @@ export class BuildingScene {
     this.selection = null;
     this.overlaid.clear();
     this.byId.clear();
+    this.litAssets = [];
     this.highlight.clear();
     this.pin.visible = false;
     for (const f of this.floors) for (const m of f.materials) m.dispose();
@@ -889,6 +933,92 @@ export class BuildingScene {
     }
   }
 
+  /** Rooms as dots at their anchor, doors as lines through the door, stairs/lifts as risers. */
+  private buildGraph() {
+    for (const o of this.graph.children) {
+      if (o instanceof THREE.Mesh || o instanceof THREE.LineSegments) {
+        o.geometry.dispose();
+        (o.material as THREE.Material).dispose();
+      }
+    }
+    this.graph.clear();
+    this.graphSegments = [];
+    this.graphDotIds = [];
+    this.edgeTip.visible = false;
+    const data = this.graphData;
+    if (!data || !this.settings.layers.graph || !this.floors.length) return;
+
+    const focus = this.settings.floor;
+    const yOf = (floorId: string | undefined) => {
+      const fv = this.floors.find((f) => f.floor.id === floorId);
+      if (!fv || (focus !== 'all' && fv.floor.level > focus)) return null;
+      return fv.floor.elevation_m + this.floorOffset(fv) + GRAPH_LIFT;
+    };
+    const nodes = new Map<string, { at: THREE.Vector3; floor?: string }>();
+    for (const n of data.nodes) {
+      const y = yOf(n.floor_id);
+      if (n.anchor && y !== null) nodes.set(n.id, { at: toVec(n.anchor, y), floor: n.floor_id });
+    }
+
+    const points: number[] = [];
+    const colors: number[] = [];
+    const color = new THREE.Color();
+    const segment = (a: THREE.Vector3, b: THREE.Vector3, hex: string) => {
+      color.set(hex);
+      points.push(a.x, a.y, a.z, b.x, b.y, b.z);
+      colors.push(color.r, color.g, color.b, color.r, color.g, color.b);
+    };
+    for (const [i, e] of data.edges.entries()) {
+      const before = points.length;
+      const hex = GRAPH_COLORS[e.closed ? 'closed' : e.kind] ?? GRAPH_COLORS.door;
+      const [a, b] = [nodes.get(e.source), nodes.get(e.target)];
+      if (e.position) {
+        // Through the door itself; an entrance has only its inside end.
+        const y = yOf(e.floor_id);
+        if (y === null) continue;
+        const door = toVec(e.position, y);
+        if (a) segment(a.at, door, hex);
+        if (b) segment(door, b.at, hex);
+      } else if (a && b) {
+        segment(a.at, b.at, hex);
+      }
+      for (let k = before; k < points.length; k += 6) this.graphSegments.push(i);
+    }
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+    lineGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+    const lines = new THREE.LineSegments(
+      lineGeo,
+      new THREE.LineBasicMaterial({ vertexColors: true, depthTest: false, transparent: true }),
+    );
+    lines.renderOrder = 1000;
+
+    const dots = new THREE.InstancedMesh(
+      new THREE.SphereGeometry(0.35, 12, 8),
+      new THREE.MeshBasicMaterial({ depthTest: false, transparent: true }),
+      nodes.size,
+    );
+    dots.renderOrder = 1001;
+    const byId = new Map(data.nodes.map((n) => [n.id, n]));
+    let i = 0;
+    for (const [id, { at }] of nodes) {
+      const n = byId.get(id)!;
+      dots.setMatrixAt(i, new THREE.Matrix4().setPosition(at));
+      color.set(
+        !n.connected_to_outside
+          ? GRAPH_COLORS.cut
+          : n.closed
+            ? '#9a9db0'
+            : spaceColor(n as unknown as Space),
+      );
+      // Room fills are pastel; the dots need a stronger version of the same hue to stand out.
+      if (n.connected_to_outside && !n.closed) color.offsetHSL(0, 0.45, -0.3);
+      dots.setColorAt(i++, color);
+      this.graphDotIds.push(id);
+    }
+    this.graph.add(lines, dots);
+  }
+
   private floorOffset(fv: FloorView | undefined): number {
     return fv ? this.floors.indexOf(fv) * this.settings.explode * EXPLODE_GAP : 0;
   }
@@ -947,6 +1077,7 @@ export class BuildingScene {
     this.root.traverse((o) => {
       if (o instanceof THREE.Mesh && o.material instanceof THREE.Material) o.material.needsUpdate = true;
     });
+    this.buildGraph();
     this.updateGridAndShadows();
     if (this.selection) this.setSelection(this.selection, false);
     this.needsRender = true;
@@ -1105,9 +1236,44 @@ export class BuildingScene {
     this.downAt = [e.clientX, e.clientY];
   };
 
+  /** The graph overlay is drawn on top, so it wins over the building underneath. */
+  private pickGraph(e: PointerEvent): THREE.Intersection | null {
+    if (!this.graph.children.length) return null;
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    const ndc = new THREE.Vector2(
+      ((e.clientX - rect.left) / rect.width) * 2 - 1,
+      -((e.clientY - rect.top) / rect.height) * 2 + 1,
+    );
+    this.raycaster.setFromCamera(ndc, this.camera);
+    this.raycaster.params.Line.threshold = 0.3;
+    const hits = this.raycaster.intersectObjects(this.graph.children, false);
+    // Prefer a dot over the lines that meet at it.
+    return hits.find((h) => h.instanceId !== undefined) ?? hits[0] ?? null;
+  }
+
+  private showEdge(hit: THREE.Intersection) {
+    const e = this.graphData?.edges[this.graphSegments[(hit.index ?? 0) / 2]];
+    if (!e) return;
+    const name = e.name ?? `${e.kind} ${e.element.split('-').pop()}`;
+    const time = e.cost_m == null ? 'time unknown' : `~${Math.round(e.cost_m / WALK_SPEED)} s · ${e.cost_m.toFixed(1)} m`;
+    this.edgeTip.element.textContent = `${name}${e.closed ? ' (closed)' : ''}: ${time}`;
+    this.edgeTip.position.copy(hit.point);
+    this.edgeTip.visible = true;
+    this.needsRender = true;
+  }
+
   private handlePointerUp = (e: PointerEvent) => {
     if (!this.downAt || Math.hypot(e.clientX - this.downAt[0], e.clientY - this.downAt[1]) > 6) return;
     this.downAt = null;
+    this.edgeTip.visible = false;
+    this.needsRender = true;
+    const graphHit = this.pickGraph(e);
+    if (graphHit?.instanceId !== undefined) {
+      const id = this.graphDotIds[graphHit.instanceId];
+      if (this.objects.has(`space:${id}`)) this.onSelect({ kind: 'space', id });
+      return;
+    }
+    if (graphHit) return this.showEdge(graphHit);
     const hit = this.pickHit(e);
     const obj = hit?.obj ?? null;
     if (obj && this.glb) {
@@ -1130,7 +1296,7 @@ export class BuildingScene {
   private setHovered(obj: THREE.Object3D | null) {
     if (obj === this.hovered) return;
     const isSelected = (o: THREE.Object3D) =>
-      this.selection && this.objects.get(selKey(this.selection)) === o;
+      (this.selection && this.objects.get(selKey(this.selection)) === o) || this.litAssets.includes(o);
     if (this.hovered && !isSelected(this.hovered)) this.restoreMaterial(this.hovered);
     this.hovered = obj;
     this.renderer.domElement.style.cursor = obj ? 'pointer' : '';

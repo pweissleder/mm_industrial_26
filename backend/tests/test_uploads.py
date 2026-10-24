@@ -45,6 +45,17 @@ def test_upload_creates_ingestible_dataset(client: TestClient, datasets_dir: Pat
     assert model["building"]["name"] == "Fertigung Ost 27"
     assert len(model["spaces"]) > 0
 
+    graph = client.get("/api/buildings/proc-factory-dev-003/graph").json()
+    assert len(graph["nodes"]) == len(model["spaces"]) + 1  # plus "outside"
+    assert graph["edges"]
+    assert graph["graph"]["floors"]
+    room = next(n for n in graph["nodes"] if n["kind"] == "space")
+    assert {"anchor", "floor_id", "elevation_m", "assets", "connected_to_outside"} <= room.keys()
+    door = next(e for e in graph["edges"] if "position" in e)
+    assert {"floor_id", "width_m", "closed"} <= door.keys()
+    assert all(e["cost_m"] is None or e["cost_m"] >= 0 for e in graph["edges"])
+    assert door["cost_m"] > 0
+
 
 def test_lists_and_serves_files(client: TestClient) -> None:
     client.post("/api/datasets/d1/files", files=[("files", ("model.glb", b"glTF", "model/gltf"))])

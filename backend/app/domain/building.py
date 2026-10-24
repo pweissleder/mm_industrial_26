@@ -81,3 +81,4 @@ class BuildingFile(_Strict):
     openings: list[OpeningIn]
     vertical_connectors: list[VerticalConnectorIn]
     assets: list[AssetIn]
+    closed: list[str] = []  # lasting closures saved by navgraph; absent in starter-kit files

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import type { Proposal, RouteResponse, TurnResponse } from '../../lib/api';
 import { formatMetres, readRouteError, routeBadge } from '../../lib/nav';
 import { AlertIcon, CheckIcon, ReplayIcon, RouteIcon } from './Icons';
@@ -81,6 +82,8 @@ function DevDetails({ turn }: { turn: TurnResponse }) {
 
 export function AssistantReply(props: {
   text: string;
+  /** Renders the reply text, e.g. with rooms and assets as links. */
+  renderText?: (text: string) => ReactNode;
   turn?: TurnResponse;
   developer: boolean;
   canReplay: boolean;
@@ -90,7 +93,7 @@ export function AssistantReply(props: {
   const routeError = readRouteError(turn?.ui?.route_error);
   return (
     <>
-      <span className="chat__text">{props.text}</span>
+      <span className="chat__text">{props.renderText ? props.renderText(props.text) : props.text}</span>
       {turn?.ui?.route && <Directions route={turn.ui.route} />}
       {!turn?.ui?.route && routeError && (
         <p className="chat__note chat__note--bad">
