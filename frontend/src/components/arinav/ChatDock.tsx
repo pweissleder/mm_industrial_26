@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState, type SubmitEvent } from 'react';
-import { api, type HealthResponse } from '../../lib/api';
+import { api, type GuardrailInfo, type HealthResponse } from '../../lib/api';
 import { LogoMark } from './Logo';
 import { ChevronIcon, SendIcon, SparkleIcon } from './Icons';
 
 interface Message {
   role: 'user' | 'assistant';
   text: string;
+  guardrail?: GuardrailInfo | null;
 }
+
+const GUARDRAIL_LABELS: Record<GuardrailInfo['category'], string> = {
+  off_topic: 'off-topic',
+  prompt_injection: 'prompt injection',
+  unsafe: 'unsafe request',
+};
 
 export interface Draft {
   text: string;
@@ -54,9 +61,9 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
     setPending(true);
     setError(null);
     try {
-      const { reply, thread_id } = await api.chat(text, threadId);
+      const { reply, thread_id, guardrail } = await api.chat(text, threadId);
       setThreadId(thread_id);
-      setMessages((prev) => [...prev, { role: 'assistant', text: reply }]);
+      setMessages((prev) => [...prev, { role: 'assistant', text: reply, guardrail }]);
     } catch {
       setError('The building is not answering. Is the backend running?');
     } finally {
@@ -95,8 +102,16 @@ export default function ChatDock({ health, backendDown, draft }: Props) {
           </header>
           <ol className="chat__log" aria-label="Conversation" ref={logRef}>
             {messages.map((m, i) => (
-              <li key={i} className={`chat__msg chat__msg--${m.role}`}>
+              <li
+                key={i}
+                className={`chat__msg chat__msg--${m.role}${m.guardrail ? ' chat__msg--blocked' : ''}`}
+              >
                 {m.text}
+                {m.guardrail && (
+                  <span className="chat__flag" title={m.guardrail.reason}>
+                    Rejected by guidelines · {GUARDRAIL_LABELS[m.guardrail.category] ?? m.guardrail.category}
+                  </span>
+                )}
               </li>
             ))}
             {pending && (

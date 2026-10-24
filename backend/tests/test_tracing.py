@@ -52,7 +52,10 @@ async def test_graph_run_is_sent_to_langsmith() -> None:
     tracer.wait_for_futures()
 
     runs = [c.kwargs for c in client.create_run.call_args_list]
-    assert [r["name"] for r in runs] == ["chat", "assistant"]
+    names = [r["name"] for r in runs]
+    # The input guardrail runs (and is traced) before the assistant.
+    assert names[:3] == ["chat", "guard", "input_guardrail"]
+    assert names[-1] == "assistant"
     assert runs[0]["extra"]["metadata"]["thread_id"] == "thread-1"
 
 

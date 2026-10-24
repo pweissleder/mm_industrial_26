@@ -22,6 +22,11 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     anthropic_model: str = "claude-opus-5-5"
 
+    # Input guardrail: rules always run; with an API key this model also classifies
+    # each chat message (in scope, off-topic, prompt injection, unsafe).
+    guardrail_classifier_enabled: bool = True
+    guardrail_model: str = "claude-haiku-5-5"
+
     # Claude Managed Agents; create both once with scripts/setup_managed_agent.py.
     managed_agent_id: str | None = None
     managed_agent_environment_id: str | None = None

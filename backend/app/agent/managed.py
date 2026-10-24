@@ -10,8 +10,10 @@ from anthropic import AsyncAnthropic
 from langchain_core.messages import AIMessage
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.graph import END, MessagesState, StateGraph
 from langgraph.graph.state import CompiledStateGraph
+
+from app.guardrails import InputGuard, add_input_guard
 
 
 class ManagedAgentReply(TypedDict):
@@ -83,11 +85,13 @@ ManagedAgentGraph = CompiledStateGraph[
 def build_managed_agent_graph(
     runner: ManagedAgentRunner,
     checkpointer: BaseCheckpointSaver[str] | None = None,
+    guard: InputGuard | None = None,
 ) -> ManagedAgentGraph:
     """One LangGraph node that delegates the turn to a Managed Agents session.
 
     The session ID lives in graph state, so each LangGraph thread keeps talking to
-    the same Managed Agents session (and its sandbox) across turns.
+    the same Managed Agents session (and its sandbox) across turns. The input `guard`
+    runs first, so blocked turns never reach the session.
     """
 
     async def managed_agent(state: ManagedAgentState) -> dict[str, object]:
@@ -96,6 +100,6 @@ def build_managed_agent_graph(
 
     builder = StateGraph(ManagedAgentState)
     builder.add_node("managed_agent", managed_agent)
-    builder.add_edge(START, "managed_agent")
+    add_input_guard(builder, guard or InputGuard(), "managed_agent")
     builder.add_edge("managed_agent", END)
     return builder.compile(checkpointer=checkpointer or InMemorySaver())

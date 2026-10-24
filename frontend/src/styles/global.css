@@ -1028,6 +1028,22 @@ code {
   border-bottom-left-radius: 5px;
 }
 
+.chat__msg--blocked {
+  background: var(--orange-50);
+  border-left: 3px solid var(--orange);
+}
+
+.chat__flag {
+  display: block;
+  margin-top: 6px;
+  color: var(--orange-600);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: normal;
+}
+
 .chat__typing {
   display: flex;
   gap: 4px;

@@ -16,9 +16,18 @@ class ChatRequest(BaseModel):
     thread_id: str | None = Field(default=None, description="Omit to start a new conversation.")
 
 
+class GuardrailInfo(BaseModel):
+    category: str = Field(description="off_topic, prompt_injection or unsafe.")
+    reason: str
+    source: str = Field(description="Which layer blocked the message: rules or classifier.")
+
+
 class ChatResponse(BaseModel):
     reply: str
     thread_id: str
+    guardrail: GuardrailInfo | None = Field(
+        default=None, description="Set when the input guardrail rejected the message."
+    )
 
 
 class DatasetList(BaseModel):

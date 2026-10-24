@@ -24,6 +24,7 @@ from app.api.routes import (
     uploads,
 )
 from app.config import Settings, get_settings
+from app.guardrails import AnthropicInputClassifier, InputGuard
 from app.pipeline.runner import PipelineRunner
 from app.storage import BuildingRepository, InMemoryBuildingRepository
 from app.tracing import configure_tracing
@@ -52,12 +53,23 @@ def create_managed_agent_runner(settings: Settings) -> ManagedAgentRunner | None
     )
 
 
+def create_input_guard(settings: Settings) -> InputGuard:
+    if not (settings.anthropic_api_key and settings.guardrail_classifier_enabled):
+        return InputGuard()
+    return InputGuard(
+        AnthropicInputClassifier(
+            AsyncAnthropic(api_key=settings.anthropic_api_key), model=settings.guardrail_model
+        )
+    )
+
+
 def create_app(
     settings: Settings | None = None,
     model: BaseChatModel | None = None,
     managed_agent_runner: ManagedAgentRunner | None = None,
     building_repository: BuildingRepository | None = None,
     pipeline_runner: PipelineRunner | None = None,
+    input_guard: InputGuard | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
 
@@ -65,9 +77,10 @@ def create_app(
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         app.state.tracing_enabled = configure_tracing(settings)
         app.state.building_repository = building_repository or InMemoryBuildingRepository()
-        app.state.graph = build_graph(model or create_chat_model(settings))
+        guard = input_guard or create_input_guard(settings)
+        app.state.graph = build_graph(model or create_chat_model(settings), guard=guard)
         runner = managed_agent_runner or create_managed_agent_runner(settings)
-        app.state.managed_agent_graph = runner and build_managed_agent_graph(runner)
+        app.state.managed_agent_graph = runner and build_managed_agent_graph(runner, guard=guard)
         app.state.pipeline_runner = pipeline_runner or PipelineRunner.from_settings(
             settings, repository=app.state.building_repository
         )

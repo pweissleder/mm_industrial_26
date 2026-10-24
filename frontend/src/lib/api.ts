@@ -10,9 +10,17 @@ export interface HealthResponse {
   tracing_enabled: boolean;
 }
 
+/** Set on a reply when the backend's input guardrail rejected the message. */
+export interface GuardrailInfo {
+  category: 'off_topic' | 'prompt_injection' | 'unsafe';
+  reason: string;
+  source: 'rules' | 'classifier';
+}
+
 export interface ChatResponse {
   reply: string;
   thread_id: string;
+  guardrail?: GuardrailInfo | null;
 }
 
 export interface IngestionResponse {

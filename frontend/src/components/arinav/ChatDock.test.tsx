@@ -49,6 +49,23 @@ describe('ChatDock', () => {
     expect(await screen.findByText('Here.')).toBeInTheDocument();
   });
 
+  it('marks replies rejected by the guardrail', async () => {
+    vi.spyOn(api, 'chat').mockResolvedValue({
+      reply: 'I can only help with this building.',
+      thread_id: 't1',
+      guardrail: { category: 'off_topic', reason: 'Asks for a poem.', source: 'classifier' },
+    });
+    const user = userEvent.setup();
+
+    render(<ChatDock health={health} backendDown={false} draft={null} />);
+    await user.type(screen.getByLabelText('Message'), 'Write me a poem');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+
+    const flag = await screen.findByText('Rejected by guidelines · off-topic');
+    expect(flag).toHaveAttribute('title', 'Asks for a poem.');
+    expect(flag.closest('li')).toHaveClass('chat__msg--blocked');
+  });
+
   it('prefills the input from a draft', () => {
     render(
       <ChatDock health={health} backendDown={false} draft={{ text: 'How do I get to H-A1?', nonce: 1 }} />,
