@@ -1,5 +1,10 @@
 // Push-to-talk recording (AudioWorklet, public/recorder.js) to a 16 kHz mono WAV, and
-// playback of the assistant's 16-bit PCM replies. Pure codecs are exported for tests.
+// playback of the assistant's 16-bit PCM replies and spoken guidance hints. Pure codecs are
+// exported for tests. All playback registers in one module-level registry so push-to-talk can
+// silence everything before the microphone opens (it must never record our own speech).
+
+import { api } from './api';
+import type { SpeechPort } from './guidanceVoice';
 
 export const STT_RATE = 16000;
 export const MAX_SECONDS = 10;
@@ -62,6 +67,25 @@ export function decodePcm16(encoded: string): Float32Array {
   return out;
 }
 
+// --- global playback registry -----------------------------------------------------------
+const players = new Set<() => void>();
+/** Recorders that are starting or recording; guidance playback stays silent meanwhile. */
+const microphones = new Set<object>();
+
+/** Stops every audio we are playing (chat replies and guidance hints). */
+export function stopAllPlayback(): void {
+  for (const stop of [...players]) {
+    try {
+      stop();
+    } catch {
+      // Already stopped.
+    }
+  }
+}
+
+/** True while push-to-talk is starting or recording. */
+export const microphoneActive = () => microphones.size > 0;
+
 export const voiceSupported = () =>
   typeof window !== 'undefined' &&
   typeof window.AudioContext === 'function' &&
@@ -102,6 +126,7 @@ export class VoiceIO {
   async start(onLimit: () => void): Promise<boolean> {
     if (this.recording) return true;
     this.held = true;
+    microphones.add(this);
     let stream: MediaStream | undefined;
     try {
       const ctx = await this.audio();
@@ -110,6 +135,7 @@ export class VoiceIO {
       });
       if (!this.held) {
         stream.getTracks().forEach((t) => t.stop());
+        microphones.delete(this);
         return false;
       }
       if (!this.workletReady) {
@@ -143,6 +169,7 @@ export class VoiceIO {
     } catch (error) {
       stream?.getTracks().forEach((t) => t.stop());
       this.held = false;
+      microphones.delete(this);
       throw error;
     }
   }
@@ -151,7 +178,11 @@ export class VoiceIO {
   stop(): { wav: string | null } | null {
     this.held = false;
     const rec = this.recording;
-    if (!rec) return null;
+    if (!rec) {
+      // A start still awaiting the microphone cleans itself up when it sees `held` is false.
+      return null;
+    }
+    microphones.delete(this);
     this.recording = null;
     window.clearTimeout(rec.timer);
     rec.source.disconnect();
@@ -174,11 +205,17 @@ export class VoiceIO {
     source.buffer = buffer;
     source.connect(ctx.destination);
     this.playing = source;
-    await new Promise<void>((resolve) => {
-      source.onended = () => resolve();
-      source.start();
-    });
-    if (this.playing === source) this.playing = null;
+    const stop = () => this.stopPlayback();
+    players.add(stop);
+    try {
+      await new Promise<void>((resolve) => {
+        source.onended = () => resolve();
+        source.start();
+      });
+    } finally {
+      players.delete(stop);
+      if (this.playing === source) this.playing = null;
+    }
   }
 
   stopPlayback() {
@@ -197,4 +234,115 @@ export class VoiceIO {
     this.context = null;
     this.workletReady = false;
   }
+}
+
+// --- guidance hints -----------------------------------------------------------------------
+const RESUME_TIMEOUT_MS = 1500;
+
+export interface GuidanceSpeechPort extends SpeechPort {
+  /** Creates/resumes the AudioContext; call from a user gesture (autoplay policy). */
+  unlock(): void;
+  /** Closes the AudioContext. */
+  dispose(): void;
+}
+
+/** SpeechPort over `api.speak` with its own abortable AudioContext playback. */
+export function createSpeechPort(): GuidanceSpeechPort {
+  let context: AudioContext | null = null;
+  let source: AudioBufferSourceNode | null = null;
+  let finish: (() => void) | null = null;
+
+  const stop = () => {
+    const node = source;
+    source = null;
+    try {
+      node?.stop();
+    } catch {
+      // Already stopped.
+    }
+    finish?.();
+  };
+
+  const audio = () => (context ??= new AudioContext());
+
+  /** Resumes the context, giving up on abort or when the browser blocks autoplay. */
+  const resumed = async (signal: AbortSignal): Promise<AudioContext> => {
+    const ctx = audio();
+    if (ctx.state !== 'suspended') return ctx;
+    let timer = 0;
+    let onAbort = () => {};
+    try {
+      await Promise.race([
+        ctx.resume(),
+        new Promise<never>((_, reject) => {
+          timer = window.setTimeout(
+            () => reject(new Error('Audio is blocked: tap the page to enable spoken hints.')),
+            RESUME_TIMEOUT_MS,
+          );
+        }),
+        new Promise<void>((resolve) => {
+          onAbort = resolve;
+          signal.addEventListener('abort', onAbort, { once: true });
+        }),
+      ]);
+    } finally {
+      window.clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+    }
+    return ctx;
+  };
+
+  return {
+    async synthesize(text, speed, signal) {
+      const response = await api.speak(text, speed, signal);
+      return { pcm: response.audio_pcm16, rate: response.sample_rate };
+    },
+
+    async play(pcm, rate, signal) {
+      if (signal.aborted || microphoneActive()) return;
+      stop();
+      const ctx = await resumed(signal);
+      if (signal.aborted || microphoneActive()) return;
+      const samples = decodePcm16(pcm);
+      if (!samples.length) return;
+      const buffer = ctx.createBuffer(1, samples.length, rate);
+      buffer.getChannelData(0).set(samples);
+      const node = ctx.createBufferSource();
+      node.buffer = buffer;
+      node.connect(ctx.destination);
+      source = node;
+      players.add(stop);
+      try {
+        await new Promise<void>((resolve) => {
+          const done = () => {
+            signal.removeEventListener('abort', stop);
+            if (finish === done) finish = null;
+            resolve();
+          };
+          finish = done;
+          node.onended = done;
+          signal.addEventListener('abort', stop, { once: true });
+          node.start();
+        });
+      } finally {
+        if (source === node) source = null;
+        if (!source) players.delete(stop);
+        node.disconnect();
+      }
+    },
+
+    stop,
+
+    unlock() {
+      const ctx = audio();
+      if (ctx.state === 'suspended') void ctx.resume().catch(() => {});
+    },
+
+    dispose() {
+      stop();
+      players.delete(stop);
+      void context?.close().catch(() => {});
+      context = null;
+    },
+  };
 }

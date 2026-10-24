@@ -32,7 +32,7 @@ from app.navigation.official import KIT_COMMIT, KIT_VERSION
 from app.navigation.official import building_map as official_map
 from app.navigation.ported import challenge, diagnostics, geometry, operations, precision
 from app.navigation.ported.validation import validate_footprints
-from app.navigation.response import official_response, precision_response
+from app.navigation.response import official_response, precision_response, waypoints
 from app.storage import BuildingRepository
 
 JSON = dict[str, Any]
@@ -133,6 +133,17 @@ def _ms(began: float) -> float:
     return round((time.perf_counter() - began) * 1000, 2)
 
 
+def _stored_closures(data: JSON) -> set[str]:
+    """Closed element ids recorded in a building file (flags plus the `closed` summary)."""
+    known: dict[str, JSON] = {
+        item["id"]: item
+        for key in ("spaces", "openings", "vertical_connectors")
+        for item in data.get(key, [])
+    }
+    flagged = {i for i, item in known.items() if item.get("closed")}
+    return flagged | {i for i in data.get("closed") or [] if i in known}
+
+
 class NavigationService:
     def __init__(self, repository: BuildingRepository, datasets_dir: Path | None = None) -> None:
         self.repository = repository
@@ -164,8 +175,11 @@ class NavigationService:
                     ingested_at=stored.ingested_at,
                     data=data,
                     bmap=bmap,
-                    # Re-ingesting replaces the building: closures dropped, revision moves on.
+                    # A new stored version: the revision moves on; closures are the ones the data
+                    # carries (per-element `closed` flags, e.g. an edit saved with the scenario).
+                    # A plain dataset re-ingest carries none, so it starts open as before.
                     revision=0 if entry is None else entry.revision + 1,
+                    closed=_stored_closures(data),
                 )
                 self._entries[building_id] = entry
             return entry
@@ -537,6 +551,8 @@ class NavigationService:
             closed = sorted(entry.closed | set(assume))
             if mode == "official":
                 response = self._official(entry, start, target, via, step_free, closed, unofficial)
+                if _bool(request.get("exact_start"), "exact_start"):
+                    self._exact_start(entry, response, start, closed)
             else:
                 if via:
                     raise NavigationError(
@@ -548,6 +564,56 @@ class NavigationService:
         response["assume_closed"] = assume
         response["elapsed_ms"] = _ms(began)
         return response
+
+    def _exact_start(self, entry: _Entry, response: JSON, start: JSON, closed: list[str]) -> None:
+        """Opt-in for live guidance: a point start keeps its exact position. The official graph has
+        one node per space (the point resolves to the space), so only the first leg inside the start
+        space is re-walked, from the point to that leg's end, on the same official walkable area
+        and visibility graph (15 cm clearance, round corners). Costs stay the official ones."""
+        position = start.get("position")
+        if response.get("status") != "ok" or start.get("kind") != "point" or position is None:
+            return
+        space_id = start["space_id"]
+        first = next(
+            (i for i, seg in enumerate(response["path"]) if seg.get("kind") != "connector"),
+            None,
+        )
+        if first is None or response["path"][first].get("space_id") != space_id:
+            return
+        segment = response["path"][first]
+        point = [float(position[0]), float(position[1])]
+        view = challenge._view(entry.bmap, closed)
+        # The segment ends at the door (on the wall); walk to the latest of its points that is
+        # reachable inside the walkable area (the door landing), then keep the rest as it was.
+        points, length, clear, rest = [], 0.0, False, []
+        for k in range(len(segment["points"]) - 1, 0, -1):
+            points, length, clear = challenge._walk_points(
+                view, space_id, point, segment["points"][k]
+            )
+            if clear:
+                rest = segment["points"][k + 1 :]
+                break
+        if not clear:
+            response["warnings"] = [
+                *response.get("warnings", []),
+                "exact_start: no clear walk from the given point; the route starts in the room.",
+            ]
+            return
+        segment["points"] = [[float(x), float(y)] for x, y in [*points, *rest]]
+        response["start"] = {**response["start"], "position": point}
+        response["exact_start_m"] = round(float(length), 3)
+        response["assumptions"] = [
+            *response.get("assumptions", []),
+            "exact_start: the first leg starts at the given point (official walkable area); "
+            "length_m stays the official cost from the space.",
+        ]
+        response["waypoints"] = waypoints(
+            response["path"],
+            response["transitions"],
+            entry.data,
+            response["start"],
+            response["target"],
+        )
 
     def _official(
         self,

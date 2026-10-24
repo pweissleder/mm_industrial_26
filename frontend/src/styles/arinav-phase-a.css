@@ -515,3 +515,175 @@
 .pipeline-chip--off:hover {
   background: #ffe3cf;
 }
+
+/* ---- Phase B: live navigation card ---- */
+.guidance {
+  position: fixed;
+  top: calc(var(--topbar-h) + 2 * var(--gutter));
+  /* Right side, clear of the camera bar, so the followed person stays visible mid-view. */
+  right: calc(var(--gutter) + 64px);
+  z-index: 25;
+  width: min(400px, calc(100% - 2 * var(--gutter)));
+  max-height: calc(100dvh - var(--topbar-h) - 220px);
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: rise 0.2s ease-out;
+}
+
+@media (max-width: 720px) {
+  .guidance {
+    right: var(--gutter);
+    left: var(--gutter);
+    width: auto;
+  }
+}
+
+.guidance__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--navy);
+}
+
+.guidance__dest {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.guidance__status {
+  padding: 2px 9px;
+  border-radius: var(--pill);
+  background: var(--gray-100);
+  color: var(--ink-2);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.guidance__status--active {
+  background: #e3f6f3;
+  color: #0b7d70;
+}
+
+.guidance__status--recomputing,
+.guidance__status--paused {
+  background: var(--orange-50);
+  color: var(--orange-600);
+}
+
+.guidance__status--blocked {
+  background: #fdecec;
+  color: var(--bad);
+}
+
+.guidance__status--arrived {
+  background: var(--blue-50);
+  color: var(--navy);
+}
+
+.guidance__message {
+  margin: 0;
+  color: var(--orange-600);
+  font-size: 13px;
+}
+
+.guidance__next {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guidance__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.guidance__icon--stairs,
+.guidance__icon--lift {
+  background: var(--orange);
+}
+
+.guidance__icon--arrive,
+.guidance__icon--exit {
+  background: var(--good);
+}
+
+.guidance__text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.guidance__meta {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.guidance__progress {
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--pill);
+  background: var(--gray-100);
+}
+
+.guidance__progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--blue), var(--orange));
+  transition: width 0.12s linear;
+}
+
+.guidance__controls,
+.guidance__settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.guidance__voice-speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.guidance__voice-speed input {
+  width: 90px;
+}
+
+.guidance__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.guidance__debug-wrap summary {
+  color: var(--ink-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.guidance__debug {
+  margin: 0;
+  padding-top: 6px;
+  border-top: 1px dashed var(--gray-200);
+  font-size: 12px;
+}

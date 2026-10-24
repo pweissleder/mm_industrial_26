@@ -147,11 +147,15 @@ export function buildUiState(args: {
   simulated: SimulatedLocation | null;
   settings: NavSettings;
   touched: ReadonlySet<keyof NavSettings>;
+  /** Start/target the user explicitly cleared since the last turn: sent as null. */
+  cleared?: ReadonlySet<'start' | 'target'>;
 }): UiState {
   const ui: UiState = { building_id: args.buildingId };
   const start = args.start?.source === 'user' ? args.start.endpoint : args.simulated?.endpoint;
   if (start) ui.start = start;
+  else if (args.cleared?.has('start')) ui.start = null;
   if (args.target?.source === 'user') ui.destination = args.target.endpoint;
+  else if (args.cleared?.has('target')) ui.destination = null;
   const s = args.settings;
   if (args.touched.has('mode')) ui.mode = s.mode;
   if (args.touched.has('step_free')) ui.step_free = s.step_free;

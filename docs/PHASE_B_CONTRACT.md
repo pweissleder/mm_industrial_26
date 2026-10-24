@@ -1,8 +1,9 @@
 # Phase B starting point — guidance data contract
 
-Phase B (live guidance along a route: following the user, re-routing, arrival; later camera and
-HQ animation) builds on data that Phase A already delivers. Nothing in Phase A animates, moves a
-camera or simulates walking. This file fixes what Phase B can rely on.
+Phase B (live guidance along a route: following the user, re-routing, arrival) builds on data that
+Phase A delivers. **Implemented on branch `noah/phase-b-navigation`**: see `docs/PHASE_B_GUIDE.md`
+(the walker is `GuidanceSim` in `frontend/src/lib/simulation.ts`, driven by `useGuidance`).
+This file fixes the data the guidance relies on.
 
 Code: `frontend/src/lib/guidance.ts` (types + `progressAt`, tested in `guidance.test.ts`);
 backend source of every field: `backend/app/navigation/response.py` (`official_response`,

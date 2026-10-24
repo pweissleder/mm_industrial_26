@@ -203,6 +203,8 @@ export interface RouteRequest {
   snap_m?: number;
   allow_schematic_vertical?: boolean;
   unofficial?: { no_production_transit?: boolean; forklift?: boolean };
+  /** Official only, point starts: begin at the exact point (first leg re-walked officially). */
+  exact_start?: boolean;
 }
 
 export interface RouteEnd {
@@ -349,8 +351,11 @@ export interface AssistantStatus {
 /** Explicit user choices only; nothing the assistant chose itself. */
 export interface UiState {
   building_id: string | null;
-  start?: Endpoint;
-  destination?: Endpoint;
+  /** null = the user cleared it (the assistant forgets it too); absent = no explicit choice. */
+  start?: Endpoint | null;
+  destination?: Endpoint | null;
+  /** What the user is looking at on the map (context for "this"), not a start/destination. */
+  inspected?: { kind: string; id: string } | null;
   mode?: NavMode;
   step_free?: boolean;
   profile?: ClearanceProfile;
@@ -610,6 +615,8 @@ export const api = {
       body: JSON.stringify({ review_id: reviewId, option, note: note || null }),
     }),
   location: (id: string) => request<LocationRecord>(locationPath(id)),
+  /** Stored locations (`has_model`: an HQ model.glb exists under the building id). */
+  locations: () => request<{ id: string; has_model: boolean }[]>('/locations'),
   locationBuilding: (id: string) => request<BuildingModel>(`${locationPath(id)}/building`),
 
   // navigation (`/api/nav`)
@@ -654,4 +661,18 @@ export const api = {
     request<{ status: string }>('/assistant/reset', post({ session_id: sessionId })),
   assistantTranscribe: (audio: string) =>
     request<TranscribeResponse>('/assistant/transcribe', post({ audio })),
+  /** Short spoken navigation hint (<= 240 chars); 503 when voice is off, 502 on TTS failure. */
+  speak: (text: string, speed: number, signal?: AbortSignal) =>
+    request<SpeakResponse>('/assistant/speak', { ...post({ text, speed }), signal }),
 };
+
+export interface SpeakResponse {
+  /** base64 16-bit little-endian mono PCM. */
+  audio_pcm16: string;
+  sample_rate: number;
+  /** The speed actually used (clamped server-side to the TTS range). */
+  speed: number;
+  /** True when served from the server's in-process hint cache. */
+  cached: boolean;
+  tts_ms: number;
+}

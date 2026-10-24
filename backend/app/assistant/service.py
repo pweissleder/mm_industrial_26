@@ -6,9 +6,9 @@ turn that produced them. Tool rounds are budgeted; a reached budget ends with a 
 what was found (no tools), never with a raw limit message.
 """
 
-import contextlib
 import copy
 import json
+import math
 import secrets
 from collections.abc import Callable
 from threading import Lock
@@ -62,6 +62,9 @@ Understanding requests
 - Read every message in the context of the conversation. If a reference is unclear (e.g. "the
   biggest one" when it is not clear biggest what, or which list), ask one short question that
   offers the likely options. Do not invent a new interpretation and do not run unrelated searches.
+- session_state.inspected is what the user is looking at on the map ("this", "what am I
+  looking at", "how do I get there"). It is not their position; use it as a destination only
+  when they say so. session_state.ui_note reports a map choice that could not be used.
 - Search results never change the user's start or destination. Only use update_session for what
   the user actually said ("I'm in ...", "I'm next to the hand dryer", "I use a wheelchair").
 - "I don't know where I am, but there is X here": find_places for X. If one room matches, use it
@@ -116,6 +119,13 @@ def default_state() -> JSON:
         "width_m": 0.6,
         "safety_m": 0.05,
         "last_route": None,
+        # What the user is looking at on the map (not a start or destination).
+        "inspected": None,
+        # A UI choice that could not be used this turn, told to the model once.
+        "ui_note": None,
+        # The start/destination as last sent by the UI (to notice when the UI drops it).
+        "start_from_ui": None,
+        "destination_from_ui": None,
     }
 
 
@@ -132,6 +142,22 @@ class Session:
             "cache_read_input_tokens": 0,
             "cache_creation_input_tokens": 0,
         }
+
+
+def _found_places(tools_called: list[JSON], limit: int = 6) -> str:
+    """`name = kind:id` for the places the turn's searches returned (ids stay out of replies)."""
+    rows: list[str] = []
+    for call in tools_called:
+        if call.get("tool") not in {"find_places", "find_nearest"} or call.get("status") != "ok":
+            continue
+        output = call.get("output")
+        for row in (output.get("results") if isinstance(output, dict) else None) or []:
+            if not isinstance(row, dict):
+                continue
+            endpoint = row.get("endpoint") or {"kind": row.get("kind"), "id": row.get("id")}
+            if endpoint.get("id"):
+                rows.append(f"{row.get('name')} = {endpoint.get('kind')}:{endpoint['id']}")
+    return "; ".join(rows[:limit])
 
 
 class Assistant:
@@ -207,6 +233,23 @@ class Assistant:
             return None
         floors, spaces = self._index(data)
         kind, ident = endpoint.get("kind"), endpoint.get("id")
+        if kind == "point" and endpoint.get("space_id") in spaces:
+            space = spaces[endpoint["space_id"]]
+            return {
+                "kind": kind,
+                "space_id": endpoint["space_id"],
+                "name": f"a point in {space.get('name') or endpoint['space_id']}",
+                "floor": floors[space["floor_id"]].get("name"),
+            }
+        if kind == "connector":
+            connector = next((c for c in data["vertical_connectors"] if c["id"] == ident), None)
+            if connector:
+                return {
+                    "kind": kind,
+                    "id": ident,
+                    "name": connector.get("name") or ident,
+                    "type": connector.get("kind"),
+                }
         if kind == "space" and ident in spaces:
             space = spaces[ident]
             return {
@@ -246,6 +289,24 @@ class Assistant:
     def check_endpoint(self, data: JSON, endpoint: JSON | None) -> JSON | None:
         if endpoint is None:
             return None
+        if isinstance(endpoint, dict) and endpoint.get("kind") == "point":
+            # An exact map point (UI only): a space and an XY inside the building frame.
+            position = endpoint.get("position")
+            if (
+                not isinstance(position, list | tuple)
+                or len(position) != 2
+                or not all(
+                    isinstance(v, int | float) and not isinstance(v, bool) and math.isfinite(v)
+                    for v in position
+                )
+                or self.describe(data, endpoint) is None
+            ):
+                raise NavigationError("invalid_input", "That map point is not inside a room")
+            return {
+                "kind": "point",
+                "space_id": endpoint["space_id"],
+                "position": [float(position[0]), float(position[1])],
+            }
         if not isinstance(endpoint, dict) or endpoint.get("kind") not in {
             "space",
             "asset",
@@ -276,6 +337,9 @@ class Assistant:
             }
             out["start"] = self.describe(data, state["start"])
             out["destination"] = self.describe(data, state["destination"])
+            out["inspected"] = self.describe(data, state.get("inspected"))
+            if state.get("ui_note"):
+                out["ui_note"] = state["ui_note"]
             closed = nav_state.get("closed", [])
             names = {
                 x["id"]: x.get("name") for k in ("spaces", "vertical_connectors") for x in data[k]
@@ -304,11 +368,35 @@ class Assistant:
         if not state["building_id"]:
             return
         data = self._data(session)
-        for key, ui_key in (("start", "start"), ("destination", "destination")):
-            value = ui.get(ui_key)
-            if isinstance(value, dict):
-                with contextlib.suppress(NavigationError):  # stale UI selection: keep session value
-                    state[key] = self.check_endpoint(data, value)
+        state["ui_note"] = None
+        for key in ("start", "destination"):
+            from_ui = f"{key}_from_ui"
+            if key not in ui:
+                # No explicit choice this turn. A place the UI had sent before and that is
+                # unchanged since is gone from the UI now (older clients omit instead of null).
+                if state.get(from_ui) is not None and state[key] == state[from_ui]:
+                    state[key] = None
+                state[from_ui] = None
+                continue
+            value = ui[key]
+            if value is None:  # the user cleared it (e.g. "Clear simulated location")
+                state[key] = None
+                continue
+            try:
+                state[key] = self.check_endpoint(data, value)
+                state[from_ui] = state[key]
+            except NavigationError as error:
+                # Never fall back silently to an older place: drop it and tell the model.
+                state[key] = None
+                state["ui_note"] = f"The {key} the user picked could not be used: {error.message}"
+        if "inspected" in ui or "selection" in ui:  # "selection": alias used by early clients
+            inspected = ui.get("inspected", ui.get("selection"))
+            state["inspected"] = (
+                {"kind": inspected.get("kind"), "id": inspected.get("id")}
+                if isinstance(inspected, dict)
+                and self.describe(data, {"kind": inspected.get("kind"), "id": inspected.get("id")})
+                else None
+            )
         if ui.get("mode") in {"official", "precision"}:
             state["mode"] = ui["mode"]
         if ui.get("profile") in {"stationary", "all", "none"}:
@@ -803,9 +891,16 @@ class Assistant:
         if ui.get("route"):
             phases.append("Showing directions")
         summary = "; ".join(f"{t['tool']}({t['status']})" for t in tools_called)
+        # Places this turn found, so "take me there" / "the second one" resolve next turn.
+        found = _found_places(tools_called)
         session.history.append({"role": "user", "text": text})
         session.history.append(
-            {"role": "assistant", "text": reply + (f"\n[tools used: {summary}]" if summary else "")}
+            {
+                "role": "assistant",
+                "text": reply
+                + (f"\n[tools used: {summary}]" if summary else "")
+                + (f"\n[places found, in order: {found}]" if found else ""),
+            }
         )
         del session.history[: -4 * HISTORY_TURNS]
         price = PRICES[self.model]

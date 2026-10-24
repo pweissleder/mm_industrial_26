@@ -78,6 +78,8 @@ export interface Navigation {
   updateSettings: (patch: Partial<NavSettings>) => void;
   computeRoute: (overrides?: { start?: Endpoint; target?: Endpoint }) => Promise<void>;
   clearRoute: () => void;
+  /** Show a route computed elsewhere (e.g. a guidance reroute) without moving the camera. */
+  showRoute: (route: RouteResponse) => void;
   scenario: (action: 'close' | 'open' | 'reset', elementId?: string) => Promise<void>;
   previewClosure: (elementIds: string[]) => Promise<void>;
   nearestExit: () => Promise<void>;
@@ -111,6 +113,11 @@ export function useNavigation(buildingId: string | null): Navigation {
   const [nearest, setNearest] = useState<NearestResponse | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  // Start/target the user explicitly cleared since the last assistant turn (sent as null, so the
+  // assistant forgets them too instead of keeping an older place).
+  const [cleared, setCleared] = useState<ReadonlySet<Which>>(new Set());
+  // Scenario revision a shown closure preview was made under.
+  const previewRevision = useRef<number | null>(null);
   const token = useRef(0);
 
   const refresh = useCallback(async () => {
@@ -131,9 +138,26 @@ export function useNavigation(buildingId: string | null): Navigation {
   useEffect(() => {
     setState(null);
     setUnavailable(null);
+    setCleared(new Set());
     setSimulatedState(buildingId ? loadSim(buildingId) : null);
     void refresh();
   }, [buildingId, refresh]);
+
+  // Whatever changed the scenario (this panel, the assistant, another tab, the team agent), a
+  // route or closure preview computed under an older revision is stale: drop it.
+  const revision = state?.revision;
+  useEffect(() => {
+    if (revision === undefined) return;
+    setRouteView((view) => {
+      if (!view || view.route.revision === revision) return view;
+      setMessage(`Scenario changed (revision ${revision}) · recompute routes.`);
+      return null;
+    });
+    if (previewRevision.current !== null && previewRevision.current !== revision) {
+      previewRevision.current = null;
+      setPreview(null);
+    }
+  }, [revision]);
 
   // The scenario is shared (assistant, other tabs, developers): reload it when the window regains focus.
   useEffect(() => {
@@ -141,6 +165,11 @@ export function useNavigation(buildingId: string | null): Navigation {
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
   }, [refresh]);
+
+  const showRoute = useCallback((route: RouteResponse) => {
+    setRouteView({ route, fit: false, nonce: Date.now() });
+    setRouteFailure(null);
+  }, []);
 
   const reset = useCallback(() => {
     setStart(null);
@@ -158,6 +187,18 @@ export function useNavigation(buildingId: string | null): Navigation {
     const choice = endpoint ? { endpoint, source: 'user' as const } : null;
     if (which === 'start') setStart(choice);
     else setTarget(choice);
+    setCleared((c) => {
+      const next = new Set(c);
+      if (endpoint) next.delete(which);
+      else next.add(which);
+      return next;
+    });
+    // A route belongs to the endpoints it was computed for: changing one makes it stale.
+    setRouteView((view) => {
+      if (view) setMessage(`The ${which} changed · compute the route again.`);
+      return null;
+    });
+    setRouteFailure(null);
   }, []);
 
   const updateSettings = useCallback((patch: Partial<NavSettings>) => {
@@ -168,14 +209,9 @@ export function useNavigation(buildingId: string | null): Navigation {
   const applyState = useCallback(
     (next: NavState | null) => {
       if (!next || next.building_id !== buildingId) return;
-      // A different scenario makes the shown route stale: it may cross a closed door now.
-      if (state && state.revision !== next.revision) {
-        setRouteView(null);
-        setMessage(`Scenario changed (revision ${next.revision}) · recompute routes.`);
-      }
-      setState(next);
+      setState(next); // a revision change drops stale routes/previews (effect above)
     },
-    [buildingId, state],
+    [buildingId],
   );
 
   const run = useCallback(async (task: () => Promise<void>) => {
@@ -265,6 +301,7 @@ export function useNavigation(buildingId: string | null): Navigation {
         if (!buildingId) return;
         try {
           const from = start?.endpoint ?? simulated?.endpoint;
+          previewRevision.current = revision ?? null;
           setPreview(
             await api.navPreviewClosure(buildingId, {
               element_ids: elementIds,
@@ -277,7 +314,7 @@ export function useNavigation(buildingId: string | null): Navigation {
           setMessage(describeError(e));
         }
       }),
-    [run, buildingId, start, simulated, settings.step_free],
+    [run, buildingId, start, simulated, settings.step_free, revision],
   );
 
   const nearestExit = useCallback(
@@ -327,6 +364,13 @@ export function useNavigation(buildingId: string | null): Navigation {
     (value: SimulatedLocation | null) => {
       setSimulatedState(value);
       if (buildingId) saveSim(buildingId, value);
+      setCleared((c) => {
+        const next = new Set(c);
+        if (value) next.delete('start');
+        else next.add('start');
+        return next;
+      });
+      if (!value) setRouteView(null); // its start was that location
     },
     [buildingId],
   );
@@ -334,6 +378,7 @@ export function useNavigation(buildingId: string | null): Navigation {
   const applyTurn = useCallback(
     (turn: TurnResponse) => {
       setLastTurn(turn);
+      setCleared(new Set()); // the assistant has now seen the cleared start/target
       const ui: TurnUi = turn.ui ?? {};
       if (ui.settings) {
         const patch = Object.fromEntries(
@@ -376,13 +421,14 @@ export function useNavigation(buildingId: string | null): Navigation {
 
   const ui = useMemo(
     () =>
-      buildUiState({ buildingId, start, target, simulated, settings, touched }),
-    [buildingId, start, target, simulated, settings, touched],
+      buildUiState({ buildingId, start, target, simulated, settings, touched, cleared }),
+    [buildingId, start, target, simulated, settings, touched, cleared],
   );
 
   const diagnosis = useMemo(() => diagnosisIds(routeFailure?.diagnosis), [routeFailure]);
 
   return {
+    showRoute,
     state,
     unavailable,
     start,
