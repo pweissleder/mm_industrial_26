@@ -34,7 +34,17 @@ Needs [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Dock
 docker compose up --build
 ```
 
-Stop with Ctrl+C, or `docker compose down` if it runs detached (`-d`). Source folders are mounted into the containers, so code changes reload automatically (file watching uses polling, which is what works reliably on Windows and macOS bind mounts). After changing dependencies, rebuild with `--build`.
+Stop with Ctrl+C, or `docker compose down` if it runs detached (`-d`). Source folders are mounted into the containers, so code changes reload automatically (file watching uses polling, which is what works reliably on Windows and macOS bind mounts). After changing dependencies, rebuild with `--build` (the frontend container also reinstalls on start when `package-lock.json` no longer matches its `node_modules` volume). Set `FRONTEND_PORT` / `BACKEND_PORT` to use other host ports.
+
+## Run the live version (Docker)
+
+`compose.prod.yaml` builds the frontend statically and serves it with nginx, which also proxies `/api` to the backend (same origin, so no CORS). The backend runs without reload, reads `backend/.env` if present, and keeps `data/datasets` (including uploads) in the named volume `datasets`, seeded with the bundled samples on first start.
+
+```bash
+docker compose -f compose.prod.yaml up --build -d
+```
+
+Open http://localhost:8080 (change with `ARINAV_PORT`). Ingested buildings are still in memory, but the app re-ingests the selected dataset on load, so a restart loses nothing visible. Stop with `docker compose -f compose.prod.yaml down` (add `-v` to also delete uploads).
 
 ## Run natively (each app on its own)
 

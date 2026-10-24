@@ -1,0 +1,36 @@
+# Live deployment: static frontend behind nginx, backend without reload, uploads kept
+# in a named volume. Run `docker compose -f compose.prod.yaml up --build -d`.
+name: arinav
+
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - path: ./backend/.env
+        required: false
+    volumes:
+      # Uploaded datasets survive restarts; first start seeds it with the bundled samples.
+      - datasets:/app/data/datasets
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  frontend:
+    build:
+      context: ./frontend
+      target: prod
+    restart: unless-stopped
+    ports:
+      - "${ARINAV_PORT:-8080}:80"
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  datasets:
