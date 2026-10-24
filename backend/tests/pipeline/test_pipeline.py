@@ -48,7 +48,8 @@ def test_offline_run_builds_location(runner: PipelineRunner) -> None:
     assert record.status == RunStatus.COMPLETED, record
     assert record.location_id == DATASET
     assert record.stages["raw_validation"].status == "passed"
-    assert record.stages["graph_build"].status == "skipped"
+    assert record.stages["graph_build"].status == "passed"
+    assert record.stages["graph_validate"].status == "passed"
     assert record.stages["model_validate"].status == "passed"
     assert record.stages["summarize"].status == "passed"
 
@@ -56,7 +57,7 @@ def test_offline_run_builds_location(runner: PipelineRunner) -> None:
     location = store.get(DATASET)
     assert location is not None and location.metadata is not None
     assert location.pillars["assets_3d"].status == "done"
-    assert location.pillars["graph"].status == "skipped"
+    assert location.pillars["graph"].status == "done"
     building = store.read_building(DATASET)
     assert set(location.metadata.spaces) == {s["id"] for s in building["spaces"]}
     assert location.metadata.summary
@@ -335,3 +336,17 @@ def test_summarizer_maps_short_space_ids_from_the_model(pipeline_settings: Setti
     assert space_brief(next(iter(stats.spaces.values()))).split(" | ")[0] != next(
         iter(stats.spaces)
     )
+
+
+def test_offline_summary_describes_what_the_site_is_for() -> None:
+    from app.domain.building import BuildingFile
+    from app.pipeline.agents.summarizer import _building_template
+    from app.pipeline.tools.stats import compute_location_stats
+
+    raw = (BACKEND_DIR / "data" / "datasets" / DATASET / "building.json").read_text()
+    text = _building_template(compute_location_stats(BuildingFile.model_validate_json(raw)))
+
+    assert text.summary.startswith("Fertigung Ost 27 is a two-storey production site for ")
+    assert "CNC milling" in text.summary and "injection moulding" in text.summary
+    assert "forklift" not in text.summary
+    assert text.floors[1].description.startswith("Floor 1: offices")

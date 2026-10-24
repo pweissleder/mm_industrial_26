@@ -12,6 +12,7 @@ dependencies = [
     "langsmith>=0.14.12",
     "mapbox-earcut>=2.1.0",
     "matplotlib>=3.11.2",
+    "networkx>=3.4",
     "numpy>=2.4.6",
     "pydantic-settings>=2.16.1",
     "python-multipart>=0.0.32",
@@ -40,6 +41,7 @@ addopts = "-m 'not live'"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+extend-exclude = ["navgraph", "navgraph_checks"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "ASYNC"]
@@ -73,5 +75,10 @@ disallow_untyped_calls = false
 warn_return_any = false
 
 [[tool.mypy.overrides]]
-module = ["jsonpatch", "trimesh.*"]
+module = ["jsonpatch", "networkx", "trimesh.*"]
 ignore_missing_imports = true
+
+# navgraph/ is vendored from the industrial-agents-hackathon-2026 repo; keep it as-is.
+[[tool.mypy.overrides]]
+module = ["navgraph", "navgraph.*"]
+ignore_errors = true

@@ -8,7 +8,9 @@ from app.ingestion.uploads import (
     DatasetFile,
     InvalidUploadError,
     dataset_file,
+    dataset_name_taken,
     list_files,
+    remove_dataset,
     save_upload,
 )
 
@@ -18,8 +20,10 @@ __all__ = [
     "IngestionSummary",
     "InvalidUploadError",
     "dataset_file",
+    "dataset_name_taken",
     "ingest_dataset",
     "list_datasets",
     "list_files",
+    "remove_dataset",
     "save_upload",
 ]

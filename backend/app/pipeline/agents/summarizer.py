@@ -18,13 +18,23 @@ CHUNK = 60
 MAX_PARALLEL = 4
 BUILDING_PROMPT = """\
 You write the reference description of a building for a "talk to your building"
-assistant. From the facts given, write a concise summary (what kind of building, size,
-floors, notable areas and equipment, accessibility), 4-8 key facts, and one short
-description per floor. Use only the facts given; no speculation."""
+assistant, like a site guide introducing it, not a data sheet.
+Summary: two or three sentences, at most 60 words. Open with what kind of place it is
+and what it is equipped to do, read from its machines and zones, e.g. "Werk Nord
+is a two-storey production site built for CNC machining and injection moulding, with a
+dedicated 3D-printing area." Then how it is laid out: halls, office and support areas,
+stairs, lifts and entrances. Use at most two numbers; the app shows the counts already.
+Key facts: 3-6 short items; these may carry numbers.
+Floors: one sentence each (at most 20 words) on what that floor is for and what is there.
+Name things in plain words (CNC milling, not cnc_mill). Say only what the facts support:
+no superlatives, no guesses about owners, products or output."""
 SPACES_PROMPT = """\
-For each space line, write one factual sentence describing the space (what it is, its
-size, notable equipment, access). Use only the facts on the line. The first field of a
-line is its space_id: return every space_id exactly as given, exactly once."""
+For each space line, write one sentence (at most 25 words) that says what the space is
+set up for, read from its kind and equipment, e.g. "Meeting room for about ten people
+with a display screen and whiteboard; step-free." Mention size only when it stands out.
+Plain words (display screen, not display_screen); use only the facts on the line.
+The first field of a line is its space_id: return every space_id exactly as given,
+exactly once."""
 
 
 class FloorText(BaseModel):
@@ -56,25 +66,108 @@ def _template(space: SpaceStats) -> str:
     return f"{text} with {equipment}; {access}." if equipment else f"{text}; {access}."
 
 
+# Offline wording: what a zone is used for and what a machine can do.
+ROOM_WORDS = {
+    "production_zone": "production",
+    "assembly_zone": "assembly",
+    "additive_zone": "additive manufacturing",
+    "logistics_zone": "logistics",
+    "warehouse_zone": "warehousing",
+    "quality_lab": "quality inspection",
+    "office": "offices",
+    "meeting_room": "meeting rooms",
+    "server_room": "server rooms",
+    "kitchen": "kitchens",
+    "locker_room": "locker rooms",
+}
+WORK_ZONES = {"production_zone", "assembly_zone", "additive_zone", "logistics_zone"}
+SHOP_FLOOR = WORK_ZONES | {"warehouse_zone", "quality_lab"}
+# Room types that every building has; they say nothing about what it is for.
+BACKGROUND_ROOMS = {"corridor", "lobby", "toilet", "stairwell", "lift", "hall", "room"}
+MACHINE_WORDS = {
+    "cnc_mill": "CNC milling",
+    "cnc_lathe": "CNC turning",
+    "drill_press": "drilling",
+    "injection_moulding_machine": "injection moulding",
+    "industrial_3d_printer": "3D printing",
+    "3d_printer": "3D printing",
+    "waterjet_cutter": "waterjet cutting",
+    "laser_cutter": "laser cutting",
+    "curing_oven": "curing",
+    "coordinate_measuring_machine": "precision measuring",
+}
+# Machines that support the work rather than define it.
+SUPPORT_MACHINES = {"conveyor", "forklift", "compressor"}
+STOREYS = {1: "single-storey", 2: "two-storey", 3: "three-storey", 4: "four-storey"}
+
+
 def _yes(flag: bool) -> str:
     return "yes" if flag else "no"
 
 
+def _join(words: list[str]) -> str:
+    return words[0] if len(words) == 1 else f"{', '.join(words[:-1])} and {words[-1]}"
+
+
+def _uses(area_by_room_type: dict[str, float], limit: int = 3) -> list[str]:
+    """What the largest rooms are for, biggest first, e.g. ['warehousing', 'production']."""
+    ranked = sorted(area_by_room_type.items(), key=lambda kv: -kv[1])
+    words = [ROOM_WORDS.get(t, t.replace("_", " ")) for t, _ in ranked if t not in BACKGROUND_ROOMS]
+    return list(dict.fromkeys(words))[:limit]
+
+
+def _capabilities(machines: dict[str, int], limit: int = 4) -> list[str]:
+    ranked = sorted(machines.items(), key=lambda kv: -kv[1])
+    words = [
+        MACHINE_WORDS.get(t, t.replace("_", " ")) for t, _ in ranked if t not in SUPPORT_MACHINES
+    ]
+    return list(dict.fromkeys(words))[:limit]
+
+
 def _building_template(stats: LocationStats) -> BuildingText:
+    storeys = STOREYS.get(stats.floor_count, f"{stats.floor_count}-storey")
+    by_type: dict[str, float] = {}
+    for f in stats.floors:
+        for t, area in f.area_by_room_type.items():
+            by_type[t] = by_type.get(t, 0) + area
+    if WORK_ZONES & by_type.keys():
+        # Lead with the shop floor; offices and the like follow as support.
+        main = _uses({t: a for t, a in by_type.items() if t in SHOP_FLOOR})
+        rest = _uses({t: a for t, a in by_type.items() if t not in SHOP_FLOOR}, limit=2)
+        opening = f"{stats.name} is a {storeys} production site for {_join(main)}"
+        opening += f", plus {_join(rest)}." if rest else "."
+    else:
+        uses = _uses(by_type)
+        opening = f"{stats.name} is a {storeys} building" + (
+            f" with {_join(uses)}." if uses else "."
+        )
+    sentences = [opening]
+    capabilities = _capabilities(stats.machines)
+    if capabilities:
+        sentences.append(f"Its machines cover {_join(capabilities)}.")
+    links = [w for w, has in (("stairs", stats.has_stairs), ("a lift", stats.has_lift)) if has]
+    if stats.floor_count > 1 and links:
+        verb = "connect" if "stairs" in links else "connects"
+        sentences.append(f"{_join(links).capitalize()} {verb} the floors.")
+    if stats.has_step_free_entrance:
+        sentences.append("The entrance is step-free.")
     return BuildingText(
-        summary=(
-            f"{stats.name}: {stats.floor_count} floors, {stats.total_area_m2:.0f} m² over "
-            f"{stats.space_count} spaces with {stats.asset_count} assets."
-        ),
+        summary=" ".join(sentences),
         key_facts=[
-            f"Levels: {stats.levels}",
+            f"{stats.total_area_m2:.0f} m² over {stats.floor_count} floors",
+            f"{stats.space_count} spaces, {stats.asset_count} assets",
+            f"{sum(stats.machines.values())} machines",
             f"Lift: {_yes(stats.has_lift)}; stairs: {_yes(stats.has_stairs)}",
             f"Step-free entrance: {_yes(stats.has_step_free_entrance)}",
         ],
         floors=[
             FloorText(
                 floor_id=f.floor_id,
-                description=f"{f.name}: {f.space_count} spaces, {f.area_m2:.0f} m².",
+                description=(
+                    f"{f.name}: {_join(floor_uses)}, across {f.space_count} spaces."
+                    if (floor_uses := _uses(f.area_by_room_type))
+                    else f"{f.name}: {f.space_count} spaces, {f.area_m2:.0f} m²."
+                ),
             )
             for f in stats.floors
         ],
