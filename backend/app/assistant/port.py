@@ -5,17 +5,13 @@ The assistant never keeps its own building or scenario copy; every fact comes fr
 
 from typing import Any, Protocol
 
+# The navigation core's error class, so `except NavigationError` here catches what the
+# NavigationService raises (one class, not a look-alike).
+from app.navigation.errors import NavigationError
+
 JSON = dict[str, Any]
 
-
-class NavigationError(Exception):
-    """A navigation call was refused: unknown place, no route, unsupported geometry, stale
-    revision.
-    """
-
-    def __init__(self, code: str, message: str, details: JSON | None = None) -> None:
-        super().__init__(message)
-        self.code, self.message, self.details = code, message, details or {}
+__all__ = ["JSON", "NavigationError", "NavigationPort"]
 
 
 class NavigationPort(Protocol):

@@ -195,6 +195,12 @@ class NavigationService:
 
     building_dict = building
 
+    def closed_elements(self, building_id: str) -> list[str]:
+        """The scenario's closed element ids (cheap; for mirrors such as the navgraph agent)."""
+        entry = self._entry(building_id)
+        with entry.lock:
+            return sorted(entry.closed)
+
     def state(self, building_id: str) -> JSON:
         entry = self._entry(building_id)
         with entry.lock:

@@ -475,7 +475,9 @@ class Assistant:
                 if state["mode"] == "precision"
                 else None,
             }
-        ui["route"] = {"result": result, "request": request}
+        # Contract (docs/PHASE_A_INTERFACES.md): ui.route is the RouteResponse itself.
+        ui["route"] = result
+        ui["route_request"] = request
         _, spaces = self._index(data)
         summary: JSON = {
             "mode": result.get("mode"),

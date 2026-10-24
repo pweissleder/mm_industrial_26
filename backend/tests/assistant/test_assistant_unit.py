@@ -231,7 +231,7 @@ def test_case_a_exit_door_is_a_valid_destination_and_route_ends_there() -> None:
     )
     route = next(c for c in nav.calls if c[0] == "route")[1]
     assert route["target"] == {"kind": "opening", "id": "O1"}
-    assert out["ui"]["route"]["result"]["element_path"][-1] == "O1"
+    assert out["ui"]["route"]["element_path"][-1] == "O1"
     assert out["phases"][-1] == "Showing directions"
     # Opening IDs are accepted directly too (the earlier failure rejected them as asset/space IDs).
     assistant2, nav2, _ = make(

@@ -1,7 +1,7 @@
 from typing import Any
 
 import networkx as nx
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 
 from app.api.deps import RepositoryDep
 from app.api.schemas import BuildingDetail, BuildingSummary, FloorOut
@@ -61,9 +61,20 @@ def get_building_model(building_id: str, repository: RepositoryDep) -> BuildingF
 
 
 @router.get("/{building_id}/graph")
-def get_building_graph(building_id: str, repository: RepositoryDep) -> dict[str, Any]:
+def get_building_graph(
+    building_id: str, repository: RepositoryDep, request: Request
+) -> dict[str, Any]:
     """The level-1 navgraph RoomGraph as node-link JSON, for the debug graph view."""
     building = Building.from_dict(_get(repository, building_id).data.model_dump())
+    # Closures come from the one scenario (NavigationService), so the overlay matches AriNav.
+    navigation = getattr(request.app.state, "navigation", None)
+    for element in navigation.closed_elements(building_id) if navigation else []:
+        if (
+            element in building.spaces
+            or element in building.openings
+            or element in building.connectors
+        ):
+            building.set_closed(element, True)
     graph = RoomGraph(building).g
     cost = OrganizerCost()
     for a, b, e in graph.edges(data=True):
@@ -71,7 +82,9 @@ def get_building_graph(building_id: str, repository: RepositoryDep) -> dict[str,
     return nx.node_link_data(graph, edges="edges")
 
 
-def _edge_cost(building: Building, cost: OrganizerCost, a: str, b: str, e: dict[str, Any]) -> float | None:
+def _edge_cost(
+    building: Building, cost: OrganizerCost, a: str, b: str, e: dict[str, Any]
+) -> float | None:
     """Routing length (m) of one hop: anchor -> door -> anchor, or the stair/lift ride."""
     try:
         if e["kind"] == "stairs":
@@ -80,7 +93,11 @@ def _edge_cost(building: Building, cost: OrganizerCost, a: str, b: str, e: dict[
             return round(cost.lift_board() + cost.lift_ride(e["rise_m"], e["floors"]), 3)
         door = e["position"]
         return round(
-            sum(cost.walk(s, s.anchor, door) for s in (building.spaces[sid] for sid in (a, b) if sid != OUTSIDE)), 3
+            sum(
+                cost.walk(s, s.anchor, door)
+                for s in (building.spaces[sid] for sid in (a, b) if sid != OUTSIDE)
+            ),
+            3,
         )
     except Exception:  # degenerate room geometry: show the edge without a time
         return None

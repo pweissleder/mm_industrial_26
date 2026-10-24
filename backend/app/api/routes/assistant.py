@@ -13,6 +13,7 @@ from app.assistant.service import Assistant, AssistantError
 from app.assistant.voice import SAMPLE_RATE, TTS_SPEED, ElevenLabsVoice, VoiceError, spoken
 
 router = APIRouter(prefix="/assistant", tags=["assistant"])
+STALE = {"revision_conflict", "stale_revision"}
 
 
 class TurnRequest(BaseModel):
@@ -51,7 +52,7 @@ def _voice(request: Request) -> ElevenLabsVoice | None:
 
 
 def _nav_error(error: NavigationError) -> HTTPException:
-    code = status.HTTP_409_CONFLICT if error.code == "stale_revision" else 422
+    code = status.HTTP_409_CONFLICT if error.code in STALE else 422
     return HTTPException(code, {"code": error.code, "message": error.message})
 
 
