@@ -28,6 +28,10 @@ class Settings(BaseSettings):
     assistant_effort: str = "medium"
     elevenlabs_api_key: str | None = None
     elevenlabs_voice_id: str = "JBFqnCBsd6RMkjVDRZzb"
+    # Input guardrail: rules always run; with an API key this model also classifies
+    # each chat message (in scope, off-topic, prompt injection, unsafe).
+    guardrail_classifier_enabled: bool = True
+    guardrail_model: str = "claude-haiku-5-5"
 
     # Claude Managed Agents; create both once with scripts/setup_managed_agent.py.
     managed_agent_id: str | None = None

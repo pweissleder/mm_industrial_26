@@ -77,6 +77,12 @@ def test_spec_tool_is_strict_but_keeps_validating_bounds() -> None:
         save_spec.call({"spec": {**ok, "default_height_m": 50}})
 
 
+def _data(result: str) -> Any:
+    """Tool results that carry dataset content are delimited as untrusted data."""
+    assert result.startswith("<dataset_content>\n") and result.endswith("\n</dataset_content>")
+    return json.loads(result.removeprefix("<dataset_content>").removesuffix("</dataset_content>"))
+
+
 def _tool(session: Any, name: str) -> Any:
     return next(t for t in raw_validation._tools(session) if t.name == name)
 
@@ -89,9 +95,7 @@ def test_typed_patch_ops_apply_like_rfc6902(session: Any) -> None:
         "value_json": "45",
         "from_path": None,
     }
-    result = json.loads(
-        patch.call({"ops": [op], "reason": "r", "issue_ids": [], "issue_class": "t"})
-    )
+    result = _data(patch.call({"ops": [op], "reason": "r", "issue_ids": [], "issue_class": "t"}))
     assert result["ok"] is True
     assert session.doc["assets"][0]["footprint"]["rotation_deg"] == 45
 
@@ -115,7 +119,5 @@ def test_typed_patch_ops_apply_like_rfc6902(session: Any) -> None:
 )
 def test_malformed_patch_ops_are_explained(session: Any, op: dict[str, Any], error: str) -> None:
     patch = _tool(session, "apply_patch_ops")
-    result = json.loads(
-        patch.call({"ops": [op], "reason": "r", "issue_ids": [], "issue_class": "t"})
-    )
+    result = _data(patch.call({"ops": [op], "reason": "r", "issue_ids": [], "issue_class": "t"}))
     assert result["ok"] is False and error in result["errors"][0]

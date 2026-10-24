@@ -23,7 +23,7 @@ describe('ChatDock', () => {
   it('sends a message and renders the reply', async () => {
     const chat = vi
       .spyOn(api, 'chat')
-      .mockResolvedValue({ reply: 'Room 2.04, second floor.', thread_id: 't1' });
+      .mockResolvedValue({ reply: 'Room 2.04, second floor.', thread_id: 't1', building_changed: false });
     const user = userEvent.setup();
 
     render(<ChatDock health={health} backendDown={false} draft={null} />);
@@ -39,8 +39,21 @@ describe('ChatDock', () => {
     expect(chat).toHaveBeenLastCalledWith('And the lift?', 't1', null);
   });
 
+  it('asks for a reload when the agent changed the building', async () => {
+    vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Lift closed.', thread_id: 't1', building_changed: true });
+    const changed = vi.fn();
+    const user = userEvent.setup();
+
+    render(<ChatDock health={health} backendDown={false} draft={null} buildingId="b1" onBuildingChanged={changed} />);
+    await user.type(screen.getByLabelText('Message'), 'Close the lift');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(await screen.findByText('Lift closed.')).toBeInTheDocument();
+    expect(changed).toHaveBeenCalledOnce();
+  });
+
   it('sends a suggestion with one tap', async () => {
-    const chat = vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1' });
+    const chat = vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1', building_changed: false });
     const user = userEvent.setup();
 
     render(<ChatDock health={health} backendDown={false} draft={null} />);
@@ -50,8 +63,26 @@ describe('ChatDock', () => {
     expect(await screen.findByText('Here.')).toBeInTheDocument();
   });
 
+  it('marks replies rejected by the guardrail', async () => {
+    vi.spyOn(api, 'chat').mockResolvedValue({
+      reply: 'I can only help with this building.',
+      thread_id: 't1',
+      building_changed: false,
+      guardrail: { category: 'off_topic', reason: 'Asks for a poem.', source: 'classifier' },
+    });
+    const user = userEvent.setup();
+
+    render(<ChatDock health={health} backendDown={false} draft={null} />);
+    await user.type(screen.getByLabelText('Message'), 'Write me a poem');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+
+    const flag = await screen.findByText('Rejected by guidelines · off-topic');
+    expect(flag).toHaveAttribute('title', 'Asks for a poem.');
+    expect(flag.closest('li')).toHaveClass('chat__msg--blocked');
+  });
+
   it('sends the selected building so the agent gets its navgraph tools', async () => {
-    const chat = vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1' });
+    const chat = vi.spyOn(api, 'chat').mockResolvedValue({ reply: 'Here.', thread_id: 't1', building_changed: false });
     const user = userEvent.setup();
 
     render(<ChatDock health={health} backendDown={false} draft={null} buildingId="b1" />);

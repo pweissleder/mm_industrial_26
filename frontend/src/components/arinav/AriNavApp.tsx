@@ -22,14 +22,16 @@ import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import {
   CodeIcon,
+  CubeIcon,
   FitIcon,
   MinusIcon,
+  OrbitIcon,
   PanelIcon,
+  PanIcon,
   PinIcon,
   PlusIcon,
   SparkleIcon,
   TopIcon,
-  CubeIcon,
   UploadIcon,
 } from './Icons';
 import Logo, { LogoMark } from './Logo';
@@ -40,7 +42,13 @@ import UploadDialog from './UploadDialog';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
-import { DEFAULT_VIEW, type CameraAction, type ObjectInfo, type ViewSettings } from './view';
+import {
+  DEFAULT_VIEW,
+  type CameraAction,
+  type NavMode,
+  type ObjectInfo,
+  type ViewSettings,
+} from './view';
 
 const LAST_DATASET = 'arinav:dataset';
 const LAST_MODE = 'arinav:mode';
@@ -110,6 +118,7 @@ export default function AriNavApp() {
   const [selection, setSelection] = useState<Selection | null>(null);
   const [info, setInfo] = useState<ObjectInfo>();
   const [camera, setCamera] = useState<CameraCommand | null>(null);
+  const [navMode, setNavMode] = useState<NavMode>('orbit');
   const [sidebarOpen, setSidebarOpen] = useState(wide);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [graph, setGraph] = useState<RoomGraphData | null>(null);
@@ -167,6 +176,29 @@ export default function AriNavApp() {
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
   const pipeline = usePipeline(dataset, buildingId, runRequest, { auto: autoHq });
 
+  // Bumped when the agent edits the building, to refetch the nav graph.
+  const [edits, setEdits] = useState(0);
+  const reloadModel = useCallback(() => {
+    if (!buildingId) return;
+    api
+      .buildingModel(buildingId)
+      .then(setModel)
+      .catch(() => notify('Could not reload the building after the change.'));
+    setEdits((n) => n + 1);
+  }, [buildingId, notify]);
+
+  // One scenario: when its revision moves (assistant Confirm, developer panel, another tab or the
+  // team agent), refetch the served model so its per-element `closed` flags match.
+  const scenarioRevision = nav.state?.revision;
+  const seenRevision = useRef<number | undefined>(undefined);
+  useEffect(() => {
+    const previous = seenRevision.current;
+    seenRevision.current = scenarioRevision;
+    if (previous !== undefined && scenarioRevision !== undefined && previous !== scenarioRevision) {
+      reloadModel();
+    }
+  }, [scenarioRevision, reloadModel]);
+
   const graphOn = settings.layers.graph;
   useEffect(() => {
     setGraph(null);
@@ -179,7 +211,7 @@ export default function AriNavApp() {
     return () => {
       live = false;
     };
-  }, [graphOn, buildingId]);
+  }, [graphOn, buildingId, edits]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
   const wasBuilding = useRef(false);
@@ -221,7 +253,14 @@ export default function AriNavApp() {
   }, [reviewId]);
 
   const showingHq = source === HQ_SOURCE && !!hq;
-  const viewModel = showingHq ? hq.building : model;
+  // The HQ model is baked, so only closures (painted red) follow the agent's edits there.
+  const hqBuilding = hq?.building;
+  const modelClosed = model?.closed;
+  const hqModel = useMemo(
+    () => hqBuilding && { ...hqBuilding, closed: modelClosed },
+    [hqBuilding, modelClosed],
+  );
+  const viewModel = showingHq && hqModel ? hqModel : model;
 
   useEffect(() => {
     api
@@ -425,6 +464,7 @@ export default function AriNavApp() {
     [selection, viewModel],
   );
   const selectedEndpoint = selection ? endpointFromSelection(selection) : null;
+  // Scenario closures (the one source); the served model's flags follow them via reloadModel.
   const closed = nav.state?.closed;
 
   const pickHint = !pick
@@ -476,6 +516,7 @@ export default function AriNavApp() {
         settings={settings}
         selection={selection}
         camera={camera}
+        navMode={navMode}
         insetLeft={isWide && sidebarOpen ? DOCKED_SIDEBAR_PX : 0}
         onSelect={handleSelect}
         route={nav.routeView}
@@ -578,6 +619,25 @@ export default function AriNavApp() {
       </div>
 
       <nav className="hud card" aria-label="Camera">
+        <button
+          className="icon-btn"
+          aria-pressed={navMode === 'orbit'}
+          onClick={() => setNavMode('orbit')}
+          aria-label="Orbit: drag to rotate"
+          title="Orbit — drag to rotate (right-drag or two fingers pan)"
+        >
+          <OrbitIcon />
+        </button>
+        <button
+          className="icon-btn"
+          aria-pressed={navMode === 'pan'}
+          onClick={() => setNavMode('pan')}
+          aria-label="Pan: drag to move"
+          title="Pan — drag to move (right-drag rotates)"
+        >
+          <PanIcon />
+        </button>
+        <span className="hud__sep" />
         <button className="icon-btn" onClick={() => runCamera('zoomIn')} aria-label="Zoom in">
           <PlusIcon />
         </button>
@@ -654,12 +714,12 @@ export default function AriNavApp() {
         buildingId={buildingId}
         model={viewModel}
         onSelect={selectFromList}
+        onBuildingChanged={reloadModel}
       />
 
       <UploadDialog
         open={uploadOpen}
         datasets={datasets}
-        current={dataset}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />

@@ -13,12 +13,21 @@ from pydantic import BaseModel, Field
 from shapely.geometry import Polygon
 
 from app.domain.building import BuildingFile
-from app.pipeline.agents.base import StageContext, agent_tool, as_json, retry_note, run_subagent
+from app.pipeline.agents.base import (
+    StageContext,
+    agent_tool,
+    as_json,
+    dataset_json,
+    retry_note,
+    run_subagent,
+    untrusted,
+)
 from app.pipeline.state import Issue, Patch, Severity, StageReport, Usage
 from app.pipeline.tools.checks import (
     ISSUE_CLASSES,
     inspect_entity,
     run_checks,
+    suspicious,
     translate_floor_ops,
 )
 from app.pipeline.tools.patching import apply_patch, deterministic_fixes, id_index
@@ -39,6 +48,7 @@ checked by deterministic rules. Your job: resolve every open issue.
 - Work class by class, highest severity first. Re-run checks after a batch of fixes.
 - When you learn something reusable about this data source, store it with `record_quirk`.
 Finish with the structured report once no issue is left open."""
+INJECTION_CLASSES = ("suspicious_id", "suspicious_text")
 
 
 class PatchOp(BaseModel):
@@ -160,7 +170,7 @@ def _tools(session: _Session) -> list[Any]:
             limit: Maximum number of issues to return.
         """
         issues = [i for i in session.open_issues() if issue_class in (None, i.issue_class)]
-        return as_json(
+        return dataset_json(
             {
                 "open_by_class": session.open_by_class(),
                 "issues": [i.model_dump(exclude={"status", "resolution"}) for i in issues[:limit]],
@@ -182,9 +192,9 @@ def _tools(session: _Session) -> list[Any]:
             entity_id: The entity id.
         """
         try:
-            return as_json(inspect_entity(session.building(), entity_id))
+            return dataset_json(inspect_entity(session.building(), entity_id))
         except KeyError:
-            return f"Unknown id: {entity_id}"
+            return untrusted(f"Unknown id: {entity_id}")
 
     @agent_tool
     def entity_pointer(entity_ids: list[str]) -> str:
@@ -194,7 +204,7 @@ def _tools(session: _Session) -> list[Any]:
             entity_ids: Ids to look up.
         """
         index = id_index(session.doc)
-        return as_json({i: index.get(i) for i in entity_ids})
+        return dataset_json({i: index.get(i) for i in entity_ids})
 
     @agent_tool
     def apply_patch_ops(
@@ -212,8 +222,8 @@ def _tools(session: _Session) -> list[Any]:
         try:
             raw_ops = [op.to_rfc6902() for op in ops]
         except ValueError as exc:
-            return as_json({"ok": False, "errors": [str(exc)]})
-        return as_json(session.patch(raw_ops, reason, issue_ids, issue_class, author="agent"))
+            return dataset_json({"ok": False, "errors": [str(exc)]})
+        return dataset_json(session.patch(raw_ops, reason, issue_ids, issue_class, author="agent"))
 
     @agent_tool
     def translate_floor(
@@ -229,7 +239,7 @@ def _tools(session: _Session) -> list[Any]:
             issue_ids: Issues this resolves.
         """
         ops = translate_floor_ops(session.doc, floor_id, dx, dy)
-        return as_json(session.patch(ops, reason, issue_ids, "floor_misalignment", "agent"))
+        return dataset_json(session.patch(ops, reason, issue_ids, "floor_misalignment", "agent"))
 
     @agent_tool
     def trim_overlap(
@@ -255,7 +265,7 @@ def _tools(session: _Session) -> list[Any]:
         assert isinstance(trimmed, Polygon)
         ring = [[round(x, 4), round(y, 4)] for x, y in list(trimmed.exterior.coords)[:-1]]
         op = {"op": "replace", "path": f"{index[trim_space_id]}/polygon", "value": ring}
-        return as_json(session.patch([op], reason, issue_ids, "overlapping_spaces", "agent"))
+        return dataset_json(session.patch([op], reason, issue_ids, "overlapping_spaces", "agent"))
 
     @agent_tool
     def accept_issue(issue_ids: list[str], reason: str) -> str:
@@ -276,14 +286,14 @@ def _tools(session: _Session) -> list[Any]:
                 issue.status, issue.resolution = "accepted", reason
                 done.append(issue_id)
         session.store.write_issues(ctx.location_id, list(session.issues.values()))
-        return as_json(
+        return dataset_json(
             {"accepted": done, "rejected": rejected, "open_by_class": session.open_by_class()}
         )
 
     @agent_tool
     def rerun_checks() -> str:
         """Re-run all checks on the cleaned building and update issue statuses."""
-        return as_json(session.recheck())
+        return dataset_json(session.recheck())
 
     @agent_tool
     def record_quirk(issue_class: str, lesson: str) -> str:
@@ -293,6 +303,8 @@ def _tools(session: _Session) -> list[Any]:
             issue_class: Issue class the lesson is about.
             lesson: What to expect and how to fix it.
         """
+        if suspicious(lesson) is not None:
+            return "rejected: lessons must describe the data, not give instructions"
         ctx.workspace.memory.record(
             session.building().building.source, issue_class, lesson, ctx.run_id
         )
@@ -325,11 +337,16 @@ def run(ctx: StageContext) -> StageReport:
     if not ctx.offline and session.open_issues():
         assert ctx.client is not None
         source = session.building().building.source
-        quirks = ctx.workspace.memory.quirks(source)
+        # Lessons are replayed into later runs, so one injected lesson must not persist.
+        quirks = [
+            q
+            for q in ctx.workspace.memory.quirks(source)
+            if suspicious(str(q.get("lesson", ""))) is None
+        ]
         user = (
-            f"Building {ctx.location_id} (source: {source}). Open issues by class: "
-            f"{session.open_by_class()}.\nLessons from earlier runs on this source: "
-            f"{quirks or 'none'}.{retry_note(ctx)}"
+            f"Building {ctx.location_id}. Open issues by class: "
+            f"{session.open_by_class()}.\nSource and lessons from earlier runs on it:\n"
+            f"{dataset_json({'source': source, 'lessons': quirks})}{retry_note(ctx)}"
         )
         report, usage = run_subagent(
             ctx.client,
@@ -347,6 +364,9 @@ def run(ctx: StageContext) -> StageReport:
 
     statuses = [i.status for i in session.issues.values()]
     still_open = session.open_issues()
+    # Neutralised or not, possible injections always reach a human (orchestrator.decide).
+    flagged = [i for i in session.issues.values() if i.issue_class in INJECTION_CLASSES]
+    warnings = [f"[warning] possible prompt injection ({i.status}): {i.message}" for i in flagged]
     errors = [i for i in still_open if i.severity == Severity.ERROR]
     # Offline nobody can work through the warnings, so only errors block the run.
     blocking = errors if ctx.offline else [i for i in still_open if i.severity != Severity.INFO]
@@ -362,8 +382,11 @@ def run(ctx: StageContext) -> StageReport:
             "open_errors": len(errors),
             "patches": session.patch_count,
             "open_by_class": session.open_by_class(),
+            "suspicious_text": [i.id for i in flagged],
         },
-        open_issues=[f"[{i.severity}] {i.message}" for i in still_open[:20]] + concerns,
+        open_issues=warnings[:20]
+        + [f"[{i.severity}] {i.message}" for i in still_open[:20] if i not in flagged]
+        + concerns,
         artifacts=["building.json", "issues.json", "patches.json"],
         usage=usage,
     )

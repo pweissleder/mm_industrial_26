@@ -19,13 +19,31 @@ class ChatRequest(BaseModel):
     )
 
 
+class GuardrailInfo(BaseModel):
+    category: str = Field(description="off_topic, prompt_injection or unsafe.")
+    reason: str
+    source: str = Field(description="Which layer blocked the message: rules or classifier.")
+
+
 class ChatResponse(BaseModel):
     reply: str
     thread_id: str
+    guardrail: GuardrailInfo | None = Field(
+        default=None, description="Set when the input guardrail rejected the message."
+    )
+    building_changed: bool = Field(
+        default=False, description="The agent edited the building; refetch its model and graph."
+    )
 
 
 class DatasetList(BaseModel):
     datasets: list[str]
+
+
+class DatasetAvailability(BaseModel):
+    dataset: str
+    available: bool = Field(description="True if a new dataset can be created under this name.")
+    reason: str | None = Field(default=None, description="Why the name can't be used.")
 
 
 class IngestionRequest(BaseModel):

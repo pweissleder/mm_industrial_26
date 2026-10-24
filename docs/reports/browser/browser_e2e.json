@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-24T20:41:36.079Z",
+ "generated": "2026-10-24T22:07:14.535Z",
  "base": "http://localhost:4321",
  "live": false,
  "passed": 10,
@@ -8,7 +8,7 @@
   {
    "name": "app_loads",
    "pass": true,
-   "ms": 2656,
+   "ms": 3307,
    "detail": {
     "buildings": 40
    }
@@ -16,7 +16,7 @@
   {
    "name": "open_campus_building",
    "pass": true,
-   "ms": 2070,
+   "ms": 2325,
    "detail": {
     "name": "Laborgebäude 025"
    }
@@ -24,7 +24,7 @@
   {
    "name": "sidebar_search_room",
    "pass": true,
-   "ms": 64,
+   "ms": 89,
    "detail": {
     "hits": 50
    }
@@ -32,7 +32,7 @@
   {
    "name": "developer_route_multifloor_to_exit_door",
    "pass": true,
-   "ms": 3100,
+   "ms": 3338,
    "detail": {
     "start": "Corridor 3.01",
     "target": "Exit from Corridor 0.01",
@@ -44,19 +44,19 @@
   {
    "name": "nearest_exit_button",
    "pass": true,
-   "ms": 82,
+   "ms": 70,
    "detail": null
   },
   {
    "name": "scenario_close_select_and_reset",
    "pass": true,
-   "ms": 1393,
+   "ms": 1567,
    "detail": null
   },
   {
    "name": "factory_precision_route_and_asset",
    "pass": true,
-   "ms": 5686,
+   "ms": 5286,
    "detail": {
     "target": "CNC mill H-A1-A",
     "official_m": 35.66,
@@ -67,13 +67,13 @@
   {
    "name": "nav_graph_layer_loads",
    "pass": true,
-   "ms": 1835,
+   "ms": 1861,
    "detail": null
   },
   {
    "name": "assistant_mode_state",
    "pass": true,
-   "ms": 608,
+   "ms": 538,
    "detail": {
     "status": "Assistant offline"
    }

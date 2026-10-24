@@ -12,6 +12,7 @@ import {
   api,
   type AssistantStatus,
   type ConfirmResponse,
+  type GuardrailInfo,
   type HealthResponse,
   type Proposal,
   type TurnResponse,
@@ -41,12 +42,20 @@ type Entry =
       role: 'assistant';
       text: string;
       turn?: TurnResponse;
+      /** Set when the team agent's input guardrail produced this reply. */
+      guardrail?: GuardrailInfo | null;
       audio?: { pcm: string; rate: number };
     }
   | { id: number; role: 'proposal'; proposal: Proposal; state: ProposalState }
   | { id: number; role: 'notice'; text: string };
 
 type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never) : never;
+
+const GUARDRAIL_LABELS: Record<GuardrailInfo['category'], string> = {
+  off_topic: 'off-topic',
+  prompt_injection: 'prompt injection',
+  unsafe: 'unsafe request',
+};
 
 export interface Draft {
   text: string;
@@ -79,6 +88,8 @@ interface Props {
   /** The shown building; rooms and assets it names in replies become links. */
   model?: BuildingModel | null;
   onSelect?: (sel: Selection) => void;
+  /** The agent changed the building; reload it so the 3D view shows the edit. */
+  onBuildingChanged?: () => void;
 }
 
 /** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
@@ -107,6 +118,7 @@ const SUGGESTIONS = [
   'Where is the nearest fire extinguisher?',
   'Route from the lobby to the 3D printer',
   'Which rooms are on floor 1?',
+  'Close the lift and route me to floor 1 step-free',
 ];
 
 const WAITING = [
@@ -165,6 +177,7 @@ export default function ChatDock({
   buildingId = null,
   model = null,
   onSelect,
+  onBuildingChanged,
 }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [input, setInput] = useState('');
@@ -241,9 +254,10 @@ export default function ChatDock({
 
   async function sendLegacy(text: string) {
     try {
-      const { reply, thread_id } = await api.chat(text, threadId, buildingId);
+      const { reply, thread_id, guardrail, building_changed } = await api.chat(text, threadId, buildingId);
       setThreadId(thread_id);
-      push({ role: 'assistant', text: reply });
+      if (building_changed) onBuildingChanged?.();
+      push({ role: 'assistant', text: reply, guardrail });
     } catch {
       setError('The building is not answering. Is the backend running?');
     }
@@ -477,6 +491,17 @@ export default function ChatDock({
                       <MicIcon width={13} height={13} className="chat__voice-mark" />
                     )}
                     {m.text}
+                  </li>
+                );
+              }
+              if (m.guardrail) {
+                return (
+                  <li key={m.id} className="chat__msg chat__msg--assistant chat__msg--blocked">
+                    {m.text}
+                    <span className="chat__flag" title={m.guardrail.reason}>
+                      Rejected by guidelines ·{' '}
+                      {GUARDRAIL_LABELS[m.guardrail.category] ?? m.guardrail.category}
+                    </span>
                   </li>
                 );
               }

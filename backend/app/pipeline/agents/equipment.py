@@ -13,7 +13,13 @@ from statistics import median
 from pydantic import BaseModel, Field
 
 from app.domain.building import BuildingFile
-from app.pipeline.agents.base import StageContext, agent_tool, as_json, retry_note, run_subagent
+from app.pipeline.agents.base import (
+    StageContext,
+    agent_tool,
+    dataset_json,
+    retry_note,
+    run_subagent,
+)
 from app.pipeline.state import StageReport, Usage
 from app.pipeline.store import AssetLibrary
 from app.pipeline.tools.geo3d.assets import AssetPlacement, place_assets
@@ -103,7 +109,7 @@ def run(ctx: StageContext) -> StageReport:
         @agent_tool
         def asset_types() -> str:
             """All asset types of this building with counts, footprints, heights, library status."""
-            return as_json(table)
+            return dataset_json(table)
 
         review, usage = run_subagent(
             ctx.client,

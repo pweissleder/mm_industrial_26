@@ -10,9 +10,19 @@ export interface HealthResponse {
   tracing_enabled: boolean;
 }
 
+/** Set on a reply when the backend's input guardrail rejected the message. */
+export interface GuardrailInfo {
+  category: 'off_topic' | 'prompt_injection' | 'unsafe';
+  reason: string;
+  source: 'rules' | 'classifier';
+}
+
 export interface ChatResponse {
   reply: string;
   thread_id: string;
+  guardrail?: GuardrailInfo | null;
+  /** The agent edited the building (closures, things added/moved/removed, doors). */
+  building_changed: boolean;
 }
 
 export interface IngestionResponse {
@@ -39,6 +49,12 @@ export interface BuildingSummary {
 export interface DatasetFile {
   name: string;
   size_bytes: number;
+}
+
+export interface DatasetAvailability {
+  dataset: string;
+  available: boolean;
+  reason: string | null;
 }
 
 export interface UploadResponse {
@@ -572,10 +588,13 @@ export const api = {
     request<{ files: DatasetFile[] }>(`/datasets/${encodeURIComponent(dataset)}/files`).then(
       (r) => r.files,
     ),
+  datasetAvailability: (dataset: string) =>
+    request<DatasetAvailability>(`/datasets/${encodeURIComponent(dataset)}/availability`),
+  /** Creates a new dataset; fails with 409 if the name is already taken. */
   upload: (dataset: string, files: File[]) => {
     const body = new FormData();
     for (const f of files) body.append('files', f, f.name);
-    return request<UploadResponse>(`/datasets/${encodeURIComponent(dataset)}/files`, {
+    return request<UploadResponse>(`/datasets/${encodeURIComponent(dataset)}/files?new=true`, {
       method: 'POST',
       body,
     });

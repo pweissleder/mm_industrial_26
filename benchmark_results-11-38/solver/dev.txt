@@ -1,0 +1,10 @@
+  errand                         19 / 19
+  floor_area_total               31 / 31
+  largest_room                   20 / 20
+  room_stacked                    9 / 9
+  shared_walls_count             24 / 24
+  step_free_reachable_count       1 / 1
+  straight_line_3d               13 / 13
+  what_if_door                    2 / 2
+  wide_delivery_count            19 / 19
+  ALL 138/138  (18s)

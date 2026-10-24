@@ -30,3 +30,10 @@ class NavgraphNavigator:
         if name in _HIDDEN_TOOLS:
             return json.dumps({"error": "unknown_tool"})
         return self._bi.call_json(name, args)
+
+    @property
+    def version(self) -> int:
+        return self._bi.b.version
+
+    def snapshot(self) -> dict[str, Any]:
+        return self._bi.b.to_dict()

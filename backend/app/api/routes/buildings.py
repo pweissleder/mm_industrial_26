@@ -1,9 +1,9 @@
 from typing import Any
 
 import networkx as nx
-from fastapi import APIRouter, HTTPException, Request, status
+from fastapi import APIRouter, HTTPException, status
 
-from app.api.deps import RepositoryDep
+from app.api.deps import NavigatorsDep, RepositoryDep
 from app.api.schemas import BuildingDetail, BuildingSummary, FloorOut
 from app.domain.building import BuildingFile
 from app.storage import BuildingRepository, StoredBuilding
@@ -54,27 +54,24 @@ def get_building(building_id: str, repository: RepositoryDep) -> BuildingDetail:
     )
 
 
+def _live(navigators: NavigatorsDep, building_id: str) -> dict[str, Any]:
+    """The building with the agent's edits (closures, moved/added things, new doors)."""
+    navigator = navigators.get(building_id)
+    if navigator is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"Building '{building_id}' not found")
+    return navigator.snapshot()
+
+
 @router.get("/{building_id}/model", response_model=BuildingFile)
-def get_building_model(building_id: str, repository: RepositoryDep) -> BuildingFile:
-    """The full building (floors, spaces, openings, connectors, assets), e.g. for 3D rendering."""
-    return _get(repository, building_id).data
+def get_building_model(building_id: str, navigators: NavigatorsDep) -> dict[str, Any]:
+    """The full building with live edits and closures, e.g. for 3D rendering."""
+    return _live(navigators, building_id)
 
 
 @router.get("/{building_id}/graph")
-def get_building_graph(
-    building_id: str, repository: RepositoryDep, request: Request
-) -> dict[str, Any]:
+def get_building_graph(building_id: str, navigators: NavigatorsDep) -> dict[str, Any]:
     """The level-1 navgraph RoomGraph as node-link JSON, for the debug graph view."""
-    building = Building.from_dict(_get(repository, building_id).data.model_dump())
-    # Closures come from the one scenario (NavigationService), so the overlay matches AriNav.
-    navigation = getattr(request.app.state, "navigation", None)
-    for element in navigation.closed_elements(building_id) if navigation else []:
-        if (
-            element in building.spaces
-            or element in building.openings
-            or element in building.connectors
-        ):
-            building.set_closed(element, True)
+    building = Building.from_dict(_live(navigators, building_id))
     graph = RoomGraph(building).g
     cost = OrganizerCost()
     for a, b, e in graph.edges(data=True):

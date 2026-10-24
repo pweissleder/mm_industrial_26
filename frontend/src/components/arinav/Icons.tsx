@@ -164,3 +164,17 @@ export const CodeIcon = (p: P) => (
     <path d="m8.5 7-5 5 5 5M15.5 7l5 5-5 5" />
   </Icon>
 );
+
+export const OrbitIcon = (p: P) => (
+  <Icon {...p}>
+    <ellipse cx="12" cy="12" rx="9" ry="4" />
+    <path d="M17.5 4.5 21 8l-3.5 3.5" transform="rotate(20 12 12)" />
+    <circle cx="12" cy="12" r="1.6" />
+  </Icon>
+);
+export const PanIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M12 3v18M3 12h18" />
+    <path d="m9 6 3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3" />
+  </Icon>
+);

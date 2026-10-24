@@ -8,7 +8,7 @@ stage never just proceeds, and retries are capped.
 
 from anthropic import Anthropic
 
-from app.pipeline.agents.base import AgentError, as_json, run_structured
+from app.pipeline.agents.base import AgentError, dataset_json, run_structured
 from app.pipeline.state import Decision, Stage, StageReport, Usage
 
 # Gates where the orchestrator is consulted even when the stage passed.
@@ -71,6 +71,16 @@ def decide(
     offline_review_on_failure: bool = True,
 ) -> tuple[Decision, Usage]:
     """Gate decision for `report`; deterministic offline and for routine passes."""
+    if report.metrics.get("suspicious_text"):
+        # Decided here, not by a model: the report quotes the very data that is in question.
+        return Decision(
+            action="ask_human",
+            reason=(
+                "Possible prompt injection in the uploaded data: text fields look like "
+                "instructions or scripts. They were replaced with neutral values where "
+                "possible; review them before the run continues."
+            ),
+        ), Usage()
     if client is None:
         if report.status == "failed" and offline_review_on_failure:
             # Deterministic stages give the same result again, so a retry can't help.
@@ -81,7 +91,7 @@ def decide(
 
     compact = report.model_dump(mode="json", exclude={"usage", "finished_at"})
     user = (
-        f"Stage report:\n{as_json(compact, limit=12_000)}\n"
+        f"Stage report:\n{dataset_json(compact, limit=12_000)}\n"
         f"Attempts so far: {attempts}. Max retries per stage: {max_retries}. "
         f"Allowed retry targets: {RETRY_TARGETS.get(report.stage, [report.stage])}."
     )

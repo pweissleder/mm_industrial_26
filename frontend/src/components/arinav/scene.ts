@@ -22,11 +22,12 @@ import {
   type Floor,
   type Point,
   type Selection,
+  type SelectionKind,
   type Space,
 } from '../../lib/building';
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import { routeDrawing } from './routeGeometry';
-import type { CameraAction, ObjectInfo, ViewSettings } from './view';
+import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 
 const SLAB = 0.15;
 const WALL_T = 0.1;
@@ -34,6 +35,10 @@ const WALL_INSET = 0.06;
 const EXPLODE_GAP = 12;
 const GHOST_OPACITY = 0.12;
 const ACCENT = new THREE.Color('#fb7928');
+/** Selection colour: a vivid magenta that no room, asset or connector colour comes close to. */
+const SELECT = new THREE.Color('#ec1c7f');
+/** Rooms, doors, stairs and lifts the agent has closed. */
+const CLOSED_COLOR = '#e5484d';
 const OPEN_TYPES = new Set(['hall', 'corridor']);
 /** Height of the route line above the floor slab. */
 const ROUTE_LIFT = 0.35;
@@ -140,15 +145,30 @@ export class BuildingScene {
   private readonly edgeTip: CSS2DObject;
   /** Assets of the selected room, painted along with it. */
   private litAssets: THREE.Object3D[] = [];
-  private readonly roomAssetMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.6, flatShading: true });
+  // A selected room's equipment, a lighter tint of the selection colour.
+  private readonly roomAssetMat = new THREE.MeshStandardMaterial({
+    color: '#f5b3d2',
+    roughness: 0.6,
+    flatShading: true,
+  });
   private readonly pin: CSS2DObject;
   private readonly hoverTip: CSS2DObject;
   private readonly raycaster = new THREE.Raycaster();
   private readonly resizeObserver: ResizeObserver;
   private readonly unitBox = new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0);
   // flatShading: the pipeline's glTF ships no normals, so smooth shading would light it black.
-  private readonly selectMat = new THREE.MeshStandardMaterial({ color: ACCENT, roughness: 0.6, flatShading: true });
-  private readonly hoverMat = new THREE.MeshStandardMaterial({ color: '#ffb27f', roughness: 0.7, flatShading: true });
+  private readonly selectMat = new THREE.MeshStandardMaterial({
+    color: SELECT,
+    emissive: SELECT,
+    emissiveIntensity: 0.35,
+    roughness: 0.5,
+    flatShading: true,
+  });
+  private readonly hoverMat = new THREE.MeshStandardMaterial({
+    color: '#f7a3c9',
+    roughness: 0.7,
+    flatShading: true,
+  });
   // Overlays painted over an element's own material: closed > diagnosis > highlight.
   private readonly closedMat = new THREE.MeshStandardMaterial({
     color: '#d93b3b',
@@ -264,7 +284,9 @@ export class BuildingScene {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
     this.controls.maxPolarAngle = Math.PI * 0.495;
-    this.controls.screenSpacePanning = true;
+    // Pan along the ground, as map and BIM viewers do, so dragging never lifts the view.
+    this.controls.screenSpacePanning = false;
+    this.setNavMode('orbit');
     this.controls.addEventListener('start', () => (this.fly = null));
 
     const el = this.renderer.domElement;
@@ -305,6 +327,7 @@ export class BuildingScene {
     this.clear();
     this.model = model;
     if (model) this.build(model);
+    this.markClosed();
     this.applySettings();
     this.applyOverlays();
     this.buildRoute();
@@ -322,6 +345,7 @@ export class BuildingScene {
     this.model = model;
     this.hq = true;
     this.buildHq(gltf.scene, model);
+    this.markClosed();
     this.applySettings();
     this.applyOverlays();
     this.buildRoute();
@@ -355,6 +379,7 @@ export class BuildingScene {
     this.settings = settings;
     if (rebuildConnectors && this.model && !this.hq) {
       this.buildConnectors(this.model);
+      this.markClosed(['connector']);
       this.applyOverlays();
     }
     this.applySettings();
@@ -403,19 +428,21 @@ export class BuildingScene {
     for (const a of this.litAssets) this.restoreMaterial(a);
     this.litAssets = [];
     this.selection = selection;
-    this.highlight.clear();
+    this.clearHighlight();
     this.pin.visible = false;
     const obj = selection && this.lookup(selection);
     if (obj) {
       this.paint(obj, this.selectMat);
       const box = new THREE.Box3().setFromObject(obj);
-      const top = box.getCenter(new THREE.Vector3());
-      top.y = box.max.y + 0.3;
-      this.pin.position.copy(top);
+      let top = box.max.y;
+      if (selection.kind === 'space') top = this.addRoomVolume(selection.id, box);
+      else if (selection.kind !== 'connector') this.addBoxOutline(box);
+      const anchor = box.getCenter(new THREE.Vector3());
+      anchor.y = top + 0.3;
+      this.pin.position.copy(anchor);
       this.pin.element.textContent = obj.userData.title ?? '';
       this.pin.visible = true;
       if (selection.kind === 'space') {
-        this.addOutline(obj);
         for (const a of this.model?.assets ?? []) {
           const mesh = a.space_id === selection.id && this.objects.get(`asset:${a.id}`);
           if (mesh) this.litAssets.push(mesh);
@@ -425,6 +452,25 @@ export class BuildingScene {
       if (fly) this.flyTo(box);
     }
     this.needsRender = true;
+  }
+
+  /**
+   * Orbit: left drag / one finger rotates; right or middle drag, shift + drag and two
+   * fingers pan. Pan swaps the primary drag, the usual hand tool of 3D viewers.
+   */
+  setNavMode(mode: NavMode) {
+    const { MOUSE, TOUCH } = THREE;
+    const pan = mode === 'pan';
+    this.controls.mouseButtons = {
+      LEFT: pan ? MOUSE.PAN : MOUSE.ROTATE,
+      MIDDLE: MOUSE.PAN,
+      RIGHT: pan ? MOUSE.ROTATE : MOUSE.PAN,
+    };
+    this.controls.touches = {
+      ONE: pan ? TOUCH.PAN : TOUCH.ROTATE,
+      TWO: pan ? TOUCH.DOLLY_ROTATE : TOUCH.DOLLY_PAN,
+    };
+    this.renderer.domElement.dataset.nav = mode;
   }
 
   camera3d(action: CameraAction) {
@@ -456,7 +502,7 @@ export class BuildingScene {
     this.overlaid.clear();
     this.byId.clear();
     this.litAssets = [];
-    this.highlight.clear();
+    this.clearHighlight();
     this.pin.visible = false;
     for (const f of this.floors) for (const m of f.materials) m.dispose();
     this.root.traverse((o) => {
@@ -819,6 +865,28 @@ export class BuildingScene {
     }
   }
 
+  /** Paint closed elements red with their own material copy, so ghosting and selection still work. */
+  private markClosed(kinds: SelectionKind[] = ['space', 'opening', 'connector']) {
+    for (const id of this.model?.closed ?? []) {
+      for (const kind of kinds) {
+        const obj = this.objects.get(`${kind}:${id}`);
+        if (!obj) continue;
+        const fv = this.floors.find((f) => f.group.getObjectById(obj.id));
+        obj.userData.closed = true;
+        obj.traverse((o) => {
+          const base = o.userData.baseMaterial;
+          if (!(o instanceof THREE.Mesh) || !(base instanceof THREE.MeshStandardMaterial)) return;
+          const red = base.clone();
+          red.color.set(CLOSED_COLOR);
+          o.material = o.userData.baseMaterial = red;
+          o.userData.closed = true;
+          fv?.materials.push(red);
+        });
+        obj.userData.title = `${String(obj.userData.title ?? id).replace(/ \(closed\)$/, '')} (closed)`;
+      }
+    }
+  }
+
   private nearestEdgeAngle([px, py]: Point, polygon: Point[]): number {
     let best = Infinity;
     let angle = 0;
@@ -1062,7 +1130,9 @@ export class BuildingScene {
           | THREE.MeshStandardMaterial
           | undefined;
         if (!material || !mesh.userData.roomColor) continue;
-        material.color.set(s.colorBy === 'room' ? mesh.userData.roomColor : '#eef0f4');
+        material.color.set(
+          mesh.userData.closed ? CLOSED_COLOR : s.colorBy === 'room' ? mesh.userData.roomColor : '#eef0f4',
+        );
       }
     }
     // The model's stair/lift shafts span storeys, so they can't follow exploded floors.
@@ -1323,16 +1393,65 @@ export class BuildingScene {
     });
   }
 
-  private addOutline(obj: THREE.Object3D) {
-    if (!(obj instanceof THREE.Mesh)) return;
-    const edges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(obj.geometry, 30),
-      new THREE.LineBasicMaterial({ color: ACCENT, depthTest: false }),
+  private clearHighlight() {
+    this.highlight.traverse((o) => {
+      if (o instanceof THREE.Mesh || o instanceof THREE.LineSegments) {
+        o.geometry.dispose();
+        (o.material as THREE.Material).dispose();
+      }
+    });
+    this.highlight.clear();
+  }
+
+  /**
+   * A selected room: a translucent column over its footprint up to wall height, outlined
+   * on top of everything, so it stands out even under furniture. Returns the column's top.
+   */
+  private addRoomVolume(spaceId: string, box: THREE.Box3): number {
+    const space = this.model?.spaces.find((s) => s.id === spaceId);
+    const fv = this.floors.find((f) => f.floor.id === space?.floor_id);
+    if (!space || !fv || space.polygon.length < 3) {
+      this.addBoxOutline(box);
+      return box.max.y;
+    }
+    const height = Math.max(0.6, Math.min(this.settings.wallHeight, fv.floor.height_m - SLAB));
+    const shape = new THREE.Shape(space.polygon.map(([x, y]) => new THREE.Vector2(x, y)));
+    const geo = new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false });
+    geo.rotateX(-Math.PI / 2);
+    const volume = new THREE.Mesh(
+      geo,
+      new THREE.MeshBasicMaterial({
+        color: SELECT,
+        transparent: true,
+        opacity: 0.16,
+        depthWrite: false,
+        side: THREE.DoubleSide,
+      }),
     );
+    volume.raycast = () => {};
+    const outline = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geo, 30),
+      new THREE.LineBasicMaterial({ color: SELECT, depthTest: false, transparent: true, opacity: 0.9 }),
+    );
+    outline.renderOrder = 5;
+    // The slab's top is the floor surface, whichever floor offset (explode) applies.
+    volume.position.y = outline.position.y = box.max.y;
+    this.highlight.add(volume, outline);
+    return box.max.y + height;
+  }
+
+  /** A box around a selected asset or door, drawn through walls so it can't hide. */
+  private addBoxOutline(box: THREE.Box3) {
+    const padded = box.clone().expandByScalar(0.08);
+    const size = padded.getSize(new THREE.Vector3());
+    const cube = new THREE.BoxGeometry(size.x, size.y, size.z);
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(cube),
+      new THREE.LineBasicMaterial({ color: SELECT, depthTest: false, transparent: true, opacity: 0.9 }),
+    );
+    cube.dispose();
     edges.renderOrder = 5;
-    obj.updateWorldMatrix(true, false);
-    edges.applyMatrix4(obj.matrixWorld);
-    edges.position.y += 0.02;
+    padded.getCenter(edges.position);
     this.highlight.add(edges);
   }
 

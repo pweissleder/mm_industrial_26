@@ -36,13 +36,36 @@ def _alive(pid: int | None, boot: str | None) -> bool:
         return False
     if pid == os.getpid():
         return boot == BOOT_ID
+    if os.name == "nt":
+        return _alive_windows(pid)
     try:
         os.kill(pid, 0)
     except ProcessLookupError:
         return False
     except PermissionError:
         return True
+    except OSError:
+        return False
     return True
+
+
+def _alive_windows(pid: int) -> bool:
+    """Read-only check. On Windows `os.kill(pid, 0)` is TerminateProcess, not a probe: it
+    killed whatever process held that pid (e.g. the backend that owns a paused run)."""
+    import ctypes
+
+    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    process_query_limited_information, still_active, access_denied = 0x1000, 259, 5
+    handle = kernel32.OpenProcess(process_query_limited_information, False, pid)
+    if not handle:
+        return ctypes.get_last_error() == access_denied
+    try:
+        code = ctypes.c_ulong()
+        return bool(kernel32.GetExitCodeProcess(handle, ctypes.byref(code))) and (
+            code.value == still_active
+        )
+    finally:
+        kernel32.CloseHandle(handle)
 
 
 class RunNotFoundError(LookupError):

@@ -6,10 +6,12 @@ The AriNav UI (manual actions), the Claude assistant tools and voice all call th
 keeps a second copy. Restarting the backend clears scenarios (as the repository does today).
 
 The team's navgraph engine (Alex, `backend/navgraph`, `app.navigation.{base,navgraph_engine,registry}`)
-behind `/api/chat` and `/api/buildings/{id}/graph` reads the same repository and **mirrors** this
-scenario (`app.navigation.scenario_sync`): closures are copied in before every call and its write
-tools (`set_closed`, `add_door`, `move_asset`, builder tools, `save`) are not offered. The graph
-overlay shows the scenario closures. Routing answers in AriNav come from the vendored official
+behind `/api/chat`, `/api/buildings/{id}/model` and `/api/buildings/{id}/graph` reads the same
+repository and **shares** this scenario (`app.navigation.scenario_sync`): closures are copied in
+before every call and snapshot, and a `set_closed` by the navgraph agent is written through to
+`NavigationService.change` (which stays the authority and bumps the revision). Asset edits
+(`add_asset`, `move_asset`, `remove_asset`) stay in the navgraph copy and show in the served model;
+topology edits (`add_door`, builder tools, `save`) are not offered. Routing answers in AriNav come from the vendored official
 kit 1.1.0 router; navgraph is not used for them.
 
 Ownership (separate modules, separate tests):

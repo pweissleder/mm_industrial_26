@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from langchain_core.messages import HumanMessage
 
 from app.api.deps import ManagedAgentGraphDep
+from app.api.routes.chat import chat_response
 from app.api.schemas import ChatRequest, ChatResponse
 from app.tracing import graph_config
 
@@ -17,4 +18,4 @@ async def managed_agent_chat(body: ChatRequest, graph: ManagedAgentGraphDep) -> 
         {"messages": [HumanMessage(content=body.message)]},
         config=graph_config("managed_agent_chat", thread_id),
     )
-    return ChatResponse(reply=result["messages"][-1].text, thread_id=thread_id)
+    return chat_response(result, thread_id)

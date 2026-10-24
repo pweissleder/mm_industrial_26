@@ -4,7 +4,7 @@
   `NavigatorRegistry` behind the LangGraph `/chat` agent and the `/buildings/{id}/graph` overlay.
 - Phase A: `NavigationService` (official kit 1.1.0 router, precision router, search, nearest,
   scenario, benchmark operations, location) behind `/api/nav`, `/api/location` and the AriNav
-  assistant. Its scenario (closures + revision) is the only one; the navgraph navigators mirror it
+  assistant. Its scenario (closures + revision) is the only one; the navgraph navigators share it
   (see `app.navigation.scenario_sync`). Contract: docs/PHASE_A_INTERFACES.md.
 """
 

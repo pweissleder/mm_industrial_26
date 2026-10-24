@@ -1,0 +1,63 @@
+question_id,answer
+proc-factory-dev-010-H04,"You'll walk about 78.1 m in total.
+
+1. **Get the plant (8.66 m):** The closest plant is in Hall access 0.24 on the Ground floor.
+2. **Take it to Office 1.08 (69.43 m):** Office 1.08 is the largest office on Floor 1 at 28.95 m². From Hall access 0.24, go into Office corridor 0.13 and follow it about 35 m to the Office staircase. Take the stairs up to Floor 1, then walk along Office corridor 1.01 for about 17 m to Office 1.08.
+
+8.66 m + 69.43 m = 78.09 m
+
+Answer: 78.09"
+swiss-5097-H02,"The four storage rooms in Basement 1 add up to **14.66 m²**:
+
+| Storage room | Area |
+|---|---|
+| Storage -1.11 (apartment 3) | 4.17 m² |
+| Storage -1.05 (apartment 2) | 4.15 m² |
+| Storage -1.15 (apartment 4) | 3.17 m² |
+| Storage -1.03 (apartment 1) | 3.16 m² |
+| **Total** | **14.66 m²** |
+
+Answer: 14.66"
+proc-campus-dev-000-H01,"The largest office on Floor 3 is **Office 3.07**, at **41.28 m²**. The next biggest is Office 3.08 at 36.9 m².
+
+Answer: Office 3.07, 41.28 m²"
+osm-way27917482-H03,"The water will leak into **Generic room -1.04.018** in Basement 1. It sits directly below Generic room 00.04.032A, and the two rooms overlap by about 5.3 m².
+
+Answer: Generic room -1.04.018"
+swiss-203-H02,"Bedroom 2.12 (apartment 10) on Floor 2 shares at least 1 m of wall with **3 other rooms**:
+
+1. **Bathroom 2.16** (apartment 10): 3.09 m of shared wall
+2. **Bathroom 2.14** (apartment 10): 2.09 m
+3. **Living room 2.13** (apartment 10): 2.03 m
+
+None of these are corridors, stairwells or lifts, so all three count. Noise can also travel up and down: Bedroom 3.04 (apartment 13) is directly above it and Bedroom 1.30 (apartment 8) is directly below.
+
+Answer: 3"
+osm-way22744230-H03,"With Lift 1 out of service, a wheelchair user who comes in through the entrance into Stairwell N0320A can still reach **30 rooms on Floor 2** without using stairs or steps.
+
+Losing Lift 1 doesn't cut off Floor 2, because Lift 1 only runs between Basement 1 and the Ground floor. Lift 2 still goes up to Floor 2.
+
+The 30 rooms are 26 generic rooms and 4 toilets (N2320, N2320A, N2335 and N2335A).
+
+Answer: 30"
+osm-way27326387-H08,"The straight-line distance between the centres of Generic room 110 (Floor 1, at +3.0 m) and Generic room K12 (Basement 2, at −6.0 m) is **9.3 m**.
+
+Most of that distance is the 9 m height difference between the two floors. The two rooms are only a couple of metres apart across the floor plan. Keep in mind that the signal would have to pass through the Ground floor slab and the Basement 2 ceiling, so expect a weaker signal than the distance alone suggests.
+
+Answer: 9.3"
+osm-way27917482-H08,"I tested a new door between Corridor 02.06.001 and Corridor 2.402 on Floor 2, placed in the middle of their shared wall at about (43.32, −20.23). The building itself wasn't changed.
+
+With that door, no rooms on Floor 3 would get a walk out of the building that's more than 1 m shorter. Every Floor 3 room's quickest way to its nearest entrance stays the same.
+
+Answer: 0"
+proc-factory-dev-010-H03,"The machine can be delivered into **3 rooms** on the ground floor.
+
+It can get in: the entrance into Logistics zone H-C1 is 4.0 m wide with no step. From there it can reach these rooms without using stairs or steps and without passing through any door narrower than 1.1 m:
+
+1. Quality lab 0.23
+2. Server room 0.18
+3. Toilet 0.17
+
+This count leaves out corridors, aisles and halls like the logistics zone and main aisles. The other ground-floor rooms are behind doors narrower than 1.1 m or behind steps.
+
+Answer: 3"

@@ -28,7 +28,7 @@ opened afterwards.
 | App shell, 3D viewer, sidebar, uploads, ingestion, pipeline, storage | `frontend/src/components/arinav/*` (base), `backend/app/{ingestion,pipeline,storage,domain,agent}` | Team (unchanged except the wiring below) |
 | navgraph engine, `/api/chat` agent, graph overlay | `backend/navgraph`, `backend/app/navigation/{base,navgraph_engine,registry}.py`, `scene.ts` graph layer | Team (Alex) |
 | Navigation core: official kit 1.1.0 router (vendored, blob-pinned), precision router, search, nearest, scenario, nine benchmark operations, location | `backend/app/navigation/{service,response,search,location,kit,errors}.py`, `official/`, `ported/` | Phase A |
-| Scenario mirror for navgraph (one scenario) | `backend/app/navigation/scenario_sync.py` | Phase A |
+| Scenario sharing for navgraph (one scenario) | `backend/app/navigation/scenario_sync.py` | Phase A |
 | Assistant (Claude tool loop, dialog state, confirmation) and voice | `backend/app/assistant/` | Phase A |
 | HTTP | `backend/app/api/routes/{navigation,location,assistant}.py` | Phase A |
 | UI modules | `ChatDock.tsx` (assistant/voice dock, team links kept), `ChatReply.tsx`, `DevPanel.tsx`, `useNavigation.ts`, `useVoice.ts`, `routeGeometry.ts`, route overlay in `scene.ts`, `lib/{nav,voice,guidance}.ts`, `styles/arinav-phase-a.css`, `public/recorder.js` | Phase A |
@@ -41,7 +41,8 @@ Contracts: `docs/PHASE_A_INTERFACES.md` (API), `docs/PHASE_B_CONTRACT.md` (guida
 There are two route engines now: the **vendored official kit 1.1.0 router** (Phase A, behind all
 AriNav routes and the assistant) and **navgraph** (team, behind `/api/chat` and the graph
 overlay). Both read the single `BuildingRepository`; the scenario lives only in
-`NavigationService` and navgraph mirrors it read-only. AriNav's routing was not switched to
+`NavigationService`; navgraph shares it (its `set_closed` writes through, asset edits stay in the
+navgraph copy and the served model, topology edits are not offered). AriNav's routing was not switched to
 navgraph because the official router is the judges' code and is verified on all reference sets;
 switching would need an equivalence run first (`backend/navgraph_checks` + `scripts/nav_benchmark.py`
 on the same items). Open team decision: keep both, or consolidate on one engine after that run.

@@ -139,15 +139,28 @@ def test_confirmed_closure_is_the_one_scenario_for_all_consumers(
         state = client.get(f"/api/nav/{B}/state").json()
         assert state["closed"] == [LIFT] and state["revision"] == before["revision"] + 1
 
-        # The navgraph agent (team /chat engine) sees the same closure and cannot write its own.
+        # The navgraph agent (team /chat engine), the served model and the graph overlay see the
+        # same closure; topology edits are not offered there.
         navigator = client.app.state.navigators.get(B)  # type: ignore[attr-defined]
         assert LIFT in json.loads(navigator.call("building_overview", {}))["closed"]
-        assert "set_closed" not in {t["name"] for t in navigator.tool_schemas()}
-        refused = json.loads(navigator.call("set_closed", {"element": LIFT, "closed": False}))
-        assert refused["error"] == "read_only"
-        # The graph overlay shows the scenario closure too.
+        tools = {t["name"] for t in navigator.tool_schemas()}
+        assert "set_closed" in tools and "add_door" not in tools
+        blocked = json.loads(navigator.call("add_door", {"first": "a", "second": "b"}))
+        assert blocked["error"] == "not_available"
+        model = client.get(f"/api/buildings/{B}/model").json()
+        assert next(c for c in model["vertical_connectors"] if c["id"] == LIFT)["closed"] is True
         graph = client.get(f"/api/buildings/{B}/graph").json()
         assert LIFT in graph["graph"]["closed"]
+
+        # A closure made by the navgraph agent is written through to the one scenario.
+        corridor = f"{B}-F1-S001"
+        navigator.call("set_closed", {"element": corridor, "closed": True})
+        shared = client.get(f"/api/nav/{B}/state").json()
+        assert shared["closed"] == sorted([LIFT, corridor])
+        assert shared["revision"] == state["revision"] + 1
+        navigator.call("set_closed", {"element": corridor, "closed": False})
+        state = client.get(f"/api/nav/{B}/state").json()
+        assert state["closed"] == [LIFT]
 
         # A step-free route from F1 now has no lift: the router says so, nothing is invented.
         route = client.post(

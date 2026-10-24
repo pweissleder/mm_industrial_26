@@ -42,6 +42,7 @@ class Space:
     ref: str | None
     polygon_coords: list[list[float]]
     synthetic: bool = False
+    closed: bool = False           # closed by set_closed until reopened
     # filled in by Building.index()
     opening_ids: list[str] = field(default_factory=list)
     stop_ids: list[str] = field(default_factory=list)      # connector ids stopping here
@@ -92,6 +93,7 @@ class Opening:
     width_m: float
     step_free: bool
     synthetic: bool = False
+    closed: bool = False
 
     @property
     def is_entrance(self) -> bool:
@@ -111,6 +113,7 @@ class Connector:
     stops: list[tuple[str, str]]
     step_free: bool
     synthetic: bool = False
+    closed: bool = False
 
 
 @dataclass
@@ -137,7 +140,6 @@ class Building:
         self.openings: dict[str, Opening] = {o.id: o for o in openings}
         self.connectors: dict[str, Connector] = {c.id: c for c in connectors}
         self.assets: dict[str, Asset] = {a.id: a for a in assets}
-        self.closed: set[str] = set()      # ids of closed spaces, openings or connectors
         self.version = 0
         self.index()
 
@@ -154,20 +156,20 @@ class Building:
                   for f in d["floors"]]
         levels = {f.id: f.level for f in floors}
         spaces = [Space(s["id"], s["floor_id"], s["type"], s["room_type"], s["name"], s.get("ref"),
-                        s["polygon"], s.get("synthetic", False)) for s in d["spaces"]]
+                        s["polygon"], s.get("synthetic", False), s.get("closed", False)) for s in d["spaces"]]
         openings = [Opening(o["id"], o["floor_id"], tuple(o["space_ids"]), o["kind"], tuple(o["position"]),
-                            float(o["width_m"]), bool(o["step_free"]), o.get("synthetic", False))
+                            float(o["width_m"]), bool(o["step_free"]), o.get("synthetic", False), o.get("closed", False))
                     for o in d["openings"]]
         connectors = []
         for v in d["vertical_connectors"]:
             stops = sorted(zip(v["floor_ids"], v["space_ids"]), key=lambda st: levels[st[0]])
             connectors.append(Connector(v["id"], v["kind"], v["name"], stops, bool(v["step_free"]),
-                                        v.get("synthetic", False)))
+                                        v.get("synthetic", False), v.get("closed", False)))
         assets = [Asset(a["id"], a["name"], a["type"], a["category"], a["space_id"], a["floor_id"],
                         tuple(a["position"]), a.get("footprint", {}), a.get("source", "dataset"))
                   for a in d.get("assets", [])]
         b = cls(d.get("building", {}), floors, spaces, openings, connectors, assets)
-        for eid in d.get("closed", []):        # lasting closures written by to_dict()
+        for eid in d.get("closed", []):        # older files kept closures only in this list
             b.set_closed(eid)
         return b
 
@@ -176,19 +178,19 @@ class Building:
             "building": self.meta,
             "floors": [vars(f).copy() for f in self.floors.values()],
             "spaces": [{"id": s.id, "floor_id": s.floor_id, "type": s.type, "room_type": s.room_type,
-                        "name": s.name, "ref": s.ref, "polygon": s.polygon_coords, "synthetic": s.synthetic}
+                        "name": s.name, "ref": s.ref, "polygon": s.polygon_coords, "synthetic": s.synthetic, "closed": s.closed}
                        for s in self.spaces.values()],
             "openings": [{"id": o.id, "floor_id": o.floor_id, "space_ids": list(o.space_ids), "kind": o.kind,
                           "position": list(o.position), "width_m": o.width_m, "step_free": o.step_free,
-                          "synthetic": o.synthetic} for o in self.openings.values()],
+                          "synthetic": o.synthetic, "closed": o.closed} for o in self.openings.values()],
             "vertical_connectors": [{"id": c.id, "kind": c.kind, "name": c.name,
                                      "floor_ids": [f for f, _ in c.stops], "space_ids": [s for _, s in c.stops],
-                                     "step_free": c.step_free, "synthetic": c.synthetic}
+                                     "step_free": c.step_free, "synthetic": c.synthetic, "closed": c.closed}
                                     for c in self.connectors.values()],
             "assets": [{"id": a.id, "name": a.name, "category": a.category, "type": a.type,
                         "space_id": a.space_id, "floor_id": a.floor_id, "position": list(a.position),
                         "footprint": a.footprint, "source": a.source} for a in self.assets.values()],
-            "closed": sorted(self.closed),
+            "closed": sorted(self.closed),     # summary of the per-element flags above
         }
 
     def save(self, path: str | Path) -> None:
@@ -235,14 +237,26 @@ class Building:
     def entrances(self) -> list[Opening]:
         return [o for o in self.openings.values() if o.is_entrance]
 
+    def element(self, element_id: str) -> Space | Opening | Connector:
+        el = self.spaces.get(element_id) or self.openings.get(element_id) or self.connectors.get(element_id)
+        if el is None:
+            raise KeyError(element_id)
+        return el
+
+    @property
+    def closed(self) -> set[str]:
+        """Ids of closed spaces, openings and connectors (the flags on the elements are the truth)."""
+        return {e.id for d in (self.spaces, self.openings, self.connectors) for e in d.values() if e.closed}
+
     def is_closed(self, element_id: str) -> bool:
-        return element_id in self.closed
+        try:
+            return self.element(element_id).closed
+        except KeyError:
+            return False
 
     # ---- edits (every edit bumps version) ---------------------------------------------------
     def set_closed(self, element_id: str, closed: bool = True) -> None:
-        if not (element_id in self.spaces or element_id in self.openings or element_id in self.connectors):
-            raise KeyError(element_id)
-        (self.closed.add if closed else self.closed.discard)(element_id)
+        self.element(element_id).closed = closed
         self.version += 1
 
     def add_opening(self, opening: Opening) -> Opening:
@@ -264,6 +278,11 @@ class Building:
         space = self.spaces[space_id]
         asset.space_id, asset.floor_id = space_id, space.floor_id
         asset.position = tuple(position) if position else space.anchor
+        self.index()
+        return asset
+
+    def remove_asset(self, asset_id: str) -> Asset:
+        asset = self.assets.pop(asset_id)
         self.index()
         return asset
 
