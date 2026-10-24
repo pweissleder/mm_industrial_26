@@ -42,9 +42,15 @@ def official_response(result: JSON, building: JSON) -> JSON:
     transitions: list[JSON] = []
     vertical = list(result["transitions"])
     door_ids = [e for e in result["element_path"] if e in openings]
-    # Walk segments in route order; a floor change between two segments is the next vertical move.
+    # Walk segments in route order; a floor change between two segments is the next vertical
+    # move(s): one stair/lift ride per floor hop, and intermediate floors have no walk segment
+    # when the route stays in the stairwell, so take moves until the segment's floor is reached.
     for segment in result["segments"]:
-        if path and segment["floor_id"] != path[-1]["floor_id"] and vertical:
+        while (
+            path
+            and vertical
+            and segment["floor_id"] != path[-1].get("to_floor_id", path[-1]["floor_id"])
+        ):
             move = vertical.pop(0)
             path.append(_connector_entry(move["kind"], move["element_id"], move))
             transitions.append(_vertical_transition(move))

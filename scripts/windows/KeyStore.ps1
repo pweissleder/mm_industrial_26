@@ -1,11 +1,11 @@
-#requires -Version 7.0
+#requires -Version 5.1
 # Internal helpers. No environment/profile/registry changes; DPAPI CurrentUser only.
 Set-StrictMode -Version Latest
 
 function Get-SyneraKeyPath {
     param([ValidateSet('Anthropic', 'ElevenLabs')][string]$Provider,
           [string]$TestScope = '')
-    if (-not $IsWindows) { throw 'Key storage requires Windows.' }
+    if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) { throw 'Key storage requires Windows.' }
     $local = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
     $directory = [IO.Path]::GetFullPath((Join-Path $local 'SyneraVoicePOC/secrets'))
     if ($TestScope) {
@@ -51,74 +51,5 @@ function Save-SyneraKey {
     } finally {
         $encrypted = $null
         if (Test-Path -LiteralPath $temporary) { Remove-Item -LiteralPath $temporary -Force }
-    }
-}
-
-function Invoke-SyneraPython {
-    param([ValidateSet('Anthropic', 'ElevenLabs', 'Both', '')][string]$Provider = '',
-          [Parameter(Mandatory)][string[]]$PythonArguments,
-          [string]$TestScope = '')
-    $project = Split-Path -Parent $PSScriptRoot
-    $python = Join-Path $project '.venv/Scripts/python.exe'
-    if (-not (Test-Path -LiteralPath $python)) { throw 'The project venv is missing. See README.md.' }
-    $start = [Diagnostics.ProcessStartInfo]::new()
-    $start.FileName = $python
-    $start.WorkingDirectory = $project
-    $start.UseShellExecute = $false
-    foreach ($argument in $PythonArguments) { $start.ArgumentList.Add($argument) }
-    # The parent process is untouched; the child receives only its selected API key.
-    foreach ($name in @('ANTHROPIC_API_KEY', 'ELEVENLABS_API_KEY', 'XI_API_KEY')) {
-        [void]$start.Environment.Remove($name)
-    }
-    $secure = $null
-    $plain = $null
-    $encrypted = $null
-    $buffer = [IntPtr]::Zero
-    $child = $null
-    try {
-        $providers = if ($Provider -eq 'Both') { @('Anthropic','ElevenLabs') } elseif ($Provider) { @($Provider) } else { @() }
-        foreach ($selectedProvider in $providers) {
-            $path = Get-SyneraKeyPath -Provider $selectedProvider -TestScope $TestScope
-            if (-not (Test-Path -LiteralPath $path)) {
-                throw 'The key is missing. Run Register-ApiKey.ps1 for this provider first.'
-            }
-            if ((Get-Item -LiteralPath $path -Force).Attributes -band [IO.FileAttributes]::ReparsePoint) {
-                throw 'Redirected key files are not allowed.'
-            }
-            try {
-                $encrypted = [IO.File]::ReadAllText($path)
-                $secure = ConvertTo-SecureString -String $encrypted -ErrorAction Stop
-                $buffer = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
-                $plain = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($buffer)
-                $name = if ($selectedProvider -eq 'Anthropic') { 'ANTHROPIC_API_KEY' } else { 'ELEVENLABS_API_KEY' }
-                $start.Environment[$name] = $plain
-            } catch { throw 'DPAPI decryption failed. Register the key again using the correct Windows account.' }
-            finally {
-                $plain = $null; $encrypted = $null
-                if ($buffer -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($buffer) }
-                if ($null -ne $secure) { $secure.Dispose() }
-                $buffer = [IntPtr]::Zero; $secure = $null
-            }
-        }
-        try { $child = [Diagnostics.Process]::Start($start) }
-        catch { throw 'The Python child process could not be started.' }
-    } finally {
-        # Start() has copied the environment; drop all parent-side temporary copies now.
-        foreach ($name in @('ANTHROPIC_API_KEY', 'ELEVENLABS_API_KEY', 'XI_API_KEY')) {
-            [void]$start.Environment.Remove($name)
-        }
-        $plain = $null
-        $encrypted = $null
-        if ($buffer -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($buffer) }
-        if ($null -ne $secure) { $secure.Dispose() }
-        $secure = $null
-        $buffer = [IntPtr]::Zero
-    }
-    try {
-        $child.WaitForExit()
-        return $child.ExitCode
-    } finally {
-        if ($null -ne $child) { $child.Dispose() }
-        $start = $null
     }
 }

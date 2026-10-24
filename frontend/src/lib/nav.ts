@@ -96,8 +96,13 @@ export function endpointLabel(e: Endpoint, model: BuildingModel | null): string 
   if (e.kind === 'space') return model?.spaces.find((s) => s.id === e.id)?.name ?? e.id;
   if (e.kind === 'asset') return model?.assets.find((a) => a.id === e.id)?.name ?? e.id;
   const o = model?.openings.find((x) => x.id === e.id);
-  const exit = o?.space_ids.includes('outside');
-  return `${exit ? 'Exit' : o ? o.kind.replace(/_/g, ' ') : 'Opening'} ${e.id.split('-').pop()}`;
+  if (!o) return `Opening ${e.id.split('-').pop()}`;
+  const names = o.space_ids
+    .filter((id) => id !== 'outside')
+    .map((id) => model?.spaces.find((s) => s.id === id)?.name ?? id);
+  // Same wording as the backend search: "Exit from Lobby", "Door between A and B".
+  if (o.space_ids.includes('outside')) return `Exit from ${names[0] ?? 'the building'}`;
+  return `${o.kind === 'opening' ? 'Opening' : 'Door'} between ${names.join(' and ')}`;
 }
 
 export function elementLabel(id: string, model: BuildingModel | null): string {

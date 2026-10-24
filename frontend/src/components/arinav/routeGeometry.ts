@@ -18,7 +18,8 @@ export interface RouteDrawing {
 
 export function routeDrawing(route: RouteResponse): RouteDrawing {
   const lines = (route.path ?? [])
-    .filter((seg) => seg.points?.length >= 2)
+    // Stairs/lift segments are drawn as `vertical` moves, not as floor polylines.
+    .filter((seg) => seg.kind !== 'connector' && seg.points?.length >= 2)
     .map((seg) => ({ floorId: seg.floor_id, points: seg.points }));
   const vertical: RouteDrawing['vertical'] = [];
   const doors: RouteDrawing['doors'] = [];
