@@ -375,3 +375,73 @@
   place-items: center;
   background: rgba(10, 20, 50, 0.25);
 }
+
+/* First person: the HUD carries the instruction, so the card shrinks to status + controls. */
+.guidance--pov {
+  width: min(340px, calc(100% - 2 * var(--gutter)));
+}
+.guidance--pov .guidance__next,
+.guidance--pov .guidance__progress,
+.guidance--pov .guidance__settings,
+.guidance--pov .guidance__message {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .guidance--pov {
+    width: auto;
+  }
+  .immersive-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .immersive-bar > * {
+    flex: none;
+  }
+  .pov-hud {
+    top: calc(var(--topbar-h) + 2 * var(--gutter) + 112px);
+  }
+}
+
+@media (max-height: 500px) {
+  .immersive-bar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .immersive-bar > * {
+    flex: none;
+  }
+  .pov-hud {
+    bottom: calc(var(--gutter) + 64px + var(--safe-b));
+  }
+  .pov-hud__badge,
+  .pov-hud__help {
+    display: none;
+  }
+}
+
+/* Landscape phones: one row each for the view bar and the controls, chat context folded. */
+@media (max-height: 500px) {
+  .guidance--pov {
+    max-height: none;
+    padding: 8px 10px;
+  }
+  .guidance--pov .guidance__head,
+  .guidance--pov .guidance__debug-wrap {
+    display: none;
+  }
+  .guidance--pov .guidance__controls {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .chat--compact .chat__context {
+    display: none;
+  }
+}
+
+/* Developer split view: the HUD sits in the middle of the first-person half. */
+.pov-hud--split {
+  left: calc(var(--inset-left) + (100% - var(--inset-left)) / 4);
+}

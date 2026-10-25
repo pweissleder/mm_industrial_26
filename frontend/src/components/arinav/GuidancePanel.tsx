@@ -43,6 +43,8 @@ interface Props {
   onVoiceSpeed: (speed: number) => void;
   onUnlockAudio: () => void;
   onClose: () => void;
+  /** First-person view: the HUD shows the instruction, the card keeps only status and controls. */
+  pov?: boolean;
 }
 
 export default function GuidancePanel(props: Props) {
@@ -64,7 +66,7 @@ export default function GuidancePanel(props: Props) {
   };
 
   return (
-    <section className={`guidance card${developer ? ' guidance--dev' : ''}`} aria-label="Navigation">
+    <section className={`guidance card${developer ? ' guidance--dev' : ''}${props.pov ? ' guidance--pov' : ''}`} aria-label="Navigation">
       <header className="guidance__head">
         <RouteIcon width={16} height={16} />
         <span className="guidance__dest">{props.destination ?? 'Destination'}</span>
@@ -193,7 +195,7 @@ export default function GuidancePanel(props: Props) {
       )}
 
       {developer && (
-        <details className="guidance__debug-wrap" open>
+        <details key={props.pov ? 'pov' : 'map'} className="guidance__debug-wrap" open={!props.pov}>
         <summary>Simulation details</summary>
         <dl className="details__rows guidance__debug" aria-label="Guidance debug">
           <div className="details__row">

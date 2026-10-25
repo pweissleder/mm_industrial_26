@@ -1525,22 +1525,29 @@ export class BuildingScene {
     this.povCamera.position.copy(eye);
     this.povCamera.lookAt(eye.clone().add(dir));
     const r = this.renderer;
-    const povW = this.split ? Math.floor(w / 2) : w;
+    // Split: both halves share the area right of the docked panel (nothing hides behind it).
+    const x0 = this.split ? Math.min(this.insetLeft, w / 2) : 0;
+    const povW = this.split ? Math.floor((w - x0) / 2) : w;
     this.povCamera.aspect = povW / h;
     this.povCamera.updateProjectionMatrix();
     r.setScissorTest(true);
-    r.setViewport(0, 0, povW, h);
-    r.setScissor(0, 0, povW, h);
+    if (x0 > 0) {
+      r.setViewport(0, 0, x0, h);
+      r.setScissor(0, 0, x0, h);
+      r.clear();
+    }
+    r.setViewport(x0, 0, povW, h);
+    r.setScissor(x0, 0, povW, h);
     r.render(this.scene, this.povCamera);
     if (this.split) {
       // Right half: the whole building from the orbit camera, with the person and the route.
-      const half = w - povW;
+      const half = w - x0 - povW;
       const aspect = this.camera.aspect;
       this.camera.aspect = half / h;
       this.camera.clearViewOffset();
       this.camera.updateProjectionMatrix();
-      r.setViewport(povW, 0, half, h);
-      r.setScissor(povW, 0, half, h);
+      r.setViewport(x0 + povW, 0, half, h);
+      r.setScissor(x0 + povW, 0, half, h);
       r.render(this.scene, this.camera);
       this.camera.aspect = aspect;
       this.resizeCameraOnly();

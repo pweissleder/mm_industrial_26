@@ -98,13 +98,13 @@ export function ImmersiveBar(props: {
 }
 
 /** POV overlay: next step, relative arrow and a clear "simulated" label. */
-export function PovHud(props: { immersive: Immersive; guidance: Guidance; manualHelp: boolean }) {
+export function PovHud(props: { immersive: Immersive; guidance: Guidance; manualHelp: boolean; split?: boolean }) {
   const { immersive: im, guidance: g } = props;
   if (im.view !== 'pov') return null;
   const ins = g.instruction;
   const moving = g.snapshot.route && g.snapshot.route.status === 'ok';
   return (
-    <div className="pov-hud" aria-live="polite">
+    <div className={`pov-hud${props.split ? ' pov-hud--split' : ''}`} aria-live="polite">
       <span className="pov-hud__badge">Simulated walkthrough</span>
       {moving && (
         <div className="pov-hud__step">
@@ -177,7 +177,9 @@ export function TouchJoystick(props: { immersive: Immersive }) {
   const { immersive: im } = props;
   const base = useRef<HTMLDivElement>(null);
   const [knob, setKnob] = useState<[number, number]>([0, 0]);
-  if (im.driver !== 'manual') return null;
+  // Touch screens only: on a desktop the keyboard walks and the stick would cover the panel.
+  const touch = typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
+  if (im.driver !== 'manual' || !touch) return null;
   const update = (e: ReactPointerEvent) => {
     const r = base.current?.getBoundingClientRect();
     if (!r) return;

@@ -1,0 +1,158 @@
+{
+ "generated": "2026-10-25T01:08:51.705Z",
+ "passed": 14,
+ "total": 14,
+ "results": [
+  {
+   "name": "C10_preview_moves_only_the_camera",
+   "pass": true,
+   "ms": 2768,
+   "detail": {
+    "distance": 0
+   }
+  },
+  {
+   "name": "G08_split_view_same_pose_in_both_halves",
+   "pass": true,
+   "ms": 3237,
+   "detail": {
+    "position": [
+     7.527999999999993,
+     2.002689090909091
+    ],
+    "floor": "proc-factory-dev-003-F1"
+   }
+  },
+  {
+   "name": "G01_wasd_walk_and_mouse_look_relative_to_view",
+   "pass": true,
+   "ms": 3423,
+   "detail": {
+    "moved_m": 0.98,
+    "direction_error_deg": 0,
+    "turned_deg": 90
+   }
+  },
+  {
+   "name": "G02_holding_into_a_wall_never_tunnels",
+   "pass": true,
+   "ms": 3504,
+   "detail": {
+    "from": "S002",
+    "to": "S002",
+    "position": [
+     8.5,
+     0.27
+    ]
+   }
+  },
+  {
+   "name": "G03_typing_in_chat_never_moves_the_person",
+   "pass": true,
+   "ms": 1104,
+   "detail": {
+    "unchanged": true
+   }
+  },
+  {
+   "name": "G04_one_driver_no_jump_when_switching",
+   "pass": true,
+   "ms": 562,
+   "detail": {
+    "manual_pose": [
+     8.5,
+     0.27
+    ],
+    "guidance_status": "active",
+    "walker_after": [
+     9.16,
+     2
+    ],
+    "note": "walker resumes on the route (offset 1.8 m), no double movement",
+    "before": "active"
+   }
+  },
+  {
+   "name": "G05_off_route_replans_from_the_person_without_teleport",
+   "pass": true,
+   "ms": 26498,
+   "detail": {
+    "route_revision": 1,
+    "status": "active",
+    "person": [
+     25.64,
+     6.29
+    ],
+    "message": null
+   }
+  },
+  {
+   "name": "M03_orientation_events_turn_the_view_with_wraparound",
+   "pass": true,
+   "ms": 21146,
+   "detail": {
+    "calibrated_yaw": 332.946,
+    "headings": [
+     61.7,
+     151.7,
+     241.7,
+     312,
+     327.7
+    ],
+    "max_error_deg": 1.25,
+    "evidence": "SIMULATED events, not a physical phone"
+   }
+  },
+  {
+   "name": "M04_orientation_unsupported_or_denied_is_truthful",
+   "pass": true,
+   "ms": 18562,
+   "detail": {
+    "status": "unsupported",
+    "label": "Rotation not available"
+   }
+  },
+  {
+   "name": "M01-portrait-390x844_navigation_view_usable",
+   "pass": true,
+   "ms": 21797,
+   "detail": {
+    "centre_covered_pct": 0,
+    "mic_buttons": 1
+   }
+  },
+  {
+   "name": "M02-landscape-844x390_navigation_view_usable",
+   "pass": true,
+   "ms": 23127,
+   "detail": {
+    "centre_covered_pct": 20,
+    "mic_buttons": 1
+   }
+  },
+  {
+   "name": "Q02-reference-1000x860_navigation_view_usable",
+   "pass": true,
+   "ms": 24038,
+   "detail": {
+    "centre_covered_pct": 0,
+    "mic_buttons": 1
+   }
+  },
+  {
+   "name": "A02_core_profile_switches_new_modules_off",
+   "pass": true,
+   "ms": 29019,
+   "detail": {
+    "immersive_bar": 0,
+    "guidance_card": 0,
+    "route_result": 1
+   }
+  },
+  {
+   "name": "no_page_errors_desktop",
+   "pass": true,
+   "detail": []
+  }
+ ]
+}

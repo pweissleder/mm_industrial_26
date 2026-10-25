@@ -930,7 +930,7 @@ export default function AriNavApp() {
             ))}
         </ImmersiveBar>
       )}
-      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersive.driver === 'manual'} />}
+      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
       {features.game && <TouchJoystick immersive={immersive} />}
 
       {features.memory && recapOpen && (
@@ -970,6 +970,7 @@ export default function AriNavApp() {
           onVoiceSpeed={(v) => guideVoice.setSpeed(v)}
           onUnlockAudio={() => speechPort.unlock()}
           onClose={() => setGuidanceHidden(true)}
+          pov={immersive.view === 'pov'}
         />
       )}
 

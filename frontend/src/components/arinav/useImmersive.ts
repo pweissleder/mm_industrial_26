@@ -293,6 +293,10 @@ export function useImmersive(args: {
     },
     [viewHeading, updateLook],
   );
+  // One stable listener: re-renders change onOrientation, and removing/adding per render lost events.
+  const orientationHandler = useRef(onOrientation);
+  orientationHandler.current = onOrientation;
+  const orientationListener = useCallback((e: DeviceOrientationEvent) => orientationHandler.current(e), []);
 
   const enableOrientation = useCallback(async () => {
     if (!features.orientation) return;
@@ -317,8 +321,8 @@ export function useImmersive(args: {
     deviceCal.current = null;
     smoothed.current = null;
     setOrientation('waiting'); // becomes 'active' with the first real event, never before
-    window.addEventListener('deviceorientation', onOrientation);
-  }, [features.orientation, onOrientation]);
+    window.addEventListener('deviceorientation', orientationListener);
+  }, [features.orientation, orientationListener]);
 
   const calibrate = useCallback(() => {
     // "I now face the direction shown": re-anchor the device to the current walking direction.
@@ -333,14 +337,14 @@ export function useImmersive(args: {
   }, [updateLook]);
 
   const disableOrientation = useCallback(() => {
-    window.removeEventListener('deviceorientation', onOrientation);
+    window.removeEventListener('deviceorientation', orientationListener);
     deviceCal.current = null;
     smoothed.current = null;
     setOrientation('off');
     updateLook({ yaw: pose.current ? pose.current.heading : null, yawOffset: 0 });
-  }, [onOrientation, updateLook]);
+  }, [orientationListener, updateLook]);
 
-  useEffect(() => () => window.removeEventListener('deviceorientation', onOrientation), [onOrientation]);
+  useEffect(() => () => window.removeEventListener('deviceorientation', orientationListener), [orientationListener]);
 
   // Arrow: from the person towards a point a few metres ahead on the route, relative to the view.
   useEffect(() => {
@@ -389,6 +393,20 @@ export function useImmersive(args: {
     },
     [publishManual],
   );
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const handle = {
+      look: () => look.get(),
+      pose: () => (pose.current ? { ...pose.current } : null),
+      driver: () => (pose.current ? 'manual' : 'autowalk'),
+      orientation: () => orientationRef.current,
+      viewHeading: () => viewHeading(),
+    };
+    (window as unknown as { __arinavImmersive?: typeof handle }).__arinavImmersive = handle;
+  }, [look, viewHeading]);
+  const orientationRef = useRef(orientation);
+  orientationRef.current = orientation;
 
   return {
     view,

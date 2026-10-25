@@ -451,7 +451,7 @@ export default function ChatDock({
       : 'Hold to talk (or hold Space)';
 
   return (
-    <section className="chat" aria-label="Chat with AriNav">
+    <section className={`chat${compact ? ' chat--compact' : ''}`} aria-label="Chat with AriNav">
       {compact && !open && hasLog && (
         <ChatMini entries={entries} pending={pending} onOpen={() => setOpen(true)} />
       )}
