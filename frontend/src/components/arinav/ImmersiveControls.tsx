@@ -1,7 +1,7 @@
 // Immersive navigation controls (night task §5/§6), isolated from the shared layout files:
 // a small mode bar (overview/POV, autowalk/walk yourself, mouse lock, phone rotation), the POV HUD
 // (next step + relative arrow, "simulated" badge), a drag-to-look layer and a touch joystick.
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import type { Features } from '../../lib/features';
 import type { Guidance } from './useGuidance';
 import type { Immersive } from './useImmersive';
@@ -19,6 +19,8 @@ export function ImmersiveBar(props: {
   guidance: Guidance;
   features: Features;
   onNotice: (text: string) => void;
+  /** Extra controls of other modules (e.g. the session memory chip). */
+  children?: ReactNode;
 }) {
   const { immersive: im, features } = props;
   const pov = im.view === 'pov';
@@ -90,6 +92,7 @@ export function ImmersiveBar(props: {
             </button>
           )),
         )}
+      {props.children}
     </div>
   );
 }

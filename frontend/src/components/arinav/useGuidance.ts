@@ -14,6 +14,7 @@ import {
   type SimEvent,
   type SimSnapshot,
 } from '../../lib/simulation';
+import type { MemoryRecorder } from '../../lib/memory';
 import type { WalkerPose } from './scene';
 import type { GuidanceCameraCommand } from './Viewer3D';
 
@@ -103,8 +104,10 @@ export function useGuidance(args: {
   /** Show a recomputed route in the map/panels (same RouteResponse the backend returned). */
   onRoute: (route: RouteResponse) => void;
   voice?: GuidanceVoicePort | null;
+  /** Opt-in activity memory (showcase): fed with actual walking only, never previews. */
+  memory?: MemoryRecorder | null;
 }): Guidance {
-  const { buildingId, route, names, scenarioRevision, settings, onRoute, voice } = args;
+  const { buildingId, route, names, scenarioRevision, settings, onRoute, voice, memory } = args;
   const sim = useRef(new GuidanceSim());
   const pose = useMemo(createPoseStore, []);
   const [snapshot, setSnapshot] = useState<SimSnapshot>(() => sim.current.snapshot());
@@ -115,8 +118,8 @@ export function useGuidance(args: {
   // A manually moved person (useImmersive); while set, the clock does not move the walker.
   const external = useRef<ExternalPose | null>(null);
   const revisionAtLoad = useRef<number | undefined>(undefined);
-  const latest = useRef({ names, settings, onRoute, voice, buildingId });
-  latest.current = { names, settings, onRoute, voice, buildingId };
+  const latest = useRef({ names, settings, onRoute, voice, buildingId, memory });
+  latest.current = { names, settings, onRoute, voice, buildingId, memory };
   const lastSnap = useRef(0);
   // Tests (dev builds only): a manual clock instead of animation frames.
   const manualClock = useRef(false);
@@ -130,6 +133,7 @@ export function useGuidance(args: {
   const publish = useCallback(
     (force = false) => {
       const snap = sim.current.snapshot();
+      latest.current.memory?.observe([], snap);
       const p = snap.progress;
       const ext = external.current;
       pose.set(
@@ -150,6 +154,7 @@ export function useGuidance(args: {
 
   const handle = useCallback(
     (events: SimEvent[]) => {
+      if (events.length) latest.current.memory?.observe(events, sim.current.snapshot(), latest.current.names);
       for (const e of events) {
         if (e.type === 'instruction') {
           const k = e.instruction.kind;

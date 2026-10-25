@@ -48,6 +48,8 @@ import type { PickHit } from './scene';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
 import { useGuidance } from './useGuidance';
+import RecapCard from './RecapCard';
+import { MemoryRecorder, downloadExport, memoryApi, type MemoryRecap } from '../../lib/memory';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
@@ -308,6 +310,8 @@ export default function AriNavApp() {
         : null,
     };
   }, [viewModel, nav.route]);
+  // Opt-in local memory (showcase profile): nothing is recorded until a session is created.
+  const recorder = useMemo(() => new MemoryRecorder(null), []);
   const guidance = useGuidance({
     buildingId,
     route: nav.route,
@@ -316,6 +320,7 @@ export default function AriNavApp() {
     settings: nav.settings,
     onRoute: nav.showRoute,
     voice: guideVoice,
+    memory: recorder,
   });
   const [guidanceHidden, setGuidanceHidden] = useState(false);
   // ---- Night: profiles (core / immersive / showcase) and immersive navigation -------------
@@ -342,6 +347,44 @@ export default function AriNavApp() {
     location: immersiveLocation,
   });
   const navigationMode = guidance.navigating || immersive.view === 'pov' || immersive.driver === 'manual';
+
+  // Session memory (showcase only, opt-in): demo sessions are labelled as synthetic.
+  const [memorySession, setMemorySession] = useState<string | null>(null);
+  const [recap, setRecap] = useState<MemoryRecap | null>(null);
+  const [recapOpen, setRecapOpen] = useState(false);
+  const [recapError, setRecapError] = useState<string | null>(null);
+  useEffect(() => recorder.setSession(memorySession), [recorder, memorySession]);
+  const startMemory = useCallback(async () => {
+    const demo = new URLSearchParams(window.location.search).get('demo') === '1';
+    try {
+      const session = await memoryApi.createSession(demo ? 'demo' : 'real');
+      setMemorySession(session.session_id);
+      setRecap(null);
+    } catch {
+      notify('Session memory is not available.');
+    }
+  }, [notify]);
+  const openRecap = useCallback(async () => {
+    if (!memorySession) return;
+    setRecapOpen(true);
+    setRecapError(null);
+    try {
+      setRecap(await memoryApi.recap(memorySession));
+    } catch {
+      setRecapError('Could not load the recap.');
+    }
+  }, [memorySession]);
+  // A confirmed destination: when a navigation actually starts.
+  const startedStatus = guidance.snapshot.status;
+  const lastStarted = useRef(startedStatus);
+  useEffect(() => {
+    const prev = lastStarted.current;
+    lastStarted.current = startedStatus;
+    const t = guidance.snapshot.route?.target;
+    if (startedStatus === 'active' && prev !== 'active' && prev !== 'paused' && prev !== 'recomputing' && t) {
+      recorder.destinationConfirmed({ name: names.target ?? 'destination', kind: t.kind, id: t.id ?? t.space_id });
+    }
+  }, [startedStatus, guidance.snapshot.route, names, recorder]);
   useEffect(() => setGuidanceHidden(false), [nav.route]);
   // While navigating, focus the floor the person is on (higher floors hidden, lower ghosted).
   const walkerFloor =
@@ -874,10 +917,41 @@ export default function AriNavApp() {
 
       {features.pov && <LookLayer immersive={immersive} />}
       {(features.pov || features.game) && model && (
-        <ImmersiveBar immersive={immersive} guidance={guidance} features={features} onNotice={notify} />
+        <ImmersiveBar immersive={immersive} guidance={guidance} features={features} onNotice={notify}>
+          {features.memory &&
+            (memorySession ? (
+              <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
+                Session recap
+              </button>
+            ) : (
+              <button className="chip" onClick={() => void startMemory()} title="Remember this session locally (opt-in)">
+                Remember session
+              </button>
+            ))}
+        </ImmersiveBar>
       )}
       {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersive.driver === 'manual'} />}
       {features.game && <TouchJoystick immersive={immersive} />}
+
+      {features.memory && recapOpen && (
+        <div className="recap-overlay">
+          <RecapCard
+            recap={recap}
+            error={recapError}
+            onClose={() => setRecapOpen(false)}
+            onNewSession={() => void startMemory().then(() => setRecapOpen(false))}
+            onExport={() => memorySession && void downloadExport(memorySession)}
+            onDelete={() => {
+              if (!memorySession) return;
+              void memoryApi.deleteSession(memorySession).finally(() => {
+                setMemorySession(null);
+                setRecap(null);
+                setRecapOpen(false);
+              });
+            }}
+          />
+        </div>
+      )}
 
       {features.guidance && !guidanceHidden && (
         <GuidancePanel

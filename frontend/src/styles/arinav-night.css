@@ -1,0 +1,377 @@
+/* Night features in AriNav: session recap card (memory). Uses the tokens from global.css. */
+
+.recap-card {
+  position: relative;
+  width: min(380px, 100%);
+  padding: 18px 18px 14px;
+  border-radius: var(--radius);
+  background:
+    radial-gradient(120% 90% at 100% 0%, rgba(251, 121, 40, 0.16), transparent 60%),
+    linear-gradient(160deg, var(--navy) 0%, var(--blue) 100%);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font);
+}
+
+.recap-card--synthetic {
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0 10px, transparent 10px 20px),
+    linear-gradient(160deg, #2c3550 0%, #4a5578 100%);
+}
+
+.recap-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.recap-card__head > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.recap-card__eyebrow {
+  margin: 0 0 2px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.recap-card__title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.recap-card__badge {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: var(--pill);
+  background: var(--orange);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.recap-card__badge--test {
+  background: #fff;
+  color: var(--navy);
+}
+
+.recap-card__close {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--pill);
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.recap-card__note {
+  margin: 0 0 10px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.recap-card__note--bad {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(217, 59, 59, 0.9);
+  opacity: 1;
+}
+
+.recap-card__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 0;
+}
+
+.recap-card__stat {
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.recap-card__stat--wide {
+  grid-column: 1 / -1;
+}
+
+.recap-card__stat dt {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.recap-card__stat dd {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 0;
+}
+
+.recap-card__value {
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recap-card__stat--wide .recap-card__value {
+  font-size: 18px;
+}
+
+.recap-card__detail {
+  font-size: 11px;
+  opacity: 0.7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recap-card__foot {
+  margin: 10px 0 0;
+  font-size: 12px;
+  opacity: 0.78;
+}
+
+.recap-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.recap-card__btn {
+  flex: 1;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--pill);
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.recap-card__btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.recap-card__btn:focus-visible,
+.recap-card__close:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+.recap-card__btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.recap-card__btn--primary {
+  border-color: var(--orange);
+  background: var(--orange);
+}
+
+.recap-card__btn--primary:hover:not(:disabled) {
+  background: var(--orange-600);
+}
+
+.recap-card__btn--bad:hover:not(:disabled) {
+  border-color: #ffb4b4;
+  background: rgba(217, 59, 59, 0.35);
+}
+
+@media (max-width: 420px) {
+  .recap-card__value {
+    font-size: 19px;
+  }
+}
+
+/* ---- Immersive navigation (POV, walk yourself, phone rotation) ---- */
+.immersive-bar {
+  position: absolute;
+  z-index: 16;
+  top: calc(var(--topbar-h) + 2 * var(--gutter));
+  left: var(--inset-left);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  max-width: min(560px, calc(100% - var(--inset-left) - var(--gutter) - 420px));
+  padding: 6px 8px;
+}
+
+.chip--on {
+  background: var(--navy);
+  color: #fff;
+}
+
+.look-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: grab;
+  touch-action: none;
+}
+
+.look-layer:active {
+  cursor: grabbing;
+}
+
+.pov-hud {
+  position: absolute;
+  z-index: 12;
+  left: 50%;
+  bottom: calc(var(--gutter) + 150px + var(--safe-b));
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.pov-hud__badge {
+  padding: 3px 10px;
+  border-radius: var(--pill);
+  background: rgba(0, 36, 120, 0.82);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pov-hud__step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: min(560px, 90vw);
+  padding: 8px 14px 8px 8px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-lg);
+}
+
+.pov-hud__arrow {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  transition: transform 0.15s linear;
+}
+
+.pov-hud__text {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.pov-hud__help {
+  padding: 3px 10px;
+  border-radius: var(--pill);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink-2);
+  font-size: 12px;
+}
+
+.joystick {
+  position: absolute;
+  z-index: 17;
+  left: calc(var(--gutter) + 8px);
+  bottom: calc(var(--gutter) + 170px + var(--safe-b));
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow-lg);
+  touch-action: none;
+}
+
+.joystick__knob {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--navy);
+  opacity: 0.9;
+}
+
+/* Compact chat: the last exchange in a small card instead of the whole conversation. */
+.chat__mini {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: min(560px, 100%);
+  padding: 8px 14px;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.chat__mini-user {
+  color: var(--blue);
+  font-size: 12.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat__mini-reply {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  font-size: 13.5px;
+}
+
+@media (max-width: 720px) {
+  .immersive-bar {
+    top: auto;
+    left: var(--gutter);
+    right: var(--gutter);
+    max-width: none;
+    bottom: calc(var(--gutter) + 118px + var(--safe-b));
+  }
+  .pov-hud {
+    top: calc(var(--topbar-h) + 2 * var(--gutter));
+    bottom: auto;
+  }
+  .joystick {
+    bottom: calc(var(--gutter) + 180px + var(--safe-b));
+  }
+}
+
+.recap-overlay {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(10, 20, 50, 0.25);
+}
