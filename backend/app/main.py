@@ -23,6 +23,7 @@ from app.api.routes import (
     ingestion,
     location,
     managed_agent,
+    memory,
     navigation,
     pipeline,
     uploads,
@@ -149,6 +150,7 @@ def create_app(
     app.include_router(navigation.router, prefix="/api")
     app.include_router(location.router, prefix="/api")
     app.include_router(assistant.router, prefix="/api")
+    app.include_router(memory.router, prefix="/api")
     return app
 
 
