@@ -236,6 +236,8 @@ export class BuildingScene {
   };
   private povYaw: number | null = null;
   private split = false;
+  /** Developer split view: the first-person view as a phone over the overview (CSS frame). */
+  private readonly phoneFrame = Object.assign(document.createElement('div'), { className: 'phone-mock' });
   private readonly controls: OrbitControls;
   private readonly sun = new THREE.DirectionalLight('#ffffff', 1.5);
   private readonly root = new THREE.Group();
@@ -393,6 +395,9 @@ export class BuildingScene {
     this.labelRenderer = new CSS2DRenderer();
     this.labelRenderer.domElement.className = 'viewer__labels';
     container.appendChild(this.labelRenderer.domElement);
+    this.phoneFrame.hidden = true;
+    this.phoneFrame.setAttribute('aria-hidden', 'true');
+    container.appendChild(this.phoneFrame);
 
     this.scene.add(new THREE.HemisphereLight('#ffffff', '#d6dbea', 1.7));
     this.sun.position.set(40, 90, 30);
@@ -442,6 +447,7 @@ export class BuildingScene {
     this.disposed = true;
     this.renderer.setAnimationLoop(null);
     this.resizeObserver.disconnect();
+    this.phoneFrame.remove();
     this.controls.dispose();
     this.clear();
     this.clearRouteObjects();
@@ -556,6 +562,7 @@ export class BuildingScene {
   /** Developer split view: POV left, whole building right (same pose). */
   setSplit(on: boolean) {
     this.split = on;
+    this.phoneFrame.hidden = !on;
     this.needsRender = true;
   }
 
@@ -1805,23 +1812,32 @@ export class BuildingScene {
     // Phone tilt (device orientation): roll about the view axis after aiming.
     if (this.look.roll) this.povCamera.rotateZ(-THREE.MathUtils.degToRad(this.look.roll));
     const r = this.renderer;
-    // Split: both halves share the area right of the docked panel (nothing hides behind it).
+    // Split (developer, desktop): the whole building from the orbit camera fills the view right of
+    // the docked panel; the first-person view is an embedded phone (same pose, route and heading).
     const x0 = this.split ? Math.min(this.insetLeft, w / 2) : 0;
-    const povW = this.split ? Math.floor((w - x0) / 2) : w;
-    this.povCamera.aspect = povW / h;
+    const phone = this.split ? this.phoneRect(x0, w, h) : null;
+    const povW = phone ? phone.w : w;
+    const povH = phone ? phone.h : h;
+    this.povCamera.aspect = povW / povH;
     // A tall portrait phone would see a narrow slice at a fixed vertical angle (looks zoomed in):
     // keep about 70 deg across, within a 100 deg vertical angle.
     const across = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(70) / 2) / this.povCamera.aspect);
     this.povCamera.fov = Math.min(100, Math.max(POV_FOV, THREE.MathUtils.radToDeg(across)));
     this.povCamera.updateProjectionMatrix();
     r.setScissorTest(true);
-    if (x0 > 0) {
-      r.setViewport(0, 0, x0, h);
-      r.setScissor(0, 0, x0, h);
+    if (phone) {
+      this.resizeCameraOnly();
+      r.setViewport(0, 0, w, h);
+      r.setScissor(0, 0, w, h);
+      r.render(this.scene, this.camera);
+      // GL counts from the bottom; the frame (CSS) from the top.
+      r.setViewport(phone.x, h - phone.y - phone.h, phone.w, phone.h);
+      r.setScissor(phone.x, h - phone.y - phone.h, phone.w, phone.h);
       r.clear();
+    } else {
+      r.setViewport(0, 0, w, h);
+      r.setScissor(0, 0, w, h);
     }
-    r.setViewport(x0, 0, povW, h);
-    r.setScissor(x0, 0, povW, h);
     // HQ walls are squashed to the overview wall height (about 1 m in an 8 m hall storey);
     // at eye height they must be full storey height, or one looks over every wall.
     const squashed = this.floors
@@ -1836,18 +1852,8 @@ export class BuildingScene {
       fv.walls.scale.y = scale;
       fv.walls.position.y = y;
     }
-    if (this.split) {
-      // Right half: the whole building from the orbit camera, with the person and the route.
-      const half = w - x0 - povW;
-      const aspect = this.camera.aspect;
-      this.camera.aspect = half / h;
-      this.camera.clearViewOffset();
-      this.camera.updateProjectionMatrix();
-      r.setViewport(x0 + povW, 0, half, h);
-      r.setScissor(x0 + povW, 0, half, h);
-      r.render(this.scene, this.camera);
-      this.camera.aspect = aspect;
-      this.resizeCameraOnly();
+    if (phone) {
+      // the overview was drawn first, under the phone
     } else if (w > MINIMAP_MIN_WIDTH) {
       // Minimap (top-down, north up, centred on the person) in the free area's top-left corner;
       // phones skip it, the first-person view needs the whole screen there.
@@ -1878,6 +1884,24 @@ export class BuildingScene {
     }
     r.setScissorTest(false);
     r.setViewport(0, 0, w, h);
+  }
+
+  /** The embedded phone (CSS px from the container's top-left) and its frame and HUD position. */
+  private phoneRect(x0: number, w: number, h: number) {
+    const width = Math.round(Math.min(300, Math.max(200, (w - x0) * 0.24)));
+    const height = Math.round(Math.min(width * 2.05, h - 210));
+    const rect = { x: Math.round(x0 + 28), y: Math.round(Math.max(96, (h - height) / 2 - 20)), w: width, h: height };
+    const style = this.phoneFrame.style;
+    const key = `${rect.x},${rect.y},${rect.w},${rect.h}`;
+    if (this.phoneFrame.dataset.rect !== key) {
+      this.phoneFrame.dataset.rect = key;
+      Object.assign(style, { left: `${rect.x}px`, top: `${rect.y}px`, width: `${rect.w}px`, height: `${rect.h}px` });
+      const app = this.container.closest<HTMLElement>('.app') ?? this.container;
+      app.style.setProperty('--phone-cx', `${rect.x + rect.w / 2}px`);
+      app.style.setProperty('--phone-bottom', `${h - rect.y - rect.h}px`);
+      app.style.setProperty('--phone-w', `${rect.w}px`);
+    }
+    return rect;
   }
 
   private resizeCameraOnly() {

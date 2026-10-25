@@ -491,8 +491,42 @@
 }
 
 /* Developer split view: the HUD sits in the middle of the first-person half. */
+/* Developer split view: the HUD sits inside the embedded phone (scene.ts phoneRect). */
 .pov-hud--split {
-  left: calc(var(--inset-left) + (100% - var(--inset-left)) / 4);
+  left: var(--phone-cx, 25%);
+  bottom: calc(var(--phone-bottom, 150px) + 14px);
+  max-width: calc(var(--phone-w, 300px) - 20px);
+}
+.pov-hud--split .pov-hud__step {
+  font-size: 0.82rem;
+}
+.pov-hud--split .pov-hud__help {
+  white-space: normal;
+  text-align: center;
+}
+
+.phone-mock {
+  position: absolute;
+  z-index: 2;
+  box-sizing: content-box;
+  margin: -9px 0 0 -9px;
+  border: 9px solid #111827;
+  border-radius: 34px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+    0 18px 40px rgba(11, 23, 54, 0.35);
+  pointer-events: none;
+}
+.phone-mock::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 34%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  background: #111827;
 }
 
 /* Desktop first person: the compact chat card sits above the input, so the HUD goes above it. */

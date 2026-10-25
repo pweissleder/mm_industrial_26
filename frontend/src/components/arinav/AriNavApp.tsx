@@ -610,18 +610,19 @@ export default function AriNavApp() {
   freeCameraRef.current = guidance.stop;
   useEffect(() => {
     if (navStatus !== 'arrived') return;
-    setArrived(names.target ?? null);
+    setArrived(names.target ?? '');
     const finish = window.setTimeout(() => {
       freeCameraRef.current();
       clearRouteRef.current();
     }, ARRIVAL_MS);
-    const hide = window.setTimeout(() => setArrived(null), ARRIVAL_MS + 900);
-    return () => {
-      window.clearTimeout(finish);
-      window.clearTimeout(hide);
-    };
+    return () => window.clearTimeout(finish);
     // Once per arrival: only the status change starts it.
   }, [navStatus]);
+  useEffect(() => {
+    if (arrived === null) return;
+    const hide = window.setTimeout(() => setArrived(null), ARRIVAL_MS + 900);
+    return () => window.clearTimeout(hide);
+  }, [arrived]);
   const wasNavigating = useRef(false);
   useEffect(() => {
     if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));

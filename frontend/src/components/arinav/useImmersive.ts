@@ -496,9 +496,10 @@ export function useImmersive(args: {
       driver: () => (pose.current ? 'manual' : 'autowalk'),
       orientation: () => orientationRef.current,
       viewHeading: () => viewHeading(),
+      enableOrientation: () => enableOrientation(),
     };
     (window as unknown as { __arinavImmersive?: typeof handle }).__arinavImmersive = handle;
-  }, [look, viewHeading]);
+  }, [look, viewHeading, enableOrientation]);
   const orientationRef = useRef(orientation);
   orientationRef.current = orientation;
 

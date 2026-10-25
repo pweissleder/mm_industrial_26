@@ -1,0 +1,77 @@
+{
+ "base": "http://127.0.0.1:4322",
+ "results": [
+  {
+   "name": "P0_equipment_start_route_and_walker",
+   "pass": true,
+   "detail": {
+    "start": {
+     "kind": "asset",
+     "id": "proc-factory-dev-003-A00001"
+    },
+    "walker": [
+     -6.9511470124659684,
+     8.299221493050581
+    ],
+    "floor": "proc-factory-dev-003-F0"
+   }
+  },
+  {
+   "name": "P0_arrival_check_then_navigation_closes",
+   "pass": true,
+   "detail": {
+    "text": "You've arrived! Kitchen 0.28",
+    "after": "idle",
+    "guidanceCards": 0,
+    "location": "Location: Kitchen 0.28"
+   }
+  },
+  {
+   "name": "P0_new_route_after_arrival_starts_at_target",
+   "pass": true,
+   "detail": {
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S028"
+    }
+   }
+  },
+  {
+   "name": "P2_view_switch_folded_hover_escape",
+   "pass": true,
+   "detail": {
+    "folded_px": 38,
+    "open_px": 222,
+    "view": "pov",
+    "route_kept": true
+   }
+  },
+  {
+   "name": "P1_desktop_dev_split_and_click_object_in_first_person",
+   "pass": true,
+   "detail": {
+    "split": true,
+    "details": null
+   }
+  },
+  {
+   "name": "P1_phone_dev_single_fullscreen_view",
+   "pass": true,
+   "detail": {
+    "split": false,
+    "mock": 0
+   }
+  },
+  {
+   "name": "P1_phone_rotation_three_axes_synthetic",
+   "pass": true,
+   "detail": {
+    "level": -3.508354649267438e-15,
+    "up": 59.952124640221435,
+    "down": -69.89630825464769,
+    "yaw": 332.946,
+    "moved_m": 2.6
+   }
+  }
+ ]
+}
