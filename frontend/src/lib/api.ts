@@ -208,6 +208,8 @@ export interface RouteRequest {
   unofficial?: { no_production_transit?: boolean; forklift?: boolean };
   /** Official only, point starts: begin at the exact point (first leg re-walked officially). */
   exact_start?: boolean;
+  /** Official only: avoid doors narrower than this (width-checked routing; doors only). */
+  min_door_width_m?: number;
 }
 
 export interface RouteEnd {
@@ -275,7 +277,21 @@ export interface RouteResponse {
   transitions: RouteTransition[];
   waypoints?: RouteWaypoint[];
   /** Constraints this route honours (a reroute must keep them). */
-  constraints?: { step_free: boolean; profile?: ClearanceProfile; width_m?: number; safety_m?: number };
+  constraints?: {
+    step_free: boolean;
+    profile?: ClearanceProfile;
+    width_m?: number;
+    safety_m?: number;
+    min_door_width_m?: number;
+  };
+  /** What a width-checked official route covered (doors only). */
+  width_check?: {
+    required_m: number;
+    narrowest_door_m: number | null;
+    unknown_width_doors: string[];
+    too_narrow_on_only_route?: { id: string; width_m: number }[];
+    scope: string;
+  };
   /** Router directions without element ids; `directions_raw` keeps the router's own lines. */
   directions: string[];
   directions_raw?: string[];

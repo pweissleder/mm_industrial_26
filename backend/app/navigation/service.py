@@ -548,12 +548,29 @@ class NavigationService:
         unofficial = request.get("unofficial") or {}
         if not isinstance(unofficial, dict):
             raise NavigationError("invalid_input", "unofficial must be an object")
+        min_width = self._min_door_width(request, mode)
+        # Width-checked routing: doors with a known width below the requirement count as closed
+        # for this request only (the official rules and costs are otherwise untouched).
+        narrow = (
+            {
+                o["id"]
+                for o in entry.openings.values()
+                if o.get("width_m") is not None and float(o["width_m"]) < min_width - 1e-9
+            }
+            if min_width is not None
+            else set()
+        )
         with entry.lock:
             closed = sorted(entry.closed | set(assume))
             if mode == "official":
-                response = self._official(entry, start, target, via, step_free, closed, unofficial)
+                routed = sorted(set(closed) | narrow)
+                response = self._official(entry, start, target, via, step_free, routed, unofficial)
                 if _bool(request.get("exact_start"), "exact_start"):
-                    self._exact_start(entry, response, start, closed)
+                    self._exact_start(entry, response, start, routed)
+                if min_width is not None:
+                    self._width_check(
+                        entry, response, min_width, narrow, (start, target, via, step_free, closed)
+                    )
             else:
                 if via:
                     raise NavigationError(
@@ -565,12 +582,74 @@ class NavigationService:
         response["assume_closed"] = assume
         # The constraints this route honours, so a later reroute keeps them (never loosens).
         response["constraints"] = {"step_free": step_free}
+        if min_width is not None:
+            response["constraints"]["min_door_width_m"] = min_width
         if mode == "precision":
             response["constraints"] |= {
                 k: request.get(k) for k in ("profile", "width_m", "safety_m") if k in request
             }
         response["elapsed_ms"] = _ms(began)
         return response
+
+    @staticmethod
+    def _min_door_width(request: JSON, mode: str) -> float | None:
+        value = request.get("min_door_width_m")
+        if value is None:
+            return None
+        if mode != "official":
+            raise NavigationError(
+                "invalid_input", "min_door_width_m is for official routes; precision uses width_m"
+            )
+        width = _number(value, "min_door_width_m", 0.0)
+        if not 0.05 <= width <= 5.0:
+            raise NavigationError("invalid_input", "min_door_width_m must be between 0.05 and 5")
+        return width
+
+    def _width_check(
+        self,
+        entry: _Entry,
+        response: JSON,
+        min_width: float,
+        narrow: set[str],
+        plain_args: tuple[JSON, JSON, list[JSON], bool, list[str]],
+    ) -> None:
+        """Report what the door-width check covered; if it made the target unreachable, name the
+        too-narrow doors the route would need (from the same route without the width limit)."""
+        openings = entry.openings
+        doors = [
+            t["element_id"] for t in response.get("transitions", []) if t.get("kind") == "door"
+        ]
+        known = [float(openings[d]["width_m"]) for d in doors if openings[d].get("width_m")]
+        check: JSON = {
+            "required_m": round(min_width, 3),
+            "doors_on_route": [{"id": d, "width_m": openings[d].get("width_m")} for d in doors],
+            "narrowest_door_m": round(min(known), 3) if known else None,
+            "unknown_width_doors": [d for d in doors if openings[d].get("width_m") is None],
+            "doors_too_narrow_in_building": len(narrow),
+            "scope": "Door widths only; corridors, furniture and lifts are not width-checked.",
+        }
+        if not response.get("reachable"):
+            start, target, via, step_free, closed = plain_args
+            plain = self._official(entry, start, target, via, step_free, closed, {})
+            needed = [
+                {"id": t["element_id"], "width_m": openings[t["element_id"]].get("width_m")}
+                for t in plain.get("transitions", [])
+                if t.get("kind") == "door" and t["element_id"] in narrow
+            ]
+            if plain.get("reachable") and needed:
+                check["too_narrow_on_only_route"] = needed
+                summary = (
+                    f"No route with doors at least {min_width:.2f} m wide; the route would need "
+                    + ", ".join(f"a {float(n['width_m']):.2f} m door" for n in needed)
+                    + "."
+                )
+                response["unreachable_reason"] = summary
+                response["diagnosis"] = {
+                    "category": "too_narrow",
+                    "summary": summary,
+                    "elements": [{"id": n["id"]} for n in needed],
+                }
+        response["width_check"] = check
 
     def _exact_start(self, entry: _Entry, response: JSON, start: JSON, closed: list[str]) -> None:
         """Opt-in for live guidance: a point start keeps its exact position. The official graph has

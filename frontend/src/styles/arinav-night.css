@@ -553,3 +553,66 @@
   justify-content: flex-end;
   max-width: min(560px, calc(100vw - 2 * var(--gutter)));
 }
+
+/* Arrival: a short green check, then the navigation closes (AriNavApp, ARRIVAL_MS). */
+.arrival {
+  position: absolute;
+  z-index: 40;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 22px 14px 14px;
+  border-radius: var(--pill);
+  background: var(--navy);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  animation: arrival-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.25);
+}
+.arrival__check {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #1f9d55;
+  color: #fff;
+}
+.arrival__check path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: arrival-draw 0.45s 0.15s ease-out forwards;
+}
+.arrival__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.arrival__text strong {
+  font-size: 1.15rem;
+}
+.arrival__text span {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+@keyframes arrival-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+}
+@keyframes arrival-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrival,
+  .arrival__check path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

@@ -31,6 +31,8 @@ import { EYE_HEIGHT_M, angleDiff, wrap360 } from '../../lib/spatial';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 import { MAX_VISIBLE_ASSETS, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
 
+// Vertical view angle of the first-person camera (wider on portrait phones, see renderPov).
+const POV_FOV = 72;
 const SLAB = 0.15;
 /** Minimap: hidden at phone widths (CSS px), else a rounded card with a thin gray border. */
 const MINIMAP_MIN_WIDTH = 640;
@@ -189,7 +191,7 @@ export class BuildingScene {
   private readonly camera = new THREE.PerspectiveCamera(40, 1, 0.1, 4000);
   // POV (night task §5): an eye-height camera at the person; the avatar lives on layer 1, which
   // only the overview cameras see, so it never blocks the lens.
-  private readonly povCamera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);
+  private readonly povCamera = new THREE.PerspectiveCamera(POV_FOV, 1, 0.05, 600);
   private readonly miniCamera = new THREE.OrthographicCamera(-15, 15, 12, -12, 0.1, 400);
   // The minimap is rendered to a texture and drawn as a rounded card with a thin gray border.
   private readonly miniTarget = new THREE.WebGLRenderTarget(1, 1, { samples: 4 });
@@ -226,7 +228,7 @@ export class BuildingScene {
   private readonly miniFrameScene = new THREE.Scene().add(
     new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.miniFrame),
   );
-  private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number } = {
+  private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number; roll?: number } = {
     view: 'overview',
     yaw: null,
     yawOffset: 0,
@@ -542,7 +544,7 @@ export class BuildingScene {
   }
 
   /** POV camera state (per frame from useImmersive); overview keeps the orbit camera. */
-  setLook(look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number }) {
+  setLook(look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number; roll?: number }) {
     const entering = look.view === 'pov' && this.look.view !== 'pov';
     this.look = look;
     if (entering) this.povYaw = null;
@@ -1800,11 +1802,17 @@ export class BuildingScene {
     const dir = new THREE.Vector3(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.sin(yaw) * Math.cos(pitch));
     this.povCamera.position.copy(eye);
     this.povCamera.lookAt(eye.clone().add(dir));
+    // Phone tilt (device orientation): roll about the view axis after aiming.
+    if (this.look.roll) this.povCamera.rotateZ(-THREE.MathUtils.degToRad(this.look.roll));
     const r = this.renderer;
     // Split: both halves share the area right of the docked panel (nothing hides behind it).
     const x0 = this.split ? Math.min(this.insetLeft, w / 2) : 0;
     const povW = this.split ? Math.floor((w - x0) / 2) : w;
     this.povCamera.aspect = povW / h;
+    // A tall portrait phone would see a narrow slice at a fixed vertical angle (looks zoomed in):
+    // keep about 70 deg across, within a 100 deg vertical angle.
+    const across = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(70) / 2) / this.povCamera.aspect);
+    this.povCamera.fov = Math.min(100, Math.max(POV_FOV, THREE.MathUtils.radToDeg(across)));
     this.povCamera.updateProjectionMatrix();
     r.setScissorTest(true);
     if (x0 > 0) {

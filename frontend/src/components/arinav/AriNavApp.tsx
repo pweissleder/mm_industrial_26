@@ -75,6 +75,9 @@ const AUTO_HQ = 'arinav:auto-hq';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
 const WIDE = '(min-width: 1024px)';
 // Navigation-panel parts dropped when it has to make room, and a folded details card's height.
+// How long the arrival check shows before the navigation is closed.
+const ARRIVAL_MS = 2600;
+const ARRIVED_SAID = /^(i('ve| have) arrived|i('m| am) (here|there)|(we|i) made it|arrived)[.!]*$/i;
 const GUIDANCE_EXTRAS = '.guidance__settings, .guidance__debug-wrap, .guidance__hint';
 const FOLDED_CARD_PX = 86;
 // Below this an open details card folds instead of scrolling.
@@ -597,6 +600,28 @@ export default function AriNavApp() {
     const label = atTarget ? (names.target ?? room) : `a point in ${room}`;
     setSimulatedRef.current({ endpoint, label, source: 'simulation' });
   }, [navStatus, guidance.snapshot, names]);
+  // Arrival ends the navigation once: a green check, then the route and its directions are
+  // cleared. The person stays at the target (the simulated location set above), ready for a new
+  // destination or free exploring.
+  const [arrived, setArrived] = useState<string | null>(null);
+  const clearRouteRef = useRef(nav.clearRoute);
+  clearRouteRef.current = nav.clearRoute;
+  const freeCameraRef = useRef(guidance.stop);
+  freeCameraRef.current = guidance.stop;
+  useEffect(() => {
+    if (navStatus !== 'arrived') return;
+    setArrived(names.target ?? null);
+    const finish = window.setTimeout(() => {
+      freeCameraRef.current();
+      clearRouteRef.current();
+    }, ARRIVAL_MS);
+    const hide = window.setTimeout(() => setArrived(null), ARRIVAL_MS + 900);
+    return () => {
+      window.clearTimeout(finish);
+      window.clearTimeout(hide);
+    };
+    // Once per arrival: only the status change starts it.
+  }, [navStatus]);
   const wasNavigating = useRef(false);
   useEffect(() => {
     if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));
@@ -1403,6 +1428,12 @@ export default function AriNavApp() {
         selection={chatSelection}
         simulated={nav.simulated}
         onTurn={(turn) => void applyTurn(turn)}
+        onLocalCommand={(text) => {
+          // Without indoor positioning only the person knows they are there: "I've arrived".
+          if (!guidance.navigating || !ARRIVED_SAID.test(text.trim())) return null;
+          guidance.arrive();
+          return `Great, you've arrived${names.target ? ` at ${names.target}` : ''}. Navigation ended.`;
+        }}
         onConfirmed={handleConfirmed}
         onPick={(purpose, reply) => setPick({ kind: purpose, reply })}
         onUseSelectionAsLocation={() => selection && void setLocationFrom(selection, true)}
@@ -1435,6 +1466,19 @@ export default function AriNavApp() {
       {toast && (
         <div className="toast" role="status">
           {toast}
+        </div>
+      )}
+      {arrived !== null && (
+        <div className="arrival" role="status" aria-live="assertive">
+          <span className="arrival__check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="30" height="30">
+              <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="arrival__text">
+            <strong>You've arrived!</strong>
+            {arrived && <span>{arrived}</span>}
+          </span>
         </div>
       )}
     </div>

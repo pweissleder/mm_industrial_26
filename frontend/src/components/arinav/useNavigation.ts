@@ -241,6 +241,7 @@ export function useNavigation(buildingId: string | null): Navigation {
             start: from,
             target: to,
             step_free: settings.step_free,
+            ...(!precision && settings.door_width_m && { min_door_width_m: settings.door_width_m }),
             ...(precision && {
               profile: settings.profile,
               width_m: settings.width_m,
@@ -383,7 +384,10 @@ export function useNavigation(buildingId: string | null): Navigation {
       const ui: TurnUi = turn.ui ?? {};
       if (ui.settings) {
         const patch = Object.fromEntries(
-          Object.entries(ui.settings).filter(([k, v]) => v !== undefined && v !== null && k in DEFAULT_NAV),
+          Object.entries(ui.settings).filter(
+            // door_width_m: null = the assistant no longer checks door widths
+            ([k, v]) => v !== undefined && (v !== null || k === 'door_width_m') && k in DEFAULT_NAV,
+          ),
         ) as Partial<NavSettings>;
         setSettings((s) => ({ ...s, ...patch }));
       }

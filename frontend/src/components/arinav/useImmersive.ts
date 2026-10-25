@@ -7,7 +7,7 @@ import type { BuildingModel } from '../../lib/building';
 import type { Features } from '../../lib/features';
 import { progressAt } from '../../lib/guidance';
 import { projectOnRoute } from '../../lib/simulation';
-import { arrowRotation, deviceHeading, headingTo, smoothAngle, wrap360 } from '../../lib/spatial';
+import { angleDiff, arrowRotation, deviceLook, headingTo, smoothAngle, wrap360 } from '../../lib/spatial';
 import { buildWorld, connectorsHere, locate, move, ride, type WalkState } from '../../lib/walkable';
 import type { ExternalPose, Guidance } from './useGuidance';
 
@@ -22,6 +22,8 @@ export interface LookState {
   yaw: number | null;
   yawOffset: number;
   pitch: number;
+  /** Sideways tilt of the phone (deg, + = top edge to the right); 0 without device orientation. */
+  roll?: number;
 }
 export interface LookStore {
   get(): LookState;
@@ -37,6 +39,8 @@ const readSpeed = () => {
 const TURN_DPS = 100;
 const LOOK_DEG_PER_PX = 0.25;
 const MAX_PITCH = 60;
+// The phone may look almost straight up and down (ceiling, floor); the camera stays defined.
+const MAX_DEVICE_PITCH = 88;
 
 const isTyping = (el: EventTarget | null) =>
   el instanceof HTMLInputElement ||
@@ -124,9 +128,11 @@ export function useImmersive(args: {
   const keys = useRef(new Set<string>());
   const stick = useRef<[number, number]>([0, 0]);
   const pose = useRef<(WalkState & { heading: number }) | null>(null);
-  const deviceCal = useRef<{ alpha0: number; heading: number; screenAngle0: number } | null>(null);
-  const lastAlpha = useRef<number | null>(null);
+  // Calibration: at `azimuth0` (deviceLook) the person faced building heading `heading`.
+  const deviceCal = useRef<{ azimuth0: number; heading: number } | null>(null);
+  const lastAzimuth = useRef<number | null>(null);
   const smoothed = useRef<number | null>(null);
+  const smoothedTilt = useRef<{ pitch: number; roll: number } | null>(null);
   const latest = useRef({ guidance, stepFree, world });
   latest.current = { guidance, stepFree, world };
 
@@ -318,19 +324,26 @@ export function useImmersive(args: {
     if (pose.current) stopManual();
   }, [model?.building.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Device orientation: permission only from a user gesture; rotation, never position.
+  // Device orientation: permission only from a user gesture; rotation, never position. All three
+  // axes (deviceLook): turning, looking up/down to ceiling and floor, and sideways tilt.
   const onOrientation = useCallback(
     (e: DeviceOrientationEvent) => {
-      if (e.alpha === null || e.alpha === undefined) return;
-      lastAlpha.current = e.alpha;
+      if (e.alpha === null || e.alpha === undefined || e.beta === null || e.gamma === null) return;
       const angle = typeof screen !== 'undefined' && screen.orientation ? screen.orientation.angle : 0;
+      const device = deviceLook(e.alpha, e.beta ?? 90, e.gamma ?? 0, angle);
+      lastAzimuth.current = device.azimuth;
       if (!deviceCal.current) {
-        deviceCal.current = { alpha0: e.alpha, heading: viewHeading() ?? 90, screenAngle0: angle };
+        deviceCal.current = { azimuth0: device.azimuth, heading: viewHeading() ?? 90 };
         setOrientation('active');
       }
-      const heading = deviceHeading(e.alpha, deviceCal.current, angle);
+      const heading = wrap360(deviceCal.current.heading + angleDiff(deviceCal.current.azimuth0, device.azimuth));
       smoothed.current = smoothAngle(smoothed.current, heading, 0.3);
-      updateLook({ yaw: smoothed.current, yawOffset: 0 });
+      const pitch = Math.max(-MAX_DEVICE_PITCH, Math.min(MAX_DEVICE_PITCH, device.pitch));
+      const tilt = smoothedTilt.current;
+      smoothedTilt.current = tilt
+        ? { pitch: tilt.pitch + (pitch - tilt.pitch) * 0.3, roll: tilt.roll + (device.roll - tilt.roll) * 0.3 }
+        : { pitch, roll: device.roll };
+      updateLook({ yaw: smoothed.current, yawOffset: 0, ...smoothedTilt.current });
       if (pose.current) pose.current.heading = smoothed.current;
     },
     [viewHeading, updateLook],
@@ -367,6 +380,7 @@ export function useImmersive(args: {
     }
     deviceCal.current = null;
     smoothed.current = null;
+    smoothedTilt.current = null;
     setOrientation('waiting'); // becomes 'active' with the first real event, never before
     window.addEventListener('deviceorientation', orientationListener);
   }, [features.orientation, orientationListener]);
@@ -375,9 +389,8 @@ export function useImmersive(args: {
     // "I now face the direction shown": re-anchor the device to the current walking direction.
     const p = latest.current.guidance.pose.get();
     const target = pose.current?.heading ?? p?.headingDeg ?? 90;
-    if (lastAlpha.current !== null) {
-      const angle = typeof screen !== 'undefined' && screen.orientation ? screen.orientation.angle : 0;
-      deviceCal.current = { alpha0: lastAlpha.current, heading: target, screenAngle0: angle };
+    if (lastAzimuth.current !== null) {
+      deviceCal.current = { azimuth0: lastAzimuth.current, heading: target };
       smoothed.current = target;
       updateLook({ yaw: target, yawOffset: 0 });
     }
@@ -387,8 +400,9 @@ export function useImmersive(args: {
     window.removeEventListener('deviceorientation', orientationListener);
     deviceCal.current = null;
     smoothed.current = null;
+    smoothedTilt.current = null;
     setOrientation('off');
-    updateLook({ yaw: pose.current ? pose.current.heading : null, yawOffset: 0 });
+    updateLook({ yaw: pose.current ? pose.current.heading : null, yawOffset: 0, pitch: -8, roll: 0 });
   }, [orientationListener, updateLook]);
 
   useEffect(() => () => window.removeEventListener('deviceorientation', orientationListener), [orientationListener]);

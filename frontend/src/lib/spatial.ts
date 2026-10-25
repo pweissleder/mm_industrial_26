@@ -73,3 +73,43 @@ export function smoothAngle(previous: number | null, next: number, factor = 0.25
 
 /** Render-frame position of a building point on a floor at a visual elevation. */
 export const toRender = (p: Point, elevation: number): [number, number, number] => [p[0], elevation, -p[1]];
+
+/**
+ * Full 3D device orientation -> view angles. W3C: R = Rz(alpha) Rx(beta) Ry(gamma) turns the
+ * device frame (x right, y top, z out of the screen) into east/north/up; the camera looks out of
+ * the back (-z) and its "up" is the screen's top for `screenAngle` (portrait 0, landscape 90/270).
+ * - pitch: up/down (deg, + = up), the whole range including ceiling and floor;
+ * - azimuth: view direction (deg CCW from east). Looking almost straight up/down the forward
+ *   direction has no horizontal part, so the phone's top edge takes over smoothly (no flip);
+ * - roll: sideways tilt (deg, + = top edge to the right).
+ * Only differences of azimuth matter (calibrated to a building heading), so compass drift and the
+ * alpha reference of the browser do not.
+ */
+export function deviceLook(
+  alpha: number,
+  beta: number,
+  gamma: number,
+  screenAngle = 0,
+): { azimuth: number; pitch: number; roll: number } {
+  const rad = Math.PI / 180;
+  const [ca, sa, cb, sb, cg, sg] = [alpha, alpha, beta, beta, gamma, gamma].map((v, i) =>
+    i % 2 ? Math.sin(v * rad) : Math.cos(v * rad),
+  );
+  const rotate = ([x, y, z]: number[]) => {
+    const [x1, z1] = [cg * x + sg * z, -sg * x + cg * z]; // Ry(gamma)
+    const [y2, z2] = [cb * y - sb * z1, sb * y + cb * z1]; // Rx(beta)
+    return [ca * x1 - sa * y2, sa * x1 + ca * y2, z2]; // Rz(alpha)
+  };
+  const f = rotate([0, 0, -1]);
+  const u = rotate([Math.sin(screenAngle * rad), Math.cos(screenAngle * rad), 0]);
+  const r = [f[1] * u[2] - f[2] * u[1], f[2] * u[0] - f[0] * u[2], f[0] * u[1] - f[1] * u[0]];
+  const pitch = Math.asin(Math.max(-1, Math.min(1, f[2]))) / rad;
+  const hx = f[0] - u[0] * f[2];
+  const hy = f[1] - u[1] * f[2];
+  return {
+    azimuth: wrap360(Math.atan2(hy, hx) / rad),
+    pitch,
+    // Undefined straight up/down: faded out over the last 15 degrees instead of spinning.
+    roll: (Math.atan2(-r[2], u[2]) / rad) * Math.min(1, Math.max(0, (90 - Math.abs(pitch)) / 15)),
+  };
+}
