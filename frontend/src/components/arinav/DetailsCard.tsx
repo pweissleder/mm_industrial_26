@@ -8,6 +8,7 @@ import {
   type Floor,
   type Selection,
 } from '../../lib/building';
+import type { ReactNode } from 'react';
 import type { SpaceMeta } from '../../lib/api';
 import { ChevronIcon, CloseIcon, PinIcon, RouteIcon } from './Icons';
 import type { ObjectInfo } from './view';
@@ -135,6 +136,8 @@ interface Props {
   collapsed?: boolean;
   /** Fold/unfold control; without it the card can't be folded. */
   onToggleCollapsed?: () => void;
+  /** Extra controls under the details, e.g. the layout editor. */
+  children?: ReactNode;
 }
 
 export default function DetailsCard({
@@ -155,6 +158,7 @@ export default function DetailsCard({
   onHold,
   collapsed = false,
   onToggleCollapsed,
+  children,
 }: Props) {
   const d = describe(model, selection, info, spaceMeta);
   if (!d) return null;
@@ -208,6 +212,7 @@ export default function DetailsCard({
               </div>
             ))}
           </dl>
+          {children}
           {routable && (
             <div className="details__group" role="group" aria-label="Route">
               <span className="details__group-title">Route</span>

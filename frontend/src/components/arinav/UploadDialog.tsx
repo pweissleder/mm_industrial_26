@@ -16,7 +16,7 @@ interface Props {
   onUploaded: (result: UploadResponse) => void;
 }
 
-type NameState =
+export type NameState =
   | { state: 'empty' | 'checking' | 'available' | 'unknown' }
   | { state: 'invalid' | 'taken'; reason: string };
 
@@ -35,31 +35,9 @@ function freeName(base: string, datasets: string[]): string {
   return name;
 }
 
-export default function UploadDialog({ open, datasets, onClose, onUploaded }: Props) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  const nameInput = useRef<HTMLInputElement>(null);
-  const picker = useRef<HTMLInputElement>(null);
-  const [name, setName] = useState('');
+/** Checks a new location name: locally right away, with the backend once typing pauses. */
+export function useNameCheck(trimmed: string, datasets: string[]): NameState {
   const [check, setCheck] = useState<NameState>({ state: 'empty' });
-  const [files, setFiles] = useState<File[]>([]);
-  const [dragging, setDragging] = useState(false);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const d = dialog.current;
-    if (!d) return;
-    if (open && !d.open) {
-      setName('');
-      setFiles([]);
-      setError(null);
-      d.showModal();
-      nameInput.current?.focus();
-    } else if (!open && d.open) d.close();
-  }, [open]);
-
-  // Validate locally right away; ask the backend once typing pauses.
-  const trimmed = name.trim();
   useEffect(() => {
     if (!trimmed) return setCheck({ state: 'empty' });
     if (!DATASET_NAME.test(trimmed)) return setCheck({ state: 'invalid', reason: INVALID });
@@ -87,6 +65,37 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
       window.clearTimeout(timer);
     };
   }, [trimmed, datasets]);
+  return check;
+}
+
+export default function UploadDialog({ open, datasets, onClose, onUploaded }: Props) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const nameInput = useRef<HTMLInputElement>(null);
+  const picker = useRef<HTMLInputElement>(null);
+  const [name, setName] = useState('');
+  const [conflict, setConflict] = useState<NameState | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [dragging, setDragging] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const d = dialog.current;
+    if (!d) return;
+    if (open && !d.open) {
+      setName('');
+      setFiles([]);
+      setError(null);
+      d.showModal();
+      nameInput.current?.focus();
+    } else if (!open && d.open) d.close();
+  }, [open]);
+
+  const trimmed = name.trim();
+  const checked = useNameCheck(trimmed, datasets);
+  // A 409 from the upload overrides the check until the name changes.
+  useEffect(() => setConflict(null), [trimmed]);
+  const check = conflict ?? checked;
 
   const nameOk = check.state === 'available' || check.state === 'unknown';
   const nothingToBuild =
@@ -124,7 +133,7 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
       onUploaded(await api.upload(trimmed, files));
     } catch (err) {
       if (err instanceof ApiError && err.status === 409) {
-        setCheck({ state: 'taken', reason: err.message });
+        setConflict({ state: 'taken', reason: err.message });
         nameInput.current?.focus();
       } else {
         setError(err instanceof ApiError ? err.message : 'Upload failed. Is the backend running?');
@@ -262,7 +271,7 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
   );
 }
 
-function NameStatus({ check }: { check: NameState }) {
+export function NameStatus({ check, id = 'location-name-status' }: { check: NameState; id?: string }) {
   const [tone, icon, text] =
     check.state === 'invalid' || check.state === 'taken'
       ? ['bad', <AlertIcon key="i" width={14} height={14} />, check.reason]
@@ -274,7 +283,7 @@ function NameStatus({ check }: { check: NameState }) {
             ? ['muted', null, 'Could not check the name; it is checked again on upload.']
             : ['muted', null, 'Letters, digits, - and _. It must not be in use yet.'];
   return (
-    <span id="location-name-status" className={`name-status name-status--${tone}`} aria-live="polite">
+    <span id={id} className={`name-status name-status--${tone}`} aria-live="polite">
       {icon}
       {text}
     </span>
