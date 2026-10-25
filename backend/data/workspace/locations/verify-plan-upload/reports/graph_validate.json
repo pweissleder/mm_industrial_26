@@ -1,0 +1,24 @@
+{
+  "stage": "graph_validate",
+  "status": "passed",
+  "summary": "Graph checks: 0 errors, 0 warnings, 0 notes.",
+  "metrics": {
+    "error": 0,
+    "warning": 0,
+    "info": 0
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "reports/graph_validation.json"
+  ],
+  "usage": {
+    "model": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "calls": 0
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-25T05:55:52.652217Z"
+}

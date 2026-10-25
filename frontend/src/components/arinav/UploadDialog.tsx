@@ -5,6 +5,7 @@ import { AlertIcon, CheckIcon, CloseIcon, FileIcon, UploadIcon } from './Icons';
 const ACCEPT = '.json,.glb,.gltf,.png,.jpg,.jpeg,.svg,.csv,.pdf,.txt,.md';
 const DATASET_NAME = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const CHECK_DELAY_MS = 300;
+const FLOOR_PLAN = /^floor_-?\d+(_plain)?\.(svg|png|jpe?g)$/i;
 
 interface Props {
   open: boolean;
@@ -87,6 +88,9 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
   }, [trimmed, datasets]);
 
   const nameOk = check.state === 'available' || check.state === 'unknown';
+  const nothingToBuild =
+    files.length > 0 &&
+    !files.some((f) => f.name === 'building.json' || FLOOR_PLAN.test(f.name) || /\.glb$/i.test(f.name));
   const canSubmit = !busy && files.length > 0 && nameOk;
 
   function addFiles(list: FileList | null) {
@@ -149,8 +153,10 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
         </header>
 
         <p className="muted">
-          Every upload creates a new location. Include a <code>building.json</code> to make it navigable,
-          or a <code>.glb</code> model to view it in 3D.
+          Every upload creates a new location. Include a <code>building.json</code>, or floor plans
+          (<code>floor_N.svg</code> works best, .png/.jpg too) with <code>equipment.csv</code> — the
+          pipeline reconstructs the building from them. A <code>.glb</code> model can be viewed in 3D on
+          its own.
         </p>
 
         <div className="step">
@@ -194,7 +200,7 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
                 browse
               </button>
             </p>
-            <span className="muted">building.json, .glb, floor plans (.png/.svg), equipment.csv</span>
+            <span className="muted">building.json, .glb, floor_N.svg/.png plans, equipment.csv</span>
             <input
               ref={picker}
               type="file"
@@ -228,6 +234,13 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
             </ul>
           )}
         </div>
+
+        {nothingToBuild && (
+          <span className="name-status name-status--bad">
+            <AlertIcon width={14} height={14} />
+            Nothing to build from: add building.json, floor_N.svg/.png plans, or a .glb.
+          </span>
+        )}
 
         {error && (
           <p className="form-error" role="alert">

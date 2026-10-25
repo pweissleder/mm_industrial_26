@@ -1,0 +1,48 @@
+{
+  "methods": {
+    "0": "svg"
+  },
+  "stats": {
+    "floors": 1,
+    "spaces": 7,
+    "spaces_from_csv": 7,
+    "openings": 7,
+    "vertical_connectors": 0,
+    "assets": 19,
+    "methods": {
+      "0": "svg"
+    },
+    "scale_m_per_px": {
+      "0": 0.05892
+    }
+  },
+  "gaps": [
+    {
+      "kind": "floor_heights",
+      "target": [
+        0
+      ],
+      "detail": "heights not drawn; defaulted to 3.0 m per storey"
+    },
+    {
+      "kind": "opening_widths",
+      "target": 6,
+      "detail": "door widths not drawn; 6 defaulted to 0.9 m"
+    }
+  ],
+  "agent": {
+    "changed": [],
+    "left_default": [
+      "Floor 0 height: the plan doesn't state it, so I kept the 3.0 m default.",
+      "Door widths: all 6 defaulted doors are drawn at about the standard width, so I kept them at 0.9 m.",
+      "Room types: I didn't inspect the 7 spaces individually. The plan shows only numeric refs (0.01, 0.02, 0.03, 0.06) and no fixtures, so I didn't guess types."
+    ]
+  },
+  "overrides": {
+    "floors": {},
+    "spaces": {},
+    "opening_widths": {},
+    "scales": {}
+  },
+  "checks": []
+}

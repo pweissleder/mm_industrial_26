@@ -1,0 +1,90 @@
+{
+  "run_id": "26844067850c",
+  "dataset": "test_WO",
+  "location_id": null,
+  "status": "failed",
+  "current_stage": null,
+  "mode": "full",
+  "offline": false,
+  "owner_pid": 49574,
+  "owner_boot": "3e6005e5d56649ffa206a85d12767b66",
+  "created_at": "2026-10-25T05:48:04.914073Z",
+  "updated_at": "2026-10-25T05:48:04.920844Z",
+  "stages": {
+    "reconstruct": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "raw_validation": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "graph_build": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "graph_validate": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "floorplan": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "equipment": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "variant_creator": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "model_validate": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "summarize": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "suggest": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    }
+  },
+  "pending_review": null,
+  "decisions": [],
+  "usage": {},
+  "artifacts": [],
+  "error": "FileNotFoundError(2, 'No such file or directory')"
+}

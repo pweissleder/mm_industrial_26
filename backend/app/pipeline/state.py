@@ -13,6 +13,7 @@ from typing import Annotated, Any, Literal, TypedDict
 from pydantic import BaseModel, Field
 
 Stage = Literal[
+    "reconstruct",
     "raw_validation",
     "graph_build",
     "graph_validate",
@@ -24,6 +25,7 @@ Stage = Literal[
     "suggest",
 ]
 STAGE_ORDER: tuple[Stage, ...] = (
+    "reconstruct",
     "raw_validation",
     "graph_build",
     "graph_validate",
@@ -37,10 +39,11 @@ STAGE_ORDER: tuple[Stage, ...] = (
 
 # "full" builds the whole location (3D model, metadata). "graph" is the benchmark variant:
 # deterministic, geometry-preserving cleanup plus the relationship graph, nothing else.
+# Both start with "reconstruct", which is skipped when the dataset ships a building.json.
 PipelineMode = Literal["full", "graph"]
 MODE_STAGES: dict[PipelineMode, tuple[Stage, ...]] = {
     "full": STAGE_ORDER,
-    "graph": ("raw_validation", "graph_build", "graph_validate"),
+    "graph": ("reconstruct", "raw_validation", "graph_build", "graph_validate"),
 }
 
 
@@ -235,4 +238,5 @@ class PipelineState(TypedDict, total=False):
     feedback: Annotated[dict[str, str], _merge]  # stage -> why its last attempt was rejected
     graph_ref: str | None  # filled by the relationship-graph stage once implemented
     skipped: bool  # input unchanged since the last completed run
+    reconstruct: bool  # load found no building.json: "reconstruct" runs, then load again
     aborted: bool

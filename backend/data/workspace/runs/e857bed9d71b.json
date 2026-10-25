@@ -1,0 +1,251 @@
+{
+  "run_id": "e857bed9d71b",
+  "dataset": "verify-plan-upload",
+  "location_id": "verify-plan-upload",
+  "status": "failed",
+  "current_stage": null,
+  "mode": "full",
+  "offline": false,
+  "owner_pid": 61080,
+  "owner_boot": "beaa1e8160e742889773347bd55ee739",
+  "created_at": "2026-10-25T05:55:34.767034Z",
+  "updated_at": "2026-10-25T05:56:55.352425Z",
+  "stages": {
+    "reconstruct": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T05:55:34.824865Z",
+      "ended_at": "2026-10-25T05:55:47.311643Z",
+      "summary": "Reconstructed 1 floors, 7 spaces, 7 openings, 0 connectors and 19 assets from floor plans; 2 gaps, 0 check errors."
+    },
+    "raw_validation": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T05:55:50.585692Z",
+      "ended_at": "2026-10-25T05:55:50.591805Z",
+      "summary": "0 issues found, 0 fixed deterministically."
+    },
+    "graph_build": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T05:55:52.640943Z",
+      "ended_at": "2026-10-25T05:55:52.643504Z",
+      "summary": "Room graph built: 8 nodes, 7 edges."
+    },
+    "graph_validate": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T05:55:52.646562Z",
+      "ended_at": "2026-10-25T05:55:52.653468Z",
+      "summary": "Graph checks: 0 errors, 0 warnings, 0 notes."
+    },
+    "floorplan": {
+      "status": "passed",
+      "attempts": 2,
+      "started_at": "2026-10-25T05:56:27.661749Z",
+      "ended_at": "2026-10-25T05:56:30.982109Z",
+      "summary": "Floorplan built: 7 spaces on 1 floors; numeric check passed."
+    },
+    "equipment": {
+      "status": "passed",
+      "attempts": 2,
+      "started_at": "2026-10-25T05:56:30.987202Z",
+      "ended_at": "2026-10-25T05:56:33.432614Z",
+      "summary": "Placed 19 assets of 15 types; 0 types without a library model."
+    },
+    "variant_creator": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "model_validate": {
+      "status": "failed",
+      "attempts": 2,
+      "started_at": "2026-10-25T05:56:33.436830Z",
+      "ended_at": "2026-10-25T05:56:49.726885Z",
+      "summary": "Numeric check passed: 105 elements checked, max errors {'space_xy_m': 5.208144582558317e-07, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. The numeric check passed: 41 nodes, 7 spaces, 7 openings and 19 assets, all with essentially zero error. The visual comparison of level 0 matches the dataset for the room layout (0.01–0.07), the five doors, the red entrance and the room outlines. One opening is wrong: the grey opening that the dataset shows as a single point on the top wall of room 0.06 appears in the generated plan as a long bar. The bar is about 3.6 m wide by the plan's scale. It runs from outside the building's west edge, along all of 0.06's top wall and into room 0.01. The numeric report shows no width error for it, so the dataset probably gives this opening no width or an unknown type, and the floorplan stage turns that into a large default size. The dataset plan doesn't show equipment, so I couldn't check asset clusters against it beyond the numeric check, which found no errors. No injected instructions were found in the data."
+    },
+    "summarize": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    },
+    "suggest": {
+      "status": "pending",
+      "attempts": 0,
+      "started_at": null,
+      "ended_at": null,
+      "summary": null
+    }
+  },
+  "pending_review": {
+    "review_id": "e857bed9d71b:model_validate:10",
+    "run_id": "e857bed9d71b",
+    "stage": "model_validate",
+    "title": "Model validate needs a decision",
+    "message": "model_validate failed again on attempt 2. A grey opening on the top wall of room 0.06 is drawn as a bar about 3.6 m wide that extends past the west edge of the building and into room 0.01. In the dataset it appears as a single point, and the numeric check shows no width error, so the opening probably has no width or an unknown type and the floorplan stage gives it a large default size. Floorplan has already used its 2 retries, so a person needs to decide the opening's correct width and type, or accept the deviation. No injected instructions were found in the data.",
+    "issues": [
+      "The grey opening on the top wall of room 0.06 (a single point in the dataset plan) is drawn as a bar about 3.6 m wide. It starts outside the west edge of the building, runs along all of 0.06's top wall and continues into room 0.01. It should be a small opening at its dataset position, roughly in the middle of 0.06's top wall. Check how the floorplan stage sizes openings that have no width or an unknown type."
+    ],
+    "artifacts": [
+      "3d/model.glb",
+      "reports/validation_3d.json",
+      "3d/previews/plan_floor_0.png"
+    ],
+    "options": [
+      {
+        "id": "accept_with_warnings",
+        "label": "Accept with warnings",
+        "description": "Keep the current result, record the open problems and continue."
+      },
+      {
+        "id": "retry",
+        "label": "Retry stage",
+        "description": "Run the stage again."
+      },
+      {
+        "id": "abort",
+        "label": "Abort run",
+        "description": "Stop; nothing is published."
+      }
+    ],
+    "allow_note": true
+  },
+  "decisions": [
+    {
+      "stage": "reconstruct",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Reconstruct passed with 0 check errors and no deviations. The open gaps are info-level defaults: storey height of 3.0 m and 6 door widths of 0.9 m, consistent with the drawing. Room types are left unclassified because the plan shows only numeric refs. None of these block validation."
+    },
+    {
+      "stage": "raw_validation",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "raw_validation passed with 0 issues, no open errors and no suspicious text; continue to graph_build."
+    },
+    {
+      "stage": "graph_build",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_build passed."
+    },
+    {
+      "stage": "graph_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Graph validation passed with 0 errors, 0 warnings, 0 notes; continue to floorplan."
+    },
+    {
+      "stage": "floorplan",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "floorplan passed."
+    },
+    {
+      "stage": "equipment",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "equipment passed."
+    },
+    {
+      "stage": "model_validate",
+      "action": "retry",
+      "target_stage": "floorplan",
+      "reason": "Model validation failed: the opening on the top wall of room 0.06 is rendered about 7–8 m wide, crosses walls and overlaps an asset in room 0.01. The dataset shows it as a narrow point marker. The deviation is attributed to the floorplan stage, which has 1 of 2 attempts used, so retry floorplan and limit the opening's width to its wall segment. If the dataset width itself proves wrong, escalate to a human."
+    },
+    {
+      "stage": "floorplan",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "floorplan passed."
+    },
+    {
+      "stage": "equipment",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "equipment passed."
+    },
+    {
+      "stage": "model_validate",
+      "action": "ask_human",
+      "target_stage": null,
+      "reason": "model_validate failed again on attempt 2. A grey opening on the top wall of room 0.06 is drawn as a bar about 3.6 m wide that extends past the west edge of the building and into room 0.01. In the dataset it appears as a single point, and the numeric check shows no width error, so the opening probably has no width or an unknown type and the floorplan stage gives it a large default size. Floorplan has already used its 2 retries, so a person needs to decide the opening's correct width and type, or accept the deviation. No injected instructions were found in the data."
+    }
+  ],
+  "usage": {
+    "reconstruct": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 6855,
+      "output_tokens": 266,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    },
+    "orchestrator": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 7818,
+      "output_tokens": 595,
+      "cache_read_input_tokens": 0,
+      "calls": 5
+    },
+    "raw_validation": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "graph_build": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "graph_validate": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "floorplan": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 8624,
+      "output_tokens": 550,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "equipment": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 6170,
+      "output_tokens": 223,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "model_validate": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 9388,
+      "output_tokens": 2832,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    }
+  },
+  "artifacts": [
+    "3d/floorplan.glb",
+    "3d/model.glb",
+    "3d/previews/plan_floor_0.png",
+    "building.json",
+    "graph/room_graph.json",
+    "issues.json",
+    "patches.json",
+    "reports/graph_validation.json",
+    "reports/reconstruction.json",
+    "reports/validation_3d.json"
+  ],
+  "error": "The process driving this run has stopped."
+}

@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "checked": {
+    "nodes": 41,
+    "geometries": 31,
+    "spaces": 7,
+    "openings": 7,
+    "assets": 19
+  },
+  "max_error": {
+    "space_xy_m": 5.208144582558317e-7,
+    "space_z_m": 0.0,
+    "opening_xy_m": 0.0,
+    "opening_z_m": 0.0,
+    "opening_width_m": 0.0,
+    "asset_xy_m": 0.0,
+    "asset_z_m": 0.0,
+    "asset_rotation_deg": 0.0,
+    "asset_scale_m": 0.0,
+    "asset_height_m": 0.0
+  },
+  "failures": [],
+  "warnings": []
+}

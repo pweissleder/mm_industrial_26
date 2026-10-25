@@ -1,0 +1,31 @@
+{
+  "stage": "raw_validation",
+  "status": "passed",
+  "summary": "0 issues found, 0 fixed deterministically.",
+  "metrics": {
+    "issues_found": 0,
+    "fixed": 0,
+    "accepted": 0,
+    "open": 0,
+    "open_errors": 0,
+    "patches": 0,
+    "open_by_class": {},
+    "suspicious_text": []
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "building.json",
+    "issues.json",
+    "patches.json"
+  ],
+  "usage": {
+    "model": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "calls": 0
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-25T05:55:50.591682Z"
+}

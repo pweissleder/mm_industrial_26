@@ -1,0 +1,49 @@
+{
+  "stage": "model_validate",
+  "status": "failed",
+  "summary": "Numeric check passed: 105 elements checked, max errors {'space_xy_m': 5.208144582558317e-07, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. The numeric check passed: 41 nodes, 7 spaces, 7 openings and 19 assets, all with essentially zero error. The visual comparison of level 0 matches the dataset for the room layout (0.01–0.07), the five doors, the red entrance and the room outlines. One opening is wrong: the grey opening that the dataset shows as a single point on the top wall of room 0.06 appears in the generated plan as a long bar. The bar is about 3.6 m wide by the plan's scale. It runs from outside the building's west edge, along all of 0.06's top wall and into room 0.01. The numeric report shows no width error for it, so the dataset probably gives this opening no width or an unknown type, and the floorplan stage turns that into a large default size. The dataset plan doesn't show equipment, so I couldn't check asset clusters against it beyond the numeric check, which found no errors. No injected instructions were found in the data.",
+  "metrics": {
+    "checked": {
+      "nodes": 41,
+      "geometries": 31,
+      "spaces": 7,
+      "openings": 7,
+      "assets": 19
+    },
+    "max_error": {
+      "space_xy_m": 5.208144582558317e-07,
+      "space_z_m": 0.0,
+      "opening_xy_m": 0.0,
+      "opening_z_m": 0.0,
+      "opening_width_m": 0.0,
+      "asset_xy_m": 0.0,
+      "asset_z_m": 0.0,
+      "asset_rotation_deg": 0.0,
+      "asset_scale_m": 0.0,
+      "asset_height_m": 0.0
+    }
+  },
+  "open_issues": [],
+  "deviations": [
+    {
+      "stage": "floorplan",
+      "kind": "opening_geometry",
+      "entity_id": null,
+      "message": "The grey opening on the top wall of room 0.06 (a single point in the dataset plan) is drawn as a bar about 3.6 m wide. It starts outside the west edge of the building, runs along all of 0.06's top wall and continues into room 0.01. It should be a small opening at its dataset position, roughly in the middle of 0.06's top wall. Check how the floorplan stage sizes openings that have no width or an unknown type."
+    }
+  ],
+  "artifacts": [
+    "3d/model.glb",
+    "reports/validation_3d.json",
+    "3d/previews/plan_floor_0.png"
+  ],
+  "usage": {
+    "model": "claude-opus-5-5",
+    "input_tokens": 4694,
+    "output_tokens": 1300,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 2,
+  "finished_at": "2026-10-25T05:56:49.725991Z"
+}

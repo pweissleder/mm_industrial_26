@@ -44,7 +44,7 @@ describe('UploadDialog', () => {
     });
     const upload = vi
       .spyOn(api, 'upload')
-      .mockResolvedValue({ dataset: 'plant-2', files: [], ingestible: false });
+      .mockResolvedValue({ dataset: 'plant-2', files: [], ingestible: false, reconstructable: false });
     const { user, onUploaded } = setup();
 
     await user.type(screen.getByLabelText(/name the location/i), 'plant-2');

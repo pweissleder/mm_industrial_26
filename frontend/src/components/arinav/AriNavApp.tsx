@@ -143,6 +143,10 @@ export default function AriNavApp() {
     return stored === 'developer' || stored === 'navigator' ? stored : 'user';
   });
   const [datasets, setDatasets] = useState<string[]>([]);
+  // Uploaded plan-only datasets that still need their reconstruct stage (no building.json yet).
+  const [pending, setPending] = useState<string[]>([]);
+  // No building.json yet, so no browser preview: it appears once reconstruction has passed.
+  const [lowUnavailable, setLowUnavailable] = useState(false);
   const [dataset, setDataset] = useState<string | null>(null);
   const [model, setModel] = useState<BuildingModel | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
@@ -198,6 +202,7 @@ export default function AriNavApp() {
   const { reset: resetNav } = nav;
   const openDataset = useCallback(
     async (name: string, startPipeline = false) => {
+      setLowUnavailable(false);
       setDataset(name);
       setBuildingId(null);
       switchedTo.current = null;
@@ -230,7 +235,34 @@ export default function AriNavApp() {
     [notify, resetNav],
   );
 
-  const refreshDatasets = useCallback(() => api.datasets().then(setDatasets), []);
+  const reconstructOpened = useRef(false);
+  // A plan-only dataset: the pipeline reconstructs building.json first, so run it at once and
+  // open the Low model when that stage has passed.
+  const openPending = useCallback(
+    (name: string) => {
+      setDataset(name);
+      setBuildingId(null);
+      setModel(null);
+      setSelection(null);
+      setLooseGlb(null);
+      setSource(GENERATED_SOURCE);
+      setPick(null);
+      resetNav();
+      setLowUnavailable(true);
+      reconstructOpened.current = false;
+      setRunRequest({ dataset: name, nonce: Date.now() });
+      remember(LAST_DATASET, name);
+    },
+    [resetNav],
+  );
+  const refreshDatasets = useCallback(
+    () =>
+      api.datasetIndex().then(({ datasets: list, needs_reconstruction }) => {
+        setDatasets(list);
+        setPending(needs_reconstruction);
+      }),
+    [],
+  );
 
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
@@ -303,6 +335,16 @@ export default function AriNavApp() {
     }
     wasBuilding.current = false;
   }, [run.phase, hq, source, notify]);
+
+  // Reconstruction done: building.json exists now, so load the Low model (once).
+  const reconstructed =
+    lowUnavailable && 'run' in run && run.run?.stages.reconstruct?.status === 'passed';
+  useEffect(() => {
+    if (!reconstructed || !dataset || reconstructOpened.current) return;
+    reconstructOpened.current = true;
+    void openDataset(dataset, false);
+    void refreshDatasets().catch(() => {}); // no longer pending
+  }, [reconstructed, dataset, openDataset, refreshDatasets]);
 
   // A review request opens the processing dialog once; later it waits behind the chip.
   const shownReview = useRef<string | null>(null);
@@ -422,16 +464,21 @@ export default function AriNavApp() {
       .then(setAssistant)
       .catch(() => setAssistant(null));
     api
-      .datasets()
-      .then((list) => {
+      .datasetIndex()
+      .then(({ datasets: list, needs_reconstruction }) => {
         setDatasets(list);
+        setPending(needs_reconstruction);
         const last = recall(LAST_DATASET);
-        const first = last && list.includes(last) ? last : list[0];
-        if (first) void openDataset(first);
+        const known = last && (list.includes(last) || needs_reconstruction.includes(last));
+        const first = known ? last : list[0];
+        if (first && needs_reconstruction.includes(first)) {
+          openPending(first);
+          setLoading(false);
+        } else if (first) void openDataset(first);
         else setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [openDataset]);
+  }, [openDataset, openPending]);
 
   // User profile: the details card folds to its title row 5 s after a selection; hovering or
   // focusing it pauses the timer, and a new selection (or the chevron) unfolds it again.
@@ -710,6 +757,8 @@ export default function AriNavApp() {
     if (result.ingestible) {
       await openDataset(result.dataset, true);
       if (glb) setSource(glb.name);
+    } else if (result.reconstructable) {
+      openPending(result.dataset);
     } else if (glb) {
       // A model without building.json: show it on its own.
       setDataset(null);
@@ -723,6 +772,10 @@ export default function AriNavApp() {
   const glbUrl =
     source && source !== HQ_SOURCE && dataset ? datasetFileUrl(dataset, source) : looseGlb;
   const empty = !loading && !model && !glbUrl;
+  const allDatasets = useMemo(
+    () => [...datasets, ...pending.filter((d) => !datasets.includes(d))],
+    [datasets, pending],
+  );
 
   // The assistant also sees what the user is inspecting on the map (D2), never as their position.
   const chatUi = useMemo(
@@ -823,8 +876,13 @@ export default function AriNavApp() {
             {model.building.name}
           </span>
         )}
-        {model && !glbUrl && !navigatorMode && (
-          <HqPill state={run} showingHq={showingHq} onOpen={() => setPipelineOpen(true)} />
+        {(model || lowUnavailable) && !glbUrl && !navigatorMode && (
+          <HqPill
+            state={run}
+            showingHq={showingHq}
+            lowUnavailable={lowUnavailable}
+            onOpen={() => setPipelineOpen(true)}
+          />
         )}
         <span className="topbar__spacer" />
         <div className="segmented segmented--small mode-toggle" role="group" aria-label="Profile">
@@ -858,9 +916,11 @@ export default function AriNavApp() {
       <div className="scrim" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
       <div className="sidebar-slot" inert={!sidebarOpen}>
         <Sidebar
-          datasets={datasets}
+          datasets={allDatasets}
+          pending={pending}
           dataset={dataset}
-          onDataset={(d) => void openDataset(d)}
+          onDataset={(d) => (pending.includes(d) ? openPending(d) : void openDataset(d))}
+          lowUnavailable={lowUnavailable}
           loading={loading}
           model={viewModel}
           summary={showingHq ? hq.location.metadata?.summary : undefined}
@@ -1036,8 +1096,22 @@ export default function AriNavApp() {
             Find your way through <span className="text-accent">any building.</span>
           </h1>
           <p>
-            AriNav follows Ariadne’s thread: upload a <code>building.json</code> or a 3D model, then
-            ask the agent where things are and how to get there.
+            {lowUnavailable && run.phase === 'not_built' ? (
+              <>
+                This dataset has floor plans but no <code>building.json</code> yet. Build it from the
+                tag above: the pipeline reconstructs the building first, then the preview appears.
+              </>
+            ) : lowUnavailable ? (
+              <>
+                Reconstructing the building from its floor plans… The quick preview needs a{' '}
+                <code>building.json</code>, so it appears once this step is done.
+              </>
+            ) : (
+              <>
+                AriNav follows Ariadne’s thread: upload a <code>building.json</code>, floor plans or a 3D
+                model, then ask the agent where things are and how to get there.
+              </>
+            )}
           </p>
           <button className="btn btn--accent" onClick={() => setUploadOpen(true)}>
             <UploadIcon width={17} height={17} /> Upload a building
@@ -1070,12 +1144,17 @@ export default function AriNavApp() {
 
       <UploadDialog
         open={uploadOpen}
-        datasets={datasets}
+        datasets={allDatasets}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />
 
-      <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />
+      <PipelineDialog
+        open={pipelineOpen}
+        pipeline={pipeline}
+        lowUnavailable={lowUnavailable}
+        onClose={() => setPipelineOpen(false)}
+      />
 
       {toast && (
         <div className="toast" role="status">

@@ -61,6 +61,8 @@ export interface UploadResponse {
   dataset: string;
   files: DatasetFile[];
   ingestible: boolean;
+  /** No building.json, but floor plans: the pipeline's reconstruct stage can rebuild it. */
+  reconstructable: boolean;
 }
 
 // --- ingestion pipeline (backend/app/pipeline) ---------------------------------------
@@ -584,6 +586,12 @@ export const api = {
       // building_id gives the agent that building's navgraph tools; without it the agent is blind.
       body: JSON.stringify({ message, thread_id: threadId, building_id: buildingId ?? undefined }),
     }),
+  /** `needs_reconstruction`: uploaded plan-only datasets that have no building.json yet. */
+  datasetIndex: () =>
+    request<{ datasets: string[]; needs_reconstruction: string[] }>('/datasets').then((r) => ({
+      datasets: r.datasets,
+      needs_reconstruction: r.needs_reconstruction ?? [],
+    })),
   datasets: () => request<{ datasets: string[] }>('/datasets').then((r) => r.datasets),
   ingest: (dataset: string) =>
     request<IngestionResponse>('/ingestions', { method: 'POST', body: JSON.stringify({ dataset }) }),

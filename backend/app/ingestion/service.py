@@ -10,6 +10,7 @@ from app.domain.building import BuildingFile
 from app.storage import BuildingRepository
 
 DATASET_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
+PLAN_IMAGE = re.compile(r"^floor_(-?\d+)(_plain)?\.(svg|png|jpe?g)$", re.I)
 
 
 class DatasetNotFoundError(LookupError):
@@ -29,10 +30,33 @@ class IngestionSummary:
     replaced: bool
 
 
+@dataclass(frozen=True)
+class DatasetInputs:
+    has_building: bool
+    reconstructable: bool  # no building.json, but floor plans to rebuild it from
+
+
+def dataset_inputs(dataset_dir: Path) -> DatasetInputs:
+    has_building = (dataset_dir / "building.json").is_file()
+    has_plans = dataset_dir.is_dir() and any(
+        p.is_file() and PLAN_IMAGE.match(p.name) for p in dataset_dir.iterdir()
+    )
+    return DatasetInputs(has_building=has_building, reconstructable=not has_building and has_plans)
+
+
 def list_datasets(datasets_dir: Path) -> list[str]:
     if not datasets_dir.is_dir():
         return []
     return sorted(p.parent.name for p in datasets_dir.glob("*/building.json"))
+
+
+def list_pending_datasets(datasets_dir: Path) -> list[str]:
+    """Folders without a building.json that the pipeline can reconstruct one for."""
+    if not datasets_dir.is_dir():
+        return []
+    return sorted(
+        p.name for p in datasets_dir.iterdir() if p.is_dir() and dataset_inputs(p).reconstructable
+    )
 
 
 def _building_file(datasets_dir: Path, dataset: str) -> Path:

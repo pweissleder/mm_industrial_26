@@ -68,6 +68,9 @@ export function usePipeline(
   // building already on screen.
   const autoRef = useRef(auto);
   autoRef.current = auto;
+  // A request is honoured once: opening the reconstructed building later (buildingId appears)
+  // follows the run that is already going instead of starting another.
+  const handledNonce = useRef<number | null>(null);
 
   const settle = useCallback(
     async (gen: number, run: RunRecord | null) => {
@@ -127,13 +130,17 @@ export function usePipeline(
   useEffect(() => {
     const gen = ++generation.current;
     window.clearTimeout(timer.current);
-    if (!dataset || !buildingId) {
+    // Plan-only datasets have no buildingId until their reconstruct stage has passed.
+    if (!dataset) {
       setState({ phase: 'idle' });
       return;
     }
     setState({ phase: 'checking' });
     void (async () => {
-      if (requestedNonce !== null && autoRef.current) return startRun(gen, dataset, false);
+      if (requestedNonce !== null && autoRef.current && handledNonce.current !== requestedNonce) {
+        handledNonce.current = requestedNonce;
+        return startRun(gen, dataset, false);
+      }
       const runs = await api.runs(dataset).catch(() => null);
       if (gen !== generation.current) return;
       if (runs === null) {
@@ -141,7 +148,7 @@ export function usePipeline(
       } else if (runs.length === 0) {
         // A model stored under the building's id is used as is, even without a run record
         // (cache: load the file, never regenerate on open).
-        const stored = await api.locations().catch(() => []);
+        const stored = buildingId ? await api.locations().catch(() => []) : [];
         if (gen !== generation.current) return;
         if (stored.some((l) => l.id === buildingId && l.has_model)) await settle(gen, null);
         else if (autoRef.current) await startRun(gen, dataset, false);

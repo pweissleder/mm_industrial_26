@@ -1,0 +1,26 @@
+{
+  "stage": "equipment",
+  "status": "passed",
+  "summary": "Placed 19 assets of 15 types; 0 types without a library model.",
+  "metrics": {
+    "placed": 19,
+    "types": 15,
+    "missing_types": [],
+    "flagged": [],
+    "to_create": []
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 3085,
+    "output_tokens": 106,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 2,
+  "finished_at": "2026-10-25T05:56:33.429829Z"
+}

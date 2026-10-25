@@ -1,0 +1,38 @@
+{
+  "id": "verify-plan-upload",
+  "dataset": "verify-plan-upload",
+  "name": "verify-plan-upload",
+  "source": "reconstructed",
+  "raw_sha256": "0c926853d834bc63271d8e95bf99c702af662848a8a48a55caa42861c3d996dd",
+  "created_at": "2026-10-25T05:55:34.822225Z",
+  "updated_at": "2026-10-25T05:56:55.353510Z",
+  "pillars": {
+    "validation": {
+      "status": "failed",
+      "updated_at": null,
+      "note": "The process driving this run has stopped."
+    },
+    "graph": {
+      "status": "failed",
+      "updated_at": null,
+      "note": "The process driving this run has stopped."
+    },
+    "assets_3d": {
+      "status": "failed",
+      "updated_at": null,
+      "note": "The process driving this run has stopped."
+    },
+    "metadata": {
+      "status": "failed",
+      "updated_at": null,
+      "note": "The process driving this run has stopped."
+    }
+  },
+  "metadata": null,
+  "artifacts": {
+    "source_dir": "/Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/backend/data/datasets/verify-plan-upload"
+  },
+  "runs": [
+    "e857bed9d71b"
+  ]
+}
