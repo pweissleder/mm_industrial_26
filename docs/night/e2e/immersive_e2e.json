@@ -1,12 +1,12 @@
 {
- "generated": "2026-10-25T02:16:19.367Z",
- "passed": 14,
- "total": 14,
+ "generated": "2026-10-25T06:23:15.389Z",
+ "passed": 15,
+ "total": 15,
  "results": [
   {
    "name": "C10_preview_moves_only_the_camera",
    "pass": true,
-   "ms": 2856,
+   "ms": 2825,
    "detail": {
     "distance": 0
    }
@@ -14,7 +14,7 @@
   {
    "name": "G08_split_view_same_pose_in_both_halves",
    "pass": true,
-   "ms": 3221,
+   "ms": 3458,
    "detail": {
     "position": [
      7.527999999999993,
@@ -26,7 +26,7 @@
   {
    "name": "G01_wasd_walk_and_mouse_look_relative_to_view",
    "pass": true,
-   "ms": 3737,
+   "ms": 4210,
    "detail": {
     "moved_m": 0.84,
     "direction_error_deg": 0,
@@ -36,7 +36,7 @@
   {
    "name": "G02_holding_into_a_wall_never_tunnels",
    "pass": true,
-   "ms": 3492,
+   "ms": 3552,
    "detail": {
     "from": "S002",
     "to": "S002",
@@ -49,7 +49,7 @@
   {
    "name": "G03_typing_in_chat_never_moves_the_person",
    "pass": true,
-   "ms": 1098,
+   "ms": 905,
    "detail": {
     "unchanged": true
    }
@@ -57,7 +57,7 @@
   {
    "name": "G04_one_driver_no_jump_when_switching",
    "pass": true,
-   "ms": 573,
+   "ms": 668,
    "detail": {
     "manual_pose": [
      8.36,
@@ -75,13 +75,13 @@
   {
    "name": "G05_off_route_replans_from_the_person_without_teleport",
    "pass": true,
-   "ms": 30989,
+   "ms": 29384,
    "detail": {
     "route_revision": 1,
     "status": "active",
     "person": [
-     26.03,
-     6.25
+     25.69,
+     6.26
     ],
     "message": null
    }
@@ -89,7 +89,7 @@
   {
    "name": "M03_orientation_events_turn_the_view_with_wraparound",
    "pass": true,
-   "ms": 23407,
+   "ms": 20795,
    "detail": {
     "calibrated_yaw": 332.946,
     "headings": [
@@ -106,16 +106,27 @@
   {
    "name": "M04_orientation_unsupported_or_denied_is_truthful",
    "pass": true,
-   "ms": 20539,
+   "ms": 19308,
    "detail": {
     "status": "unsupported",
     "label": "Rotation not available"
    }
   },
   {
+   "name": "G09_first_person_stairs_prompt_and_keys",
+   "pass": true,
+   "ms": 21980,
+   "detail": {
+    "prompt": "Stairs here ▼ Ground floor Q",
+    "from": "proc-factory-dev-003-F1",
+    "to": "proc-factory-dev-003-F0",
+    "space": "proc-factory-dev-003-F0-S017"
+   }
+  },
+  {
    "name": "M01-portrait-390x844_navigation_view_usable",
    "pass": true,
-   "ms": 26608,
+   "ms": 24146,
    "detail": {
     "centre_covered_pct": 0,
     "mic_buttons": 1
@@ -124,7 +135,7 @@
   {
    "name": "M02-landscape-844x390_navigation_view_usable",
    "pass": true,
-   "ms": 25946,
+   "ms": 24398,
    "detail": {
     "centre_covered_pct": 20,
     "mic_buttons": 1
@@ -133,7 +144,7 @@
   {
    "name": "Q02-reference-1000x860_navigation_view_usable",
    "pass": true,
-   "ms": 29400,
+   "ms": 25665,
    "detail": {
     "centre_covered_pct": 0,
     "mic_buttons": 1
@@ -142,7 +153,7 @@
   {
    "name": "A02_core_profile_switches_new_modules_off",
    "pass": true,
-   "ms": 31586,
+   "ms": 30821,
    "detail": {
     "immersive_bar": 0,
     "guidance_card": 0,

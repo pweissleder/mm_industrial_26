@@ -123,7 +123,32 @@ export function PovHud(props: { immersive: Immersive; guidance: Guidance; manual
           </span>
         </div>
       )}
-      {props.manualHelp && <span className="pov-hud__help">WASD / arrows to walk · drag to look · Esc frees the mouse</span>}
+      {im.driver === 'manual' && <RidePrompt immersive={im} />}
+      {props.manualHelp && <span className="pov-hud__help">WASD / arrows to walk · drag to look · E / Q stairs and lifts · Esc frees the mouse</span>}
+    </div>
+  );
+}
+
+/** Standing at stairs or a lift while walking yourself: say so, with keys and tap targets. */
+function RidePrompt(props: { immersive: Immersive }) {
+  const { up, down } = props.immersive.rideOptions;
+  if (!up && !down) return null;
+  const what = (up ?? down)?.kind === 'lift' ? 'Lift' : 'Stairs';
+  const row = (o: NonNullable<typeof up>, dir: 1 | -1, key: string) =>
+    o.usable ? (
+      <button className="btn btn--primary btn--sm" onClick={() => props.immersive.rideStep(dir)}>
+        {dir > 0 ? '▲' : '▼'} {o.floorName} <kbd>{key}</kbd>
+      </button>
+    ) : (
+      <span className="pov-hud__ride-off">
+        {dir > 0 ? '▲' : '▼'} {o.floorName}: {o.reason === 'not step-free' ? 'not step-free' : 'closed'}
+      </span>
+    );
+  return (
+    <div className="pov-hud__ride" role="group" aria-label={`${what} here`}>
+      <span className="pov-hud__ride-title">{what} here</span>
+      {up && row(up, 1, 'E')}
+      {down && row(down, -1, 'Q')}
     </div>
   );
 }

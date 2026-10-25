@@ -55,6 +55,16 @@ function createLookStore(initial: LookState): LookStore & { set(next: LookState)
   };
 }
 
+export interface RideOption {
+  connectorId: string;
+  floorId: string;
+  floorName: string;
+  kind: string;
+  usable: boolean;
+  reason: string | null;
+  level: number;
+}
+
 export interface Immersive {
   view: CameraView;
   driver: Driver;
@@ -77,6 +87,10 @@ export interface Immersive {
   /** Stairs/lifts usable from where the manual person stands. */
   rides: { id: string; name: string; kind: string; floors: { id: string; name: string }[]; usable: boolean; reason: string | null }[];
   rideTo: (connectorId: string, floorId: string) => void;
+  /** The next floor up/down reachable from here (stairs or lift), for E/Q and the HUD prompt. */
+  rideOptions: { up: RideOption | null; down: RideOption | null };
+  /** Take the stairs/lift one floor up (+1) or down (-1); false if nothing usable. */
+  rideStep: (dir: 1 | -1) => boolean;
   manualPose: (ExternalPose & { blocked?: boolean }) | null;
   /** Current view heading (deg) or null if unknown (for spatial questions). */
   viewHeading: () => number | null;
@@ -208,6 +222,11 @@ export function useImmersive(args: {
     const down = (e: KeyboardEvent) => {
       if (isTyping(e.target) || e.ctrlKey || e.metaKey || e.altKey) return;
       const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+      // E / Page Up: stairs or lift one floor up; Q / Page Down: one floor down (where you stand)
+      if (pose.current && ['e', 'q', 'PageUp', 'PageDown'].includes(k) && !e.repeat) {
+        if (rideStepRef.current(k === 'e' || k === 'PageUp' ? 1 : -1)) e.preventDefault();
+        return;
+      }
       if (!['w', 'a', 's', 'd', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Shift'].includes(k)) {
         if (k === 'Escape') keys.current.clear();
         return;
@@ -394,6 +413,39 @@ export function useImmersive(args: {
     [publishManual],
   );
 
+  // Next floor up/down from here: nearest level in that direction, usable rides first.
+  const rideOptions = useMemo(() => {
+    const out: { up: RideOption | null; down: RideOption | null } = { up: null, down: null };
+    if (!model || !manualPose || !rides.length) return out;
+    const level = new Map(model.floors.map((f) => [f.id, f.level]));
+    const here = level.get(manualPose.floor_id) ?? 0;
+    for (const r of rides)
+      for (const f of r.floors) {
+        const l = level.get(f.id);
+        if (l === undefined || l === here) continue;
+        const key = l > here ? 'up' : 'down';
+        const option: RideOption = { connectorId: r.id, floorId: f.id, floorName: f.name, kind: r.kind, usable: r.usable, reason: r.reason, level: l };
+        const best = out[key];
+        const better =
+          !best ||
+          (option.usable && !best.usable) ||
+          (option.usable === best.usable && Math.abs(l - here) < Math.abs(best.level - here));
+        if (better) out[key] = option;
+      }
+    return out;
+  }, [model, manualPose, rides]);
+  const rideStep = useCallback(
+    (dir: 1 | -1) => {
+      const option = dir > 0 ? rideOptions.up : rideOptions.down;
+      if (!option || !option.usable) return false;
+      rideTo(option.connectorId, option.floorId);
+      return true;
+    },
+    [rideOptions, rideTo],
+  );
+  const rideStepRef = useRef(rideStep);
+  rideStepRef.current = rideStep;
+
   useEffect(() => {
     if (!import.meta.env.DEV) return;
     const handle = {
@@ -425,6 +477,8 @@ export function useImmersive(args: {
     arrowDeg,
     rides,
     rideTo,
+    rideOptions,
+    rideStep,
     manualPose,
     viewHeading,
   };

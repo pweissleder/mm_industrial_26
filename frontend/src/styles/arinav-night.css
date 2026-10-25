@@ -457,3 +457,33 @@
     display: none;
   }
 }
+
+/* Stairs / lift prompt in first person (walk yourself). */
+.pov-hud__ride {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+}
+.pov-hud__ride-title {
+  font-weight: 700;
+  color: var(--navy);
+}
+.pov-hud__ride kbd {
+  margin-left: 6px;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.25);
+  font: inherit;
+  font-size: 11px;
+}
+.pov-hud__ride-off {
+  color: var(--ink-2);
+  font-size: 13px;
+}

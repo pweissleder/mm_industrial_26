@@ -295,6 +295,35 @@ await check('M04_orientation_unsupported_or_denied_is_truthful', async () => {
   return { status, label: 'Rotation not available' };
 });
 
+// --------------------------------------------------------------- stairs in first person (walk yourself)
+await check('G09_first_person_stairs_prompt_and_keys', async () => {
+  const p = await open({ width: 1440, height: 900 });
+  current = p;
+  await building(p, FACTORY);
+  await devRoute(p, 'Office 1.04', 'Rooms', 'CNC mill H-A1-A', 'Assets');
+  await p.evaluate(() => window.__arinavGuidance.manualClock(true));
+  await p.getByRole('button', { name: 'Start navigation' }).click();
+  await p.evaluate(() => window.__arinavGuidance.advance(4)); // the walker stands in the staircase
+  await p.getByRole('button', { name: 'First person' }).click();
+  await p.getByRole('button', { name: /Walk myself/ }).click();
+  await p.waitForTimeout(800);
+  const a = await im(p);
+  const prompt = p.locator('.pov-hud__ride');
+  await prompt.waitFor({ timeout: 5000 });
+  const text = await prompt.innerText();
+  await p.screenshot({ path: join(OUT, 'G09-stairs-prompt-1440.png') });
+  await p.mouse.move(900, 450);
+  await p.keyboard.press('q');
+  await p.waitForTimeout(600);
+  const b = await im(p);
+  await p.screenshot({ path: join(OUT, 'G09-after-stairs-1440.png') });
+  await p.context().close();
+  current = page;
+  assert(/Stairs here/.test(text) && /Ground floor/.test(text), `prompt "${text}"`);
+  assert(a.pose.floor_id !== b.pose.floor_id, `still on ${b.pose.floor_id}`);
+  return { prompt: text.replace(/\s+/g, ' '), from: a.pose.floor_id, to: b.pose.floor_id, space: b.pose.space_id };
+});
+
 // --------------------------------------------------------------- mobile + reference viewport visuals
 for (const [name, vp] of [
   ['M01-portrait-390x844', { width: 390, height: 844 }],

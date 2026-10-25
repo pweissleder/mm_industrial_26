@@ -17,10 +17,24 @@ SAMPLE_RATE = 16000
 
 
 class VoiceError(RuntimeError):
-    def __init__(self, stage: str, status: int | None = None) -> None:
-        self.stage, self.http_status = stage, status
+    def __init__(self, stage: str, status: int | None = None, reason: str | None = None) -> None:
+        self.stage, self.http_status, self.reason = stage, status, reason
         detail = f" (HTTP {status})." if status else " (connection, timeout or invalid response)."
+        if reason == "quota_exceeded":
+            detail = " (HTTP 401): the ElevenLabs API key's credit quota is used up."
+        elif reason:
+            detail = f" (HTTP {status}, {reason})."
         super().__init__(f"ElevenLabs {stage} failed{detail}")
+
+
+def _reason(response: httpx2.Response) -> str | None:
+    """ElevenLabs' machine-readable error status (e.g. quota_exceeded), never the message text."""
+    try:
+        detail = response.json().get("detail")
+    except Exception:
+        return None
+    status = detail.get("status") if isinstance(detail, dict) else None
+    return status if isinstance(status, str) and re.fullmatch(r"[a-z_]{3,40}", status) else None
 
 
 class ElevenLabsVoice:
@@ -50,7 +64,7 @@ class ElevenLabsVoice:
                 files={"file": ("speech.wav", wav, "audio/wav")},
             )
             if response.status_code != 200:
-                raise VoiceError("STT", response.status_code)
+                raise VoiceError("STT", response.status_code, _reason(response))
             text = response.json().get("text")
             if not isinstance(text, str) or not text.strip() or len(text) > 2000:
                 raise VoiceError("STT")
@@ -76,7 +90,7 @@ class ElevenLabsVoice:
                 },
             )
             if response.status_code != 200:
-                raise VoiceError("TTS", response.status_code)
+                raise VoiceError("TTS", response.status_code, _reason(response))
             pcm = response.content
             if "json" in response.headers.get("content-type", "") or not pcm or len(pcm) % 2:
                 raise VoiceError("TTS audio format")
