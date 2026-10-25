@@ -140,7 +140,10 @@ export function ImmersiveBar(props: {
           {manual ? 'Walking yourself' : 'Walk myself'}
         </button>
       )}
-      {props.guidance.canStart && (manual || !['active', 'recomputing'].includes(props.guidance.snapshot.status)) && (
+      {/* In the overview "Start navigation" does the same; here only while walking or in first person. */}
+      {props.guidance.canStart &&
+        (manual || pov) &&
+        (manual || !['active', 'recomputing'].includes(props.guidance.snapshot.status)) && (
         <button
           className="chip"
           onClick={() => {

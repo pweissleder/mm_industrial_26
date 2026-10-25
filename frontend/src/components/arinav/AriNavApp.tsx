@@ -1250,6 +1250,12 @@ export default function AriNavApp() {
       <div className="right-rail" ref={railRef}>
         {(features.pov || features.game) && model && (
           <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
+            {guidanceHidden && guidance.canStart && (
+              // The closed navigation card comes back here (route, Start navigation).
+              <button className="chip chip--accent" onClick={() => setGuidanceHidden(false)} title="Show the route and start navigation">
+                Route
+              </button>
+            )}
             {features.memory &&
               (memorySession ? (
                 <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
@@ -1322,7 +1328,8 @@ export default function AriNavApp() {
         </nav>
 
         {/* Quick floor switching at every width (the sidebar no longer has a floor picker). */}
-        {!glbUrl && floorChoices.length > 0 && (
+        {/* Phones hide it while navigating: the floor follows the person then. */}
+        {!glbUrl && floorChoices.length > 0 && !(isPhone && guidance.navigating) && (
           <div className="floor-rail card" role="radiogroup" aria-label="Floor">
             {floorChoices.map((f) => (
               <button

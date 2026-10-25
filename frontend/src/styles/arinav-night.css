@@ -825,3 +825,16 @@
   height: var(--phone-h, 600px);
   border-radius: 26px;
 }
+
+.chip--accent {
+  background: var(--navy);
+  color: #fff;
+}
+
+/* Touch phones zoom with two fingers: the zoom buttons are left out to keep the screen calm. */
+@media (pointer: coarse) and (max-width: 720px) {
+  .hud .icon-btn[aria-label='Zoom in'],
+  .hud .icon-btn[aria-label='Zoom out'] {
+    display: none;
+  }
+}
