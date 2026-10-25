@@ -1,5 +1,5 @@
 {
- "base": "http://127.0.0.1:4322",
+ "base": "https://localhost:4321",
  "results": [
   {
    "name": "P0_equipment_start_route_and_walker",
@@ -15,8 +15,8 @@
     ],
     "off_centre_m": 2.3,
     "walker": [
-     -5.836766720824716,
-     6.350891303694571
+     -5.836658028898513,
+     6.350819986629324
     ],
     "floor": "proc-factory-dev-003-F0"
    }
@@ -42,11 +42,10 @@
    }
   },
   {
-   "name": "P2_view_switch_folded_hover_escape",
+   "name": "P2_view_switch_menu_hover_escape",
    "pass": true,
    "detail": {
-    "folded_px": 38,
-    "open_px": 222,
+    "icon_px": 28,
     "view": "pov",
     "route_kept": true
    }

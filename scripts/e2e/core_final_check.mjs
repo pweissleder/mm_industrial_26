@@ -31,7 +31,7 @@ async function check(name, fn) {
   }
 }
 async function open(viewport, contextOptions = {}) {
-  const context = await browser.newContext({ viewport, ...contextOptions });
+  const context = await browser.newContext({ viewport, ignoreHTTPSErrors: true, ...contextOptions });
   const page = await context.newPage();
   page.errors = [];
   page.on('pageerror', (e) => page.errors.push(e.message));
@@ -178,26 +178,28 @@ await check('P0_new_route_after_arrival_starts_at_target', async () => {
   return { start: body.start };
 });
 
-await check('P2_view_switch_folded_hover_escape', async () => {
-  const sw = page.getByRole('group', { name: 'Camera' });
-  const folded = await sw.evaluate((el) => el.classList.contains('view-switch--folded'));
-  const w0 = (await sw.boundingBox()).width;
-  await sw.hover();
-  await page.waitForTimeout(400);
-  const w1 = (await sw.boundingBox()).width;
+await check('P2_view_switch_menu_hover_escape', async () => {
+  const anchor = page.getByRole('button', { name: 'Change view' });
+  const closed = await page.locator('.view-switch__menu').count();
+  await anchor.hover();
+  await page.waitForTimeout(300);
+  const opened = await page.locator('.view-switch__menu').count();
+  const after = await anchor.boundingBox();
   await page.screenshot({ path: join(OUT, 'P2-view-switch-open-1440.png') });
   await page.keyboard.press('Escape');
-  await page.mouse.move(700, 300);
-  await page.waitForTimeout(400);
-  const w2 = (await sw.boundingBox()).width;
-  assert(folded && w1 > w0 + 20 && w2 < w1 - 20, `widths ${w0} ${w1} ${w2}`);
-  await sw.hover();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(200);
+  const escaped = await page.locator('.view-switch__menu').count();
+  const before = await anchor.boundingBox(); // the menu takes no room: same place open and closed
+  assert(!closed && opened && !escaped && Math.abs(before.x - after.x) < 1, `menu ${closed}/${opened}/${escaped}, icon moved ${before.x}->${after.x}`);
+  await anchor.click(); // a click (hover opens it already) keeps it open
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'First person' }).click();
   await page.waitForTimeout(800);
   const view = await page.evaluate(() => window.__arinavImmersive.look().view);
+  const menuAfter = await page.locator('.view-switch__menu').count();
   const stillRoute = await g(page);
-  return { folded_px: Math.round(w0), open_px: Math.round(w1), view, route_kept: stillRoute.route };
+  assert(view === 'pov' && !menuAfter, `view ${view}, menu ${menuAfter}`);
+  return { icon_px: Math.round(before.width), view, route_kept: stillRoute.route };
 });
 
 await check('P1_desktop_dev_split_and_click_object_in_first_person', async () => {
@@ -232,7 +234,7 @@ await check('P1_phone_dev_single_fullscreen_view', async () => {
   await phone.evaluate(() => window.__arinavGuidance.manualClock(true));
   await phone.evaluate(() => window.__arinavGuidance.advance(3));
   // tap the folded switch (the current view's icon) to unfold it, then choose
-  await phone.getByRole('button', { name: 'Overview' }).tap();
+  await phone.getByRole('button', { name: 'Change view' }).tap();
   await phone.waitForTimeout(400);
   await phone.getByRole('button', { name: 'First person' }).click();
   await phone.waitForTimeout(1200);
