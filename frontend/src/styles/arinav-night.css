@@ -445,3 +445,15 @@
 .pov-hud--split {
   left: calc(var(--inset-left) + (100% - var(--inset-left)) / 4);
 }
+
+/* Desktop first person: the compact chat card sits above the input, so the HUD goes above it. */
+@media (min-width: 721px) and (min-height: 501px) {
+  .app:has(.chat__mini) .pov-hud {
+    bottom: calc(var(--gutter) + 270px + var(--safe-b));
+  }
+}
+@media (max-height: 500px) {
+  .chat--compact .chat__mini {
+    display: none;
+  }
+}

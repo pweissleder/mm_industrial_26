@@ -1,27 +1,38 @@
 {
-  "when": "2026-10-25T01:43:35.089Z",
+  "when": "2026-10-25T02:22:21.443Z",
   "videos": {
     "scene1": "C:\\Users\\noah3\\AppData\\Local\\Temp\\arinav-scenes-video\\scene1_coffee_route_arrival.webm",
-    "scene2": "C:\\Users\\noah3\\AppData\\Local\\Temp\\arinav-scenes-video\\scene2_wheelchair_lift_closed.webm",
     "scene3": "C:\\Users\\noah3\\AppData\\Local\\Temp\\arinav-scenes-video\\scene3_walk_whats_on_my_right.webm"
+  },
+  "marks": {
+    "scene1": {
+      "start": 26.28,
+      "walk0": 29.57,
+      "walk1": 39.57,
+      "arrive0": 41.38
+    },
+    "scene3": {
+      "walk0": 17.51,
+      "ask0": 46.2
+    }
   },
   "log": [
     {
-      "t": "2026-10-25T01:41:45.128Z",
+      "t": "2026-10-25T02:20:55.025Z",
       "scene": 1,
       "what": "said: I'm in Office 0.38. Where can I get a coffee?",
-      "reply": "The nearest coffee machine is in Kitchen 0.28 on the same floor, about 21 m from Office 0.38. The route is on the map. Kitchen 0.31 is the next closest, at about 37 m.\nDirections · 21.4 m · 4 steps\nOfficial route · furniture ignored\nStart in Office 0.38 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 16 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nFinding places\nNoting your position and needs\nFinding the closest options\nShowing directions",
+      "reply": "The closest coffee machine is in Kitchen 0.28, on the same floor. It's about 21 m away, and the route is on the map.\nDirections · 21.4 m · 4 steps\nOfficial route · furniture ignored\nStart in Office 0.38 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 16 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nFinding places\nNoting your position and needs\nFinding the closest options\nShowing directions",
       "replies_before": 0
     },
     {
-      "t": "2026-10-25T01:41:53.279Z",
+      "t": "2026-10-25T02:21:03.391Z",
       "scene": 1,
       "what": "said: And how do I get there?",
-      "reply": "Leave Office 0.38 into Office corridor 0.16, then follow the corridor to Kitchen 0.28. It's about 21 m, all on the ground floor. The step-by-step directions are next to the chat.\nDirections · 21.4 m · 4 steps\nOfficial route · furniture ignored\nStart in Office 0.38 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 16 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nChecking routes\nShowing directions",
+      "reply": "Leave Office 0.38 into Office corridor 0.16, then follow the corridor about 16 m to Kitchen 0.28. The coffee machine is a couple of metres inside, about 21 m in total with no stairs. The step-by-step directions are next to the chat.\nDirections · 21.4 m · 4 steps\nOfficial route · furniture ignored\nStart in Office 0.38 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 16 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nChecking routes\nShowing directions",
       "replies_before": 1
     },
     {
-      "t": "2026-10-25T01:42:17.089Z",
+      "t": "2026-10-25T02:21:24.109Z",
       "scene": 1,
       "what": "final status",
       "status": "arrived",
@@ -29,67 +40,31 @@
       "total": 21.3523
     },
     {
-      "t": "2026-10-25T01:42:30.427Z",
-      "scene": 2,
-      "what": "said: The office lift is out of order. Please close it.",
-      "reply": "NEEDS YOUR CONFIRMATION\n\nClose lift or stairs “Office lift”?\n\nConfirm\nCancel",
-      "replies_before": 0
-    },
-    {
-      "t": "2026-10-25T01:42:34.501Z",
-      "scene": 2,
-      "what": "confirmed closure"
-    },
-    {
-      "t": "2026-10-25T01:42:47.088Z",
-      "scene": 2,
-      "what": "said: I use a wheelchair. I'm at hall access 0.19 and need to get to Office 1.04 upstairs.",
-      "reply": "There's no step-free route to Office 1.04 right now, because the office lift is closed and it's the only step-free way upstairs. You could wait for the lift to reopen, or I can reopen it if it's working again. I can also look for a destination on the ground floor.\n\nreachable if closures are lifted: Office lift; reachable without the step-free restriction\n\nFinding places\nNoting your position and needs\nChecking routes\nShowing directions",
-      "replies_before": 3
-    },
-    {
-      "t": "2026-10-25T01:42:58.108Z",
-      "scene": 2,
-      "what": "said: Okay. Then take me to kitchen 0.28 instead.",
-      "reply": "Kitchen 0.28 is on the ground floor, about 47 m away, and the route is step-free. It goes through Office corridor 0.16.\nDirections · 47.0 m · 4 steps\nOfficial route · furniture ignored\nStart in Hall access 0.19 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 42 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nFinding places\nChecking routes\nShowing directions",
-      "replies_before": 4
-    },
-    {
-      "t": "2026-10-25T01:43:01.725Z",
-      "scene": 2,
-      "what": "route",
-      "status": "idle",
-      "path": 2,
-      "constraints": {
-        "step_free": true
-      }
-    },
-    {
-      "t": "2026-10-25T01:43:14.403Z",
+      "t": "2026-10-25T02:21:38.139Z",
       "scene": 3,
       "what": "said: I'm in Office 0.38.",
       "reply": "You're in Office 0.38 on the ground floor. Where would you like to go?\nFinding places\nNoting your position and needs",
       "replies_before": 0
     },
     {
-      "t": "2026-10-25T01:43:25.301Z",
+      "t": "2026-10-25T02:22:11.698Z",
       "scene": 3,
       "what": "pose before question",
       "pose": {
         "floor_id": "proc-factory-dev-003-F0",
-        "space_id": "proc-factory-dev-003-F0-S038",
+        "space_id": "proc-factory-dev-003-F0-S016",
         "position": [
-          9.670175214113602,
-          29.345111597951945
+          6.684376594516588,
+          29.85597383371055
         ],
-        "heading": 350
+        "heading": 80
       }
     },
     {
-      "t": "2026-10-25T01:43:30.296Z",
+      "t": "2026-10-25T02:22:16.800Z",
       "scene": 3,
       "what": "said: What's on my right?",
-      "reply": "On your right you can see an office chair about 0.9 m away. Beyond it are Desk 0.38 (2.3 m) and a filing cabinet (2.7 m).",
+      "reply": "Nothing is listed on your right in Office corridor 0.16. Your position now shows as that corridor rather than Office 0.38, so tell me if you've moved or want me to reset it.",
       "replies_before": 1
     }
   ]

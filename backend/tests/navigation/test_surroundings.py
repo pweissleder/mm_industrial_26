@@ -48,3 +48,14 @@ def test_without_a_heading_no_sides_and_a_note(service: NavigationService) -> No
     result = service.surroundings(B, OFFICE, [2.5, 2.7], None)
     assert result["heading_known"] is False and "ask" in result["note"]
     assert all("side" not in i for i in result["items"])
+
+
+def test_doors_further_along_a_wall_carry_the_wall_side(service: NavigationService) -> None:
+    # Office 1.04's door is on its east wall at (5.0, 2.718). Standing at the west side and
+    # looking north (90), the door is ahead-right at a shallow angle: sector "ahead"/"right",
+    # and if in the "ahead" sector it must say wall_side "right".
+    result = service.surroundings(B, OFFICE, [1.0, 0.8], 90)
+    d = door(result)
+    assert d["side"] in ("ahead", "right")
+    if d["side"] == "ahead":
+        assert d["wall_side"] == "right"

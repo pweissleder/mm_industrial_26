@@ -321,8 +321,14 @@ await check('04_09_precision_walker_stays_on_checked_route_and_modes_differ', as
 });
 
 await check('12_missing_hq_does_not_block_map_use', async () => {
+  // The campus has a saved HQ model since the night build: hide it for this check (no model, no run).
+  const noHq = (r) => (r.request().method() === 'GET' ? r.fulfill({ json: [] }) : r.continue());
+  await page.route('**/api/locations', noHq);
+  await page.route('**/api/pipeline-runs?*', noHq);
   await openBuilding(page, CAMPUS);
   await page.getByRole('button', { name: /LQ only/ }).waitFor({ timeout: 20000 });
+  await page.unroute('**/api/locations', noHq);
+  await page.unroute('**/api/pipeline-runs?*', noHq);
   await developer(page);
   await route(page, '3.01', 'Rooms', 'exit', 'Exits');
   const s = await snap(page);

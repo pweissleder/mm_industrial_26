@@ -2,7 +2,10 @@
 relative to a pose and view heading, from the building data only.
 
 Headings follow the building frame used everywhere (degrees counter-clockwise from +X). Sides are
-four 90° sectors around the view direction; "right" is clockwise. Visibility is a plain line of
+four 90° sectors around the view direction; "right" is clockwise. Things ahead that
+are clearly off to one side (a door on the right-hand wall further down a corridor) also carry
+`wall_side`, which is how people say it ("the second door on your right").
+Visibility is a plain line of
 sight inside the person's own room outline: something in another room is reported as behind a wall
 (or through a door), never as visible. Without a heading no sides are given (ask, don't guess).
 """
@@ -14,6 +17,7 @@ from shapely.geometry import LineString, Polygon
 
 JSON = dict[str, Any]
 SIDES = ("ahead", "left", "behind", "right")
+LATERAL_M = 0.6  # this far off the line of sight counts as "on the right/left" further along
 
 
 def _side(rel: float) -> str:
@@ -34,6 +38,9 @@ def _relative(
         bearing = math.degrees(math.atan2(dy, dx)) % 360
         rel = (bearing - heading + 540) % 360 - 180  # + = counter-clockwise = left
         out |= {"side": _side(rel), "relative_deg": round(rel)}
+        lateral = -math.sin(math.radians(rel)) * math.hypot(dx, dy)  # + = to the right
+        if out["side"] == "ahead" and abs(lateral) >= LATERAL_M:
+            out["wall_side"] = "right" if lateral > 0 else "left"
     return out
 
 
@@ -44,7 +51,7 @@ def surroundings(
     position: list[float],
     heading_deg: float | None,
     radius_m: float = 12.0,
-    limit: int = 12,
+    limit: int = 40,
 ) -> JSON:
     spaces = {s["id"]: s for s in data["spaces"]}
     floors = {f["id"]: f for f in data["floors"]}
@@ -100,6 +107,7 @@ def surroundings(
         "heading_known": heading_deg is not None,
         "items": items[:limit],
         "rules": "Sides are relative to the person's view direction (right = clockwise). "
+        "wall_side marks things ahead that are on the right/left-hand side further along. "
         "'visible' means a clear line inside this room; other rooms are behind walls.",
     }
     if heading_deg is None:

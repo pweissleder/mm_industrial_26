@@ -500,7 +500,10 @@ def _s01(heading: float, direction: str, stored: float) -> Scenario:
                         "items",
                         lambda items: (
                             bool(items)
-                            and all(i["side"] == direction for i in items)
+                            and all(
+                                i["side"] == direction or i.get("wall_side") == direction
+                                for i in items
+                            )
                             and any(i["kind"] == "door" for i in items)
                         ),
                         f"only {direction} items, door included",

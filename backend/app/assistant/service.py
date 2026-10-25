@@ -84,6 +84,8 @@ Understanding requests
   when they say so. session_state.ui_note reports a map choice that could not be used.
 - "What's on my right / behind me": describe_surroundings (sides come from the view
   direction; only 'visible' things are in sight; never claim something behind a wall is seen).
+  A start known_from "simulation" is where the person has walked to in the app: use it as their
+  position without questioning an earlier stated room.
 - Something leaking, dripping or falling through the floor ("which room below is affected?"):
   building_fact room_stacked for the room directly below (largest overlap on the floor below).
   Say that this is the room directly underneath; do not simulate or promise water flow.
@@ -861,8 +863,15 @@ class Assistant:
         )
         direction = args.get("direction") or "all"
         if direction != "all" and result.get("heading_known"):
-            result["items"] = [i for i in result["items"] if i.get("side") == direction]
+            # "on my right" includes doors on the right-hand wall further along (wall_side)
+            result["items"] = [
+                i
+                for i in result["items"]
+                if i.get("side") == direction
+                or (direction in ("left", "right") and i.get("wall_side") == direction)
+            ]
             result["filtered_to"] = direction
+        result["items"] = result["items"][:12]
         return result
 
     def tool_list_buildings(self, session: Session, args: JSON, ui: JSON) -> JSON:

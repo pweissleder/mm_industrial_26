@@ -45,6 +45,8 @@ async function open(viewport, query = '?profile=immersive', contextOptions = {})
   page.on('pageerror', (e) => page.errors.push(e.message));
   await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
   await page.goto(BASE + query, { waitUntil: 'networkidle' });
+  // the Astro dev toolbar is a development overlay that can intercept clicks, not part of the app
+  await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
   return page;
 }
 const panel = async (p, openIt) => {

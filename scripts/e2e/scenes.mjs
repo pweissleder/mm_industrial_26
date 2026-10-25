@@ -172,13 +172,17 @@ if (ONLY.includes('3')) {
   const model = await (await fetch(`${process.env.ARINAV_API || 'http://localhost:8000/api'}/buildings/${FACTORY}/model`)).json();
   const door = model.openings.find((o) => o.space_ids.includes(`${FACTORY}-F0-S038`) && o.space_ids.includes(`${FACTORY}-F0-S016`));
   const turnTo = async (bearing) => {
-    const pose = await p.evaluate(() => window.__arinavImmersive.pose());
-    const diff = ((bearing - pose.heading + 540) % 360) - 180; // + = left (counter-clockwise)
-    const key = diff > 0 ? 'ArrowLeft' : 'ArrowRight';
-    await p.keyboard.down(key);
-    await p.waitForTimeout((Math.abs(diff) / 100) * 1000);
-    await p.keyboard.up(key);
-    await p.waitForTimeout(400);
+    // arrow keys turn about 100 deg/s; correct a few times since frame timing varies
+    for (let k = 0; k < 5; k++) {
+      const pose = await p.evaluate(() => window.__arinavImmersive.pose());
+      const diff = ((bearing - pose.heading + 540) % 360) - 180; // + = left (counter-clockwise)
+      if (Math.abs(diff) < 4) break;
+      const key = diff > 0 ? 'ArrowLeft' : 'ArrowRight';
+      await p.keyboard.down(key);
+      await p.waitForTimeout(Math.max(40, (Math.abs(diff) / 100) * 1000 * (k ? 0.8 : 1)));
+      await p.keyboard.up(key);
+      await p.waitForTimeout(250);
+    }
   };
   const hold = async (key, ms) => {
     await p.keyboard.down(key);
@@ -188,9 +192,11 @@ if (ONLY.includes('3')) {
   };
   let pose = await p.evaluate(() => window.__arinavImmersive.pose());
   await turnTo((Math.atan2(door.position[1] - pose.position[1], door.position[0] - pose.position[0]) * 180) / Math.PI);
-  for (let i = 0; i < 12 && pose.space_id !== `${FACTORY}-F0-S016`; i++) {
+  for (let i = 0; i < 16 && pose.space_id !== `${FACTORY}-F0-S016`; i++) {
     await hold('w', 300);
     pose = await p.evaluate(() => window.__arinavImmersive.pose());
+    if (pose.space_id !== `${FACTORY}-F0-S016`)
+      await turnTo((Math.atan2(door.position[1] - pose.position[1], door.position[0] - pose.position[0]) * 180) / Math.PI);
   }
   await hold('w', 700);
   pose = await p.evaluate(() => window.__arinavImmersive.pose());

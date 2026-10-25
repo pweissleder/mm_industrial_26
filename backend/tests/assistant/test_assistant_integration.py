@@ -396,7 +396,7 @@ def test_s01_whats_on_my_right_uses_the_pose_and_view_direction(
         }
         out = turn(client, "What's on my right?", pose=pose)
         items = out["tools"][0]["output"]["items"]
-        assert items and all(i["side"] == "right" for i in items)
+        assert items and all("right" in (i["side"], i.get("wall_side")) for i in items)
         assert any(i["kind"] == "door" for i in items)
         out = turn(client, "And now?", pose=None)  # pose cleared: must ask, not guess
         assert out["tools"][0]["status"] == "error"
