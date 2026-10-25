@@ -46,6 +46,7 @@ import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import GuidancePanel from './GuidancePanel';
 import {
+  AlertIcon,
   CodeIcon,
   CubeIcon,
   FitIcon,
@@ -63,13 +64,23 @@ import {
   UploadIcon,
   UserIcon,
 } from './Icons';
-import { AddDoor, AddItem, AssetEditor, EditTools, LockedNote, OpeningEditor } from './LayoutEditor';
+import {
+  AddDoor,
+  AddItem,
+  AssetEditor,
+  EditTools,
+  LockedNote,
+  OpeningEditor,
+  SaveLayoutDialog,
+  type SaveTarget,
+} from './LayoutEditor';
 import Logo, { LogoMark } from './Logo';
 import { HqPill, PipelineDialog } from './PipelineStatus';
 import type { MovedItem, PickHit } from './scene';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
 import { useGuidance } from './useGuidance';
+import { useHqOutdated } from './useHqOutdated';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
@@ -210,6 +221,8 @@ export default function AriNavApp() {
   const [editing, setEditing] = useState(false);
   const [history, setHistory] = useState<BuildingModel[]>([]);
   const [saving, setSaving] = useState(false);
+  const [saveOpen, setSaveOpen] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const modelRef = useRef(model);
   modelRef.current = model;
   const dirtyRef = useRef(false);
@@ -322,6 +335,8 @@ export default function AriNavApp() {
   }, [graphOn, buildingId, edits]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
+  // Saved layout edits don't rebuild the HQ model; say when it shows an older layout.
+  const hqOutdated = useHqOutdated(dataset, hq?.location, edits);
   const wasBuilding = useRef(false);
   useEffect(() => {
     if (run.phase === 'running' || run.phase === 'review') wasBuilding.current = true;
@@ -797,14 +812,28 @@ export default function AriNavApp() {
     notify('Drag items and doors to move them. Select a room to add items or doors.');
   }
 
-  async function saveLayout() {
+  async function saveLayout(target: SaveTarget) {
     if (!model || !dataset) return;
     setSaving(true);
+    setSaveError(null);
     try {
       const response = await fetch(datasetFileUrl(dataset, 'building.json'));
       if (!response.ok) throw new Error(`building.json: ${response.status}`);
       const original = (await response.json()) as Record<string, unknown>;
-      await api.upload(dataset, [toBuildingFile(original, model)]);
+      if (target.kind === 'copy') {
+        // A new location: the original dataset is left as it is.
+        const name = String((original.building as { name?: unknown } | undefined)?.name ?? dataset);
+        const file = toBuildingFile(original, model, { id: target.name, name: `${name} (${target.name})` });
+        await api.upload(target.name, [file], { create: true });
+        setSaveOpen(false);
+        setHistory([]);
+        dirtyRef.current = false;
+        await refreshDatasets().catch(() => {});
+        await openDataset(target.name);
+        notify(`Saved as the new location “${target.name}”.`);
+        return;
+      }
+      await api.upload(dataset, [toBuildingFile(original, model)], { create: false });
       const ingestion = await api.ingest(dataset);
       const saved = await api.buildingModel(ingestion.building_id);
       setHistory([]);
@@ -812,13 +841,14 @@ export default function AriNavApp() {
       setModel(saved);
       setBuildingId(ingestion.building_id);
       setEdits((n) => n + 1);
+      setSaveOpen(false);
       notify(
         hq
           ? 'Layout saved. Rebuild the HQ model under Processing to include it.'
-          : 'Layout saved to building.json.',
+          : 'Layout saved. Compute the route again to use the change.',
       );
     } catch (e) {
-      notify(e instanceof ApiError ? `Could not save: ${e.message}` : 'Could not save the layout.');
+      setSaveError(e instanceof ApiError ? `Could not save: ${e.message}` : 'Could not save the layout.');
     } finally {
       setSaving(false);
     }
@@ -1072,6 +1102,16 @@ export default function AriNavApp() {
         {model && !glbUrl && !navigatorMode && (
           <HqPill state={run} showingHq={showingHq} onOpen={() => setPipelineOpen(true)} />
         )}
+        {model && !glbUrl && !navigatorMode && hq && hqOutdated && (
+          <span
+            className="hq-outdated"
+            role="status"
+            title="The HQ model was built before the latest saved layout changes, so it still shows the old doors and items. Routes and the Low view use the new layout."
+          >
+            <AlertIcon width={14} height={14} />
+            <span className="hq-outdated__label">HQ shows an older layout</span>
+          </span>
+        )}
         <span className="topbar__spacer" />
         <div className="segmented segmented--small mode-toggle" role="group" aria-label="Profile">
           {PROFILES.map(({ id, label, title, Icon }) => (
@@ -1107,7 +1147,10 @@ export default function AriNavApp() {
             onStart={startEditing}
             onUndo={undo}
             onDiscard={discard}
-            onSave={() => void saveLayout()}
+            onSave={() => {
+              setSaveError(null);
+              setSaveOpen(true);
+            }}
             onDone={() => setEditing(false)}
           />
         )}
@@ -1375,6 +1418,19 @@ export default function AriNavApp() {
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />
+
+      {dataset && (
+        <SaveLayoutDialog
+          open={saveOpen}
+          dataset={dataset}
+          datasets={datasets}
+          changes={history.length}
+          saving={saving}
+          error={saveError}
+          onSave={(target) => void saveLayout(target)}
+          onClose={() => !saving && setSaveOpen(false)}
+        />
+      )}
 
       <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />
 

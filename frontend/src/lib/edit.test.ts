@@ -276,6 +276,14 @@ describe('doors', () => {
 });
 
 describe('saving', () => {
+  it('gives a copy its own building id and name', async () => {
+    const original = { building: { id: 'B', name: 'Hall', split: 'dev' }, assets: [], openings: [] };
+    const file = toBuildingFile(original, { assets: [], openings: [] }, { id: 'hall-v2', name: 'Hall (hall-v2)' });
+    const saved = JSON.parse(await file.text());
+    expect(saved.building).toEqual({ id: 'hall-v2', name: 'Hall (hall-v2)', split: 'dev' });
+    expect(original.building.id).toBe('B');
+  });
+
   it('keeps a door closure from the file but not from the scenario', async () => {
     const original = { openings: [{ id: 'D1', closed: true }], assets: [] };
     const base = { floor_id: 'B-F0', space_ids: ['B-S1', 'B-S2'], kind: 'door', position: [4, 2] as [number, number], width_m: 0.9, step_free: true };

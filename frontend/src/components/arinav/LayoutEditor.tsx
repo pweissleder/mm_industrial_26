@@ -1,7 +1,7 @@
 // Layout editing controls (developer profile): forms for a selected asset or door, "add item"
 // and "add door" for a selected room, and the save/undo group in the top bar. The edits
 // themselves live in lib/edit.ts.
-import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type SubmitEvent } from 'react';
 import { humanize, type Asset, type BuildingModel, type Opening, type Space } from '../../lib/building';
 import {
   catalog,
@@ -11,7 +11,8 @@ import {
   type CatalogItem,
   type OpeningPatch,
 } from '../../lib/edit';
-import { CopyIcon, EditIcon, PlusIcon, RotateIcon, TrashIcon, UndoIcon } from './Icons';
+import { CloseIcon, CopyIcon, EditIcon, PlusIcon, RotateIcon, TrashIcon, UndoIcon } from './Icons';
+import { NameStatus, useNameCheck } from './UploadDialog';
 
 /** A text/number input that commits on Enter or blur, so typing doesn't rebuild the scene. */
 function Field({
@@ -295,6 +296,132 @@ export function LockedNote() {
         Stairs and lifts can't be edited. Add a door to them from the room next door.
       </p>
     </div>
+  );
+}
+
+export type SaveTarget = { kind: 'update' } | { kind: 'copy'; name: string };
+
+/** Where to save the layout: over the current location, or as a new one (the original stays). */
+export function SaveLayoutDialog({
+  open,
+  dataset,
+  datasets,
+  changes,
+  saving,
+  error,
+  onSave,
+  onClose,
+}: {
+  open: boolean;
+  dataset: string;
+  datasets: string[];
+  changes: number;
+  saving: boolean;
+  error: string | null;
+  onSave: (target: SaveTarget) => void;
+  onClose: () => void;
+}) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [kind, setKind] = useState<SaveTarget['kind']>('update');
+  const [name, setName] = useState('');
+  const trimmed = name.trim();
+  const check = useNameCheck(kind === 'copy' ? trimmed : '', datasets);
+
+  useEffect(() => {
+    const d = dialog.current;
+    if (!d) return;
+    if (open && !d.open) {
+      setKind('update');
+      setName(`${dataset}-edited`);
+      d.showModal();
+    } else if (!open && d.open) d.close();
+  }, [open, dataset]);
+
+  const canSave =
+    !saving && (kind === 'update' || check.state === 'available' || check.state === 'unknown');
+
+  function submit(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (canSave) onSave(kind === 'update' ? { kind } : { kind, name: trimmed });
+  }
+
+  return (
+    <dialog
+      ref={dialog}
+      className="dialog"
+      onClose={onClose}
+      onClick={(e) => e.target === dialog.current && !saving && onClose()}
+      aria-labelledby="save-layout-title"
+    >
+      <form className="dialog__body" onSubmit={submit}>
+        <header className="dialog__head">
+          <div>
+            <span className="eyebrow">
+              {changes} change{changes === 1 ? '' : 's'}
+            </span>
+            <h2 id="save-layout-title">Save layout</h2>
+          </div>
+          <button type="button" className="icon-btn" onClick={onClose} aria-label="Close" disabled={saving}>
+            <CloseIcon />
+          </button>
+        </header>
+
+        <div className="save-choices" role="radiogroup" aria-label="Where to save">
+          <label className={`save-choice${kind === 'update' ? ' save-choice--on' : ''}`}>
+            <input type="radio" name="save-kind" checked={kind === 'update'} onChange={() => setKind('update')} />
+            <span>
+              <b>Update “{dataset}”</b>
+              <small>
+                Replaces its building.json. Routes and the agent use the new layout right away. Doors
+                closed in the current scenario open again.
+              </small>
+            </span>
+          </label>
+          <label className={`save-choice${kind === 'copy' ? ' save-choice--on' : ''}`}>
+            <input type="radio" name="save-kind" checked={kind === 'copy'} onChange={() => setKind('copy')} />
+            <span>
+              <b>Save as a new location</b>
+              <small>The original stays as it is; the copy opens after saving.</small>
+            </span>
+          </label>
+        </div>
+
+        {kind === 'copy' && (
+          <div className="step">
+            <label className="step__head" htmlFor="save-layout-name">
+              Name of the new location
+            </label>
+            <input
+              id="save-layout-name"
+              className="input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              autoComplete="off"
+              spellCheck={false}
+              autoFocus
+              aria-invalid={check.state === 'invalid' || check.state === 'taken'}
+              aria-describedby="save-layout-name-status"
+            />
+            <NameStatus check={check} id="save-layout-name-status" />
+          </div>
+        )}
+
+        {error && (
+          <p className="form-error" role="alert">
+            {error}
+          </p>
+        )}
+
+        <footer className="dialog__foot">
+          <button type="button" className="btn btn--ghost" onClick={onClose} disabled={saving}>
+            Cancel
+          </button>
+          <button type="submit" className="btn btn--accent" disabled={!canSave}>
+            {saving ? 'Saving…' : kind === 'update' ? 'Save' : 'Save copy'}
+          </button>
+        </footer>
+      </form>
+    </dialog>
   );
 }
 

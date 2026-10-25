@@ -2278,3 +2278,68 @@ code {
   padding: 5px 10px;
   font-size: 12px;
 }
+
+.save-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  box-shadow: inset 0 0 0 1px var(--line);
+  cursor: pointer;
+}
+
+.save-choice--on {
+  background: var(--blue-50);
+  box-shadow: inset 0 0 0 1.5px var(--blue);
+}
+
+.save-choice input {
+  margin: 3px 0 0;
+  accent-color: var(--blue);
+}
+
+.save-choice span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.save-choice b {
+  color: var(--navy);
+}
+
+.save-choice small {
+  color: var(--ink-2);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+/* Next to the HQ pill: the HQ model predates the saved layout. */
+.hq-outdated {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: var(--pill);
+  background: #fff3cf;
+  color: #8a6100;
+  box-shadow: inset 0 0 0 1px rgba(214, 160, 0, 0.4);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: help;
+}
+
+@media (max-width: 640px) {
+  .hq-outdated__label {
+    display: none;
+  }
+}

@@ -118,6 +118,8 @@ export interface LocationRecord {
   id: string;
   dataset: string;
   name: string;
+  /** SHA-256 of the dataset's building.json the last run built from. */
+  raw_sha256?: string;
   updated_at: string;
   pillars: Record<string, { status: PillarState; note: string | null }>;
   metadata: {
@@ -657,11 +659,15 @@ export const api = {
     ),
   datasetAvailability: (dataset: string) =>
     request<DatasetAvailability>(`/datasets/${encodeURIComponent(dataset)}/availability`),
-  /** Creates a new dataset; fails with 409 if the name is already taken. */
-  upload: (dataset: string, files: File[]) => {
+  /**
+   * Creates a new dataset; fails with 409 if the name is already taken. With
+   * `create: false` it updates an existing dataset's files instead (the layout editor's save).
+   */
+  upload: (dataset: string, files: File[], { create = true }: { create?: boolean } = {}) => {
     const body = new FormData();
     for (const f of files) body.append('files', f, f.name);
-    return request<UploadResponse>(`/datasets/${encodeURIComponent(dataset)}/files?new=true`, {
+    const query = create ? '?new=true' : '';
+    return request<UploadResponse>(`/datasets/${encodeURIComponent(dataset)}/files${query}`, {
       method: 'POST',
       body,
     });

@@ -584,12 +584,19 @@ type Raw = Record<string, unknown>;
  * model also carries scenario state (`closed` flags), which must not be baked into the file;
  * an element keeps the `closed` value its file entry had.
  */
-export function toBuildingFile(original: Raw, model: Pick<BuildingModel, 'assets' | 'openings'>): File {
+export function toBuildingFile(
+  original: Raw,
+  model: Pick<BuildingModel, 'assets' | 'openings'>,
+  copy?: { id: string; name: string },
+): File {
+  // A copy is a building of its own: the backend stores buildings by id.
+  const building = copy ? { ...(original.building as Raw), id: copy.id, name: copy.name } : original.building;
   const originalOpenings = new Map(
     ((original.openings as Raw[] | undefined) ?? []).map((o) => [o.id as string, o]),
   );
   const file = {
     ...original,
+    building,
     openings: model.openings.map((o) => {
       const before = originalOpenings.get(o.id);
       return {
