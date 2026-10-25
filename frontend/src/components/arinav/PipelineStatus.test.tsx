@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { api, type LocationRecord, type RunRecord } from '../../lib/api';
 import type { BuildingModel } from '../../lib/building';
-import { PipelineChip, PipelineDialog, READY_CHIP_MS } from './PipelineStatus';
+import { HqPill, PipelineDialog, READY_CHIP_MS } from './PipelineStatus';
 import { usePipeline, type Pipeline } from './usePipeline';
 
 beforeAll(() => {
@@ -111,16 +111,29 @@ describe('usePipeline', () => {
   });
 });
 
-describe('PipelineChip', () => {
-  it('gets out of the way a while after the HQ model is ready', () => {
+describe('HqPill', () => {
+  const hq = {} as Extract<Pipeline['state'], { phase: 'ready' }>['hq'];
+
+  it('says HQ for a building that was processed before', () => {
+    render(<HqPill state={{ phase: 'ready', run: null, hq }} showingHq onOpen={() => {}} />);
+    expect(screen.getByRole('button', { name: /^HQ\./ })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /HQ finished/ })).not.toBeInTheDocument();
+  });
+
+  it('says HQ finished right after a build, then settles to HQ', () => {
     vi.useFakeTimers();
     try {
-      const hq = {} as Extract<Pipeline['state'], { phase: 'ready' }>['hq'];
-      render(<PipelineChip state={{ phase: 'ready', run: null, hq }} onOpen={() => {}} />);
-      expect(screen.getByRole('button', { name: /HQ ready/ })).toBeInTheDocument();
+      const run = makeRun({ status: 'running' });
+      const { rerender } = render(
+        <HqPill state={{ phase: 'running', run }} showingHq={false} onOpen={() => {}} />,
+      );
+      expect(screen.getByRole('button', { name: /^HQ \d+\/\d+/ })).toBeInTheDocument();
+      rerender(<HqPill state={{ phase: 'ready', run, hq }} showingHq onOpen={() => {}} />);
+      expect(screen.getByRole('button', { name: /HQ finished/ })).toBeInTheDocument();
 
       act(() => vi.advanceTimersByTime(READY_CHIP_MS));
-      expect(screen.queryByRole('button', { name: /HQ ready/ })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /HQ finished/ })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /^HQ\./ })).toBeInTheDocument();
     } finally {
       vi.useRealTimers();
     }
@@ -137,8 +150,8 @@ describe('PipelineDialog', () => {
     };
     const user = userEvent.setup();
 
-    render(<PipelineChip state={pipeline.state} onOpen={() => {}} />);
-    expect(screen.getByRole('button', { name: /Review needed/ })).toBeInTheDocument();
+    render(<HqPill state={pipeline.state} showingHq={false} onOpen={() => {}} />);
+    expect(screen.getByRole('button', { name: /HQ · Review/ })).toBeInTheDocument();
 
     render(<PipelineDialog open pipeline={pipeline} onClose={() => {}} />);
     expect(screen.getByText('Two rooms overlap.')).toBeInTheDocument();

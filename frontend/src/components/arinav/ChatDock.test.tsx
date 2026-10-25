@@ -126,6 +126,21 @@ describe('ChatDock profiles', () => {
     }
   });
 
+  it('shows the location as a pill in the input bar and clears it', async () => {
+    const onClearSimulated = vi.fn();
+    const simulated = { endpoint: { kind: 'space' as const, id: 'sp-1' }, label: 'Print Lab' };
+    const user = userEvent.setup();
+    const { unmount } = render(
+      <ChatDock {...live} profile="user" simulated={simulated} onClearSimulated={onClearSimulated} />,
+    );
+    expect(screen.getByText('Location: Print Lab')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Clear location' }));
+    expect(onClearSimulated).toHaveBeenCalled();
+    unmount();
+    render(<ChatDock {...live} profile="navigator" simulated={simulated} />);
+    expect(screen.queryByText('Location: Print Lab')).not.toBeInTheDocument();
+  });
+
   it('attaches the selection and stops sending it once detached', async () => {
     const turn = vi.spyOn(api, 'assistantTurn').mockResolvedValue(turnReply('Ok.'));
     const user = userEvent.setup();

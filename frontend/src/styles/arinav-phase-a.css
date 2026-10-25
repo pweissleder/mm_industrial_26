@@ -10,7 +10,7 @@
 
 @media (max-width: 1200px) {
   .mode-toggle__label,
-  .topbar .quality {
+  .topbar .quality--plain {
     display: none;
   }
 }
@@ -322,25 +322,6 @@
   flex: none;
 }
 
-.sim-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 3px 4px 3px 12px;
-  border-radius: var(--pill);
-  background: #e3f6f3;
-  color: #0b7d70;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.sim-chip__text {
-  max-width: 320px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .talk-btn {
   display: grid;
   place-items: center;
@@ -511,16 +492,6 @@
   font-weight: 600;
 }
 
-/* ---- HQ pipeline chip when auto-build is off ---- */
-.pipeline-chip--off {
-  background: var(--orange-50);
-  color: var(--orange-600);
-}
-
-.pipeline-chip--off:hover {
-  background: #ffe3cf;
-}
-
 /* ---- Phase B: live navigation card ---- */
 .guidance {
   position: fixed;
@@ -544,6 +515,26 @@
     left: var(--gutter);
     width: auto;
   }
+}
+
+/* Short of room next to the camera bar: instruction and main controls only; the rest slides away. */
+.guidance__settings,
+.guidance__debug-wrap,
+.guidance__hint {
+  max-height: 640px;
+  transition:
+    max-height 0.28s ease,
+    opacity 0.2s ease,
+    margin 0.28s ease;
+}
+
+.guidance--compact .guidance__settings,
+.guidance--compact .guidance__debug-wrap,
+.guidance--compact .guidance__hint {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: -8px;
 }
 
 .guidance__head {
@@ -712,6 +703,11 @@
   flex: none;
 }
 
+.attach-chip--location {
+  background: #e3f6f3;
+  color: #0b7d70;
+}
+
 /* Folding slides the name (and leading clip) shut instead of snapping. */
 .attach-chip,
 .attach-chip__clip,
@@ -732,19 +728,19 @@
   white-space: nowrap;
 }
 
-/* Folded to its icon: just the paperclip, which turns into the detach cross on hover/focus. */
+/* Folded to its icon (the paperclip or pin); hovering or focusing it slides it open again. */
 .attach-chip__icon-clip {
   display: none;
 }
 
-.attach-chip--compact {
+.attach-chip--compact:not(:hover):not(:focus-within) {
   flex: none;
   gap: 0;
   padding: 3px;
 }
 
-.attach-chip--compact .attach-chip__text,
-.attach-chip--compact .attach-chip__clip {
+.attach-chip--compact:not(:hover):not(:focus-within) .attach-chip__text,
+.attach-chip--compact:not(:hover):not(:focus-within) .attach-chip__clip {
   max-width: 0;
   width: 0;
   opacity: 0;
@@ -758,20 +754,20 @@
   display: none;
 }
 
-/* Narrow input bars fold the pill to its icon right away. */
+/* Narrow input bars fold the pills to their icons right away (same hover rule). */
 .chat__bar {
   container-type: inline-size;
 }
 
 @container (max-width: 460px) {
-  .attach-chip {
+  .attach-chip:not(:hover):not(:focus-within) {
     flex: none;
     gap: 0;
     padding: 3px;
   }
 
-  .attach-chip__text,
-  .attach-chip__clip {
+  .attach-chip:not(:hover):not(:focus-within) .attach-chip__text,
+  .attach-chip:not(:hover):not(:focus-within) .attach-chip__clip {
     max-width: 0;
     width: 0;
     opacity: 0;

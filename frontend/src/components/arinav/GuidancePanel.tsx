@@ -43,6 +43,8 @@ interface Props {
   onVoiceSpeed: (speed: number) => void;
   onUnlockAudio: () => void;
   onClose: () => void;
+  /** Short of room: only the instruction and the main controls. */
+  compact?: boolean;
 }
 
 export default function GuidancePanel(props: Props) {
@@ -64,7 +66,10 @@ export default function GuidancePanel(props: Props) {
   };
 
   return (
-    <section className={`guidance card${developer ? ' guidance--dev' : ''}`} aria-label="Navigation">
+    <section
+      className={`guidance card${developer ? ' guidance--dev' : ''}${props.compact ? ' guidance--compact' : ''}`}
+      aria-label="Navigation"
+    >
       <header className="guidance__head">
         <RouteIcon width={16} height={16} />
         <span className="guidance__dest">{props.destination ?? 'Destination'}</span>

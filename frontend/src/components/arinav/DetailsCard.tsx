@@ -123,6 +123,9 @@ interface Props {
   /** Route section: "From here" / "To here" (user and developer profiles). */
   onFromHere?: () => void;
   onToHere?: () => void;
+  /** A start / destination is already chosen: that button turns white, the open one stays blue. */
+  startSet?: boolean;
+  targetSet?: boolean;
   /** Pointer/focus over the card, so the user profile can keep it open. */
   onHold?: (held: boolean) => void;
   /** Folded to its title row (user profile, after a few seconds). */
@@ -142,6 +145,8 @@ export default function DetailsCard({
   canToggle = false,
   onFromHere,
   onToHere,
+  startSet = false,
+  targetSet = false,
   onHold,
   collapsed = false,
   onToggleCollapsed,
@@ -181,8 +186,9 @@ export default function DetailsCard({
           <CloseIcon />
         </button>
       </header>
-      {!collapsed && (
-        <>
+      {/* Always rendered, so folding can slide the body shut instead of cutting it off. */}
+      <div className="details__body" inert={collapsed}>
+        <div className="details__body-inner">
           {closed && (
             <p className="details__closed" role="status">
               Deactivated in the current scenario
@@ -202,12 +208,18 @@ export default function DetailsCard({
               <span className="details__group-title">Route</span>
               <div className="details__group-buttons">
                 {onFromHere && (
-                  <button className="btn btn--ghost btn--sm" onClick={onFromHere}>
+                  <button
+                    className={`btn btn--sm ${startSet ? 'btn--ghost' : 'btn--primary'}`}
+                    onClick={onFromHere}
+                  >
                     <PinIcon width={16} height={16} /> From here
                   </button>
                 )}
                 {onToHere && (
-                  <button className="btn btn--primary btn--sm" onClick={onToHere}>
+                  <button
+                    className={`btn btn--sm ${targetSet ? 'btn--ghost' : 'btn--primary'}`}
+                    onClick={onToHere}
+                  >
                     <RouteIcon width={16} height={16} /> To here
                   </button>
                 )}
@@ -224,8 +236,8 @@ export default function DetailsCard({
               </button>
             </div>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </section>
   );
 }

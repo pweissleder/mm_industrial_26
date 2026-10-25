@@ -92,7 +92,7 @@ export default function DevPanel(props: Props) {
         <p className="field__hint">
           {props.autoHq
             ? 'Opening or uploading an unprocessed building starts the ingestion pipeline. With an API key on the server it calls Claude (about $0.30 to $1.50 per building).'
-            : 'Off: new buildings stay in the free browser preview (LQ). Start a build from the “LQ only” chip in the top bar. Buildings already processed still load their HQ model.'}
+            : 'Off: new buildings stay in the free browser preview (LQ). Start a build from the “Low · Build HQ” pill in the top bar. Buildings already processed still load their HQ model.'}
         </p>
       </CollapsibleSection>
       <CollapsibleSection title="Last assistant turn">

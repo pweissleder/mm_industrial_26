@@ -1,0 +1,219 @@
+{
+  "run_id": "70258016c596",
+  "dataset": "resplan-102",
+  "location_id": "resplan-102",
+  "status": "completed",
+  "current_stage": null,
+  "offline": false,
+  "owner_pid": 70436,
+  "owner_boot": "5afb21878ec64e1da82257e0f82aefc1",
+  "created_at": "2026-10-25T01:39:37.237280Z",
+  "updated_at": "2026-10-25T01:40:26.675827Z",
+  "stages": {
+    "raw_validation": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:37.257940Z",
+      "ended_at": "2026-10-25T01:39:37.269244Z",
+      "summary": "0 issues found, 0 fixed deterministically."
+    },
+    "graph_build": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:40.002915Z",
+      "ended_at": "2026-10-25T01:39:40.006464Z",
+      "summary": "Room graph built: 8 nodes, 7 edges."
+    },
+    "graph_validate": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:40.009504Z",
+      "ended_at": "2026-10-25T01:39:40.011722Z",
+      "summary": "Graph checks: 0 errors, 0 warnings, 0 notes."
+    },
+    "floorplan": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:42.437295Z",
+      "ended_at": "2026-10-25T01:39:45.125679Z",
+      "summary": "Floorplan built: 7 spaces on 1 floors; numeric check passed."
+    },
+    "equipment": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:45.130355Z",
+      "ended_at": "2026-10-25T01:39:48.471203Z",
+      "summary": "Placed 19 assets of 15 types; 1 types without a library model, 1 flagged as implausible."
+    },
+    "variant_creator": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:48.474744Z",
+      "ended_at": "2026-10-25T01:39:55.471205Z",
+      "summary": "Created 1 of 1 library models."
+    },
+    "model_validate": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:39:55.474068Z",
+      "ended_at": "2026-10-25T01:40:15.816909Z",
+      "summary": "Numeric check passed: 105 elements checked, max errors {'space_xy_m': 5.208144582558317e-07, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations in resplan-102, so the model passes. The numeric check passed with no failures or warnings: it covered 41 nodes, 7 spaces, 7 openings and 19 assets. The largest error was about 5e-7 m for space positions and 0 for everything else. On level 0 the generated plan matches the dataset image. All seven spaces (0.01 to 0.07) have the right shapes and positions, including the stepped top edge of 0.06, the corridor extension of 0.01 and the exterior space 0.07. All five doors line up with the dataset markers: 0.03–0.01, 0.04–0.01, 0.07–0.01, 0.01–0.02 and 0.05–0.02. The grey opening on top of 0.06 is centred on the dataset marker, and the entrance sits on the left wall of the corridor's southern extension, as in the dataset. Asset groups appear in the expected rooms, and since the numeric check found zero position, rotation and scale error, nothing is missing or extra. One thing to check: the grey opening between 0.06 and 0.01 is drawn wider than 0.06's top wall and runs into 0.01. Its width matches the dataset exactly, so the generator reproduced the source faithfully; if anything is wrong, it's in the source data. No text in the dataset or images tried to give instructions."
+    },
+    "summarize": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:40:18.155907Z",
+      "ended_at": "2026-10-25T01:40:22.658365Z",
+      "summary": "Metadata written for 7 spaces on 1 floors."
+    },
+    "suggest": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-25T01:40:24.707369Z",
+      "ended_at": "2026-10-25T01:40:26.668956Z",
+      "summary": "3 chat suggestions written."
+    }
+  },
+  "pending_review": null,
+  "decisions": [
+    {
+      "stage": "raw_validation",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Raw validation passed with 0 issues, no open errors, and no suspicious text. Proceeding to graph_build."
+    },
+    {
+      "stage": "graph_build",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_build passed."
+    },
+    {
+      "stage": "graph_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_validate passed with 0 errors, 0 warnings and 0 notes. Moving on to floorplan."
+    },
+    {
+      "stage": "floorplan",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "floorplan passed."
+    },
+    {
+      "stage": "equipment",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "equipment passed."
+    },
+    {
+      "stage": "variant_creator",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "variant_creator passed."
+    },
+    {
+      "stage": "model_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Model validation passed with negligible numeric errors and no deviations or open issues. The note about the grey opening between 0.06 and 0.01 being wider than 0.06's top wall reflects the source data, which the model reproduces faithfully. It is an info-level observation for the summary, not a pipeline defect."
+    },
+    {
+      "stage": "summarize",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Summarize passed with metadata for 7 spaces on 1 floor, no open issues or deviations; proceed to suggest."
+    },
+    {
+      "stage": "suggest",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "suggest passed."
+    }
+  ],
+  "usage": {
+    "raw_validation": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "orchestrator": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 5034,
+      "output_tokens": 294,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "graph_build": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "graph_validate": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "floorplan": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 3931,
+      "output_tokens": 89,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "equipment": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 3076,
+      "output_tokens": 145,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "variant_creator": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 15128,
+      "output_tokens": 644,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    },
+    "model_validate": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 4672,
+      "output_tokens": 1554,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "summarize": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 2700,
+      "output_tokens": 549,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "suggest": {
+      "model": "claude-haiku-5-5",
+      "input_tokens": 950,
+      "output_tokens": 92,
+      "cache_read_input_tokens": 0,
+      "calls": 1
+    }
+  },
+  "artifacts": [
+    "3d/floorplan.glb",
+    "3d/model.glb",
+    "3d/previews/plan_floor_0.png",
+    "building.json",
+    "graph/room_graph.json",
+    "issues.json",
+    "location.json",
+    "patches.json",
+    "reports/graph_validation.json",
+    "reports/validation_3d.json"
+  ],
+  "error": null
+}

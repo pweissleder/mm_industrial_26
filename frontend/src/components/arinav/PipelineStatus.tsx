@@ -1,8 +1,8 @@
-// High-quality build status: a chip for the top bar and a dialog with the stage list,
+// High-quality build status: a pill for the top bar and a dialog with the stage list,
 // the pipeline's review requests (accept / retry / abort with a note) and retry on failure.
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, locationFileUrl, type ReviewOptionId, type RunRecord } from '../../lib/api';
-import { AlertIcon, CheckIcon, CloseIcon, SparkleIcon } from './Icons';
+import { AlertIcon, CheckIcon, CloseIcon } from './Icons';
 import type { Pipeline, PipelineState } from './usePipeline';
 
 const STAGES: [string, string][] = [
@@ -19,7 +19,7 @@ const STAGES: [string, string][] = [
 const stageLabel = (stage: string | null | undefined) =>
   STAGES.find(([id]) => id === stage)?.[1] ?? stage ?? '';
 const isImage = (path: string) => /\.(png|jpe?g|svg)$/i.test(path);
-/** How long the "HQ ready" chip stays before it gets out of the way. */
+/** How long "HQ finished" shows after a build before the pill settles back to "HQ". */
 export const READY_CHIP_MS = 10_000;
 
 function progress(run: RunRecord): string {
@@ -27,49 +27,74 @@ function progress(run: RunRecord): string {
   return `${Math.min(done + 1, STAGES.length)}/${STAGES.length}`;
 }
 
-export function PipelineChip({ state, onOpen }: { state: PipelineState; onOpen: () => void }) {
-  // Once ready, the HQ badge in the top bar says it all; the chip only adds clutter.
-  const ready = state.phase === 'ready';
-  const [settled, setSettled] = useState(false);
+/**
+ * The model-quality pill next to the building name: HQ or Low, and while the pipeline works on
+ * it, its progress (building, review, failed). "HQ finished" shows only right after a build
+ * finishes in this session, not when a processed building simply loads. Opens the details.
+ */
+export function HqPill({
+  state,
+  showingHq,
+  onOpen,
+}: {
+  state: PipelineState;
+  /** The HQ model is on screen (not the browser preview or an uploaded GLB). */
+  showingHq: boolean;
+  onOpen: () => void;
+}) {
+  const { phase } = state;
+  const wasBuilding = useRef(false);
+  const [justFinished, setJustFinished] = useState(false);
   useEffect(() => {
-    setSettled(false);
-    if (!ready) return;
-    const timer = window.setTimeout(() => setSettled(true), READY_CHIP_MS);
+    // A new building starts over at idle/checking, so its stored result isn't "just finished".
+    if (phase === 'idle' || phase === 'checking') wasBuilding.current = false;
+    if (phase === 'running' || phase === 'review') wasBuilding.current = true;
+    if (phase !== 'ready') setJustFinished(false);
+    if (phase !== 'ready' || !wasBuilding.current) return;
+    wasBuilding.current = false;
+    setJustFinished(true);
+    const timer = window.setTimeout(() => setJustFinished(false), READY_CHIP_MS);
     return () => window.clearTimeout(timer);
-  }, [ready]);
-  if (state.phase === 'idle' || (ready && settled)) return null;
+  }, [phase]);
   const [tone, label, title] =
-    state.phase === 'not_built'
+    state.phase === 'idle'
+      ? ['low', 'Low', 'Quick preview generated in the browser from building.json']
+      : state.phase === 'not_built'
       ? [
-          'off',
-          'LQ only · Build HQ',
-          'No high-quality model yet. Auto-build is off (Developer mode); open to build it now.',
+          'low',
+          'Low · Build HQ',
+          'Quick browser preview. No high-quality model yet; auto-build is off (Developer mode). Open to build it now.',
         ]
       : state.phase === 'checking'
-      ? ['busy', 'Checking HQ model…', 'Looking for a processed version of this building']
-      : state.phase === 'running'
-        ? [
-            'busy',
-            `Building HQ · ${progress(state.run)}`,
-            `High-quality model in progress: ${stageLabel(state.run.current_stage) || 'queued'}`,
-          ]
-        : state.phase === 'review'
-          ? ['attention', 'Review needed', state.run.pending_review?.title ?? 'The pipeline needs a decision']
-          : state.phase === 'ready'
-            ? ['good', 'HQ ready', 'High-quality model available']
-            : ['bad', 'HQ failed', state.message];
+        ? ['busy', 'Checking HQ', 'Looking for a processed version of this building']
+        : state.phase === 'running'
+          ? [
+              'busy',
+              `HQ ${progress(state.run)}`,
+              `High-quality model in progress: ${stageLabel(state.run.current_stage) || 'queued'}`,
+            ]
+          : state.phase === 'review'
+            ? ['attention', 'HQ · Review', state.run.pending_review?.title ?? 'The pipeline needs a decision']
+            : state.phase === 'failed'
+              ? ['bad', 'HQ failed', state.message]
+              : !showingHq
+                ? ['low', 'Low', 'Quick browser preview; the high-quality model is available under 3D source']
+                : justFinished
+                  ? ['hq', 'HQ finished', 'High-quality model just finished and is now shown']
+                  : ['hq', 'HQ', 'High-quality model from the ingestion pipeline'];
+  // Plain HQ / Low is only a label: small screens drop it, build progress and problems stay.
+  const plain = (tone === 'hq' && !justFinished) || label === 'Low';
   return (
     <button
-      className={`pipeline-chip pipeline-chip--${tone}`}
+      className={`quality quality--button quality--${tone}${plain ? ' quality--plain' : ''}`}
       onClick={onOpen}
-      title={title}
+      title={`${title}. Show processing details`}
       aria-label={`${label}. Show processing details`}
     >
-      {tone === 'busy' && <span className="spinner" aria-hidden="true" />}
-      {tone === 'good' && <CheckIcon width={15} height={15} />}
-      {tone === 'off' && <SparkleIcon width={15} height={15} />}
-      {(tone === 'attention' || tone === 'bad') && <AlertIcon width={15} height={15} />}
-      <span className="pipeline-chip__label">{label}</span>
+      {tone === 'busy' && <span className="spinner spinner--xs" aria-hidden="true" />}
+      {justFinished && tone === 'hq' && <CheckIcon width={12} height={12} />}
+      {(tone === 'attention' || tone === 'bad') && <AlertIcon width={12} height={12} />}
+      {label}
     </button>
   );
 }

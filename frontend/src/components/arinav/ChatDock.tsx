@@ -156,6 +156,60 @@ const PaperclipIcon = (p: { width?: number; height?: number; className?: string 
   </svg>
 );
 
+// Pill geometry in px (see .attach-chip): the name's max width, everything around the name
+// when unfolded (padding, leading icon, gaps, remove button) and the folded icon-only size.
+const PILL_TEXT_MAX = 200;
+const PILL_CHROME = 68;
+const PILL_COMPACT = 34;
+// Measures the input's text (placeholder or typed), with a rough fallback where canvas is missing.
+let measureCtx: { font: string; measureText: (t: string) => { width: number } } | null = null;
+function textWidth(text: string, font: string): number {
+  if (!measureCtx) {
+    const canvas = document.createElement('canvas');
+    measureCtx = (typeof canvas.getContext === 'function' && !navigator.userAgent.includes('jsdom')
+      ? canvas.getContext('2d')
+      : null) ?? { font: '', measureText: (t: string) => ({ width: t.length * 7.5 }) };
+  }
+  measureCtx.font = font;
+  return measureCtx.measureText(text).width;
+}
+
+/**
+ * Context sent with each question (location, selected item), shown inside the input bar.
+ * Compact: only its icon, which turns into the remove cross on hover or focus.
+ */
+function ContextPill(props: {
+  Icon: (p: { width?: number; height?: number; className?: string }) => ReactNode;
+  text: string;
+  title: string;
+  compact: boolean;
+  removeLabel: string;
+  onRemove: () => void;
+  location?: boolean;
+}) {
+  const { Icon } = props;
+  return (
+    <span
+      className={`attach-chip${props.location ? ' attach-chip--location' : ''}${
+        props.compact ? ' attach-chip--compact' : ''
+      }`}
+      title={props.title}
+    >
+      <Icon width={14} height={14} className="attach-chip__clip" />
+      <span className="attach-chip__text">{props.text}</span>
+      <button
+        type="button"
+        className="icon-btn icon-btn--sm"
+        onClick={props.onRemove}
+        aria-label={props.removeLabel}
+      >
+        <Icon width={14} height={14} className="attach-chip__icon-clip" />
+        <CloseIcon width={14} height={14} className="attach-chip__icon-x" />
+      </button>
+    </span>
+  );
+}
+
 function read(storage: () => Storage, key: string): string | null {
   try {
     return storage().getItem(key);
@@ -306,14 +360,34 @@ export default function ChatDock({
     ? `${ui.inspected ? `${ui.inspected.kind}:${ui.inspected.id}` : ''}|${selection.name}`
     : null;
   const attached = !!selection && detachedKey !== selKey;
-  // The pill in the input bar folds to its icon once typed text runs into it; it unfolds again
-  // when the field is cleared (narrow bars fold it in CSS).
-  const [chipCompact, setChipCompact] = useState(false);
-  useLayoutEffect(() => {
+  // Context pills in the input bar fold to their icons one after the other (the one next to the
+  // text first) as soon as the typed text, or the placeholder, would run into them. The room is
+  // worked out from the pills' target sizes, so folding animations don't feed back into it.
+  const [folded, setFolded] = useState(0);
+  const fitPills = useCallback(() => {
     const el = inputRef.current;
-    if (!input) setChipCompact(false);
-    else if (el && el.scrollWidth > el.clientWidth) setChipCompact(true);
-  }, [input]);
+    const bar = el?.parentElement;
+    if (!el || !bar) return;
+    const pills = [...bar.querySelectorAll<HTMLElement>('.attach-chip')];
+    const need = textWidth(el.value || el.placeholder, getComputedStyle(el).font) + 12;
+    const total = el.clientWidth + pills.reduce((sum, p) => sum + p.getBoundingClientRect().width, 0);
+    const full = pills.map(
+      (p) => Math.min(PILL_TEXT_MAX, p.querySelector('.attach-chip__text')?.scrollWidth ?? 0) + PILL_CHROME,
+    );
+    let k = 0;
+    const roomFor = (n: number) =>
+      total - n * PILL_COMPACT - full.slice(n).reduce((sum, w) => sum + w, 0);
+    while (k < pills.length && need > roomFor(k)) k += 1;
+    setFolded(k);
+  }, []);
+  useLayoutEffect(fitPills, [fitPills, input, voice.recording, simulated, attached, selection]);
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => fitPills());
+    observer.observe(el.parentElement ?? el);
+    return () => observer.disconnect();
+  }, [fitPills]);
 
   async function sendLegacy(text: string) {
     const started = epoch.current;
@@ -703,27 +777,14 @@ export default function ChatDock({
         </div>
       )}
 
-      {live && developer && (
+      {live && developer && (!simulated || (speak && canSpeak)) && (
         <div className="chat__context">
-          {developer &&
-            (simulated ? (
-              <span className="sim-chip" title="Simulated location, sent as your start">
-                <PinIcon width={14} height={14} />
-                <span className="sim-chip__text">Simulated location: {simulated.label}</span>
-                <button
-                  className="icon-btn icon-btn--sm"
-                  onClick={() => onClearSimulated?.()}
-                  aria-label="Clear simulated location"
-                >
-                  <CloseIcon width={14} height={14} />
-                </button>
-              </span>
-            ) : (
-              <button className="chip chip--soft" onClick={() => onPick?.('location', false)}>
-                <PinIcon width={14} height={14} /> Set simulated location
-              </button>
-            ))}
-          {developer && speak && canSpeak && range && ttsSpeed !== undefined && (
+          {!simulated && (
+            <button className="chip chip--soft" onClick={() => onPick?.('location', false)}>
+              <PinIcon width={14} height={14} /> Set simulated location
+            </button>
+          )}
+          {speak && canSpeak && range && ttsSpeed !== undefined && (
             <label className="chat__speed">
               <span>Speed {ttsSpeed.toFixed(2)}×</span>
               <input
@@ -779,23 +840,26 @@ export default function ChatDock({
             {status}
           </span>
         )}
+        {live && !isNavigator && simulated && (
+          <ContextPill
+            Icon={PinIcon}
+            text={`Location: ${simulated.label}`}
+            title={`Location: ${simulated.label} · sent as your start`}
+            compact={folded >= 1}
+            removeLabel="Clear location"
+            onRemove={() => onClearSimulated?.()}
+            location
+          />
+        )}
         {live && !isNavigator && selection && attached && (
-          <span
-            className={`attach-chip${chipCompact ? ' attach-chip--compact' : ''}`}
+          <ContextPill
+            Icon={PaperclipIcon}
+            text={selection.name}
             title={`${selection.name} · sent with your questions as context`}
-          >
-            <PaperclipIcon width={14} height={14} className="attach-chip__clip" />
-            <span className="attach-chip__text">{selection.name}</span>
-            <button
-              type="button"
-              className="icon-btn icon-btn--sm"
-              onClick={() => setDetachedKey(selKey)}
-              aria-label={`Detach ${selection.name}`}
-            >
-              <PaperclipIcon width={14} height={14} className="attach-chip__icon-clip" />
-              <CloseIcon width={14} height={14} className="attach-chip__icon-x" />
-            </button>
-          </span>
+            compact={folded >= (simulated ? 2 : 1)}
+            removeLabel={`Detach ${selection.name}`}
+            onRemove={() => setDetachedKey(selKey)}
+          />
         )}
         {voiceOn && (
           <button

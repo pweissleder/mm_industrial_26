@@ -723,7 +723,6 @@ code {
 
 .list__row[aria-current='true'] {
   background: var(--orange-50);
-  box-shadow: inset 3px 0 0 var(--orange);
 }
 
 .list__text {
@@ -944,6 +943,18 @@ code {
   cursor: grabbing;
 }
 
+/* Buttons the short camera bar brings back fade in. */
+.hud > * {
+  animation: hud-in 0.22s ease-out;
+}
+
+@keyframes hud-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
 .hud__sep {
   height: 1px;
   margin: 3px 8px;
@@ -986,13 +997,14 @@ code {
   color: var(--blue);
 }
 
-/* Top right: the details card above the navigation panel, stacked so they never overlap. */
+/* Top right, on the camera bar's margin: the details card above the navigation panel, ending
+   just above the camera bar (--rail-top, measured by the app) so the two never overlap. */
 .top-stack {
   position: absolute;
   z-index: 25;
   top: calc(var(--gutter) * 2 + var(--topbar-h));
-  right: calc(var(--gutter) * 2 + 48px);
-  bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 110px) + 8px);
+  right: var(--gutter);
+  bottom: calc(100% - var(--rail-top, 100%) + 8px);
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -1053,7 +1065,31 @@ code {
   gap: 12px;
 }
 
-/* User profile: folded to the title row after a few seconds. */
+/* Folding slides the body shut (grid rows 1fr -> 0fr) and tightens the padding. */
+.details {
+  transition: padding 0.28s ease;
+}
+
+.details__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.28s ease,
+    opacity 0.2s ease;
+}
+
+.details__body-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.details--collapsed .details__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+/* Folded to the title row (after a few seconds, while navigating, or short of room). */
 .details--collapsed {
   padding: 10px 12px;
 }
@@ -1568,44 +1604,36 @@ code {
   box-shadow: inset 0 0 0 1px rgba(18, 165, 148, 0.35);
 }
 
-.pipeline-chip {
+.quality--button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  flex: none;
-  height: 34px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: var(--pill);
-  background: var(--gray-100);
-  color: var(--navy);
-  font-size: 13px;
-  font-weight: 600;
+  gap: 5px;
   white-space: nowrap;
-  transition: background 0.15s;
 }
 
-.pipeline-chip:hover {
-  background: #e6e7ec;
+/* Pipeline states on the same pill: building, needs a review, failed. */
+.quality--busy {
+  background: var(--blue-50);
+  color: var(--blue);
+  box-shadow: inset 0 0 0 1px rgba(0, 79, 171, 0.25);
 }
 
-.pipeline-chip--good {
-  color: #0b7c6f;
-}
-
-.pipeline-chip--attention {
+.quality--attention {
   background: var(--orange);
   color: #fff;
   animation: attention 1.6s ease-in-out infinite;
 }
 
-.pipeline-chip--attention:hover {
-  background: var(--orange-600);
-}
-
-.pipeline-chip--bad {
+.quality--bad {
   background: #fdecec;
   color: var(--bad);
+  box-shadow: inset 0 0 0 1px rgba(179, 38, 30, 0.3);
+}
+
+.spinner--xs {
+  width: 10px;
+  height: 10px;
+  border-width: 1.5px;
 }
 
 @keyframes attention {
@@ -1633,7 +1661,7 @@ code {
 
 @media (prefers-reduced-motion: reduce) {
   .spinner,
-  .pipeline-chip--attention {
+  .quality--attention {
     animation-duration: 3s;
   }
 }
@@ -1848,18 +1876,6 @@ code {
   font-size: 13px;
 }
 
-@media (max-width: 640px) {
-  .pipeline-chip {
-    width: 34px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .pipeline-chip__label {
-    display: none;
-  }
-}
-
 /* ------------------------------------------------------------ responsive */
 
 /* Desktop / iPad landscape: the sidebar is docked and the chat sits beside it. */
@@ -1914,8 +1930,10 @@ code {
   }
 }
 
-/* Narrow desktops and below: icon-only profile toggle and upload (the logo stays). */
+/* Narrow desktops and below: icon-only profile toggle and upload, wordmark without the mark. */
 @media (max-width: 1200px) {
+  /* The wordmark stays; the globe mark goes. */
+  .topbar .logo__mark,
   .topbar__upload-label {
     display: none;
   }

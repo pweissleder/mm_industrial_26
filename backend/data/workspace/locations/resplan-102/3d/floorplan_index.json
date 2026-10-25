@@ -1,0 +1,236 @@
+{
+ "building": {
+  "id": "resplan-102",
+  "kind": "building"
+ },
+ "floor:resplan-102-F0": {
+  "elevation_m": 0.0,
+  "height_m": 3.0,
+  "id": "resplan-102-F0",
+  "kind": "floor",
+  "level": 0
+ },
+ "resplan-102-F0-O0001": {
+  "depth_m": 0.2,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0001",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   13.922,
+   8.379
+  ],
+  "space_ids": [
+   "resplan-102-F0-S002",
+   "resplan-102-F0-S005"
+  ],
+  "width_m": 0.957
+ },
+ "resplan-102-F0-O0002": {
+  "depth_m": 0.2,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0002",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   11.671,
+   7.808
+  ],
+  "space_ids": [
+   "resplan-102-F0-S001",
+   "resplan-102-F0-S002"
+  ],
+  "width_m": 0.924
+ },
+ "resplan-102-F0-O0003": {
+  "depth_m": 0.2,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0003",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   3.474,
+   8.665
+  ],
+  "space_ids": [
+   "resplan-102-F0-S001",
+   "resplan-102-F0-S003"
+  ],
+  "width_m": 0.957
+ },
+ "resplan-102-F0-O0004": {
+  "depth_m": 0.2,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0004",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   2.45,
+   8.068
+  ],
+  "space_ids": [
+   "resplan-102-F0-S001",
+   "resplan-102-F0-S004"
+  ],
+  "width_m": 0.974
+ },
+ "resplan-102-F0-O0005": {
+  "depth_m": 0.6,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0005",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   9.748,
+   9.101
+  ],
+  "space_ids": [
+   "resplan-102-F0-S001",
+   "resplan-102-F0-S007"
+  ],
+  "width_m": 0.957
+ },
+ "resplan-102-F0-O0006": {
+  "depth_m": 0.2,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0006",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   6.607,
+   6.775
+  ],
+  "space_ids": [
+   "resplan-102-F0-S001",
+   "resplan-102-F0-S006"
+  ],
+  "width_m": 4.327
+ },
+ "resplan-102-F0-O0007": {
+  "depth_m": 0.2,
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-O0007",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   10.129,
+   3.768
+  ],
+  "space_ids": [
+   "resplan-102-F0-S001",
+   "outside"
+  ],
+  "width_m": 1.142
+ },
+ "resplan-102-F0-S001": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S001",
+  "kind": "space",
+  "name": "Living room 0.01",
+  "ref": "0.01",
+  "room_type": "living_room",
+  "type": "room"
+ },
+ "resplan-102-F0-S002": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S002",
+  "kind": "space",
+  "name": "Bedroom 0.02",
+  "ref": "0.02",
+  "room_type": "bedroom",
+  "type": "room"
+ },
+ "resplan-102-F0-S003": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S003",
+  "kind": "space",
+  "name": "Bedroom 0.03",
+  "ref": "0.03",
+  "room_type": "bedroom",
+  "type": "room"
+ },
+ "resplan-102-F0-S004": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S004",
+  "kind": "space",
+  "name": "Bathroom 0.04",
+  "ref": "0.04",
+  "room_type": "bathroom",
+  "type": "room"
+ },
+ "resplan-102-F0-S005": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S005",
+  "kind": "space",
+  "name": "Bathroom 0.05",
+  "ref": "0.05",
+  "room_type": "bathroom",
+  "type": "room"
+ },
+ "resplan-102-F0-S006": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S006",
+  "kind": "space",
+  "name": "Kitchen 0.06",
+  "ref": "0.06",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "resplan-102-F0-S007": {
+  "floor_id": "resplan-102-F0",
+  "id": "resplan-102-F0-S007",
+  "kind": "space",
+  "name": "Balcony 0.07",
+  "ref": "0.07",
+  "room_type": "balcony",
+  "type": "outdoor"
+ },
+ "walls:resplan-102-F0-S001": {
+  "capped": false,
+  "floor_id": "resplan-102-F0",
+  "height_m": 3.0,
+  "kind": "walls",
+  "min_height_m": 3.0,
+  "space_id": "resplan-102-F0-S001"
+ },
+ "walls:resplan-102-F0-S002": {
+  "capped": false,
+  "floor_id": "resplan-102-F0",
+  "height_m": 3.0,
+  "kind": "walls",
+  "min_height_m": 3.0,
+  "space_id": "resplan-102-F0-S002"
+ },
+ "walls:resplan-102-F0-S003": {
+  "capped": false,
+  "floor_id": "resplan-102-F0",
+  "height_m": 3.0,
+  "kind": "walls",
+  "min_height_m": 3.0,
+  "space_id": "resplan-102-F0-S003"
+ },
+ "walls:resplan-102-F0-S004": {
+  "capped": false,
+  "floor_id": "resplan-102-F0",
+  "height_m": 3.0,
+  "kind": "walls",
+  "min_height_m": 3.0,
+  "space_id": "resplan-102-F0-S004"
+ },
+ "walls:resplan-102-F0-S005": {
+  "capped": false,
+  "floor_id": "resplan-102-F0",
+  "height_m": 3.0,
+  "kind": "walls",
+  "min_height_m": 3.0,
+  "space_id": "resplan-102-F0-S005"
+ },
+ "walls:resplan-102-F0-S006": {
+  "capped": false,
+  "floor_id": "resplan-102-F0",
+  "height_m": 3.0,
+  "kind": "walls",
+  "min_height_m": 3.0,
+  "space_id": "resplan-102-F0-S006"
+ }
+}

@@ -106,6 +106,11 @@ export const FitIcon = (p: P) => (
     <path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4" />
   </Icon>
 );
+export const MoreIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M6 12h.01M12 12h.01M18 12h.01" strokeWidth="3" />
+  </Icon>
+);
 export const SparkleIcon = (p: P) => (
   <Icon {...p}>
     <path d="M12 3.5 13.9 9a2 2 0 0 0 1.2 1.2L20.5 12l-5.4 1.9a2 2 0 0 0-1.2 1.2L12 20.5l-1.9-5.4a2 2 0 0 0-1.2-1.2L3.5 12l5.4-1.9A2 2 0 0 0 10.1 9L12 3.5Z" />

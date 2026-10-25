@@ -29,6 +29,7 @@ import {
   CubeIcon,
   FitIcon,
   FrontIcon,
+  MoreIcon,
   NavigateIcon,
   MinusIcon,
   OrbitIcon,
@@ -41,7 +42,7 @@ import {
   UserIcon,
 } from './Icons';
 import Logo, { LogoMark } from './Logo';
-import { PipelineChip, PipelineDialog } from './PipelineStatus';
+import { HqPill, PipelineDialog } from './PipelineStatus';
 import type { PickHit } from './scene';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
@@ -63,7 +64,16 @@ const LAST_MODE = 'arinav:mode';
 const AUTO_HQ = 'arinav:auto-hq';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
 const WIDE = '(min-width: 1024px)';
-const wide = () => window.matchMedia(WIDE).matches;
+// Navigation-panel parts dropped when it has to make room, and a folded details card's height.
+const GUIDANCE_EXTRAS = '.guidance__settings, .guidance__debug-wrap, .guidance__hint';
+const FOLDED_CARD_PX = 86;
+// Below this an open details card folds instead of scrolling.
+const MIN_OPEN_CARD_PX = 240;
+// Short camera bar until measured: zoom in, zoom out, fit and "more".
+const COMPACT_HUD_PX = 168;
+// Below this the sidebar starts (and folds) closed, leaving the 3D view room.
+const ROOMY = '(min-width: 1101px)';
+const roomy = () => window.matchMedia(ROOMY).matches;
 // Sidebar width plus its gutters, matching --sidebar-w and --gutter in global.css.
 const DOCKED_SIDEBAR_PX = 340 + 2 * 16;
 
@@ -96,14 +106,14 @@ const PROFILES: {
 /** What the next click in the 3D view sets, instead of only selecting. */
 type Pick = { kind: 'endpoint'; which: Which } | { kind: PickPurpose; reply: boolean };
 
-function useWide(): boolean {
-  const [value, setValue] = useState(wide);
+function useMedia(query: string): boolean {
+  const [value, setValue] = useState(() => window.matchMedia(query).matches);
   useEffect(() => {
-    const mq = window.matchMedia(WIDE);
+    const mq = window.matchMedia(query);
     const update = () => setValue(mq.matches);
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
-  }, []);
+  }, [query]);
   return value;
 }
 
@@ -157,14 +167,23 @@ export default function AriNavApp() {
   const [info, setInfo] = useState<ObjectInfo>();
   const [camera, setCamera] = useState<CameraCommand | null>(null);
   const [navMode, setNavMode] = useState<NavMode>('orbit');
-  const [sidebarOpen, setSidebarOpen] = useState(wide);
+  // Navigator keeps the map clear: the sidebar starts closed there, and below 1100 px everywhere.
+  const [sidebarOpen, setSidebarOpen] = useState(() => roomy() && mode !== 'navigator');
   const [uploadOpen, setUploadOpen] = useState(false);
   const [graph, setGraph] = useState<RoomGraphData | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [pick, setPick] = useState<Pick | null>(null);
   const [exactPoint, setExactPoint] = useState(false);
-  const isWide = useWide();
+  const isWide = useMedia(WIDE);
+  const isRoomy = useMedia(ROOMY);
+  const seenRoomy = useRef(isRoomy);
+  useEffect(() => {
+    if (seenRoomy.current === isRoomy) return;
+    seenRoomy.current = isRoomy;
+    setSidebarOpen(isRoomy && mode !== 'navigator');
+    // Only crossing the breakpoint folds or unfolds; the mode is read, not tracked.
+  }, [isRoomy]);
   const appRef = useRef<HTMLDivElement>(null);
   const nav = useNavigation(buildingId);
   const developer = mode === 'developer';
@@ -278,8 +297,8 @@ export default function AriNavApp() {
     if (wasBuilding.current) {
       notify(
         switching
-          ? 'High-quality model ready — now showing it.'
-          : 'High-quality model ready — pick it under 3D source.',
+          ? 'High-quality model finished — now showing it.'
+          : 'High-quality model finished — pick it under 3D source.',
       );
     }
     wasBuilding.current = false;
@@ -430,6 +449,83 @@ export default function AriNavApp() {
   useEffect(() => {
     if (guidanceShown || guidance.navigating) setCardCollapsed(true);
   }, [guidanceShown, guidance.navigating]);
+
+  // Phones: the camera bar shows zoom and fit only, plus a button for the rest.
+  // Phones, and desktops where the details/navigation would run into it, show a short camera bar.
+  const isPhone = useMedia('(max-width: 640px)');
+  const [hudExpanded, setHudExpanded] = useState(false);
+  const [hudCrowded, setHudCrowded] = useState(false);
+  const hudCompact = (isPhone || hudCrowded) && !hudExpanded;
+  const hudExpandedRef = useRef(hudExpanded);
+  hudExpandedRef.current = hudExpanded;
+
+  // The details card and navigation panel share the right margin with the camera bar and end
+  // above it. When they would run into it, the camera bar shortens first, then the card scrolls
+  // or (short of room) folds, then the navigation panel drops its settings. Re-checked on resize and when their content
+  // changes, not on a manual unfold, so the user can still open the card (it scrolls then).
+  const stackRef = useRef<HTMLDivElement>(null);
+  const railRef = useRef<HTMLDivElement>(null);
+  const [guidanceCompact, setGuidanceCompact] = useState(false);
+  const hudHeights = useRef({ full: 0, compact: COMPACT_HUD_PX });
+  const fitStack = useCallback(() => {
+    const app = appRef.current;
+    const stack = stackRef.current;
+    const rail = railRef.current;
+    if (!app || !stack || !rail || getComputedStyle(stack).display === 'contents') return;
+    const railTop = (rail.firstElementChild ?? rail).getBoundingClientRect().top;
+    app.style.setProperty('--rail-top', `${railTop - app.getBoundingClientRect().top}px`);
+    requestAnimationFrame(() => {
+      // The room above a full and above a short camera bar, from the bar's measured heights.
+      const hud = rail.querySelector<HTMLElement>('.hud');
+      const hudNow = hud?.offsetHeight ?? 0;
+      if (hud) hudHeights.current[hud.classList.contains('hud--compact') ? 'compact' : 'full'] = hudNow;
+      const { full: hudFull, compact: hudShort } = hudHeights.current;
+      const room = stack.clientHeight + hudNow - (hudFull || hudNow);
+      const roomShort = hudExpandedRef.current ? room : stack.clientHeight + hudNow - hudShort;
+      const card = stack.querySelector<HTMLElement>('.details');
+      const guide = stack.querySelector<HTMLElement>('.guidance');
+      // Natural heights, not the boxes mid-animation: the hidden parts' content is still there.
+      const extras = guide ? [...guide.querySelectorAll<HTMLElement>(GUIDANCE_EXTRAS)] : [];
+      const guideH = guide
+        ? guide.scrollHeight +
+          extras.reduce((sum, el) => sum + el.scrollHeight - el.offsetHeight, 0) +
+          (guide.classList.contains('guidance--compact') ? extras.length * 8 : 0)
+        : 0;
+      const gap = card && guide ? 8 : 0;
+      const cardOpen = card && !card.classList.contains('details--collapsed');
+      const body = card?.querySelector<HTMLElement>('.details__body');
+      const inner = card?.querySelector<HTMLElement>('.details__body-inner');
+      const cardFull =
+        card && body && inner ? card.scrollHeight - body.offsetHeight + inner.scrollHeight : 0;
+      const need = (cardOpen ? cardFull : (card?.offsetHeight ?? 0)) + gap + guideH;
+      if (need <= room) {
+        // A card folded to make room keeps the short bar; it only grows back once all fits.
+        if (cardOpen || !card) setHudCrowded(false);
+        setGuidanceCompact(false);
+        return;
+      }
+      setHudCrowded(true);
+      // With the short bar the open card may still fit, or scroll in a useful height.
+      if (need <= roomShort || (cardOpen && roomShort - gap - guideH >= MIN_OPEN_CARD_PX)) {
+        setGuidanceCompact(false);
+        return;
+      }
+      if (cardOpen) setCardCollapsed(true);
+      const folded = card ? FOLDED_CARD_PX : 0;
+      setGuidanceCompact(!!guide && folded + gap + guideH > roomShort);
+    });
+  }, []);
+  useEffect(() => {
+    const app = appRef.current;
+    if (!app || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => fitStack());
+    observer.observe(app);
+    if (railRef.current) observer.observe(railRef.current);
+    return () => observer.disconnect();
+  }, [fitStack]);
+  useEffect(() => {
+    fitStack();
+  }, [fitStack, selection, guidanceShown, guidance.navigating, hudCompact, floorChoices.length]);
   useEffect(() => {
     if (!userMode || !selection || cardHeld || cardCollapsed) return;
     const timer = window.setTimeout(() => setCardCollapsed(true), 5000);
@@ -453,6 +549,7 @@ export default function AriNavApp() {
     remember(LAST_MODE, next);
     setPick(null);
     if (next === 'developer') setSidebarOpen(true);
+    if (next === 'navigator') setSidebarOpen(false);
   };
 
   /** Make a room the (simulated) user location; optionally answer the assistant with it. */
@@ -578,6 +675,17 @@ export default function AriNavApp() {
         focusFloorOf(sel);
         setSelection(sel);
         setInfo(undefined);
+      } else if (!route && (ui.highlight?.length ?? 0) > 1) {
+        // Several matches: drop the old selection and step back to the overview to show them all.
+        const floorOf = new Map<string, string>();
+        for (const x of [...(viewModel?.spaces ?? []), ...(viewModel?.assets ?? [])]) {
+          floorOf.set(x.id, x.floor_id);
+        }
+        const floors = new Set(ui.highlight!.map((id) => floorOf.get(String(id))));
+        if (floors.size > 1) setSettings((s) => (s.floor === 'all' ? s : { ...s, floor: 'all' }));
+        setSelection(null);
+        setInfo(undefined);
+        setCamera({ action: 'fit', nonce: Date.now() });
       }
     },
     [buildingId, switchBuilding, nav, viewModel, settings.floor, focusFloorOf],
@@ -615,17 +723,6 @@ export default function AriNavApp() {
   const glbUrl =
     source && source !== HQ_SOURCE && dataset ? datasetFileUrl(dataset, source) : looseGlb;
   const empty = !loading && !model && !glbUrl;
-  const quality = glbUrl
-    ? null
-    : showingHq
-      ? {
-          tone: 'hq',
-          label: 'HQ',
-          title: 'High-quality model from the ingestion pipeline',
-        }
-      : model
-        ? { tone: 'low', label: 'Low', title: 'Quick preview generated in the browser from building.json' }
-        : null;
 
   // The assistant also sees what the user is inspecting on the map (D2), never as their position.
   const chatUi = useMemo(
@@ -670,6 +767,8 @@ export default function AriNavApp() {
             onToHere: selectedEndpoint
               ? () => nav.setEndpoint('target', selectedEndpoint)
               : undefined,
+            startSet: !!nav.start,
+            targetSet: !!nav.target,
           }
         : {
             onFromHere: () => void setLocationFrom(selection, false),
@@ -679,6 +778,8 @@ export default function AriNavApp() {
                 nonce: Date.now(),
                 send: true,
               }),
+            startSet: !!nav.simulated,
+            targetSet: !!nav.route?.target,
           }
       : {};
 
@@ -722,21 +823,9 @@ export default function AriNavApp() {
             {model.building.name}
           </span>
         )}
-        {quality &&
-          !navigatorMode &&
-          (showingHq ? (
-            <button
-              className={`quality quality--${quality.tone} quality--button`}
-              title={`${quality.title}. Show processing details`}
-              onClick={() => setPipelineOpen(true)}
-            >
-              {quality.label}
-            </button>
-          ) : (
-            <span className={`quality quality--${quality.tone}`} title={quality.title}>
-              {quality.label}
-            </span>
-          ))}
+        {model && !glbUrl && !navigatorMode && (
+          <HqPill state={run} showingHq={showingHq} onOpen={() => setPipelineOpen(true)} />
+        )}
         <span className="topbar__spacer" />
         <div className="segmented segmented--small mode-toggle" role="group" aria-label="Profile">
           {PROFILES.map(({ id, label, title, Icon }) => (
@@ -753,7 +842,6 @@ export default function AriNavApp() {
             </button>
           ))}
         </div>
-        {!navigatorMode && <PipelineChip state={run} onOpen={() => setPipelineOpen(true)} />}
         {!navigatorMode && (
           <button
             className="btn btn--accent topbar__upload"
@@ -812,46 +900,64 @@ export default function AriNavApp() {
       </div>
 
       {/* Right edge: camera bar above the floor rail, pinned to the bottom (not pushed by the chat). */}
-      <div className="right-rail">
-        <nav className="hud card" aria-label="Camera">
-          <button
-            className="icon-btn"
-            aria-pressed={navMode === 'orbit'}
-            onClick={() => setNavMode('orbit')}
-            aria-label="Orbit: drag to rotate"
-            title="Orbit — drag to rotate (right-drag or two fingers pan)"
-          >
-            <OrbitIcon />
-          </button>
-          <button
-            className="icon-btn"
-            aria-pressed={navMode === 'pan'}
-            onClick={() => setNavMode('pan')}
-            aria-label="Pan: drag to move"
-            title="Pan — drag to move (right-drag rotates)"
-          >
-            <PanIcon />
-          </button>
-          <span className="hud__sep" />
+      <div className="right-rail" ref={railRef}>
+        <nav className={`hud card${hudCompact ? ' hud--compact' : ''}`} aria-label="Camera">
+          {!hudCompact && (
+            <>
+              <button
+                className="icon-btn"
+                aria-pressed={navMode === 'orbit'}
+                onClick={() => setNavMode('orbit')}
+                aria-label="Orbit: drag to rotate"
+                title="Orbit — drag to rotate (right-drag or two fingers pan)"
+              >
+                <OrbitIcon />
+              </button>
+              <button
+                className="icon-btn"
+                aria-pressed={navMode === 'pan'}
+                onClick={() => setNavMode('pan')}
+                aria-label="Pan: drag to move"
+                title="Pan — drag to move (right-drag rotates)"
+              >
+                <PanIcon />
+              </button>
+              <span className="hud__sep" />
+            </>
+          )}
           <button className="icon-btn" onClick={() => runCamera('zoomIn')} aria-label="Zoom in">
             <PlusIcon />
           </button>
           <button className="icon-btn" onClick={() => runCamera('zoomOut')} aria-label="Zoom out">
             <MinusIcon />
           </button>
-          <span className="hud__sep" />
-          <button className="icon-btn" onClick={() => runCamera('iso')} aria-label="3D view">
-            <CubeIcon />
-          </button>
-          <button className="icon-btn" onClick={() => runCamera('top')} aria-label="Top view">
-            <TopIcon />
-          </button>
-          <button className="icon-btn" onClick={() => runCamera('front')} aria-label="Front view">
-            <FrontIcon />
-          </button>
+          {!hudCompact && (
+            <>
+              <span className="hud__sep" />
+              <button className="icon-btn" onClick={() => runCamera('iso')} aria-label="3D view">
+                <CubeIcon />
+              </button>
+              <button className="icon-btn" onClick={() => runCamera('top')} aria-label="Top view">
+                <TopIcon />
+              </button>
+              <button className="icon-btn" onClick={() => runCamera('front')} aria-label="Front view">
+                <FrontIcon />
+              </button>
+            </>
+          )}
           <button className="icon-btn" onClick={() => runCamera('fit')} aria-label="Fit to view">
             <FitIcon />
           </button>
+          {(isPhone || hudCrowded) && (
+            <button
+              className="icon-btn hud__more"
+              aria-expanded={hudExpanded}
+              onClick={() => setHudExpanded((o) => !o)}
+              aria-label={hudExpanded ? 'Fewer view controls' : 'More view controls'}
+            >
+              <MoreIcon />
+            </button>
+          )}
         </nav>
 
         {/* Quick floor switching at every width (the sidebar no longer has a floor picker). */}
@@ -884,7 +990,7 @@ export default function AriNavApp() {
       )}
 
       {/* Top right: the selection's details above the navigation panel, never overlapping. */}
-      <div className="top-stack">
+      <div className="top-stack" ref={stackRef}>
         {selection && showCard && (
           <DetailsCard
             model={viewModel}
@@ -904,6 +1010,7 @@ export default function AriNavApp() {
         {guidanceShown && (
           <GuidancePanel
             guidance={guidance}
+            compact={guidanceCompact}
             developer={developer}
             destination={names.target}
             floorName={names.floor}
