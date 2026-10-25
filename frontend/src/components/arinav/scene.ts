@@ -26,6 +26,7 @@ import {
   type Space,
 } from '../../lib/building';
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
+import { constrainItemMove, startItemDrag, type ItemDrag } from '../../lib/edit';
 import { routeDrawing } from './routeGeometry';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 import { assetCapFor, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
@@ -48,6 +49,31 @@ const ROUTE_COLORS = { official: '#7c3aed', precision: '#004fab', vertical: '#5d
 /** Where a click hit the model, in building coordinates. */
 export interface PickHit {
   position: Point;
+}
+
+/** Where a dragged asset ended up: its room and the rotation along that room's walls. */
+export interface MovedItem {
+  spaceId: string;
+  rotation?: number;
+}
+
+/** Element kinds that can be dragged in edit mode; stairs and lifts stay put. */
+const DRAGGABLE = new Set(['asset', 'opening']);
+
+/** An asset or door being dragged in edit mode, across the horizontal plane of its base. */
+interface Drag {
+  obj: THREE.Object3D;
+  plane: THREE.Plane;
+  /** Object position minus the grabbed point, so it doesn't jump to the cursor. */
+  offset: THREE.Vector3;
+  start: [number, number];
+  moved: boolean;
+  /** Assets only: the room the item is kept in while dragging (walls stop it). */
+  item: ItemDrag | null;
+  /** Room at the start, to show the new one when the item changes room. */
+  startSpace: string | null;
+  /** Assets only: the rotation lining it up with the walls of the room it is in. */
+  rotation?: number;
 }
 
 const OPENING_COLORS: Record<string, string> = {
@@ -303,11 +329,16 @@ export class BuildingScene {
   private freeAspect = 1;
   private downAt: [number, number] | null = null;
   private disposed = false;
+  /** Edit mode: assets and doors of the generated view can be dragged. */
+  private editable = false;
+  private drag: Drag | null = null;
+  private noFly: string | null = null;
 
   constructor(
     private readonly container: HTMLElement,
     settings: ViewSettings,
     private readonly onSelect: (sel: Selection | null, info?: ObjectInfo, hit?: PickHit) => void,
+    private readonly onMove: (sel: Selection, position: Point, item?: MovedItem) => void = () => {},
   ) {
     this.settings = settings;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -354,8 +385,10 @@ export class BuildingScene {
     this.controls.addEventListener('start', () => (this.fly = null));
 
     const el = this.renderer.domElement;
-    el.addEventListener('pointerdown', this.handlePointerDown);
+    // Capture phase: runs before OrbitControls' own listener, so a drag can switch it off.
+    el.addEventListener('pointerdown', this.handlePointerDown, { capture: true });
     el.addEventListener('pointerup', this.handlePointerUp);
+    el.addEventListener('pointercancel', this.handlePointerCancel);
     el.addEventListener('pointermove', this.handlePointerMove);
     el.addEventListener('pointerleave', () => this.setHovered(null));
 
@@ -390,9 +423,12 @@ export class BuildingScene {
     this.loadToken++;
     const keepCamera = this.sameBuilding(model);
     if (!keepCamera) this.route = null;
+    const previous = this.selection;
     this.clear();
     this.model = model;
     if (model) this.build(model);
+    // An edit of the same building rebuilds the scene; keep what was selected.
+    if (keepCamera && previous && this.lookup(previous)) this.selection = previous;
     this.initAssetCulling();
     this.markClosed();
     this.applySettings();
@@ -669,7 +705,15 @@ export class BuildingScene {
     this.needsRender = true;
   }
 
+  setEditable(on: boolean) {
+    this.editable = on;
+    if (!on) this.endDrag(false);
+  }
+
   setSelection(selection: Selection | null, fly = true) {
+    // The asset just dragged gets selected by the app too; the camera stays where it is.
+    if (fly && selection && selKey(selection) === this.noFly) fly = false;
+    if (fly) this.noFly = null;
     if (this.selection) this.restoreMaterial(this.lookup(this.selection));
     for (const a of this.litAssets) this.restoreMaterial(a);
     this.litAssets = [];
@@ -1657,6 +1701,106 @@ export class BuildingScene {
 
   private handlePointerDown = (e: PointerEvent) => {
     this.downAt = [e.clientX, e.clientY];
+    if (!this.editable || this.hq || this.glb || e.button !== 0) return;
+    const obj = this.pick(e);
+    if (!obj || !DRAGGABLE.has((obj.userData.sel as Selection | undefined)?.kind ?? '')) return;
+    const base = obj.getWorldPosition(new THREE.Vector3());
+    const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -base.y);
+    const grabbed = this.raycaster.ray.intersectPlane(plane, new THREE.Vector3());
+    if (!grabbed) return;
+    const sel = obj.userData.sel as Selection;
+    const item = sel.kind === 'asset' && this.model ? startItemDrag(this.model, sel.id) : null;
+    this.drag = {
+      obj,
+      plane,
+      offset: base.sub(grabbed),
+      start: [e.clientX, e.clientY],
+      moved: false,
+      item,
+      startSpace: item?.spaceId ?? null,
+    };
+    this.controls.enabled = false;
+    this.renderer.domElement.setPointerCapture(e.pointerId);
+  };
+
+  private moveDrag(e: PointerEvent) {
+    const d = this.drag!;
+    if (!d.moved && Math.hypot(e.clientX - d.start[0], e.clientY - d.start[1]) < 4) return;
+    if (!d.moved) {
+      d.moved = true;
+      this.pin.visible = this.hoverTip.visible = false;
+      this.clearHighlight();
+      this.renderer.domElement.style.cursor = 'grabbing';
+    }
+    const rect = this.renderer.domElement.getBoundingClientRect();
+    this.raycaster.setFromCamera(
+      new THREE.Vector2(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1,
+      ),
+      this.camera,
+    );
+    const hit = this.raycaster.ray.intersectPlane(d.plane, new THREE.Vector3());
+    if (!hit) return;
+    const local = d.obj.parent!.worldToLocal(hit.add(d.offset));
+    let [x, y] = [local.x, -local.z];
+    if (d.item && this.model) {
+      const sel = d.obj.userData.sel as Selection;
+      const from: Point = [d.obj.position.x, -d.obj.position.z];
+      const result = constrainItemMove(this.model, sel.id, d.item, from, [x, y]);
+      [x, y] = result.position;
+      d.item = result.state;
+      d.rotation = result.rotation;
+      d.obj.rotation.y = THREE.MathUtils.degToRad(result.rotation);
+    }
+    d.obj.position.x = x;
+    d.obj.position.z = -y;
+    if (d.item) this.showDragRoom(d);
+    this.needsRender = true;
+  }
+
+  /** While an item is dragged into another room, name that room above it. */
+  private showDragRoom(d: Drag) {
+    const changed = d.item && d.item.spaceId !== d.startSpace;
+    const name = changed ? this.model?.spaces.find((s) => s.id === d.item!.spaceId)?.name : null;
+    this.hoverTip.visible = !!name;
+    if (!name) return;
+    const box = new THREE.Box3().setFromObject(d.obj);
+    this.hoverTip.position.set((box.min.x + box.max.x) / 2, box.max.y, (box.min.z + box.max.z) / 2);
+    this.hoverTip.element.textContent = `→ ${name}`;
+  }
+
+  /** Finish a drag; `commit` reports the new position (dataset coordinates). */
+  private endDrag(commit: boolean): boolean {
+    const d = this.drag;
+    if (!d) return false;
+    this.drag = null;
+    this.controls.enabled = true;
+    this.renderer.domElement.style.cursor = '';
+    if (!d.moved) return false;
+    this.downAt = null;
+    const sel = d.obj.userData.sel as Selection;
+    if (commit) {
+      // Keep it selected through the rebuild the move triggers, without flying to it.
+      if (this.selection) this.restoreMaterial(this.lookup(this.selection));
+      this.selection = sel;
+      this.noFly = selKey(sel);
+      this.onMove(
+        sel,
+        [d.obj.position.x, -d.obj.position.z],
+        d.item ? { spaceId: d.item.spaceId, rotation: d.rotation } : undefined,
+      );
+      this.onSelect(sel);
+    }
+    this.needsRender = true;
+    return true;
+  }
+
+  private handlePointerCancel = () => {
+    const d = this.drag;
+    this.endDrag(false);
+    // Put it back: the model was not changed.
+    if (d?.moved && this.model) this.setModel(this.model);
   };
 
   /** The graph overlay is drawn on top, so it wins over the building underneath. */
@@ -1686,6 +1830,7 @@ export class BuildingScene {
   }
 
   private handlePointerUp = (e: PointerEvent) => {
+    if (this.endDrag(true)) return;
     if (!this.downAt || Math.hypot(e.clientX - this.downAt[0], e.clientY - this.downAt[1]) > 6) return;
     this.downAt = null;
     this.edgeTip.visible = false;
@@ -1712,6 +1857,7 @@ export class BuildingScene {
   };
 
   private handlePointerMove = (e: PointerEvent) => {
+    if (this.drag) return this.moveDrag(e);
     if (e.pointerType !== 'mouse' || e.buttons) return;
     this.setHovered(this.pick(e));
   };
@@ -1722,7 +1868,8 @@ export class BuildingScene {
       (this.selection && this.objects.get(selKey(this.selection)) === o) || this.litAssets.includes(o);
     if (this.hovered && !isSelected(this.hovered)) this.restoreMaterial(this.hovered);
     this.hovered = obj;
-    this.renderer.domElement.style.cursor = obj ? 'pointer' : '';
+    const draggable = this.editable && !this.hq && !this.glb && DRAGGABLE.has(obj?.userData.sel?.kind);
+    this.renderer.domElement.style.cursor = draggable ? 'grab' : obj ? 'pointer' : '';
     if (obj && !isSelected(obj) && !this.glb) this.paint(obj, this.hoverMat);
     // Selected or highlighted things already carry the pin/colour, so no second pill over them.
     const marked = !!obj && (isSelected(obj) || this.highlightIds.includes(obj.userData.sel?.id));

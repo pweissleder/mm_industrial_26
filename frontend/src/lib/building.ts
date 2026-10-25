@@ -30,6 +30,8 @@ export interface Opening {
   position: Point;
   width_m: number;
   step_free: boolean;
+  /** Added by the dataset rather than taken from the source data. */
+  synthetic?: boolean;
   closed?: boolean;
 }
 
@@ -52,6 +54,8 @@ export interface Asset {
   floor_id: string;
   position: Point;
   footprint: { width_m?: number; depth_m?: number; rotation_deg?: number };
+  /** dataset | generated (starter kit), user (placed in the layout editor). */
+  source?: string;
 }
 
 export interface BuildingModel {
@@ -83,6 +87,16 @@ export function polygonArea(polygon: Point[]): number {
     a += x1 * y2 - x2 * y1;
   }
   return a / 2;
+}
+
+export function pointInPolygon([x, y]: Point, polygon: Point[]): boolean {
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const [xi, yi] = polygon[i];
+    const [xj, yj] = polygon[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
 }
 
 export function centroid(polygon: Point[]): Point {

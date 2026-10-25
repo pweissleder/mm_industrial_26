@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   api,
+  ApiError,
   datasetFileUrl,
   type AssistantStatus,
   type ConfirmResponse,
@@ -9,7 +10,27 @@ import {
   type TurnResponse,
   type UploadResponse,
 } from '../../lib/api';
-import { floorLabel, type BuildingModel, type Selection } from '../../lib/building';
+import { floorLabel, type BuildingModel, type Point, type Selection } from '../../lib/building';
+import {
+  addAsset,
+  addOpening,
+  alignAsset,
+  constrainItemMove,
+  deleteAsset,
+  deleteOpening,
+  duplicateAsset,
+  isLockedSpace,
+  moveAsset,
+  startItemDrag,
+  moveOpening,
+  rotateAsset,
+  toBuildingFile,
+  updateAsset,
+  updateOpening,
+  type AssetPatch,
+  type CatalogItem,
+  type OpeningPatch,
+} from '../../lib/edit';
 import {
   elementLabel,
   endpointFromSelection,
@@ -42,9 +63,10 @@ import {
   UploadIcon,
   UserIcon,
 } from './Icons';
+import { AddDoor, AddItem, AssetEditor, EditTools, LockedNote, OpeningEditor } from './LayoutEditor';
 import Logo, { LogoMark } from './Logo';
 import { HqPill, PipelineDialog } from './PipelineStatus';
-import type { PickHit } from './scene';
+import type { MovedItem, PickHit } from './scene';
 import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
 import { useGuidance } from './useGuidance';
@@ -184,6 +206,14 @@ export default function AriNavApp() {
   const [toast, setToast] = useState<string | null>(null);
   const [pick, setPick] = useState<Pick | null>(null);
   const [exactPoint, setExactPoint] = useState(false);
+  // Layout editing: `history` holds the models before each unsaved edit, for undo.
+  const [editing, setEditing] = useState(false);
+  const [history, setHistory] = useState<BuildingModel[]>([]);
+  const [saving, setSaving] = useState(false);
+  const modelRef = useRef(model);
+  modelRef.current = model;
+  const dirtyRef = useRef(false);
+  dirtyRef.current = history.length > 0;
   const isWide = useMedia(WIDE);
   const isRoomy = useMedia(ROOMY);
   const seenRoomy = useRef(isRoomy);
@@ -216,6 +246,8 @@ export default function AriNavApp() {
       setSource(GENERATED_SOURCE);
       setPick(null);
       resetNav();
+      setEditing(false);
+      setHistory([]);
       try {
         const [ingestion, files] = await Promise.all([
           api.ingest(name),
@@ -253,7 +285,12 @@ export default function AriNavApp() {
     if (!buildingId) return;
     api
       .buildingModel(buildingId)
-      .then(setModel)
+      // Unsaved layout edits survive a reload (e.g. a door closed meanwhile).
+      .then((fresh) =>
+        setModel((current) =>
+          dirtyRef.current && current ? { ...fresh, assets: current.assets } : fresh,
+        ),
+      )
       .catch(() => notify('Could not reload the building after the change.'));
     setEdits((n) => n + 1);
   }, [buildingId, notify]);
@@ -298,7 +335,8 @@ export default function AriNavApp() {
     }
     if (switchedTo.current === hq.modelUrl) return;
     switchedTo.current = hq.modelUrl;
-    const switching = source === GENERATED_SOURCE;
+    // While editing the layout the preview stays; the HQ model is one pick away afterwards.
+    const switching = source === GENERATED_SOURCE && !editing;
     if (switching) {
       setSource(HQ_SOURCE);
       setSelection(null);
@@ -311,7 +349,7 @@ export default function AriNavApp() {
       );
     }
     wasBuilding.current = false;
-  }, [run.phase, hq, source, notify]);
+  }, [run.phase, hq, source, editing, notify]);
 
   // A review request opens the processing dialog once; later it waits behind the chip.
   const shownReview = useRef<string | null>(null);
@@ -536,10 +574,11 @@ export default function AriNavApp() {
     fitStack();
   }, [fitStack, selection, guidanceShown, guidance.navigating, hudCompact, floorChoices.length]);
   useEffect(() => {
-    if (!userMode || !selection || cardHeld || cardCollapsed) return;
+    // The layout editor lives in the card, so it stays open while editing.
+    if (!userMode || editing || !selection || cardHeld || cardCollapsed) return;
     const timer = window.setTimeout(() => setCardCollapsed(true), 5000);
     return () => window.clearTimeout(timer);
-  }, [userMode, selection, cardHeld, cardCollapsed]);
+  }, [userMode, editing, selection, cardHeld, cardCollapsed]);
 
   // The chat dock grows with suggestions and context chips; overlays above it follow --chat-h.
   useEffect(() => {
@@ -554,6 +593,8 @@ export default function AriNavApp() {
   }, []);
 
   const changeMode = (next: AppMode) => {
+    // Layout editing is a developer tool; unsaved changes keep it open until saved or discarded.
+    if (next !== 'developer' && !dirtyRef.current) setEditing(false);
     setMode(next);
     remember(LAST_MODE, next);
     setPick(null);
@@ -710,6 +751,200 @@ export default function AriNavApp() {
 
   const runCamera = (action: CameraAction) => setCamera({ action, nonce: Date.now() });
 
+  // ---------------------------------------------------------------- layout editing
+
+  const dirty = history.length > 0;
+
+  const applyEdit = useCallback((change: (m: BuildingModel) => BuildingModel) => {
+    const current = modelRef.current;
+    if (!current) return;
+    const next = change(current);
+    if (next === current) return;
+    modelRef.current = next; // several edits in one event build on each other
+    setHistory((h) => [...h, current]);
+    setModel(next);
+  }, []);
+
+  /** Keep the selection only if it still exists in `next`. */
+  const reconcileSelection = (next: BuildingModel) =>
+    setSelection((sel) =>
+      sel?.kind === 'asset' && !next.assets.some((a) => a.id === sel.id) ? null : sel,
+    );
+
+  const undo = useCallback(() => {
+    const previous = history.at(-1);
+    if (!previous) return;
+    setHistory(history.slice(0, -1));
+    setModel(previous);
+    reconcileSelection(previous);
+  }, [history]);
+
+  const discard = () => {
+    const original = history[0];
+    if (!original) return;
+    setHistory([]);
+    setModel(original);
+    reconcileSelection(original);
+  };
+
+  function startEditing() {
+    if (source !== GENERATED_SOURCE) {
+      setSource(GENERATED_SOURCE);
+      setSelection(null);
+    }
+    setSettings((s) => (s.layers.assets ? s : { ...s, layers: { ...s.layers, assets: true } }));
+    setEditing(true);
+    notify('Drag items and doors to move them. Select a room to add items or doors.');
+  }
+
+  async function saveLayout() {
+    if (!model || !dataset) return;
+    setSaving(true);
+    try {
+      const response = await fetch(datasetFileUrl(dataset, 'building.json'));
+      if (!response.ok) throw new Error(`building.json: ${response.status}`);
+      const original = (await response.json()) as Record<string, unknown>;
+      await api.upload(dataset, [toBuildingFile(original, model)]);
+      const ingestion = await api.ingest(dataset);
+      const saved = await api.buildingModel(ingestion.building_id);
+      setHistory([]);
+      dirtyRef.current = false;
+      setModel(saved);
+      setBuildingId(ingestion.building_id);
+      setEdits((n) => n + 1);
+      notify(
+        hq
+          ? 'Layout saved. Rebuild the HQ model under Processing to include it.'
+          : 'Layout saved to building.json.',
+      );
+    } catch (e) {
+      notify(e instanceof ApiError ? `Could not save: ${e.message}` : 'Could not save the layout.');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const moveItem = (id: string, position: Point, item?: MovedItem) =>
+    applyEdit((m) => moveAsset(m, id, position, item ?? {}));
+  /** Arrow-key nudge: walls stop it, like dragging (keys alone never change the room). */
+  const nudgeItem = (id: string, from: Point, to: Point) => {
+    const current = modelRef.current;
+    const state = current && startItemDrag(current, id);
+    if (!current || !state) return;
+    const result = constrainItemMove(current, id, state, from, to);
+    moveItem(id, result.position, { spaceId: result.state.spaceId, rotation: result.rotation });
+  };
+  /** A door snaps to a wall; where there is none between two spaces, it goes back. */
+  const moveDoor = (id: string, position: Point) => {
+    const current = modelRef.current;
+    if (!current) return;
+    const next = moveOpening(current, id, position);
+    if (next !== current) return applyEdit(() => next);
+    setModel({ ...current }); // rebuild the scene so the dragged door returns
+    notify('A door needs a wall between two spaces (or to the outside).');
+  };
+  const moveElement = (sel: Selection, position: Point, item?: MovedItem) =>
+    sel.kind === 'opening' ? moveDoor(sel.id, position) : moveItem(sel.id, position, item);
+  const changeDoor = (id: string, patch: OpeningPatch) => applyEdit((m) => updateOpening(m, id, patch));
+  const deleteDoor = (id: string) => {
+    applyEdit((m) => deleteOpening(m, id));
+    setSelection(null);
+  };
+  const addDoor = (spaceId: string, to: string) => {
+    let added = '';
+    applyEdit((m) => {
+      const result = addOpening(m, spaceId, to);
+      added = result.id;
+      return result.model;
+    });
+    if (added) setSelection({ kind: 'opening', id: added });
+  };
+  const changeItem = (id: string, patch: AssetPatch) => applyEdit((m) => updateAsset(m, id, patch));
+  const rotateItem = (id: string, delta: number) => applyEdit((m) => rotateAsset(m, id, delta));
+  const alignItem = (id: string) => applyEdit((m) => alignAsset(m, id));
+  const deleteItem = (id: string) => {
+    applyEdit((m) => deleteAsset(m, id));
+    setSelection(null);
+  };
+  const duplicateItem = (id: string) => {
+    let copy = '';
+    applyEdit((m) => {
+      const result = duplicateAsset(m, id);
+      copy = result.id;
+      return result.model;
+    });
+    if (copy) setSelection({ kind: 'asset', id: copy });
+  };
+  const addItem = (spaceId: string, item: CatalogItem) => {
+    let added = '';
+    applyEdit((m) => {
+      const result = addAsset(m, spaceId, item);
+      added = result.id;
+      return result.model;
+    });
+    if (added) setSelection({ kind: 'asset', id: added });
+  };
+
+  // Keyboard: Ctrl+Z undo; for the selected item or door Delete and arrow nudges, R / Shift+R rotate items.
+  useEffect(() => {
+    if (!editing) return;
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target?.closest?.('input, textarea, select, [contenteditable="true"]')) return;
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undo();
+        return;
+      }
+      if (!selection || e.ctrlKey || e.metaKey || e.altKey) return;
+      const id = selection.id;
+      const element =
+        selection.kind === 'asset'
+          ? modelRef.current?.assets.find((a) => a.id === id)
+          : selection.kind === 'opening'
+            ? modelRef.current?.openings.find((o) => o.id === id)
+            : undefined;
+      if (!element) return;
+      const door = selection.kind === 'opening';
+      const step = e.shiftKey ? 1 : 0.1;
+      const nudge: Record<string, Point> = {
+        ArrowLeft: [-step, 0],
+        ArrowRight: [step, 0],
+        ArrowUp: [0, step],
+        ArrowDown: [0, -step],
+      };
+      if (e.key === 'Delete' || e.key === 'Backspace') (door ? deleteDoor : deleteItem)(id);
+      else if (!door && e.key.toLowerCase() === 'r') rotateItem(id, e.shiftKey ? -90 : 90);
+      else if (nudge[e.key]) {
+        const [dx, dy] = nudge[e.key];
+        const to: Point = [element.position[0] + dx, element.position[1] + dy];
+        if (door) moveDoor(id, to);
+        else nudgeItem(id, element.position, to);
+      } else return;
+      e.preventDefault();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
+  // Unsaved layout edits: ask before the page goes away.
+  useEffect(() => {
+    if (!dirty) return;
+    const onUnload = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener('beforeunload', onUnload);
+    return () => window.removeEventListener('beforeunload', onUnload);
+  }, [dirty]);
+
+  const editAvailable = !!model && !!dataset && !looseGlb && !loading;
+  const editedAsset =
+    editing && selection?.kind === 'asset' ? model?.assets.find((a) => a.id === selection.id) : undefined;
+  const editedSpace =
+    editing && selection?.kind === 'space' ? model?.spaces.find((s) => s.id === selection.id) : undefined;
+  const editedDoor =
+    editing && selection?.kind === 'opening'
+      ? model?.openings.find((o) => o.id === selection.id)
+      : undefined;
+
   async function handleUploaded(result: UploadResponse) {
     setUploadOpen(false);
     const count = result.files.length;
@@ -815,6 +1050,8 @@ export default function AriNavApp() {
         walker={guidance.pose}
         guidanceCamera={guidance.camera}
         onPreviewDone={guidance.previewDone}
+        editable={editing}
+        onMove={moveElement}
       />
 
       <header className="topbar card">
@@ -861,6 +1098,19 @@ export default function AriNavApp() {
             <span className="topbar__upload-label">Wrapped</span>
           </button>
         )}
+        {(editing || (developer && editAvailable)) && (
+          <EditTools
+            editing={editing}
+            available={editAvailable}
+            changes={history.length}
+            saving={saving}
+            onStart={startEditing}
+            onUndo={undo}
+            onDiscard={discard}
+            onSave={() => void saveLayout()}
+            onDone={() => setEditing(false)}
+          />
+        )}
         {!navigatorMode && (
           <button
             className="btn btn--accent topbar__upload"
@@ -879,7 +1129,10 @@ export default function AriNavApp() {
         <Sidebar
           datasets={datasets}
           dataset={dataset}
-          onDataset={(d) => void openDataset(d)}
+          onDataset={(d) => {
+            if (dirty && !window.confirm('Discard your unsaved layout changes?')) return;
+            void openDataset(d);
+          }}
           loading={loading}
           model={viewModel}
           summary={showingHq ? hq.location.metadata?.summary : undefined}
@@ -887,6 +1140,7 @@ export default function AriNavApp() {
           sources={sources}
           source={source}
           onSource={(s) => {
+            if (editing) return notify('Finish editing the layout to switch the 3D source.');
             setSource(s);
             setSelection(null);
           }}
@@ -1024,7 +1278,32 @@ export default function AriNavApp() {
             collapsed={cardCollapsed}
             onToggleCollapsed={() => setCardCollapsed((c) => !c)}
             {...routeHandlers}
-          />
+          >
+            {editedAsset && (
+              <AssetEditor
+                asset={editedAsset}
+                onChange={(patch) => changeItem(editedAsset.id, patch)}
+                onRotate={(delta) => rotateItem(editedAsset.id, delta)}
+              onAlign={() => alignItem(editedAsset.id)}
+                onDuplicate={() => duplicateItem(editedAsset.id)}
+                onDelete={() => deleteItem(editedAsset.id)}
+              />
+            )}
+            {editedDoor && (
+              <OpeningEditor
+                opening={editedDoor}
+                onChange={(patch) => changeDoor(editedDoor.id, patch)}
+                onDelete={() => deleteDoor(editedDoor.id)}
+              />
+            )}
+            {editedSpace && model && isLockedSpace(editedSpace) && <LockedNote />}
+            {editedSpace && model && !isLockedSpace(editedSpace) && (
+              <>
+                <AddItem model={model} space={editedSpace} onAdd={(item) => addItem(editedSpace.id, item)} />
+                <AddDoor model={model} space={editedSpace} onAdd={(to) => addDoor(editedSpace.id, to)} />
+              </>
+            )}
+          </DetailsCard>
         )}
         {guidanceShown && (
           <GuidancePanel

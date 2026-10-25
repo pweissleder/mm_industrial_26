@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
-import type { BuildingModel, Selection } from '../../lib/building';
-import { BuildingScene, type PickHit } from './scene';
+import type { BuildingModel, Point, Selection } from '../../lib/building';
+import { BuildingScene, type MovedItem, type PickHit } from './scene';
 import type { PoseStore } from './useGuidance';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 
@@ -52,6 +52,9 @@ interface Props {
   guidanceCamera?: GuidanceCameraCommand | null;
   /** The route preview finished or was skipped. */
   onPreviewDone?: () => void;
+  /** Layout editing: assets and doors can be dragged, each drop is reported through onMove. */
+  editable?: boolean;
+  onMove?: (selection: Selection, position: Point, item?: MovedItem) => void;
 }
 
 export default function Viewer3D({
@@ -72,6 +75,8 @@ export default function Viewer3D({
   walker = null,
   guidanceCamera = null,
   onPreviewDone,
+  editable = false,
+  onMove,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const scene = useRef<BuildingScene | null>(null);
@@ -79,13 +84,18 @@ export default function Viewer3D({
   onSelectRef.current = onSelect;
   const onPreviewDoneRef = useRef(onPreviewDone);
   onPreviewDoneRef.current = onPreviewDone;
+  const onMoveRef = useRef(onMove);
+  onMoveRef.current = onMove;
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!container.current) return;
     try {
-      scene.current = new BuildingScene(container.current, settings, (s, i, h) =>
-        onSelectRef.current(s, i, h),
+      scene.current = new BuildingScene(
+        container.current,
+        settings,
+        (s, i, h) => onSelectRef.current(s, i, h),
+        (s, p, item) => onMoveRef.current?.(s, p, item),
       );
     } catch {
       setError('3D view needs WebGL, which this browser does not provide.');
@@ -118,6 +128,7 @@ export default function Viewer3D({
   useEffect(() => scene.current?.setGraph(graph), [graph]);
   useEffect(() => scene.current?.setSelection(selection), [selection]);
   useEffect(() => scene.current?.setNavMode(navMode), [navMode]);
+  useEffect(() => scene.current?.setEditable(editable), [editable]);
   useEffect(() => {
     if (camera) scene.current?.camera3d(camera.action);
   }, [camera]);
