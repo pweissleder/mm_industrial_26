@@ -9,7 +9,7 @@ would make, turn by turn, then a final text.
 given sentence is not tested here (that is covered by a few live dialogs). No network, no API key,
 no constant-text mock.
 
-Generated 2026-10-25 01:41 UTC by `backend/scripts/dialog_scenarios_report.py` from
+Generated 2026-10-25 01:52 UTC by `backend/scripts/dialog_scenarios_report.py` from
 `backend/tests/assistant/test_dialog_scenarios.py` (pytest exit code 0).
 
 Result legend: `passed`; `xfail` = the scenario documents a genuine defect of the current code
@@ -18,7 +18,7 @@ building data missing.
 
 ## Totals
 
-passed: 54, xfail: 6 (of 60)
+passed: 60 (of 60)
 
 | Matrix row | passed | xfail | FAILED | skipped |
 |---|---|---|---|---|
@@ -26,7 +26,7 @@ passed: 54, xfail: 6 (of 60)
 | C02 | 4 | 0 | 0 | 0 |
 | C03 | 5 | 0 | 0 | 0 |
 | C04 | 2 | 0 | 0 | 0 |
-| C05 | 2 | 1 | 0 | 0 |
+| C05 | 3 | 0 | 0 | 0 |
 | C06 | 1 | 0 | 0 | 0 |
 | C07 | 2 | 0 | 0 | 0 |
 | C08 | 2 | 0 | 0 | 0 |
@@ -35,10 +35,10 @@ passed: 54, xfail: 6 (of 60)
 | H02 | 2 | 0 | 0 | 0 |
 | H03 | 1 | 0 | 0 | 0 |
 | INV-1 | 1 | 0 | 0 | 0 |
-| INV-2 | 2 | 1 | 0 | 0 |
-| INV-3 | 4 | 2 | 0 | 0 |
-| INV-4 | 6 | 1 | 0 | 0 |
-| INV-5 | 2 | 1 | 0 | 0 |
+| INV-2 | 3 | 0 | 0 | 0 |
+| INV-3 | 6 | 0 | 0 | 0 |
+| INV-4 | 7 | 0 | 0 | 0 |
+| INV-5 | 3 | 0 | 0 | 0 |
 | INV-7 | 1 | 0 | 0 | 0 |
 | S01 | 4 | 0 | 0 | 0 |
 | S02 | 3 | 0 | 0 | 0 |
@@ -66,7 +66,7 @@ passed: 54, xfail: 6 (of 60)
 | C04b | C04 | an unknown inspected item is dropped (not kept from before); the 'selection' alias works; inspected=null clears | passed |
 | C05a | C05 | exact map-point start routes to an exit door: point start (requested XY) and final opening position preserved | passed |
 | C05b | C05 | a map point in an unknown room is refused with a ui_note; no fallback to the earlier start | passed |
-| C05c | C05 | a map point far outside its room polygon is refused at sync (ui_note), not stored as 'a point in Office 1.04' | xfail |
+| C05c | C05 | a map point far outside its room polygon is refused at sync (ui_note), not stored as 'a point in Office 1.04'; a click 0.2 m outside the wall is kept, moved just inside, and the router accepts it | passed |
 | C06a | C06 | successive vertical moves (campus): F0->F4 by lift, then from the arrival room F4->F1; floors visited in order, the second route starts where the first arrived | passed |
 | C07a | C07 | propose closing the lift changes nothing; Confirm applies it, drops the stale last_route, the proposal cannot be confirmed twice; the next turn sees the closure | passed |
 | C07b | C07 | a cancelled proposal changes nothing and the model is told it was cancelled | passed |
@@ -97,26 +97,30 @@ passed: 54, xfail: 6 (of 60)
 | INV_lift_closed_no_stairs_fallback | INV-4 | lift closed, step-free nearest toilet with route: the same-floor toilet is chosen (the closer one downstairs is not offered via stairs), no vertical transition | passed |
 | INV_route_constraints_echoed | INV-4 | precision + step-free + width/safety from the UI: the route request and the route's own constraints echo exactly the session settings (guidance reroutes reuse them) | passed |
 | INV_width_no_silent_fallback | INV-4 | precision with a 1.0 m width that no door path supports: failed with the 'offer official' hint, no silent official route, width and mode unchanged, one router call | passed |
-| INV_width_binding_nearest | INV-4 | precision mode with a required width of 1.0 m: find_nearest must not rank kitchens whose only doors are 0.9 m as reachable | xfail |
+| INV_width_binding_nearest | INV-4 | precision mode with a required width of 1.0 m: find_nearest must not rank kitchens whose only doors are 0.9 m as reachable (they are named as not passable); at 0.6 m the closest kitchen is offered again and the route to it is obstacle-checked | passed |
 | INV_location_source_simulation | INV-3 | UI start with start_source='simulation' is labelled known_from='simulation' in the snapshot and in the session_state the model sees | passed |
 | INV_location_source_manual | INV-3 | UI start with start_source=None is labelled known_from='manual' in the snapshot and in the session_state the model sees | passed |
 | INV_location_source_qr | INV-3 | UI start with start_source='qr' is labelled known_from='qr' in the snapshot and in the session_state the model sees | passed |
 | INV_location_source_hypothesis | INV-3 | UI start with start_source='hypothesis' is labelled known_from='hypothesis' in the snapshot and in the session_state the model sees | passed |
-| INV_location_source_unknown_not_manual | INV-3 | an unsupported source (e.g. an experimental image estimate) must not be labelled 'manual' (= user-confirmed) | xfail |
-| INV_location_source_after_update_session | INV-3 | a start the user states after an earlier QR start must not inherit the stale 'qr' label | xfail |
+| INV_location_source_unknown_not_manual | INV-3 | an unsupported source (e.g. an experimental image estimate) must not be labelled 'manual' (= user-confirmed) | passed |
+| INV_location_source_after_update_session | INV-3 | a start the user states after an earlier QR start must not inherit the stale 'qr' label | passed |
 | INV_stale_pose_rejected | INV-5 | invalid poses are discarded, never kept from the previous turn: foreign-building room, non-finite position; a non-finite heading becomes 'unknown' | passed |
-| INV_pose_outside_room_rejected | INV-5 | a pose whose position lies far outside its claimed room is discarded | xfail |
-| INV_route_preview_does_not_move_user | INV-2 | 'how far is it from the kitchen to the lab?' (plan_route with an explicit other start) must not relocate the user: the next nearest search still starts at Office 1.04 | xfail |
+| INV_pose_outside_room_rejected | INV-5 | a pose whose position lies far outside its claimed room is discarded | passed |
+| INV_route_preview_does_not_move_user | INV-2 | 'how far is it from the kitchen to the lab?' (plan_route with an explicit other start) must not relocate the user: the next nearest search still starts at Office 1.04 | passed |
 | INV_unknown_room_honest_error | INV-7 | unknown room ids from the model give unknown_place for route and update_session; start and destination are untouched; no router call | passed |
 | INV_building_switch_by_tool | INV-5 | select_building: unknown id refused; a real switch clears start, proposals and history (the old proposal cannot be confirmed); an unknown UI building is refused and the state stays | passed |
 
 ## Known defects (strict xfail)
 
-- **C05c** (xfail): sync_ui/check_endpoint only checks that the point's space exists, not that the position lies inside it (the error text claims 'not inside a room'); the bad point is stored and the router refuses it only later
-- **INV_width_binding_nearest** (xfail): find_nearest ignores the session width (NavigationPort.nearest has no width parameter): Kitchen 0.28 behind a 0.9 m door is ranked first for a 1.0 m width
-- **INV_location_source_unknown_not_manual** (xfail): sync_ui maps any unknown start_source to 'manual', so an unverified estimate is presented to the model as a manually confirmed position
-- **INV_location_source_after_update_session** (xfail): update_session (and plan_route) set state.start but never start_source; the previous UI source ('qr') stays and is shown as known_from for the new start
-- **INV_pose_outside_room_rejected** (xfail): _check_pose only checks that the space id exists and the XY is finite; a pose 60 m away from Office 1.04 is accepted and describe_surroundings answers from it
-- **INV_route_preview_does_not_move_user** (xfail): tool_plan_route writes an explicit start into session.state['start'] (and keeps the old start_source), so a route between two other places moves the user
+None open.
+
+## Defects these scenarios found, fixed since (now regression tests)
+
+- **C05c** (passed): Fixed; was: sync_ui/check_endpoint only checks that the point's space exists, not that the position lies inside it (the error text claims 'not inside a room'); the bad point is stored and the router refuses it only later
+- **INV_width_binding_nearest** (passed): Fixed; was: find_nearest ignores the session width (NavigationPort.nearest has no width parameter): Kitchen 0.28 behind a 0.9 m door is ranked first for a 1.0 m width
+- **INV_location_source_unknown_not_manual** (passed): Fixed; was: sync_ui maps any unknown start_source to 'manual', so an unverified estimate is presented to the model as a manually confirmed position
+- **INV_location_source_after_update_session** (passed): Fixed; was: update_session (and plan_route) set state.start but never start_source; the previous UI source ('qr') stays and is shown as known_from for the new start
+- **INV_pose_outside_room_rejected** (passed): Fixed; was: _check_pose only checks that the space id exists and the XY is finite; a pose 60 m away from Office 1.04 is accepted and describe_surroundings answers from it
+- **INV_route_preview_does_not_move_user** (passed): Fixed; was: tool_plan_route writes an explicit start into session.state['start'] (and keeps the old start_source), so a route between two other places moves the user
 
 Matrix rows: C01-C09, S01-S03, S05, H01-H03 from docs/night/ACCEPTANCE_MATRIX.csv; INV-n = invariant n of docs/night/NIGHT_TASK.md section 'Invarianten'.

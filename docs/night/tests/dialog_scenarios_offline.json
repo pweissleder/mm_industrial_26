@@ -1,11 +1,10 @@
 {
-  "generated": "2026-10-25 01:41 UTC",
+  "generated": "2026-10-25 01:52 UTC",
   "kind": "offline scripted tool calls: state/tool/guard logic, not NLU",
   "test_file": "backend/tests/assistant/test_dialog_scenarios.py",
   "pytest_exit_code": 0,
   "totals": {
-    "passed": 54,
-    "xfail": 6
+    "passed": 60
   },
   "per_matrix_row": {
     "C01": {
@@ -21,8 +20,7 @@
       "passed": 2
     },
     "C05": {
-      "passed": 2,
-      "xfail": 1
+      "passed": 3
     },
     "C06": {
       "passed": 1
@@ -49,20 +47,16 @@
       "passed": 1
     },
     "INV-2": {
-      "passed": 2,
-      "xfail": 1
+      "passed": 3
     },
     "INV-3": {
-      "passed": 4,
-      "xfail": 2
+      "passed": 6
     },
     "INV-4": {
-      "passed": 6,
-      "xfail": 1
+      "passed": 7
     },
     "INV-5": {
-      "passed": 2,
-      "xfail": 1
+      "passed": 3
     },
     "INV-7": {
       "passed": 1
@@ -88,8 +82,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.295"
+      "time_s": "0.125"
     },
     {
       "id": "C01b",
@@ -98,8 +93,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.111"
+      "time_s": "0.310"
     },
     {
       "id": "C01c",
@@ -108,8 +104,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.146"
+      "time_s": "0.163"
     },
     {
       "id": "C01d",
@@ -118,8 +115,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.099"
+      "time_s": "0.116"
     },
     {
       "id": "C02a",
@@ -128,8 +126,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.376"
+      "time_s": "0.159"
     },
     {
       "id": "C02b",
@@ -138,8 +137,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.139"
+      "time_s": "0.145"
     },
     {
       "id": "C02c",
@@ -148,8 +148,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.158"
+      "time_s": "0.382"
     },
     {
       "id": "C02d",
@@ -158,8 +159,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.246"
+      "time_s": "0.254"
     },
     {
       "id": "C03a",
@@ -168,8 +170,9 @@
       "turns": 3,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.388"
+      "time_s": "0.169"
     },
     {
       "id": "C03b",
@@ -178,8 +181,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.133"
+      "time_s": "0.366"
     },
     {
       "id": "C03c",
@@ -188,8 +192,9 @@
       "turns": 4,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.192"
+      "time_s": "0.205"
     },
     {
       "id": "C03d",
@@ -198,8 +203,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.368"
+      "time_s": "0.162"
     },
     {
       "id": "C03e",
@@ -208,8 +214,9 @@
       "turns": 3,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.270"
+      "time_s": "0.514"
     },
     {
       "id": "C04a",
@@ -218,8 +225,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.101"
+      "time_s": "0.105"
     },
     {
       "id": "C04b",
@@ -228,8 +236,9 @@
       "turns": 3,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.109"
+      "time_s": "0.117"
     },
     {
       "id": "C05a",
@@ -238,8 +247,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.136"
+      "time_s": "0.131"
     },
     {
       "id": "C05b",
@@ -248,18 +258,20 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.355"
+      "time_s": "0.105"
     },
     {
       "id": "C05c",
       "matrix_row": "C05",
-      "checks": "a map point far outside its room polygon is refused at sync (ui_note), not stored as 'a point in Office 1.04'",
-      "turns": 1,
-      "result": "xfail",
-      "defect": "sync_ui/check_endpoint only checks that the point's space exists, not that the position lies inside it (the error text claims 'not inside a room'); the bad point is stored and the router refuses it only later",
+      "checks": "a map point far outside its room polygon is refused at sync (ui_note), not stored as 'a point in Office 1.04'; a click 0.2 m outside the wall is kept, moved just inside, and the router accepts it",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "fixed_defect": "Fixed; was: sync_ui/check_endpoint only checks that the point's space exists, not that the position lies inside it (the error text claims 'not inside a room'); the bad point is stored and the router refuses it only later",
       "detail": "",
-      "time_s": "0.086"
+      "time_s": "0.391"
     },
     {
       "id": "C06a",
@@ -268,8 +280,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.183"
+      "time_s": "0.198"
     },
     {
       "id": "C07a",
@@ -278,8 +291,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.416"
+      "time_s": "0.157"
     },
     {
       "id": "C07b",
@@ -288,8 +302,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.108"
+      "time_s": "0.109"
     },
     {
       "id": "C08a",
@@ -298,8 +313,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.117"
+      "time_s": "0.377"
     },
     {
       "id": "C08b",
@@ -308,8 +324,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.157"
+      "time_s": "0.166"
     },
     {
       "id": "C09a",
@@ -318,8 +335,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.142"
+      "time_s": "0.160"
     },
     {
       "id": "C09b",
@@ -328,8 +346,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.354"
+      "time_s": "0.094"
     },
     {
       "id": "S01_east",
@@ -338,8 +357,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.095"
+      "time_s": "0.087"
     },
     {
       "id": "S01_north",
@@ -348,8 +368,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.086"
+      "time_s": "0.327"
     },
     {
       "id": "S01_west",
@@ -358,8 +379,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.084"
+      "time_s": "0.086"
     },
     {
       "id": "S01_south",
@@ -368,8 +390,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.081"
+      "time_s": "0.089"
     },
     {
       "id": "S02_occluded",
@@ -378,8 +401,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.334"
+      "time_s": "0.096"
     },
     {
       "id": "S02_no_heading",
@@ -388,8 +412,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.085"
+      "time_s": "0.087"
     },
     {
       "id": "S02_no_pose",
@@ -398,8 +423,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.108"
+      "time_s": "0.344"
     },
     {
       "id": "S03_leak_below",
@@ -408,8 +434,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.121"
+      "time_s": "0.139"
     },
     {
       "id": "S03_no_floor_below",
@@ -418,8 +445,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.095"
+      "time_s": "0.101"
     },
     {
       "id": "S05_chitchat",
@@ -428,8 +456,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.368"
+      "time_s": "0.121"
     },
     {
       "id": "H01_only_navigation_counts",
@@ -438,8 +467,9 @@
       "turns": 0,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.030"
+      "time_s": "0.034"
     },
     {
       "id": "H02_reset_and_isolation",
@@ -448,8 +478,9 @@
       "turns": 3,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.124"
+      "time_s": "0.127"
     },
     {
       "id": "H02_deleted_history_not_resurrected",
@@ -458,8 +489,9 @@
       "turns": 0,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.042"
+      "time_s": "0.043"
     },
     {
       "id": "H03_synthetic_labelled",
@@ -468,8 +500,9 @@
       "turns": 0,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.064"
+      "time_s": "0.285"
     },
     {
       "id": "INV_search_does_not_move_start",
@@ -478,8 +511,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.156"
+      "time_s": "0.159"
     },
     {
       "id": "INV_preview_closure_changes_nothing",
@@ -488,8 +522,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.138"
+      "time_s": "0.145"
     },
     {
       "id": "INV_clear_is_real",
@@ -498,8 +533,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.325"
+      "time_s": "0.110"
     },
     {
       "id": "INV_step_free_tightens_only",
@@ -508,8 +544,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.147"
+      "time_s": "0.148"
     },
     {
       "id": "INV_step_free_tool_tightens_persists",
@@ -518,8 +555,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.162"
+      "time_s": "0.388"
     },
     {
       "id": "INV_step_free_guard_defence",
@@ -528,8 +566,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.132"
+      "time_s": "0.152"
     },
     {
       "id": "INV_lift_closed_no_stairs_fallback",
@@ -538,8 +577,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.373"
+      "time_s": "0.144"
     },
     {
       "id": "INV_route_constraints_echoed",
@@ -548,8 +588,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.246"
+      "time_s": "0.240"
     },
     {
       "id": "INV_width_no_silent_fallback",
@@ -558,18 +599,20 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.181"
+      "time_s": "0.427"
     },
     {
       "id": "INV_width_binding_nearest",
       "matrix_row": "INV-4",
-      "checks": "precision mode with a required width of 1.0 m: find_nearest must not rank kitchens whose only doors are 0.9 m as reachable",
-      "turns": 1,
-      "result": "xfail",
-      "defect": "find_nearest ignores the session width (NavigationPort.nearest has no width parameter): Kitchen 0.28 behind a 0.9 m door is ranked first for a 1.0 m width",
+      "checks": "precision mode with a required width of 1.0 m: find_nearest must not rank kitchens whose only doors are 0.9 m as reachable (they are named as not passable); at 0.6 m the closest kitchen is offered again and the route to it is obstacle-checked",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "fixed_defect": "Fixed; was: find_nearest ignores the session width (NavigationPort.nearest has no width parameter): Kitchen 0.28 behind a 0.9 m door is ranked first for a 1.0 m width",
       "detail": "",
-      "time_s": "0.129"
+      "time_s": "1.336"
     },
     {
       "id": "INV_location_source_simulation",
@@ -578,8 +621,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.334"
+      "time_s": "0.325"
     },
     {
       "id": "INV_location_source_manual",
@@ -588,8 +632,9 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.084"
+      "time_s": "0.088"
     },
     {
       "id": "INV_location_source_qr",
@@ -598,6 +643,7 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
       "time_s": "0.086"
     },
@@ -608,28 +654,31 @@
       "turns": 1,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.089"
+      "time_s": "0.085"
     },
     {
       "id": "INV_location_source_unknown_not_manual",
       "matrix_row": "INV-3",
       "checks": "an unsupported source (e.g. an experimental image estimate) must not be labelled 'manual' (= user-confirmed)",
       "turns": 1,
-      "result": "xfail",
-      "defect": "sync_ui maps any unknown start_source to 'manual', so an unverified estimate is presented to the model as a manually confirmed position",
+      "result": "passed",
+      "defect": null,
+      "fixed_defect": "Fixed; was: sync_ui maps any unknown start_source to 'manual', so an unverified estimate is presented to the model as a manually confirmed position",
       "detail": "",
-      "time_s": "0.087"
+      "time_s": "0.088"
     },
     {
       "id": "INV_location_source_after_update_session",
       "matrix_row": "INV-3",
       "checks": "a start the user states after an earlier QR start must not inherit the stale 'qr' label",
       "turns": 2,
-      "result": "xfail",
-      "defect": "update_session (and plan_route) set state.start but never start_source; the previous UI source ('qr') stays and is shown as known_from for the new start",
+      "result": "passed",
+      "defect": null,
+      "fixed_defect": "Fixed; was: update_session (and plan_route) set state.start but never start_source; the previous UI source ('qr') stays and is shown as known_from for the new start",
       "detail": "",
-      "time_s": "0.166"
+      "time_s": "0.109"
     },
     {
       "id": "INV_stale_pose_rejected",
@@ -638,28 +687,31 @@
       "turns": 4,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.195"
+      "time_s": "0.401"
     },
     {
       "id": "INV_pose_outside_room_rejected",
       "matrix_row": "INV-5",
       "checks": "a pose whose position lies far outside its claimed room is discarded",
       "turns": 1,
-      "result": "xfail",
-      "defect": "_check_pose only checks that the space id exists and the XY is finite; a pose 60 m away from Office 1.04 is accepted and describe_surroundings answers from it",
+      "result": "passed",
+      "defect": null,
+      "fixed_defect": "Fixed; was: _check_pose only checks that the space id exists and the XY is finite; a pose 60 m away from Office 1.04 is accepted and describe_surroundings answers from it",
       "detail": "",
-      "time_s": "0.111"
+      "time_s": "0.089"
     },
     {
       "id": "INV_route_preview_does_not_move_user",
       "matrix_row": "INV-2",
       "checks": "'how far is it from the kitchen to the lab?' (plan_route with an explicit other start) must not relocate the user: the next nearest search still starts at Office 1.04",
       "turns": 2,
-      "result": "xfail",
-      "defect": "tool_plan_route writes an explicit start into session.state['start'] (and keeps the old start_source), so a route between two other places moves the user",
+      "result": "passed",
+      "defect": null,
+      "fixed_defect": "Fixed; was: tool_plan_route writes an explicit start into session.state['start'] (and keeps the old start_source), so a route between two other places moves the user",
       "detail": "",
-      "time_s": "0.514"
+      "time_s": "0.155"
     },
     {
       "id": "INV_unknown_room_honest_error",
@@ -668,8 +720,9 @@
       "turns": 2,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.165"
+      "time_s": "0.116"
     },
     {
       "id": "INV_building_switch_by_tool",
@@ -678,8 +731,9 @@
       "turns": 3,
       "result": "passed",
       "defect": null,
+      "fixed_defect": null,
       "detail": "",
-      "time_s": "0.240"
+      "time_s": "0.382"
     }
   ]
 }

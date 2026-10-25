@@ -195,7 +195,8 @@ class Scenario:
     setup: Callable[[Ctx], None] | None = None
     custom: Callable[[Ctx], None] | None = None
     nav: type[RecordingNav] = RecordingNav
-    xfail: str | None = None
+    xfail: str | None = None  # a defect of the current code (strict xfail)
+    fixed: str | None = None  # a defect this scenario found and that has been fixed since
 
 
 MISSING = object()
@@ -901,7 +902,8 @@ SCENARIOS: list[Scenario] = [
         "C05c",
         "C05",
         "a map point far outside its room polygon is refused at sync (ui_note), not stored as "
-        "'a point in Office 1.04'",
+        "'a point in Office 1.04'; a click 0.2 m outside the wall is kept, moved just inside, "
+        "and the router accepts it",
         [
             Turn(
                 ["Where are you?"],
@@ -915,9 +917,26 @@ SCENARIOS: list[Scenario] = [
                         ),
                     ),
                 ],
-            )
+            ),
+            Turn(
+                [route(EXIT_DOOR), "Here is the way out."],
+                ui={"start": {"kind": "point", "space_id": OFFICE["id"], "position": [-0.2, 2.7]}},
+                expect=[
+                    st("start.kind", "point"),
+                    custom(
+                        "moved just inside, at most 0.3 m",
+                        lambda c, r: (
+                            0.0 < c.state()["start"]["position"][0] <= 0.1
+                            and c.state()["start"]["position"][1] == pytest.approx(2.7)
+                        ),
+                    ),
+                    ui("route.status", "ok"),
+                    ui("route.start.kind", "point"),
+                ],
+            ),
         ],
-        xfail="sync_ui/check_endpoint only checks that the point's space exists, not that the "
+        fixed="Fixed; was: "
+        "sync_ui/check_endpoint only checks that the point's space exists, not that the "
         "position lies inside it (the error text claims 'not inside a room'); the bad point is "
         "stored and the router refuses it only later",
     ),
@@ -1535,15 +1554,37 @@ SCENARIOS: list[Scenario] = [
         "INV_width_binding_nearest",
         "INV-4",
         "precision mode with a required width of 1.0 m: find_nearest must not rank kitchens "
-        "whose only doors are 0.9 m as reachable",
+        "whose only doors are 0.9 m as reachable (they are named as not passable); at 0.6 m "
+        "the closest kitchen is offered again and the route to it is obstacle-checked",
         [
             Turn(
-                [nearest("room_type:kitchen"), "Kitchen 0.28."],
+                [nearest("room_type:kitchen", and_route=True), "No kitchen fits that width."],
                 ui={"start": CORRIDOR_F0, "mode": "precision", "width_m": 1.0},
-                expect=[custom("every result passable at the session width", _width_ok)],
-            )
+                expect=[
+                    custom("every result passable at the session width", _width_ok),
+                    tool_out(
+                        0,
+                        "not_passable_at_this_width",
+                        lambda names: "Kitchen 0.28" in names,
+                        "Kitchen 0.28 named",
+                    ),
+                    tool(0, "find_nearest", checked_for__width_m=1.0),
+                    ui_lacks("route"),
+                ],
+            ),
+            Turn(
+                [nearest("room_type:kitchen", and_route=True), "Kitchen 0.28 is close."],
+                ui={"start": CORRIDOR_F0, "mode": "precision", "width_m": 0.6},
+                expect=[
+                    custom("every result passable at the session width", _width_ok),
+                    tool(0, "find_nearest", results__0__name="Kitchen 0.28"),
+                    tool(0, "find_nearest", route_to_closest__checked="obstacle_checked"),
+                    ui("route.constraints.width_m", 0.6),
+                ],
+            ),
         ],
-        xfail="find_nearest ignores the session width (NavigationPort.nearest has no width "
+        fixed="Fixed; was: "
+        "find_nearest ignores the session width (NavigationPort.nearest has no width "
         "parameter): Kitchen 0.28 behind a 0.9 m door is ranked first for a 1.0 m width",
     ),
     _source("simulation", "simulation"),
@@ -1560,6 +1601,7 @@ SCENARIOS: list[Scenario] = [
                 ["Okay."],
                 ui={"start": OFFICE, "start_source": "image_estimate"},
                 expect=[
+                    snap("start.known_from", "unknown"),
                     custom(
                         "not claimed as manual",
                         lambda c, r: r["state"]["start"].get("known_from") != "manual",
@@ -1567,7 +1609,8 @@ SCENARIOS: list[Scenario] = [
                 ],
             )
         ],
-        xfail="sync_ui maps any unknown start_source to 'manual', so an unverified estimate is "
+        fixed="Fixed; was: "
+        "sync_ui maps any unknown start_source to 'manual', so an unverified estimate is "
         "presented to the model as a manually confirmed position",
     ),
     Scenario(
@@ -1593,7 +1636,8 @@ SCENARIOS: list[Scenario] = [
                 ],
             ),
         ],
-        xfail="update_session (and plan_route) set state.start but never start_source; the "
+        fixed="Fixed; was: "
+        "update_session (and plan_route) set state.start but never start_source; the "
         "previous UI source ('qr') stays and is shown as known_from for the new start",
     ),
     Scenario(
@@ -1635,7 +1679,8 @@ SCENARIOS: list[Scenario] = [
                 expect=[st("pose", None)],
             )
         ],
-        xfail="_check_pose only checks that the space id exists and the XY is finite; a pose 60 m "
+        fixed="Fixed; was: "
+        "_check_pose only checks that the space id exists and the XY is finite; a pose 60 m "
         "away from Office 1.04 is accepted and describe_surroundings answers from it",
     ),
     Scenario(
@@ -1653,11 +1698,15 @@ SCENARIOS: list[Scenario] = [
                 ],
                 expect=[
                     st("start", OFFICE),
+                    snap("start.known_from", "manual"),
+                    tool(0, "plan_route", user_position_unchanged="Office 1.04"),
+                    ui("route.start.id", KITCHEN_028["id"]),
                     tool(1, "find_nearest", from__name="Office 1.04"),
                 ],
             ),
         ],
-        xfail="tool_plan_route writes an explicit start into session.state['start'] (and keeps "
+        fixed="Fixed; was: "
+        "tool_plan_route writes an explicit start into session.state['start'] (and keeps "
         "the old start_source), so a route between two other places moves the user",
     ),
     Scenario(

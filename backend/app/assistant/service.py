@@ -15,6 +15,9 @@ from threading import Lock
 from time import perf_counter
 from typing import Any, Protocol
 
+from shapely.geometry import Point, Polygon
+from shapely.ops import nearest_points
+
 from app.assistant.port import JSON, NavigationError, NavigationPort
 from app.assistant.tools import build_tools
 
@@ -25,6 +28,13 @@ MAX_TOKENS = 4096
 HISTORY_TURNS = 6
 MAX_INPUT_CHARS = 2000
 MAX_RESULT_CHARS = 8000
+# A map point may lie this far outside its room (a click on the wall line); a pose this far.
+POINT_TOLERANCE_M = 0.3
+POSE_TOLERANCE_M = 0.5
+# How a start is known (frontend LOCATION_SOURCE_LABEL). "manual" = the person chose or said it.
+START_SOURCES = {"manual", "simulation", "qr", "hypothesis"}
+# Precision mode: nearest candidates checked with an obstacle-checked route at the session width.
+NEAREST_CHECKED = 10
 # USD per million tokens, only for the on-screen estimate (cache write = 1.25 x input).
 PRICES = {
     "claude-sonnet-5-5": {"input": 2.00, "output": 10.00, "cache_read": 0.20, "cache_write": 2.50},
@@ -176,6 +186,11 @@ def _found_places(tools_called: list[JSON], limit: int = 6) -> str:
     return "; ".join(rows[:limit])
 
 
+def _outline(space: JSON) -> Polygon:
+    polygon = Polygon(space["polygon"])
+    return polygon if polygon.is_valid else polygon.buffer(0)
+
+
 class Assistant:
     def __init__(
         self,
@@ -319,11 +334,16 @@ class Assistant:
                 or self.describe(data, endpoint) is None
             ):
                 raise NavigationError("invalid_input", "That map point is not inside a room")
-            return {
-                "kind": "point",
-                "space_id": endpoint["space_id"],
-                "position": [float(position[0]), float(position[1])],
-            }
+            outline = _outline(self._index(data)[1][endpoint["space_id"]])
+            here = Point(float(position[0]), float(position[1]))
+            if outline.distance(here) > POINT_TOLERANCE_M:
+                raise NavigationError("invalid_input", "That map point is not inside a room")
+            if not outline.covers(here):
+                # A click on the wall line (within the tolerance): move it just inside, since the
+                # router requires the point in the polygon. Never moved farther than the tolerance.
+                inner = outline.buffer(-0.02)
+                here = nearest_points(outline if inner.is_empty else inner, here)[0]
+            return {"kind": "point", "space_id": endpoint["space_id"], "position": [here.x, here.y]}
         if not isinstance(endpoint, dict) or endpoint.get("kind") not in {
             "space",
             "asset",
@@ -415,12 +435,10 @@ class Assistant:
                 state[key] = self.check_endpoint(data, value)
                 state[from_ui] = state[key]
                 if key == "start":
-                    source = ui.get("start_source")
-                    state["start_source"] = (
-                        source
-                        if source in {"manual", "simulation", "qr", "hypothesis"}
-                        else "manual"
-                    )
+                    # No source = a manual pick (the client omits it then). An unknown source
+                    # is never promoted to "manual" (user-confirmed): it is labelled "unknown".
+                    source = ui.get("start_source") or "manual"
+                    state["start_source"] = source if source in START_SOURCES else "unknown"
             except NavigationError as error:
                 # Never fall back silently to an older place: drop it and tell the model.
                 state[key] = None
@@ -515,15 +533,37 @@ class Assistant:
             raise NavigationError(
                 "invalid_input", "Give a category such as exit or room_type:toilet"
             )
+        precision = state["mode"] == "precision"
         results = self.navigation.nearest(
-            state["building_id"], state["start"], category, step_free, 5
+            state["building_id"],
+            state["start"],
+            category,
+            step_free,
+            NEAREST_CHECKED if precision else 5,
         )
+        excluded: list[str] = []
+        if precision:
+            # The required width binds here too: the official ranking ignores width, so every
+            # candidate is checked with the obstacle-checked route at the session settings.
+            passable: list[JSON] = []
+            for row in results:
+                if len(passable) == 5:
+                    break
+                if self._passable(state, row["endpoint"], step_free):
+                    passable.append(row)
+                else:
+                    excluded.append(str(row.get("name")))
+            results = passable
         out: JSON = {
             "from": self.describe(self._data(session), state["start"]),
             "results": results,
             "ranking": "Sorted by official walking distance (walk_cost_m); the first is the "
             "closest. Any other result is farther.",
         }
+        if precision:
+            out["checked_for"] = {k: state[k] for k in ("width_m", "safety_m", "profile")}
+            if excluded:
+                out["not_passable_at_this_width"] = excluded
         if not results:
             out["note"] = "Nothing reachable of that kind. Say so and offer an alternative."
             if step_free:
@@ -556,6 +596,8 @@ class Assistant:
                 if data is None:
                     raise NavigationError("no_building", "Select a building first")
                 state[key] = self.check_endpoint(data, args[key])
+                if key == "start":
+                    state["start_source"] = "manual"  # the person said where they are
         self._apply_settings(state, args)
         ui["endpoints"] = {"start": state["start"], "destination": state["destination"]}
         ui["settings"] = self._settings(state)
@@ -582,22 +624,17 @@ class Assistant:
         self._apply_settings(
             state, {"mode": args.get("mode"), "step_free": True if args.get("step_free") else None}
         )
-        state["start"], state["destination"] = start, destination
+        # The user's position only changes by what they say (update_session) or the UI. A route
+        # from another place ("how far from the kitchen to the lab?") never moves a KNOWN start;
+        # with no start known yet, the route's start is adopted (the user named it: "from A").
+        moved_from = None
+        if state["start"] is None:
+            state["start"], state["start_source"] = start, "manual"
+        elif start != state["start"]:
+            moved_from = (self.describe(data, state["start"]) or {}).get("name")
+        state["destination"] = destination
         assume = [str(x) for x in args.get("assume_closed") or []]
-        request: JSON = {
-            "mode": state["mode"],
-            "start": start,
-            "target": destination,
-            "step_free": state["step_free"],
-            "assume_closed": assume,
-        }
-        if state["mode"] == "precision":
-            request |= {
-                "profile": state["profile"],
-                "width_m": state["width_m"],
-                "safety_m": state["safety_m"],
-                "allow_schematic_vertical": True,
-            }
+        request = self._route_request(state, start, destination, assume)
         ui["endpoints"] = {"start": start, "destination": destination}
         ui["settings"] = self._settings(state)
         try:
@@ -660,8 +697,39 @@ class Assistant:
         }
         if state["step_free"]:
             summary["constraint"] = STEP_FREE_NOTE
+        if moved_from:
+            summary["user_position_unchanged"] = moved_from
         state["last_route"] = {k: summary[k] for k in ("mode", "status", "length_m", "from", "to")}
         return summary
+
+    @staticmethod
+    def _route_request(state: JSON, start: JSON, target: JSON, assume: list[str]) -> JSON:
+        """A route request with the session's binding constraints (step-free; width: precision)."""
+        request: JSON = {
+            "mode": state["mode"],
+            "start": start,
+            "target": target,
+            "step_free": state["step_free"],
+            "assume_closed": assume,
+        }
+        if state["mode"] == "precision":
+            request |= {
+                "profile": state["profile"],
+                "width_m": state["width_m"],
+                "safety_m": state["safety_m"],
+                "allow_schematic_vertical": True,
+            }
+        return request
+
+    def _passable(self, state: JSON, target: JSON, step_free: bool) -> bool:
+        """Whether the obstacle-checked route at the session width/step-free reaches `target`."""
+        request = self._route_request(state | {"step_free": step_free}, state["start"], target, [])
+        try:
+            result = self.navigation.route(state["building_id"], request)
+        except NavigationError:
+            return False
+        stairs = any(t.get("kind") == "stairs" for t in result.get("transitions", []))
+        return result.get("status") == "ok" and not (step_free and stairs)
 
     def tool_preview_closure(self, session: Session, args: JSON, ui: JSON) -> JSON:
         ids = [str(x) for x in dict.fromkeys(args.get("element_ids") or [])]
@@ -750,15 +818,26 @@ class Assistant:
     def _check_pose(data: JSON, pose: Any) -> JSON | None:
         if not isinstance(pose, dict):
             return None
-        spaces = {s["id"] for s in data["spaces"]}
+        spaces = {s["id"]: s for s in data["spaces"]}
         position = pose.get("position")
         heading = pose.get("heading_deg")
         ok_pos = (
             isinstance(position, list | tuple)
             and len(position) == 2
-            and all(isinstance(v, int | float) and math.isfinite(v) for v in position)
+            and all(
+                isinstance(v, int | float) and not isinstance(v, bool) and math.isfinite(v)
+                for v in position
+            )
         )
-        if pose.get("space_id") not in spaces or not ok_pos:
+        if (
+            pose.get("space_id") not in spaces
+            or not ok_pos
+            or not isinstance(position, list | tuple)
+        ):
+            return None
+        # A pose must be in (or right at the wall of) the room it claims; otherwise it is stale.
+        outline = _outline(spaces[pose["space_id"]])
+        if outline.distance(Point(float(position[0]), float(position[1]))) > POSE_TOLERANCE_M:
             return None
         if not (isinstance(heading, int | float) and math.isfinite(heading)):
             heading = None

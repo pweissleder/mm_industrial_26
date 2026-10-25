@@ -102,6 +102,7 @@ def write_reports(results: dict[str, dict[str, str]], exit_code: int) -> tuple[P
                 "turns": len(scenario.turns),
                 "result": found["result"],
                 "defect": scenario.xfail,
+                "fixed_defect": scenario.fixed,
                 "detail": found["detail"] if found["result"] in {"FAILED", "skipped"} else "",
                 "time_s": found["time_s"],
             }
@@ -155,6 +156,11 @@ def write_reports(results: dict[str, dict[str, str]], exit_code: int) -> tuple[P
     defects = [row for row in rows if row["defect"]]
     lines += ["", "## Known defects (strict xfail)\n"]
     lines += [f"- **{row['id']}** ({row['result']}): {cell(row['defect'])}" for row in defects]
+    if not defects:
+        lines.append("None open.")
+    fixed = [row for row in rows if row["fixed_defect"]]
+    lines += ["", "## Defects these scenarios found, fixed since (now regression tests)\n"]
+    lines += [f"- **{row['id']}** ({row['result']}): {cell(row['fixed_defect'])}" for row in fixed]
     lines += [
         "",
         "Matrix rows: C01-C09, S01-S03, S05, H01-H03 from docs/night/ACCEPTANCE_MATRIX.csv; "
