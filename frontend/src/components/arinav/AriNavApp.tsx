@@ -28,15 +28,17 @@ import {
   CodeIcon,
   CubeIcon,
   FitIcon,
+  FrontIcon,
+  NavigateIcon,
   MinusIcon,
   OrbitIcon,
   PanelIcon,
   PanIcon,
   PinIcon,
   PlusIcon,
-  SparkleIcon,
   TopIcon,
   UploadIcon,
+  UserIcon,
 } from './Icons';
 import Logo, { LogoMark } from './Logo';
 import { PipelineChip, PipelineDialog } from './PipelineStatus';
@@ -64,6 +66,32 @@ const WIDE = '(min-width: 1024px)';
 const wide = () => window.matchMedia(WIDE).matches;
 // Sidebar width plus its gutters, matching --sidebar-w and --gutter in global.css.
 const DOCKED_SIDEBAR_PX = 340 + 2 * 16;
+
+const PROFILES: {
+  id: AppMode;
+  label: string;
+  title: string;
+  Icon: typeof UserIcon;
+}[] = [
+  {
+    id: 'navigator',
+    label: 'Navigator',
+    title: 'Navigator: just ask and follow the route',
+    Icon: NavigateIcon,
+  },
+  {
+    id: 'user',
+    label: 'User',
+    title: 'User: explore the building, ask and set your location',
+    Icon: UserIcon,
+  },
+  {
+    id: 'developer',
+    label: 'Developer',
+    title: 'Developer: manual routing, scenarios, examples and tool calls',
+    Icon: CodeIcon,
+  },
+];
 
 /** What the next click in the 3D view sets, instead of only selecting. */
 type Pick = { kind: 'endpoint'; which: Which } | { kind: PickPurpose; reply: boolean };
@@ -99,14 +127,19 @@ export default function AriNavApp() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [backendDown, setBackendDown] = useState(false);
   const [assistant, setAssistant] = useState<AssistantStatus | null>(null);
-  const [mode, setMode] = useState<AppMode>(() =>
-    recall(LAST_MODE) === 'developer' ? 'developer' : 'assistant',
-  );
+  const [mode, setMode] = useState<AppMode>(() => {
+    const stored = recall(LAST_MODE);
+    // A legacy 'assistant' maps to the user profile.
+    return stored === 'developer' || stored === 'navigator' ? stored : 'user';
+  });
   const [datasets, setDatasets] = useState<string[]>([]);
   const [dataset, setDataset] = useState<string | null>(null);
   const [model, setModel] = useState<BuildingModel | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
-  const [runRequest, setRunRequest] = useState<{ dataset: string; nonce: number } | null>(null);
+  const [runRequest, setRunRequest] = useState<{
+    dataset: string;
+    nonce: number;
+  } | null>(null);
   const [autoHq, setAutoHq] = useState(() => recall(AUTO_HQ) === 'true');
   const changeAutoHq = useCallback((value: boolean) => {
     setAutoHq(value);
@@ -135,6 +168,8 @@ export default function AriNavApp() {
   const appRef = useRef<HTMLDivElement>(null);
   const nav = useNavigation(buildingId);
   const developer = mode === 'developer';
+  const navigatorMode = mode === 'navigator';
+  const userMode = mode === 'user';
 
   const notify = useCallback((text: string) => {
     setToast(text);
@@ -180,7 +215,9 @@ export default function AriNavApp() {
 
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
-  const pipeline = usePipeline(dataset, buildingId, runRequest, { auto: autoHq });
+  const pipeline = usePipeline(dataset, buildingId, runRequest, {
+    auto: autoHq,
+  });
 
   // Bumped when the agent edits the building, to refetch the nav graph.
   const [edits, setEdits] = useState(0);
@@ -270,8 +307,18 @@ export default function AriNavApp() {
   // Floor rail entries, top floor first under "All", as in the sidebar's floor picker.
   const floorChoices = useMemo(() => {
     const floors = [...(viewModel?.floors ?? [])].sort((a, b) => b.level - a.level);
-    type Choice = { key: string; level: ViewSettings['floor']; label: string; title: string };
-    const all: Choice = { key: 'all', level: 'all', label: 'All', title: 'All floors' };
+    type Choice = {
+      key: string;
+      level: ViewSettings['floor'];
+      label: string;
+      title: string;
+    };
+    const all: Choice = {
+      key: 'all',
+      level: 'all',
+      label: 'All',
+      title: 'All floors',
+    };
     const choices = floors.map((f): Choice => ({ key: f.id, level: f.level, label: floorLabel(f), title: f.name }));
     return floors.length > 1 ? [all, ...choices] : [];
   }, [viewModel]);
@@ -367,6 +414,28 @@ export default function AriNavApp() {
       .catch(() => setLoading(false));
   }, [openDataset]);
 
+  // User profile: the details card folds to its title row 5 s after a selection; hovering or
+  // focusing it pauses the timer, and a new selection (or the chevron) unfolds it again.
+  // In every profile it folds while a route is shown, so the navigation panel below has room.
+  const [cardCollapsed, setCardCollapsed] = useState(false);
+  const [cardHeld, setCardHeld] = useState(false);
+  const guidanceShown =
+    !guidanceHidden &&
+    (guidance.snapshot.route?.status === 'ok' || guidance.snapshot.status === 'blocked');
+  useEffect(() => {
+    setCardCollapsed(guidance.navigating);
+    setCardHeld(false);
+    // Only a new selection resets the fold; the navigation state is read, not tracked.
+  }, [selection]);
+  useEffect(() => {
+    if (guidanceShown || guidance.navigating) setCardCollapsed(true);
+  }, [guidanceShown, guidance.navigating]);
+  useEffect(() => {
+    if (!userMode || !selection || cardHeld || cardCollapsed) return;
+    const timer = window.setTimeout(() => setCardCollapsed(true), 5000);
+    return () => window.clearTimeout(timer);
+  }, [userMode, selection, cardHeld, cardCollapsed]);
+
   // The chat dock grows with suggestions and context chips; overlays above it follow --chat-h.
   useEffect(() => {
     const app = appRef.current;
@@ -400,7 +469,10 @@ export default function AriNavApp() {
         return;
       }
       const label = elementLabel(spaceId, viewModel);
-      let location: SimulatedLocation = { endpoint: { kind: 'space', id: spaceId }, label };
+      let location: SimulatedLocation = {
+        endpoint: { kind: 'space', id: spaceId },
+        label,
+      };
       try {
         const resolved = await api.resolveLocation({
           building_id: buildingId,
@@ -546,7 +618,11 @@ export default function AriNavApp() {
   const quality = glbUrl
     ? null
     : showingHq
-      ? { tone: 'hq', label: 'HQ', title: 'High-quality model from the ingestion pipeline' }
+      ? {
+          tone: 'hq',
+          label: 'HQ',
+          title: 'High-quality model from the ingestion pipeline',
+        }
       : model
         ? { tone: 'low', label: 'Low', title: 'Quick preview generated in the browser from building.json' }
         : null;
@@ -563,7 +639,10 @@ export default function AriNavApp() {
   const chatSelection = useMemo(
     () =>
       selection && selection.kind !== 'object'
-        ? { name: elementLabel(selection.id, viewModel), room: selection.kind === 'space' }
+        ? {
+            name: elementLabel(selection.id, viewModel),
+            room: selection.kind === 'space',
+          }
         : null,
     [selection, viewModel],
   );
@@ -579,34 +658,29 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
-  const detailActions =
-    selection && selection.kind !== 'object' ? (
-      developer ? (
-        selectedEndpoint && (
-          <>
-            <button
-              className="btn btn--ghost btn--sm"
-              onClick={() => nav.setEndpoint('start', selectedEndpoint)}
-            >
-              Set as start
-            </button>
-            <button
-              className="btn btn--ghost btn--sm"
-              onClick={() => nav.setEndpoint('target', selectedEndpoint)}
-            >
-              Set as target
-            </button>
-          </>
-        )
-      ) : assistant && selection.kind === 'space' ? (
-        <button
-          className="btn btn--ghost btn--sm"
-          onClick={() => void setLocationFrom(selection, false)}
-        >
-          <PinIcon width={16} height={16} /> I am here (simulated)
-        </button>
-      ) : null
-    ) : null;
+  const showCard =
+    !!selection && !(navigatorMode && selection.kind === 'space');
+  const routeHandlers =
+    selection && selection.kind !== 'object' && !navigatorMode
+      ? developer
+        ? {
+            onFromHere: selectedEndpoint
+              ? () => nav.setEndpoint('start', selectedEndpoint)
+              : undefined,
+            onToHere: selectedEndpoint
+              ? () => nav.setEndpoint('target', selectedEndpoint)
+              : undefined,
+          }
+        : {
+            onFromHere: () => void setLocationFrom(selection, false),
+            onToHere: () =>
+              setDraft({
+                text: `How do I get to ${elementLabel(selection.id, viewModel)}?`,
+                nonce: Date.now(),
+                send: true,
+              }),
+          }
+      : {};
 
   return (
     <div
@@ -649,6 +723,7 @@ export default function AriNavApp() {
           </span>
         )}
         {quality &&
+          !navigatorMode &&
           (showingHq ? (
             <button
               className={`quality quality--${quality.tone} quality--button`}
@@ -663,31 +738,33 @@ export default function AriNavApp() {
             </span>
           ))}
         <span className="topbar__spacer" />
-        <div className="segmented segmented--small mode-toggle" role="group" aria-label="Mode">
-          <button
-            className="segmented__item"
-            aria-pressed={!developer}
-            onClick={() => changeMode('assistant')}
-            title="Assistant mode: ask, talk and follow routes"
-          >
-            <SparkleIcon width={15} height={15} />
-            <span className="mode-toggle__label">Assistant</span>
-          </button>
-          <button
-            className="segmented__item"
-            aria-pressed={developer}
-            onClick={() => changeMode('developer')}
-            title="Developer mode: manual routing, scenarios, examples and tool calls"
-          >
-            <CodeIcon width={15} height={15} />
-            <span className="mode-toggle__label">Developer</span>
-          </button>
+        <div className="segmented segmented--small mode-toggle" role="group" aria-label="Profile">
+          {PROFILES.map(({ id, label, title, Icon }) => (
+            <button
+              key={id}
+              className="segmented__item"
+              aria-pressed={mode === id}
+              aria-label={label}
+              onClick={() => changeMode(id)}
+              title={title}
+            >
+              <Icon width={15} height={15} />
+              <span className="mode-toggle__label">{label}</span>
+            </button>
+          ))}
         </div>
-        <PipelineChip state={run} onOpen={() => setPipelineOpen(true)} />
-        <button className="btn btn--accent topbar__upload" onClick={() => setUploadOpen(true)}>
-          <UploadIcon width={17} height={17} />
-          <span className="topbar__upload-label">Upload assets</span>
-        </button>
+        {!navigatorMode && <PipelineChip state={run} onOpen={() => setPipelineOpen(true)} />}
+        {!navigatorMode && (
+          <button
+            className="btn btn--accent topbar__upload"
+            onClick={() => setUploadOpen(true)}
+            aria-label="Upload assets"
+            title="Upload assets"
+          >
+            <UploadIcon width={17} height={17} />
+            <span className="topbar__upload-label">Upload assets</span>
+          </button>
+        )}
       </header>
 
       <div className="scrim" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
@@ -710,7 +787,6 @@ export default function AriNavApp() {
           onSettings={setSettings}
           selection={selection}
           onSelect={selectFromList}
-          onCamera={runCamera}
           onClose={() => setSidebarOpen(false)}
           developer={
             developer ? (
@@ -735,61 +811,67 @@ export default function AriNavApp() {
         />
       </div>
 
-      <nav className="hud card" aria-label="Camera">
-        <button
-          className="icon-btn"
-          aria-pressed={navMode === 'orbit'}
-          onClick={() => setNavMode('orbit')}
-          aria-label="Orbit: drag to rotate"
-          title="Orbit — drag to rotate (right-drag or two fingers pan)"
-        >
-          <OrbitIcon />
-        </button>
-        <button
-          className="icon-btn"
-          aria-pressed={navMode === 'pan'}
-          onClick={() => setNavMode('pan')}
-          aria-label="Pan: drag to move"
-          title="Pan — drag to move (right-drag rotates)"
-        >
-          <PanIcon />
-        </button>
-        <span className="hud__sep" />
-        <button className="icon-btn" onClick={() => runCamera('zoomIn')} aria-label="Zoom in">
-          <PlusIcon />
-        </button>
-        <button className="icon-btn" onClick={() => runCamera('zoomOut')} aria-label="Zoom out">
-          <MinusIcon />
-        </button>
-        <span className="hud__sep" />
-        <button className="icon-btn" onClick={() => runCamera('iso')} aria-label="3D view">
-          <CubeIcon />
-        </button>
-        <button className="icon-btn" onClick={() => runCamera('top')} aria-label="Top view">
-          <TopIcon />
-        </button>
-        <button className="icon-btn" onClick={() => runCamera('fit')} aria-label="Fit to view">
-          <FitIcon />
-        </button>
-      </nav>
+      {/* Right edge: camera bar above the floor rail, pinned to the bottom (not pushed by the chat). */}
+      <div className="right-rail">
+        <nav className="hud card" aria-label="Camera">
+          <button
+            className="icon-btn"
+            aria-pressed={navMode === 'orbit'}
+            onClick={() => setNavMode('orbit')}
+            aria-label="Orbit: drag to rotate"
+            title="Orbit — drag to rotate (right-drag or two fingers pan)"
+          >
+            <OrbitIcon />
+          </button>
+          <button
+            className="icon-btn"
+            aria-pressed={navMode === 'pan'}
+            onClick={() => setNavMode('pan')}
+            aria-label="Pan: drag to move"
+            title="Pan — drag to move (right-drag rotates)"
+          >
+            <PanIcon />
+          </button>
+          <span className="hud__sep" />
+          <button className="icon-btn" onClick={() => runCamera('zoomIn')} aria-label="Zoom in">
+            <PlusIcon />
+          </button>
+          <button className="icon-btn" onClick={() => runCamera('zoomOut')} aria-label="Zoom out">
+            <MinusIcon />
+          </button>
+          <span className="hud__sep" />
+          <button className="icon-btn" onClick={() => runCamera('iso')} aria-label="3D view">
+            <CubeIcon />
+          </button>
+          <button className="icon-btn" onClick={() => runCamera('top')} aria-label="Top view">
+            <TopIcon />
+          </button>
+          <button className="icon-btn" onClick={() => runCamera('front')} aria-label="Front view">
+            <FrontIcon />
+          </button>
+          <button className="icon-btn" onClick={() => runCamera('fit')} aria-label="Fit to view">
+            <FitIcon />
+          </button>
+        </nav>
 
-      {/* Phones: quick floor switching without opening the panel (hidden on wider screens). */}
-      {!glbUrl && floorChoices.length > 0 && (
-        <div className="floor-rail card" role="radiogroup" aria-label="Floor">
-          {floorChoices.map((f) => (
-            <button
-              key={f.key}
-              role="radio"
-              aria-checked={settings.floor === f.level}
-              className="floor-rail__item"
-              title={f.title}
-              onClick={() => setSettings((s) => ({ ...s, floor: f.level }))}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      )}
+        {/* Quick floor switching at every width (the sidebar no longer has a floor picker). */}
+        {!glbUrl && floorChoices.length > 0 && (
+          <div className="floor-rail card" role="radiogroup" aria-label="Floor">
+            {floorChoices.map((f) => (
+              <button
+                key={f.key}
+                role="radio"
+                aria-checked={settings.floor === f.level}
+                className="floor-rail__item"
+                title={f.title}
+                onClick={() => setSettings((s) => ({ ...s, floor: f.level }))}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {pickHint && (
         <div className="pick-banner card" role="status">
@@ -801,19 +883,44 @@ export default function AriNavApp() {
         </div>
       )}
 
-      {selection && (
-        <DetailsCard
-          model={viewModel}
-          spaceMeta={showingHq ? hq.location.metadata?.spaces : undefined}
-          selection={selection}
-          info={info}
-          onClose={() => handleSelect(null)}
-          onAsk={(text) => setDraft({ text, nonce: Date.now() })}
-          onFocusFloor={(level) => setSettings((s) => ({ ...s, floor: level }))}
-          closed={!!closed?.includes(selection.id)}
-          extraActions={detailActions}
-        />
-      )}
+      {/* Top right: the selection's details above the navigation panel, never overlapping. */}
+      <div className="top-stack">
+        {selection && showCard && (
+          <DetailsCard
+            model={viewModel}
+            spaceMeta={showingHq ? hq.location.metadata?.spaces : undefined}
+            selection={selection}
+            info={info}
+            onClose={() => handleSelect(null)}
+            onAsk={(text) => setDraft({ text, nonce: Date.now(), send: true })}
+            closed={!!closed?.includes(selection.id)}
+            canToggle={!navigatorMode}
+            onHold={userMode ? setCardHeld : undefined}
+            collapsed={cardCollapsed}
+            onToggleCollapsed={() => setCardCollapsed((c) => !c)}
+            {...routeHandlers}
+          />
+        )}
+        {guidanceShown && (
+          <GuidancePanel
+            guidance={guidance}
+            developer={developer}
+            destination={names.target}
+            floorName={names.floor}
+            scenarioRevision={nav.state?.revision}
+            voice={voiceState ?? guideVoice.state}
+            voiceAvailable={voiceAvailable}
+            onMute={() => {
+              speechPort.unlock();
+              guideVoice.setMuted(!guideVoice.state.muted);
+            }}
+            onRepeat={() => guideVoice.repeat()}
+            onVoiceSpeed={(v) => guideVoice.setSpeed(v)}
+            onUnlockAudio={() => speechPort.unlock()}
+            onClose={() => setGuidanceHidden(true)}
+          />
+        )}
+      </div>
 
       {empty && (
         <section className="welcome card">
@@ -832,32 +939,13 @@ export default function AriNavApp() {
         </section>
       )}
 
-      {!guidanceHidden && (
-        <GuidancePanel
-          guidance={guidance}
-          developer={developer}
-          destination={names.target}
-          floorName={names.floor}
-          scenarioRevision={nav.state?.revision}
-          voice={voiceState ?? guideVoice.state}
-          voiceAvailable={voiceAvailable}
-          onMute={() => {
-            speechPort.unlock();
-            guideVoice.setMuted(!guideVoice.state.muted);
-          }}
-          onRepeat={() => guideVoice.repeat()}
-          onVoiceSpeed={(v) => guideVoice.setSpeed(v)}
-          onUnlockAudio={() => speechPort.unlock()}
-          onClose={() => setGuidanceHidden(true)}
-        />
-      )}
 
       <ChatDock
         health={health}
         backendDown={backendDown}
         draft={draft}
         assistant={assistant}
-        developer={developer}
+        profile={mode}
         ui={chatUi}
         selection={chatSelection}
         simulated={nav.simulated}
@@ -868,6 +956,7 @@ export default function AriNavApp() {
         onClearSimulated={() => nav.setSimulated(null)}
         buildingId={buildingId}
         model={viewModel}
+        suggestions={showingHq ? hq.location.metadata?.suggestions : undefined}
         onSelect={selectFromList}
         onBuildingChanged={reloadModel}
       />

@@ -1,15 +1,16 @@
 /* Phase A modules in AriNav: assistant replies, voice controls, developer panel, route badges.
    Kept apart from global.css (team styles); uses the same tokens. */
 
-/* ---- top bar: Assistant / Developer switch ---- */
+/* ---- top bar: Navigator / User / Developer switch ---- */
 .mode-toggle .segmented__item {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-@media (max-width: 720px) {
-  .mode-toggle__label {
+@media (max-width: 1200px) {
+  .mode-toggle__label,
+  .topbar .quality {
     display: none;
   }
 }
@@ -286,14 +287,19 @@
   padding: 2px;
 }
 
-.chat__speak[aria-pressed='true'] {
-  background: var(--blue);
-  color: #fff;
+.chat__speak-toggle {
+  margin-left: auto;
+  width: 36px;
+  height: 36px;
+  color: var(--muted);
 }
 
-.chat__speak:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.chat__speak-toggle[aria-pressed='true'] {
+  color: var(--blue);
+}
+
+.chat__speak-toggle + .chat__new {
+  margin-left: 0;
 }
 
 .chat__speed {
@@ -312,7 +318,6 @@
   width: 110px;
 }
 
-.chat__replay-last,
 .chat__expand {
   flex: none;
 }
@@ -686,4 +691,109 @@
   padding-top: 6px;
   border-top: 1px dashed var(--gray-200);
   font-size: 12px;
+}
+
+/* ---- chat: profiles (attachment chip, on-demand speech, navigator line) ---- */
+.attach-chip {
+  flex: 0 1 auto;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 4px 3px 10px;
+  border-radius: var(--pill);
+  background: #e8effd;
+  color: var(--blue);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.attach-chip svg {
+  flex: none;
+}
+
+/* Folding slides the name (and leading clip) shut instead of snapping. */
+.attach-chip,
+.attach-chip__clip,
+.attach-chip__text {
+  transition:
+    max-width 0.22s ease,
+    width 0.22s ease,
+    opacity 0.18s ease,
+    padding 0.22s ease,
+    gap 0.22s ease;
+}
+
+.attach-chip__text {
+  max-width: 200px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Folded to its icon: just the paperclip, which turns into the detach cross on hover/focus. */
+.attach-chip__icon-clip {
+  display: none;
+}
+
+.attach-chip--compact {
+  flex: none;
+  gap: 0;
+  padding: 3px;
+}
+
+.attach-chip--compact .attach-chip__text,
+.attach-chip--compact .attach-chip__clip {
+  max-width: 0;
+  width: 0;
+  opacity: 0;
+}
+
+.attach-chip--compact:not(:hover):not(:focus-within) .attach-chip__icon-clip {
+  display: block;
+}
+
+.attach-chip--compact:not(:hover):not(:focus-within) .attach-chip__icon-x {
+  display: none;
+}
+
+/* Narrow input bars fold the pill to its icon right away. */
+.chat__bar {
+  container-type: inline-size;
+}
+
+@container (max-width: 460px) {
+  .attach-chip {
+    flex: none;
+    gap: 0;
+    padding: 3px;
+  }
+
+  .attach-chip__text,
+  .attach-chip__clip {
+    max-width: 0;
+    width: 0;
+    opacity: 0;
+  }
+
+  .attach-chip:not(:hover):not(:focus-within) .attach-chip__icon-clip {
+    display: block;
+  }
+
+  .attach-chip:not(:hover):not(:focus-within) .attach-chip__icon-x {
+    display: none;
+  }
+}
+
+.chat__latest {
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--ink-2);
+  max-height: 96px;
+  overflow-y: auto;
+}
+
+.chat__latest--error {
+  color: #b3261e;
 }

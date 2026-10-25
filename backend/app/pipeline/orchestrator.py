@@ -22,7 +22,7 @@ RETRY_TARGETS: dict[Stage, list[Stage]] = {
 SYSTEM_PROMPT = """\
 You orchestrate a building ingestion pipeline with fixed stages: raw_validation ->
 graph_build -> graph_validate -> floorplan -> equipment -> variant_creator ->
-model_validate -> summarize. After a stage you get its report and decide:
+model_validate -> summarize -> suggest. After a stage you get its report and decide:
 - proceed: the result is good enough for the next stage (open info-level notes are fine).
 - retry: re-run a stage (target_stage) when the report shows a fixable problem; target
   the stage the deviations are attributed to.

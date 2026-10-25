@@ -1,0 +1,1682 @@
+{
+  "id": "proc-factory-dev-003",
+  "dataset": "proc-factory-dev-003",
+  "name": "Fertigung Ost 27",
+  "source": "procedural",
+  "raw_sha256": "e0229a3c82616d4c4ee62d5753022c8e383585b1118a170162ee59afb69ed66b",
+  "created_at": "2026-10-24T16:32:38.881449Z",
+  "updated_at": "2026-10-24T16:40:12.127650Z",
+  "pillars": {
+    "validation": {
+      "status": "done",
+      "updated_at": "2026-10-24T16:40:12.127592Z",
+      "note": null
+    },
+    "graph": {
+      "status": "skipped",
+      "updated_at": "2026-10-24T16:40:12.127610Z",
+      "note": null
+    },
+    "assets_3d": {
+      "status": "done",
+      "updated_at": "2026-10-24T16:40:12.127621Z",
+      "note": null
+    },
+    "metadata": {
+      "status": "done",
+      "updated_at": "2026-10-24T16:40:12.127629Z",
+      "note": null
+    }
+  },
+  "metadata": {
+    "summary": "Fertigung Ost 27 is a procedurally generated two-storey factory building with about 5,394 m² across 79 spaces (56 rooms) and 505 assets. The ground floor holds production, assembly, additive manufacturing, warehouse and logistics zones, plus offices, meeting rooms, a quality lab, a server room, a kitchen, a locker room and a lobby. The first floor is mainly offices, with a server room, kitchens, meeting rooms and toilets. Machines include CNC mills, injection moulding machines, 3D printers, a waterjet cutter and forklifts. A lift and stairs connect both floors, and the building has step-free entrance access with full step-free coverage.",
+    "key_facts": [
+      "Two floors (levels 0 and 1) with a total area of 5,394.45 m².",
+      "79 spaces, of which 56 are rooms.",
+      "505 assets: 20 machines, 115 equipment items, 353 furniture items and 17 fixtures.",
+      "Machines: 3 CNC mills, 3 drill presses, 3 injection moulding machines, 2 industrial 3D printers, 2 3D printers, 2 forklifts, plus a conveyor, curing oven, waterjet cutter, compressor and coordinate measuring machine.",
+      "42 server racks, 51 pallet racks and 10 fire extinguishers.",
+      "Office lift (step-free) and office staircase (not step-free) both serve levels 0 and 1.",
+      "Step-free entrance with step-free coverage of 1.0; the ground floor has 4 entrances.",
+      "Source: procedurally generated for the Munich hackathon, CC0-1.0."
+    ],
+    "stats": {
+      "building_id": "proc-factory-dev-003",
+      "name": "Fertigung Ost 27",
+      "source": "procedural",
+      "license": "CC0-1.0",
+      "attribution": "Procedurally generated for the Munich hackathon (CC0)",
+      "floor_count": 2,
+      "levels": [
+        0,
+        1
+      ],
+      "missing_levels": [],
+      "total_area_m2": 5394.45,
+      "space_count": 79,
+      "room_count": 56,
+      "asset_count": 505,
+      "equipment_by_category": {
+        "machine": 20,
+        "equipment": 115,
+        "furniture": 353,
+        "fixture": 17
+      },
+      "top_equipment": {
+        "chair": 90,
+        "pallet_rack": 51,
+        "desk": 50,
+        "office_chair": 50,
+        "server_rack": 42,
+        "filing_cabinet": 30,
+        "plant": 20,
+        "locker": 12,
+        "bookshelf": 10,
+        "display_screen": 10,
+        "fire_extinguisher": 10,
+        "meeting_table": 10,
+        "coffee_machine": 7,
+        "fridge": 7,
+        "kitchen_counter": 7
+      },
+      "machines": {
+        "cnc_mill": 3,
+        "drill_press": 3,
+        "conveyor": 1,
+        "industrial_3d_printer": 2,
+        "3d_printer": 2,
+        "curing_oven": 1,
+        "injection_moulding_machine": 3,
+        "waterjet_cutter": 1,
+        "forklift": 2,
+        "compressor": 1,
+        "coordinate_measuring_machine": 1
+      },
+      "has_lift": true,
+      "has_stairs": true,
+      "has_step_free_entrance": true,
+      "step_free_coverage": 1.0,
+      "connectors": [
+        {
+          "id": "proc-factory-dev-003-V01",
+          "kind": "stairs",
+          "name": "Office staircase",
+          "levels": [
+            0,
+            1
+          ],
+          "step_free": false
+        },
+        {
+          "id": "proc-factory-dev-003-V02",
+          "kind": "lift",
+          "name": "Office lift",
+          "levels": [
+            0,
+            1
+          ],
+          "step_free": true
+        }
+      ]
+    },
+    "floors": [
+      {
+        "floor_id": "proc-factory-dev-003-F0",
+        "level": 0,
+        "name": "Ground floor",
+        "description": "Ground floor (level 0, 8 m high, 4,556.85 m², 47 spaces, 27 rooms, 4 entrances). Hall space totals 2,525.7 m² and corridors 1,379.35 m². It includes warehouse (1,239.75 m²), production (495.9 m²), assembly, additive and logistics zones (247.95 m² each). It also has a lobby, offices, meeting rooms, a quality lab, a server room, a kitchen, toilets, a locker room, a stairwell and a lift. All 20 machines are here, along with 51 pallet racks and 23 server racks.",
+        "stats": {
+          "floor_id": "proc-factory-dev-003-F0",
+          "level": 0,
+          "name": "Ground floor",
+          "elevation_m": 0.0,
+          "height_m": 8.0,
+          "space_count": 47,
+          "room_count": 27,
+          "area_m2": 4556.85,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "hall": 2525.7,
+            "corridor": 1379.35,
+            "stair": 20.0,
+            "lift": 12.5,
+            "room": 619.3
+          },
+          "area_by_room_type": {
+            "production_zone": 495.9,
+            "assembly_zone": 247.95,
+            "additive_zone": 247.95,
+            "warehouse_zone": 1239.75,
+            "corridor": 1379.35,
+            "logistics_zone": 247.95,
+            "stairwell": 20.0,
+            "lift": 12.5,
+            "lobby": 46.2,
+            "meeting_room": 171.65,
+            "quality_lab": 25.6,
+            "toilet": 21.8,
+            "office": 244.95,
+            "kitchen": 45.4,
+            "server_room": 80.45,
+            "locker_room": 29.45
+          },
+          "equipment_by_category": {
+            "machine": 20,
+            "equipment": 61,
+            "furniture": 222,
+            "fixture": 7
+          },
+          "top_equipment": {
+            "chair": 65,
+            "pallet_rack": 51,
+            "server_rack": 23,
+            "desk": 18,
+            "office_chair": 18,
+            "locker": 12,
+            "filing_cabinet": 11,
+            "plant": 8,
+            "display_screen": 7,
+            "meeting_table": 7
+          },
+          "entrances": 4
+        }
+      },
+      {
+        "floor_id": "proc-factory-dev-003-F1",
+        "level": 1,
+        "name": "Floor 1",
+        "description": "Floor 1 (level 1, elevation 3.5 m, 3.5 m high, 837.6 m², 32 spaces, 29 rooms, no entrances). An office floor with 411.85 m² of offices, kitchens (108.95 m²), a server room (65.2 m²), meeting rooms (61.85 m²), toilets, corridors, a stairwell and a lift. It has 32 desks, 19 server racks, 19 filing cabinets and 5 coffee machines.",
+        "stats": {
+          "floor_id": "proc-factory-dev-003-F1",
+          "level": 1,
+          "name": "Floor 1",
+          "elevation_m": 3.5,
+          "height_m": 3.5,
+          "space_count": 32,
+          "room_count": 29,
+          "area_m2": 837.6,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "corridor": 139.6,
+            "stair": 20.0,
+            "lift": 12.5,
+            "room": 665.5
+          },
+          "area_by_room_type": {
+            "corridor": 139.6,
+            "stairwell": 20.0,
+            "lift": 12.5,
+            "office": 411.85,
+            "server_room": 65.2,
+            "kitchen": 108.95,
+            "meeting_room": 61.85,
+            "toilet": 17.65
+          },
+          "equipment_by_category": {
+            "furniture": 131,
+            "equipment": 54,
+            "fixture": 10
+          },
+          "top_equipment": {
+            "desk": 32,
+            "office_chair": 32,
+            "chair": 25,
+            "filing_cabinet": 19,
+            "server_rack": 19,
+            "plant": 12,
+            "bookshelf": 6,
+            "coffee_machine": 5,
+            "fridge": 5,
+            "kitchen_counter": 5
+          },
+          "entrances": 0
+        }
+      }
+    ],
+    "spaces": {
+      "proc-factory-dev-003-F0-S001": {
+        "space_id": "proc-factory-dev-003-F0-S001",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Production zone H-A1",
+        "ref": "H-A1",
+        "type": "hall",
+        "room_type": "production_zone",
+        "area_m2": 247.95,
+        "description": "Production zone H-A1 is a production zone of 248 m² with 3x cnc mill, 1x drill press, 1x fire extinguisher, 1x tool cabinet; step-free.",
+        "equipment": {
+          "cnc_mill": 3,
+          "drill_press": 1,
+          "fire_extinguisher": 1,
+          "tool_cabinet": 1,
+          "welding_station": 1
+        },
+        "doors": 3,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S002": {
+        "space_id": "proc-factory-dev-003-F0-S002",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Assembly zone H-A2",
+        "ref": "H-A2",
+        "type": "hall",
+        "room_type": "assembly_zone",
+        "area_m2": 247.95,
+        "description": "Assembly zone H-A2 is a assembly zone of 248 m² with 5x assembly station, 1x conveyor, 2x tool cabinet, 3x workbench; step-free.",
+        "equipment": {
+          "assembly_station": 5,
+          "conveyor": 1,
+          "tool_cabinet": 2,
+          "workbench": 3
+        },
+        "doors": 3,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S003": {
+        "space_id": "proc-factory-dev-003-F0-S003",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Additive zone H-A3",
+        "ref": "H-A3",
+        "type": "hall",
+        "room_type": "additive_zone",
+        "area_m2": 247.95,
+        "description": "Additive zone H-A3 is a additive zone of 248 m² with 2x 3d printer, 1x curing oven, 2x industrial 3d printer, 2x workbench; step-free.",
+        "equipment": {
+          "3d_printer": 2,
+          "curing_oven": 1,
+          "industrial_3d_printer": 2,
+          "workbench": 2
+        },
+        "doors": 3,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S004": {
+        "space_id": "proc-factory-dev-003-F0-S004",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Production zone H-A4",
+        "ref": "H-A4",
+        "type": "hall",
+        "room_type": "production_zone",
+        "area_m2": 247.95,
+        "description": "Production zone H-A4 is a production zone of 248 m² with 2x drill press, 1x fire extinguisher, 3x injection moulding machine, 2x tool cabinet; step-free.",
+        "equipment": {
+          "drill_press": 2,
+          "fire_extinguisher": 1,
+          "injection_moulding_machine": 3,
+          "tool_cabinet": 2,
+          "waterjet_cutter": 1,
+          "welding_station": 1
+        },
+        "doors": 3,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S005": {
+        "space_id": "proc-factory-dev-003-F0-S005",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Warehouse zone H-A5",
+        "ref": "H-A5",
+        "type": "hall",
+        "room_type": "warehouse_zone",
+        "area_m2": 247.95,
+        "description": "Warehouse zone H-A5 is a warehouse zone of 248 m² with 1x pallet jack, 10x pallet rack; step-free.",
+        "equipment": {
+          "pallet_jack": 1,
+          "pallet_rack": 10
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S006": {
+        "space_id": "proc-factory-dev-003-F0-S006",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Main aisle H-B1",
+        "ref": "H-B1",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 247.95,
+        "description": "Main aisle H-B1 is a corridor of 248 m²; step-free.",
+        "equipment": {},
+        "doors": 3,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S007": {
+        "space_id": "proc-factory-dev-003-F0-S007",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Main aisle H-B2",
+        "ref": "H-B2",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 247.95,
+        "description": "Main aisle H-B2 is a corridor of 248 m² with 1x shoe cabinet; step-free.",
+        "equipment": {
+          "shoe_cabinet": 1
+        },
+        "doors": 4,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S008": {
+        "space_id": "proc-factory-dev-003-F0-S008",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Main aisle H-B3",
+        "ref": "H-B3",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 247.95,
+        "description": "Main aisle H-B3 is a corridor of 248 m²; step-free.",
+        "equipment": {},
+        "doors": 4,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S009": {
+        "space_id": "proc-factory-dev-003-F0-S009",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Main aisle H-B4",
+        "ref": "H-B4",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 247.95,
+        "description": "Main aisle H-B4 is a corridor of 248 m² with 1x shoe cabinet; step-free.",
+        "equipment": {
+          "shoe_cabinet": 1
+        },
+        "doors": 4,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S010": {
+        "space_id": "proc-factory-dev-003-F0-S010",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Main aisle H-B5",
+        "ref": "H-B5",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 247.95,
+        "description": "Main aisle H-B5 is a corridor of 248 m² with 1x fire extinguisher; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 4,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S011": {
+        "space_id": "proc-factory-dev-003-F0-S011",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Warehouse zone H-C1",
+        "ref": "H-C1",
+        "type": "hall",
+        "room_type": "warehouse_zone",
+        "area_m2": 247.95,
+        "description": "Warehouse zone H-C1 is a warehouse zone of 248 m² with 2x pallet jack, 10x pallet rack; step-free.",
+        "equipment": {
+          "pallet_jack": 2,
+          "pallet_rack": 10
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S012": {
+        "space_id": "proc-factory-dev-003-F0-S012",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Warehouse zone H-C2",
+        "ref": "H-C2",
+        "type": "hall",
+        "room_type": "warehouse_zone",
+        "area_m2": 247.95,
+        "description": "Warehouse zone H-C2 is a warehouse zone of 248 m² with 2x pallet jack, 10x pallet rack; step-free.",
+        "equipment": {
+          "pallet_jack": 2,
+          "pallet_rack": 10
+        },
+        "doors": 2,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S013": {
+        "space_id": "proc-factory-dev-003-F0-S013",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Warehouse zone H-C3",
+        "ref": "H-C3",
+        "type": "hall",
+        "room_type": "warehouse_zone",
+        "area_m2": 247.95,
+        "description": "Warehouse zone H-C3 is a warehouse zone of 248 m² with 1x pallet jack, 10x pallet rack; step-free.",
+        "equipment": {
+          "pallet_jack": 1,
+          "pallet_rack": 10
+        },
+        "doors": 2,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S014": {
+        "space_id": "proc-factory-dev-003-F0-S014",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Warehouse zone H-C4",
+        "ref": "H-C4",
+        "type": "hall",
+        "room_type": "warehouse_zone",
+        "area_m2": 247.95,
+        "description": "Warehouse zone H-C4 is a warehouse zone of 248 m² with 10x pallet rack; step-free.",
+        "equipment": {
+          "pallet_rack": 10
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S015": {
+        "space_id": "proc-factory-dev-003-F0-S015",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Logistics zone H-C5",
+        "ref": "H-C5",
+        "type": "hall",
+        "room_type": "logistics_zone",
+        "area_m2": 247.95,
+        "description": "Logistics zone H-C5 is a logistics zone of 248 m² with 1x compressor, 2x forklift, 1x forklift charging station, 2x packing station; step-free.",
+        "equipment": {
+          "compressor": 1,
+          "forklift": 2,
+          "forklift_charging_station": 1,
+          "packing_station": 2,
+          "pallet_rack": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S016": {
+        "space_id": "proc-factory-dev-003-F0-S016",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office corridor 0.16",
+        "ref": "0.16",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 139.6,
+        "description": "Office corridor 0.16 is a corridor of 140 m²; step-free.",
+        "equipment": {},
+        "doors": 32,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S017": {
+        "space_id": "proc-factory-dev-003-F0-S017",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Staircase 0.17",
+        "ref": "0.17",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 20.0,
+        "description": "Staircase 0.17 is a stairwell of 20 m²; step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S018": {
+        "space_id": "proc-factory-dev-003-F0-S018",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Lift 0.18",
+        "ref": "0.18",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 12.5,
+        "description": "Lift 0.18 is a lift of 12 m²; step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S019": {
+        "space_id": "proc-factory-dev-003-F0-S019",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Hall access 0.19",
+        "ref": "0.19",
+        "type": "hall",
+        "room_type": "lobby",
+        "area_m2": 27.15,
+        "description": "Hall access 0.19 is a lobby of 27 m² with 2x bench, 1x plant, 1x reception desk; step-free.",
+        "equipment": {
+          "bench": 2,
+          "plant": 1,
+          "reception_desk": 1
+        },
+        "doors": 2,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S020": {
+        "space_id": "proc-factory-dev-003-F0-S020",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.20",
+        "ref": "0.20",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 21.55,
+        "description": "Meeting room 0.20 is a meeting room of 22 m² with 9x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 9,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S021": {
+        "space_id": "proc-factory-dev-003-F0-S021",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Quality lab 0.21",
+        "ref": "0.21",
+        "type": "room",
+        "room_type": "quality_lab",
+        "area_m2": 25.6,
+        "description": "Quality lab 0.21 is a quality lab of 26 m² with 1x coordinate measuring machine, 1x inspection bench, 2x microscope; step-free.",
+        "equipment": {
+          "coordinate_measuring_machine": 1,
+          "inspection_bench": 1,
+          "microscope": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S022": {
+        "space_id": "proc-factory-dev-003-F0-S022",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Toilet 0.22",
+        "ref": "0.22",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 21.8,
+        "description": "Toilet 0.22 is a toilet of 22 m² with 1x hand dryer, 2x sink, 3x toilet; step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 2,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S023": {
+        "space_id": "proc-factory-dev-003-F0-S023",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.23",
+        "ref": "0.23",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 16.85,
+        "description": "Office 0.23 is a office of 17 m² with 1x bookshelf, 1x desk, 1x office chair, 1x plant; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 1,
+          "office_chair": 1,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S024": {
+        "space_id": "proc-factory-dev-003-F0-S024",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.24",
+        "ref": "0.24",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 27.4,
+        "description": "Meeting room 0.24 is a meeting room of 27 m² with 10x chair, 1x display screen, 1x meeting table, 1x whiteboard; step-free.",
+        "equipment": {
+          "chair": 10,
+          "display_screen": 1,
+          "meeting_table": 1,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S025": {
+        "space_id": "proc-factory-dev-003-F0-S025",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.25",
+        "ref": "0.25",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 22.5,
+        "description": "Office 0.25 is a office of 22 m² with 2x desk, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S026": {
+        "space_id": "proc-factory-dev-003-F0-S026",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.26",
+        "ref": "0.26",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.25,
+        "description": "Office 0.26 is a office of 26 m² with 1x bookshelf, 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S027": {
+        "space_id": "proc-factory-dev-003-F0-S027",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.27",
+        "ref": "0.27",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 18.85,
+        "description": "Meeting room 0.27 is a meeting room of 19 m² with 8x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 8,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S028": {
+        "space_id": "proc-factory-dev-003-F0-S028",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Kitchen 0.28",
+        "ref": "0.28",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 24.8,
+        "description": "Kitchen 0.28 is a kitchen of 25 m² with 1x coffee machine, 1x dishwasher, 1x fridge, 1x kitchen counter; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S029": {
+        "space_id": "proc-factory-dev-003-F0-S029",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Server room 0.29",
+        "ref": "0.29",
+        "type": "room",
+        "room_type": "server_room",
+        "area_m2": 28.0,
+        "description": "Server room 0.29 is a server room of 28 m² with 1x fire extinguisher, 8x server rack, 1x ups unit; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1,
+          "server_rack": 8,
+          "ups_unit": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S030": {
+        "space_id": "proc-factory-dev-003-F0-S030",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.30",
+        "ref": "0.30",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 29.55,
+        "description": "Office 0.30 is a office of 30 m² with 2x desk, 2x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S031": {
+        "space_id": "proc-factory-dev-003-F0-S031",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Kitchen 0.31",
+        "ref": "0.31",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 20.6,
+        "description": "Kitchen 0.31 is a kitchen of 21 m² with 1x coffee machine, 1x dining table, 1x fridge, 1x kitchen counter; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dining_table": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S032": {
+        "space_id": "proc-factory-dev-003-F0-S032",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.32",
+        "ref": "0.32",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 19.05,
+        "description": "Office 0.32 is a office of 19 m² with 2x desk, 1x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S033": {
+        "space_id": "proc-factory-dev-003-F0-S033",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Hall access 0.33",
+        "ref": "0.33",
+        "type": "hall",
+        "room_type": "lobby",
+        "area_m2": 19.05,
+        "description": "Hall access 0.33 is a lobby of 19 m² with 2x bench, 1x plant, 1x vending machine; step-free.",
+        "equipment": {
+          "bench": 2,
+          "plant": 1,
+          "vending_machine": 1
+        },
+        "doors": 2,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S034": {
+        "space_id": "proc-factory-dev-003-F0-S034",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.34",
+        "ref": "0.34",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 21.75,
+        "description": "Office 0.34 is a office of 22 m² with 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S035": {
+        "space_id": "proc-factory-dev-003-F0-S035",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.35",
+        "ref": "0.35",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 29.6,
+        "description": "Meeting room 0.35 is a meeting room of 30 m² with 10x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 10,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S036": {
+        "space_id": "proc-factory-dev-003-F0-S036",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.36",
+        "ref": "0.36",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 27.7,
+        "description": "Meeting room 0.36 is a meeting room of 28 m² with 10x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 10,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S037": {
+        "space_id": "proc-factory-dev-003-F0-S037",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.37",
+        "ref": "0.37",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 21.9,
+        "description": "Office 0.37 is a office of 22 m² with 2x desk, 2x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S038": {
+        "space_id": "proc-factory-dev-003-F0-S038",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.38",
+        "ref": "0.38",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 16.9,
+        "description": "Office 0.38 is a office of 17 m² with 1x desk, 2x filing cabinet, 1x office chair; step-free.",
+        "equipment": {
+          "desk": 1,
+          "filing_cabinet": 2,
+          "office_chair": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S039": {
+        "space_id": "proc-factory-dev-003-F0-S039",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Locker room 0.39",
+        "ref": "0.39",
+        "type": "room",
+        "room_type": "locker_room",
+        "area_m2": 29.45,
+        "description": "Locker room 0.39 is a locker room of 29 m² with 2x bench, 12x locker; step-free.",
+        "equipment": {
+          "bench": 2,
+          "locker": 12
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S040": {
+        "space_id": "proc-factory-dev-003-F0-S040",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.40",
+        "ref": "0.40",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 23.55,
+        "description": "Meeting room 0.40 is a meeting room of 24 m² with 9x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 9,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S041": {
+        "space_id": "proc-factory-dev-003-F0-S041",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Meeting room 0.41",
+        "ref": "0.41",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 23.0,
+        "description": "Meeting room 0.41 is a meeting room of 23 m² with 9x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 9,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S042": {
+        "space_id": "proc-factory-dev-003-F0-S042",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.42",
+        "ref": "0.42",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 18.4,
+        "description": "Office 0.42 is a office of 18 m² with 1x desk, 2x filing cabinet, 1x office chair; step-free.",
+        "equipment": {
+          "desk": 1,
+          "filing_cabinet": 2,
+          "office_chair": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S043": {
+        "space_id": "proc-factory-dev-003-F0-S043",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Server room 0.43",
+        "ref": "0.43",
+        "type": "room",
+        "room_type": "server_room",
+        "area_m2": 23.9,
+        "description": "Server room 0.43 is a server room of 24 m² with 1x fire extinguisher, 7x server rack, 1x ups unit; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1,
+          "server_rack": 7,
+          "ups_unit": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S044": {
+        "space_id": "proc-factory-dev-003-F0-S044",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.44",
+        "ref": "0.44",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 16.55,
+        "description": "Office 0.44 is a office of 17 m² with 1x desk, 1x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 1,
+          "office_chair": 1,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S045": {
+        "space_id": "proc-factory-dev-003-F0-S045",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Server room 0.45",
+        "ref": "0.45",
+        "type": "room",
+        "room_type": "server_room",
+        "area_m2": 28.55,
+        "description": "Server room 0.45 is a server room of 29 m² with 1x fire extinguisher, 8x server rack, 1x ups unit; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1,
+          "server_rack": 8,
+          "ups_unit": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S046": {
+        "space_id": "proc-factory-dev-003-F0-S046",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.46",
+        "ref": "0.46",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 17.6,
+        "description": "Office 0.46 is a office of 18 m² with 1x bookshelf, 1x desk, 1x office chair; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 1,
+          "office_chair": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F0-S047": {
+        "space_id": "proc-factory-dev-003-F0-S047",
+        "floor_id": "proc-factory-dev-003-F0",
+        "name": "Office 0.47",
+        "ref": "0.47",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 17.65,
+        "description": "Office 0.47 is a office of 18 m² with 1x bookshelf, 1x desk, 1x office chair, 1x plant; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 1,
+          "office_chair": 1,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S001": {
+        "space_id": "proc-factory-dev-003-F1-S001",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office corridor 1.01",
+        "ref": "1.01",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 139.6,
+        "description": "Office corridor 1.01 is a corridor of 140 m² with 1x coat rack; step-free.",
+        "equipment": {
+          "coat_rack": 1
+        },
+        "doors": 31,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S002": {
+        "space_id": "proc-factory-dev-003-F1-S002",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Staircase 1.02",
+        "ref": "1.02",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 20.0,
+        "description": "Staircase 1.02 is a stairwell of 20 m² with 1x fire extinguisher; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S003": {
+        "space_id": "proc-factory-dev-003-F1-S003",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Lift 1.03",
+        "ref": "1.03",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 12.5,
+        "description": "Lift 1.03 is a lift of 12 m²; step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S004": {
+        "space_id": "proc-factory-dev-003-F1-S004",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.04",
+        "ref": "1.04",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 27.15,
+        "description": "Office 1.04 is a office of 27 m² with 1x bookshelf, 2x desk, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S005": {
+        "space_id": "proc-factory-dev-003-F1-S005",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Server room 1.05",
+        "ref": "1.05",
+        "type": "room",
+        "room_type": "server_room",
+        "area_m2": 21.55,
+        "description": "Server room 1.05 is a server room of 22 m² with 1x fire extinguisher, 6x server rack, 1x ups unit; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1,
+          "server_rack": 6,
+          "ups_unit": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S006": {
+        "space_id": "proc-factory-dev-003-F1-S006",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.06",
+        "ref": "1.06",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 25.6,
+        "description": "Office 1.06 is a office of 26 m² with 1x bookshelf, 2x desk, 2x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S007": {
+        "space_id": "proc-factory-dev-003-F1-S007",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Kitchen 1.07",
+        "ref": "1.07",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 21.8,
+        "description": "Kitchen 1.07 is a kitchen of 22 m² with 1x coffee machine, 1x dishwasher, 1x fridge, 1x kitchen counter; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S008": {
+        "space_id": "proc-factory-dev-003-F1-S008",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Kitchen 1.08",
+        "ref": "1.08",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 16.85,
+        "description": "Kitchen 1.08 is a kitchen of 17 m² with 1x coffee machine, 1x dining table, 1x dishwasher, 1x fridge; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dining_table": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S009": {
+        "space_id": "proc-factory-dev-003-F1-S009",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.09",
+        "ref": "1.09",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 27.4,
+        "description": "Office 1.09 is a office of 27 m² with 2x desk, 1x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S010": {
+        "space_id": "proc-factory-dev-003-F1-S010",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Meeting room 1.10",
+        "ref": "1.10",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 22.5,
+        "description": "Meeting room 1.10 is a meeting room of 22 m² with 9x chair, 1x display screen, 1x meeting table, 1x whiteboard; step-free.",
+        "equipment": {
+          "chair": 9,
+          "display_screen": 1,
+          "meeting_table": 1,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S011": {
+        "space_id": "proc-factory-dev-003-F1-S011",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.11",
+        "ref": "1.11",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.25,
+        "description": "Office 1.11 is a office of 26 m² with 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S012": {
+        "space_id": "proc-factory-dev-003-F1-S012",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Server room 1.12",
+        "ref": "1.12",
+        "type": "room",
+        "room_type": "server_room",
+        "area_m2": 18.85,
+        "description": "Server room 1.12 is a server room of 19 m² with 1x fire extinguisher, 6x server rack, 1x ups unit; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1,
+          "server_rack": 6,
+          "ups_unit": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S013": {
+        "space_id": "proc-factory-dev-003-F1-S013",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Server room 1.13",
+        "ref": "1.13",
+        "type": "room",
+        "room_type": "server_room",
+        "area_m2": 24.8,
+        "description": "Server room 1.13 is a server room of 25 m² with 1x fire extinguisher, 7x server rack, 1x ups unit; step-free.",
+        "equipment": {
+          "fire_extinguisher": 1,
+          "server_rack": 7,
+          "ups_unit": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S014": {
+        "space_id": "proc-factory-dev-003-F1-S014",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Kitchen 1.14",
+        "ref": "1.14",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 28.0,
+        "description": "Kitchen 1.14 is a kitchen of 28 m² with 1x coffee machine, 1x dishwasher, 1x fridge, 1x kitchen counter; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S015": {
+        "space_id": "proc-factory-dev-003-F1-S015",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.15",
+        "ref": "1.15",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 29.55,
+        "description": "Office 1.15 is a office of 30 m² with 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S016": {
+        "space_id": "proc-factory-dev-003-F1-S016",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.16",
+        "ref": "1.16",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 20.6,
+        "description": "Office 1.16 is a office of 21 m² with 1x bookshelf, 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S017": {
+        "space_id": "proc-factory-dev-003-F1-S017",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.17",
+        "ref": "1.17",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 19.05,
+        "description": "Office 1.17 is a office of 19 m² with 1x bookshelf, 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S018": {
+        "space_id": "proc-factory-dev-003-F1-S018",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.18",
+        "ref": "1.18",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 19.05,
+        "description": "Office 1.18 is a office of 19 m² with 2x desk, 1x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S019": {
+        "space_id": "proc-factory-dev-003-F1-S019",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Meeting room 1.19",
+        "ref": "1.19",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 21.75,
+        "description": "Meeting room 1.19 is a meeting room of 22 m² with 9x chair, 1x display screen, 1x meeting table; step-free.",
+        "equipment": {
+          "chair": 9,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S020": {
+        "space_id": "proc-factory-dev-003-F1-S020",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.20",
+        "ref": "1.20",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 29.6,
+        "description": "Office 1.20 is a office of 30 m² with 2x desk, 1x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S021": {
+        "space_id": "proc-factory-dev-003-F1-S021",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.21",
+        "ref": "1.21",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 27.7,
+        "description": "Office 1.21 is a office of 28 m² with 1x bookshelf, 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S022": {
+        "space_id": "proc-factory-dev-003-F1-S022",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.22",
+        "ref": "1.22",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 21.9,
+        "description": "Office 1.22 is a office of 22 m² with 2x desk, 1x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S023": {
+        "space_id": "proc-factory-dev-003-F1-S023",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.23",
+        "ref": "1.23",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 16.9,
+        "description": "Office 1.23 is a office of 17 m² with 1x desk, 1x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 1,
+          "office_chair": 1,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S024": {
+        "space_id": "proc-factory-dev-003-F1-S024",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.24",
+        "ref": "1.24",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 29.45,
+        "description": "Office 1.24 is a office of 29 m² with 2x desk, 2x filing cabinet, 2x office chair; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S025": {
+        "space_id": "proc-factory-dev-003-F1-S025",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.25",
+        "ref": "1.25",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 23.55,
+        "description": "Office 1.25 is a office of 24 m² with 1x bookshelf, 2x desk, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S026": {
+        "space_id": "proc-factory-dev-003-F1-S026",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.26",
+        "ref": "1.26",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 23.0,
+        "description": "Office 1.26 is a office of 23 m² with 2x desk, 2x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S027": {
+        "space_id": "proc-factory-dev-003-F1-S027",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Kitchen 1.27",
+        "ref": "1.27",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 18.4,
+        "description": "Kitchen 1.27 is a kitchen of 18 m² with 1x coffee machine, 1x dishwasher, 1x fridge, 1x kitchen counter; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S028": {
+        "space_id": "proc-factory-dev-003-F1-S028",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Kitchen 1.28",
+        "ref": "1.28",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 23.9,
+        "description": "Kitchen 1.28 is a kitchen of 24 m² with 1x coffee machine, 1x fridge, 1x kitchen counter, 1x microwave; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S029": {
+        "space_id": "proc-factory-dev-003-F1-S029",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.29",
+        "ref": "1.29",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 16.55,
+        "description": "Office 1.29 is a office of 17 m² with 1x desk, 2x filing cabinet, 1x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 1,
+          "filing_cabinet": 2,
+          "office_chair": 1,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S030": {
+        "space_id": "proc-factory-dev-003-F1-S030",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Office 1.30",
+        "ref": "1.30",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 28.55,
+        "description": "Office 1.30 is a office of 29 m² with 2x desk, 2x filing cabinet, 2x office chair, 1x plant; step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S031": {
+        "space_id": "proc-factory-dev-003-F1-S031",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Meeting room 1.31",
+        "ref": "1.31",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 17.6,
+        "description": "Meeting room 1.31 is a meeting room of 18 m² with 7x chair, 1x display screen, 1x meeting table, 1x whiteboard; step-free.",
+        "equipment": {
+          "chair": 7,
+          "display_screen": 1,
+          "meeting_table": 1,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-factory-dev-003-F1-S032": {
+        "space_id": "proc-factory-dev-003-F1-S032",
+        "floor_id": "proc-factory-dev-003-F1",
+        "name": "Toilet 1.32",
+        "ref": "1.32",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 17.65,
+        "description": "Toilet 1.32 is a toilet of 18 m² with 1x hand dryer, 2x sink, 3x toilet; step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 2,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      }
+    }
+  },
+  "artifacts": {
+    "source_dir": "/Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/problem_statement/industrial-agents-hackathon-2026/data/dev/proc-factory-dev-003",
+    "building": "building.json",
+    "model": "3d/model.glb",
+    "model_index": "3d/model_index.json",
+    "issues": "issues.json",
+    "patches": "patches.json"
+  },
+  "runs": [
+    "6019bbc266f8",
+    "3621d1feb7e3"
+  ]
+}

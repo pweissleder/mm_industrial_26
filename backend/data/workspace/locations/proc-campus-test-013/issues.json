@@ -1,0 +1,773 @@
+[
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F-1-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S005"
+    ],
+    "message": "space proc-campus-test-013-F-1-S005 name 'Staircase 1' does not contain ref '-1.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "-1.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F-1-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S006"
+    ],
+    "message": "space proc-campus-test-013-F-1-S006 name 'Lift 1' does not contain ref '-1.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "-1.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F-1-S011",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S011"
+    ],
+    "message": "space proc-campus-test-013-F-1-S011 name 'Staircase 2' does not contain ref '-1.11'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "-1.11"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F-1-S012",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S012"
+    ],
+    "message": "space proc-campus-test-013-F-1-S012 name 'Lift 2' does not contain ref '-1.12'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "-1.12"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F-1-S030",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S030"
+    ],
+    "message": "space proc-campus-test-013-F-1-S030 name 'Staircase 3' does not contain ref '-1.30'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "-1.30"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F-1-S031",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S031"
+    ],
+    "message": "space proc-campus-test-013-F-1-S031 name 'Lift 3' does not contain ref '-1.31'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "-1.31"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S005"
+    ],
+    "message": "space proc-campus-test-013-F0-S005 name 'Staircase 1' does not contain ref '0.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "0.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S006"
+    ],
+    "message": "space proc-campus-test-013-F0-S006 name 'Lift 1' does not contain ref '0.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "0.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S008",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S008"
+    ],
+    "message": "space proc-campus-test-013-F0-S008 name 'Staircase 2' does not contain ref '0.08'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "0.08"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S009",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S009"
+    ],
+    "message": "space proc-campus-test-013-F0-S009 name 'Lift 2' does not contain ref '0.09'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "0.09"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S010",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S010"
+    ],
+    "message": "space proc-campus-test-013-F0-S010 name 'Main lobby' does not contain ref '0.10'",
+    "details": {
+      "name": "Main lobby",
+      "ref": "0.10"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S025",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S025"
+    ],
+    "message": "space proc-campus-test-013-F0-S025 name 'Staircase 3' does not contain ref '0.25'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "0.25"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F0-S026",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F0-S026"
+    ],
+    "message": "space proc-campus-test-013-F0-S026 name 'Lift 3' does not contain ref '0.26'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "0.26"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F1-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F1-S005"
+    ],
+    "message": "space proc-campus-test-013-F1-S005 name 'Staircase 1' does not contain ref '1.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "1.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F1-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F1-S006"
+    ],
+    "message": "space proc-campus-test-013-F1-S006 name 'Lift 1' does not contain ref '1.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "1.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F1-S011",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F1-S011"
+    ],
+    "message": "space proc-campus-test-013-F1-S011 name 'Staircase 2' does not contain ref '1.11'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "1.11"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F1-S012",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F1-S012"
+    ],
+    "message": "space proc-campus-test-013-F1-S012 name 'Lift 2' does not contain ref '1.12'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "1.12"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F1-S030",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F1-S030"
+    ],
+    "message": "space proc-campus-test-013-F1-S030 name 'Staircase 3' does not contain ref '1.30'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "1.30"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F1-S031",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F1-S031"
+    ],
+    "message": "space proc-campus-test-013-F1-S031 name 'Lift 3' does not contain ref '1.31'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "1.31"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F2-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F2-S005"
+    ],
+    "message": "space proc-campus-test-013-F2-S005 name 'Staircase 1' does not contain ref '2.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "2.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F2-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F2-S006"
+    ],
+    "message": "space proc-campus-test-013-F2-S006 name 'Lift 1' does not contain ref '2.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "2.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F2-S011",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F2-S011"
+    ],
+    "message": "space proc-campus-test-013-F2-S011 name 'Staircase 2' does not contain ref '2.11'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "2.11"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F2-S012",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F2-S012"
+    ],
+    "message": "space proc-campus-test-013-F2-S012 name 'Lift 2' does not contain ref '2.12'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "2.12"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F2-S030",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F2-S030"
+    ],
+    "message": "space proc-campus-test-013-F2-S030 name 'Staircase 3' does not contain ref '2.30'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "2.30"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F2-S031",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F2-S031"
+    ],
+    "message": "space proc-campus-test-013-F2-S031 name 'Lift 3' does not contain ref '2.31'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "2.31"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F3-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F3-S005"
+    ],
+    "message": "space proc-campus-test-013-F3-S005 name 'Staircase 1' does not contain ref '3.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "3.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F3-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F3-S006"
+    ],
+    "message": "space proc-campus-test-013-F3-S006 name 'Lift 1' does not contain ref '3.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "3.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F3-S011",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F3-S011"
+    ],
+    "message": "space proc-campus-test-013-F3-S011 name 'Staircase 2' does not contain ref '3.11'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "3.11"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F3-S012",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F3-S012"
+    ],
+    "message": "space proc-campus-test-013-F3-S012 name 'Lift 2' does not contain ref '3.12'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "3.12"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F3-S030",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F3-S030"
+    ],
+    "message": "space proc-campus-test-013-F3-S030 name 'Staircase 3' does not contain ref '3.30'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "3.30"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F3-S031",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F3-S031"
+    ],
+    "message": "space proc-campus-test-013-F3-S031 name 'Lift 3' does not contain ref '3.31'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "3.31"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F4-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F4-S005"
+    ],
+    "message": "space proc-campus-test-013-F4-S005 name 'Staircase 1' does not contain ref '4.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "4.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F4-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F4-S006"
+    ],
+    "message": "space proc-campus-test-013-F4-S006 name 'Lift 1' does not contain ref '4.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "4.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F4-S011",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F4-S011"
+    ],
+    "message": "space proc-campus-test-013-F4-S011 name 'Staircase 2' does not contain ref '4.11'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "4.11"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F4-S012",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F4-S012"
+    ],
+    "message": "space proc-campus-test-013-F4-S012 name 'Lift 2' does not contain ref '4.12'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "4.12"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F4-S030",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F4-S030"
+    ],
+    "message": "space proc-campus-test-013-F4-S030 name 'Staircase 3' does not contain ref '4.30'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "4.30"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F4-S031",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F4-S031"
+    ],
+    "message": "space proc-campus-test-013-F4-S031 name 'Lift 3' does not contain ref '4.31'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "4.31"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F5-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F5-S005"
+    ],
+    "message": "space proc-campus-test-013-F5-S005 name 'Staircase 1' does not contain ref '5.05'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "5.05"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F5-S006",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F5-S006"
+    ],
+    "message": "space proc-campus-test-013-F5-S006 name 'Lift 1' does not contain ref '5.06'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "5.06"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F5-S011",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F5-S011"
+    ],
+    "message": "space proc-campus-test-013-F5-S011 name 'Staircase 2' does not contain ref '5.11'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "5.11"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F5-S012",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F5-S012"
+    ],
+    "message": "space proc-campus-test-013-F5-S012 name 'Lift 2' does not contain ref '5.12'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "5.12"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F5-S030",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F5-S030"
+    ],
+    "message": "space proc-campus-test-013-F5-S030 name 'Staircase 3' does not contain ref '5.30'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "5.30"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-test-013-F5-S031",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F5-S031"
+    ],
+    "message": "space proc-campus-test-013-F5-S031 name 'Lift 3' does not contain ref '5.31'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "5.31"
+    },
+    "status": "accepted",
+    "resolution": "Procedural source: stair/lift/lobby names never contain the ref; harmless naming convention."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-test-013-F-1-S005|proc-campus-test-013-F0-S005|proc-campus-test-013-F1-S005|proc-campus-test-013-F2-S005|proc-campus-test-013-F3-S005|proc-campus-test-013-F4-S005|proc-campus-test-013-F5-S005",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S005",
+      "proc-campus-test-013-F0-S005",
+      "proc-campus-test-013-F1-S005",
+      "proc-campus-test-013-F2-S005",
+      "proc-campus-test-013-F3-S005",
+      "proc-campus-test-013-F4-S005",
+      "proc-campus-test-013-F5-S005"
+    ],
+    "message": "7 spaces share name 'Staircase 1'",
+    "details": {
+      "value": "Staircase 1",
+      "count": 7
+    },
+    "status": "accepted",
+    "resolution": "Same stair/lift shaft repeated on each floor, so the shared name is intended."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-test-013-F-1-S006|proc-campus-test-013-F0-S006|proc-campus-test-013-F1-S006|proc-campus-test-013-F2-S006|proc-campus-test-013-F3-S006|proc-campus-test-013-F4-S006|proc-campus-test-013-F5-S006",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S006",
+      "proc-campus-test-013-F0-S006",
+      "proc-campus-test-013-F1-S006",
+      "proc-campus-test-013-F2-S006",
+      "proc-campus-test-013-F3-S006",
+      "proc-campus-test-013-F4-S006",
+      "proc-campus-test-013-F5-S006"
+    ],
+    "message": "7 spaces share name 'Lift 1'",
+    "details": {
+      "value": "Lift 1",
+      "count": 7
+    },
+    "status": "accepted",
+    "resolution": "Same stair/lift shaft repeated on each floor, so the shared name is intended."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-test-013-F-1-S011|proc-campus-test-013-F0-S008|proc-campus-test-013-F1-S011|proc-campus-test-013-F2-S011|proc-campus-test-013-F3-S011|proc-campus-test-013-F4-S011|proc-campus-test-013-F5-S011",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S011",
+      "proc-campus-test-013-F0-S008",
+      "proc-campus-test-013-F1-S011",
+      "proc-campus-test-013-F2-S011",
+      "proc-campus-test-013-F3-S011",
+      "proc-campus-test-013-F4-S011",
+      "proc-campus-test-013-F5-S011"
+    ],
+    "message": "7 spaces share name 'Staircase 2'",
+    "details": {
+      "value": "Staircase 2",
+      "count": 7
+    },
+    "status": "accepted",
+    "resolution": "Same stair/lift shaft repeated on each floor, so the shared name is intended."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-test-013-F-1-S012|proc-campus-test-013-F0-S009|proc-campus-test-013-F1-S012|proc-campus-test-013-F2-S012|proc-campus-test-013-F3-S012|proc-campus-test-013-F4-S012|proc-campus-test-013-F5-S012",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S012",
+      "proc-campus-test-013-F0-S009",
+      "proc-campus-test-013-F1-S012",
+      "proc-campus-test-013-F2-S012",
+      "proc-campus-test-013-F3-S012",
+      "proc-campus-test-013-F4-S012",
+      "proc-campus-test-013-F5-S012"
+    ],
+    "message": "7 spaces share name 'Lift 2'",
+    "details": {
+      "value": "Lift 2",
+      "count": 7
+    },
+    "status": "accepted",
+    "resolution": "Same stair/lift shaft repeated on each floor, so the shared name is intended."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-test-013-F-1-S030|proc-campus-test-013-F0-S025|proc-campus-test-013-F1-S030|proc-campus-test-013-F2-S030|proc-campus-test-013-F3-S030|proc-campus-test-013-F4-S030|proc-campus-test-013-F5-S030",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S030",
+      "proc-campus-test-013-F0-S025",
+      "proc-campus-test-013-F1-S030",
+      "proc-campus-test-013-F2-S030",
+      "proc-campus-test-013-F3-S030",
+      "proc-campus-test-013-F4-S030",
+      "proc-campus-test-013-F5-S030"
+    ],
+    "message": "7 spaces share name 'Staircase 3'",
+    "details": {
+      "value": "Staircase 3",
+      "count": 7
+    },
+    "status": "accepted",
+    "resolution": "Same stair/lift shaft repeated on each floor, so the shared name is intended."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-test-013-F-1-S031|proc-campus-test-013-F0-S026|proc-campus-test-013-F1-S031|proc-campus-test-013-F2-S031|proc-campus-test-013-F3-S031|proc-campus-test-013-F4-S031|proc-campus-test-013-F5-S031",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-test-013-F-1-S031",
+      "proc-campus-test-013-F0-S026",
+      "proc-campus-test-013-F1-S031",
+      "proc-campus-test-013-F2-S031",
+      "proc-campus-test-013-F3-S031",
+      "proc-campus-test-013-F4-S031",
+      "proc-campus-test-013-F5-S031"
+    ],
+    "message": "7 spaces share name 'Lift 3'",
+    "details": {
+      "value": "Lift 3",
+      "count": 7
+    },
+    "status": "accepted",
+    "resolution": "Same stair/lift shaft repeated on each floor, so the shared name is intended."
+  }
+]

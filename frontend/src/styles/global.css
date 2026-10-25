@@ -569,6 +569,8 @@ code {
 
 .sidebar__close {
   display: none;
+  width: 38px;
+  height: 38px;
 }
 
 .sidebar__body {
@@ -904,13 +906,29 @@ code {
   gap: 8px;
 }
 
-/* Camera HUD on the right edge. */
-.hud {
+/* Right edge: camera HUD above the floor rail, pinned just above the chat bar's height so
+   the opening conversation never pushes it around. */
+.right-rail {
   position: absolute;
   z-index: 10;
   right: var(--gutter);
-  top: 50%;
-  transform: translateY(-50%);
+  top: calc(var(--gutter) * 2 + var(--topbar-h));
+  bottom: calc(var(--gutter) + var(--safe-b) + 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.right-rail > * {
+  pointer-events: auto;
+}
+
+/* Camera HUD. */
+.hud {
+  flex: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -932,9 +950,80 @@ code {
   background: var(--line);
 }
 
-/* Floor rail: phones only, bottom right above the chat. */
+/* Floor rail: under the HUD at the bottom of the right rail; scrolls when floors run long. */
 .floor-rail {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 4px;
+  border-radius: 14px;
+}
+
+.floor-rail__item {
+  min-width: 40px;
+  height: 36px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.floor-rail__item:hover {
+  color: var(--blue);
+}
+
+/* Only the selected floor's text is highlighted. */
+.floor-rail__item[aria-checked='true'] {
+  background: transparent;
+  color: var(--blue);
+}
+
+/* Top right: the details card above the navigation panel, stacked so they never overlap. */
+.top-stack {
+  position: absolute;
+  z-index: 25;
+  top: calc(var(--gutter) * 2 + var(--topbar-h));
+  right: calc(var(--gutter) * 2 + 48px);
+  bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 110px) + 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.top-stack > * {
+  pointer-events: auto;
+}
+
+.top-stack > .details,
+.top-stack > .guidance {
+  position: static;
+  min-height: 0;
+  max-height: none;
+}
+
+/* Both scroll when space runs out; a folded card always keeps its title row. */
+.top-stack > .details,
+.top-stack > .guidance {
+  flex: 0 1 auto;
+  overflow-y: auto;
+}
+
+.top-stack > .details--collapsed {
+  flex: none;
+}
+
+.top-stack > .guidance {
+  min-height: 120px;
 }
 
 /* Details of the selected element. */
@@ -944,7 +1033,8 @@ code {
   top: calc(var(--gutter) * 2 + var(--topbar-h));
   right: calc(var(--gutter) * 2 + 48px);
   width: 320px;
-  max-height: calc(100% - 220px);
+  /* Stay above the chat dock (suggestions and context chips grow it). */
+  max-height: calc(100% - var(--gutter) * 3 - var(--topbar-h) - var(--chat-h, 110px) - 8px);
   overflow-y: auto;
   padding: 16px;
   animation: rise 0.22s ease-out;
@@ -961,6 +1051,23 @@ code {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+}
+
+/* User profile: folded to the title row after a few seconds. */
+.details--collapsed {
+  padding: 10px 12px;
+}
+
+.details--collapsed .details__head {
+  align-items: center;
+}
+
+.details__fold svg {
+  transition: transform 0.15s;
+}
+
+.details:not(.details--collapsed) .details__fold svg {
+  transform: rotate(180deg);
 }
 
 .details__titles {
@@ -1006,6 +1113,40 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 12px;
+}
+
+/* Route section: visually grouped, concise. */
+.details__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.details__group-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.details__group-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.details__group-buttons .btn {
+  justify-content: center;
+}
+
+.floor-rail__item[aria-checked='true'] {
+  font-weight: 700;
 }
 
 /* Chat dock: bottom centre, in the space right of the sidebar. */
@@ -1773,6 +1914,19 @@ code {
   }
 }
 
+/* Narrow desktops and below: icon-only profile toggle and upload (the logo stays). */
+@media (max-width: 1200px) {
+  .topbar__upload-label {
+    display: none;
+  }
+
+  .topbar__upload {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+  }
+}
+
 /* Phones: compact top bar, bottom sheets, full-width chat. */
 @media (max-width: 640px) {
   :root {
@@ -1785,19 +1939,8 @@ code {
     gap: 6px;
   }
 
-  .logo__word {
-    font-size: 18px;
-  }
-
-  .topbar__building,
-  .topbar__upload-label {
+  .topbar__building {
     display: none;
-  }
-
-  .topbar__upload {
-    width: 42px;
-    height: 42px;
-    padding: 0;
   }
 
   .sidebar-slot {
@@ -1835,44 +1978,26 @@ code {
     padding-top: 18px;
   }
 
-  .hud {
-    top: calc(var(--gutter) * 2 + var(--topbar-h));
-    transform: none;
+  /* Phones: the details sheet sits at the bottom and navigation at the top, so no stacking. */
+  .top-stack {
+    display: contents;
   }
 
-  .floor-rail {
+  .top-stack > .details {
     position: absolute;
-    z-index: 10;
-    right: var(--gutter);
-    bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 110px) + 8px);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    max-height: 40dvh;
+    max-height: 42dvh;
+  }
+
+  .top-stack > .guidance {
+    position: fixed;
+    max-height: calc(100dvh - var(--topbar-h) - 220px);
     overflow-y: auto;
-    scrollbar-width: none;
-    padding: 4px;
-    border-radius: 14px;
   }
 
-  .floor-rail__item {
-    min-width: 40px;
-    height: 36px;
-    padding: 0 6px;
-    border: 0;
-    border-radius: 10px;
-    background: transparent;
-    color: var(--ink-2);
-    font: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  .floor-rail__item[aria-checked='true'] {
-    background: var(--orange-50);
-    color: var(--orange-600);
-    box-shadow: inset 0 0 0 1px rgba(251, 121, 40, 0.35);
+  /* Phones: the bottom belongs to the sheets, so the right rail hangs from the top. */
+  .right-rail {
+    bottom: auto;
+    justify-content: flex-start;
   }
 
   /* The details sheet and the open panel cover the bottom; the rail steps aside. */

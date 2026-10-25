@@ -1,0 +1,581 @@
+[
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S004",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S004"
+    ],
+    "message": "space proc-campus-dev-000-F0-S004 name 'Staircase 1' does not contain ref '0.04'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "0.04"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S005"
+    ],
+    "message": "space proc-campus-dev-000-F0-S005 name 'Lift 1' does not contain ref '0.05'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "0.05"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S009",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S009"
+    ],
+    "message": "space proc-campus-dev-000-F0-S009 name 'Staircase 2' does not contain ref '0.09'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "0.09"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S010",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S010"
+    ],
+    "message": "space proc-campus-dev-000-F0-S010 name 'Lift 2' does not contain ref '0.10'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "0.10"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S014",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S014"
+    ],
+    "message": "space proc-campus-dev-000-F0-S014 name 'Staircase 3' does not contain ref '0.14'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "0.14"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S015",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S015"
+    ],
+    "message": "space proc-campus-dev-000-F0-S015 name 'Lift 3' does not contain ref '0.15'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "0.15"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F0-S018",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S018"
+    ],
+    "message": "space proc-campus-dev-000-F0-S018 name 'Main lobby' does not contain ref '0.18'",
+    "details": {
+      "name": "Main lobby",
+      "ref": "0.18"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F1-S004",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F1-S004"
+    ],
+    "message": "space proc-campus-dev-000-F1-S004 name 'Staircase 1' does not contain ref '1.04'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "1.04"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F1-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F1-S005"
+    ],
+    "message": "space proc-campus-dev-000-F1-S005 name 'Lift 1' does not contain ref '1.05'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "1.05"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F1-S009",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F1-S009"
+    ],
+    "message": "space proc-campus-dev-000-F1-S009 name 'Staircase 2' does not contain ref '1.09'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "1.09"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F1-S010",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F1-S010"
+    ],
+    "message": "space proc-campus-dev-000-F1-S010 name 'Lift 2' does not contain ref '1.10'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "1.10"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F1-S014",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F1-S014"
+    ],
+    "message": "space proc-campus-dev-000-F1-S014 name 'Staircase 3' does not contain ref '1.14'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "1.14"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F1-S015",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F1-S015"
+    ],
+    "message": "space proc-campus-dev-000-F1-S015 name 'Lift 3' does not contain ref '1.15'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "1.15"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F2-S004",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F2-S004"
+    ],
+    "message": "space proc-campus-dev-000-F2-S004 name 'Staircase 1' does not contain ref '2.04'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "2.04"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F2-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F2-S005"
+    ],
+    "message": "space proc-campus-dev-000-F2-S005 name 'Lift 1' does not contain ref '2.05'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "2.05"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F2-S009",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F2-S009"
+    ],
+    "message": "space proc-campus-dev-000-F2-S009 name 'Staircase 2' does not contain ref '2.09'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "2.09"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F2-S010",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F2-S010"
+    ],
+    "message": "space proc-campus-dev-000-F2-S010 name 'Lift 2' does not contain ref '2.10'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "2.10"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F2-S014",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F2-S014"
+    ],
+    "message": "space proc-campus-dev-000-F2-S014 name 'Staircase 3' does not contain ref '2.14'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "2.14"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F2-S015",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F2-S015"
+    ],
+    "message": "space proc-campus-dev-000-F2-S015 name 'Lift 3' does not contain ref '2.15'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "2.15"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F3-S004",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F3-S004"
+    ],
+    "message": "space proc-campus-dev-000-F3-S004 name 'Staircase 1' does not contain ref '3.04'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "3.04"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F3-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F3-S005"
+    ],
+    "message": "space proc-campus-dev-000-F3-S005 name 'Lift 1' does not contain ref '3.05'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "3.05"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F3-S009",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F3-S009"
+    ],
+    "message": "space proc-campus-dev-000-F3-S009 name 'Staircase 2' does not contain ref '3.09'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "3.09"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F3-S010",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F3-S010"
+    ],
+    "message": "space proc-campus-dev-000-F3-S010 name 'Lift 2' does not contain ref '3.10'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "3.10"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F3-S014",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F3-S014"
+    ],
+    "message": "space proc-campus-dev-000-F3-S014 name 'Staircase 3' does not contain ref '3.14'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "3.14"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F3-S015",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F3-S015"
+    ],
+    "message": "space proc-campus-dev-000-F3-S015 name 'Lift 3' does not contain ref '3.15'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "3.15"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F4-S004",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F4-S004"
+    ],
+    "message": "space proc-campus-dev-000-F4-S004 name 'Staircase 1' does not contain ref '4.04'",
+    "details": {
+      "name": "Staircase 1",
+      "ref": "4.04"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F4-S005",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F4-S005"
+    ],
+    "message": "space proc-campus-dev-000-F4-S005 name 'Lift 1' does not contain ref '4.05'",
+    "details": {
+      "name": "Lift 1",
+      "ref": "4.05"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F4-S009",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F4-S009"
+    ],
+    "message": "space proc-campus-dev-000-F4-S009 name 'Staircase 2' does not contain ref '4.09'",
+    "details": {
+      "name": "Staircase 2",
+      "ref": "4.09"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F4-S010",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F4-S010"
+    ],
+    "message": "space proc-campus-dev-000-F4-S010 name 'Lift 2' does not contain ref '4.10'",
+    "details": {
+      "name": "Lift 2",
+      "ref": "4.10"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F4-S014",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F4-S014"
+    ],
+    "message": "space proc-campus-dev-000-F4-S014 name 'Staircase 3' does not contain ref '4.14'",
+    "details": {
+      "name": "Staircase 3",
+      "ref": "4.14"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "name_ref_mismatch:proc-campus-dev-000-F4-S015",
+    "issue_class": "name_ref_mismatch",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F4-S015"
+    ],
+    "message": "space proc-campus-dev-000-F4-S015 name 'Lift 3' does not contain ref '4.15'",
+    "details": {
+      "name": "Lift 3",
+      "ref": "4.15"
+    },
+    "status": "accepted",
+    "resolution": "Generator names spaces by role; harmless."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-dev-000-F0-S004|proc-campus-dev-000-F1-S004|proc-campus-dev-000-F2-S004|proc-campus-dev-000-F3-S004|proc-campus-dev-000-F4-S004",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S004",
+      "proc-campus-dev-000-F1-S004",
+      "proc-campus-dev-000-F2-S004",
+      "proc-campus-dev-000-F3-S004",
+      "proc-campus-dev-000-F4-S004"
+    ],
+    "message": "5 spaces share name 'Staircase 1'",
+    "details": {
+      "value": "Staircase 1",
+      "count": 5
+    },
+    "status": "accepted",
+    "resolution": "Same shaft repeated per floor, intentionally same name; refs unique."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-dev-000-F0-S005|proc-campus-dev-000-F1-S005|proc-campus-dev-000-F2-S005|proc-campus-dev-000-F3-S005|proc-campus-dev-000-F4-S005",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S005",
+      "proc-campus-dev-000-F1-S005",
+      "proc-campus-dev-000-F2-S005",
+      "proc-campus-dev-000-F3-S005",
+      "proc-campus-dev-000-F4-S005"
+    ],
+    "message": "5 spaces share name 'Lift 1'",
+    "details": {
+      "value": "Lift 1",
+      "count": 5
+    },
+    "status": "accepted",
+    "resolution": "Same shaft repeated per floor, intentionally same name; refs unique."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-dev-000-F0-S009|proc-campus-dev-000-F1-S009|proc-campus-dev-000-F2-S009|proc-campus-dev-000-F3-S009|proc-campus-dev-000-F4-S009",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S009",
+      "proc-campus-dev-000-F1-S009",
+      "proc-campus-dev-000-F2-S009",
+      "proc-campus-dev-000-F3-S009",
+      "proc-campus-dev-000-F4-S009"
+    ],
+    "message": "5 spaces share name 'Staircase 2'",
+    "details": {
+      "value": "Staircase 2",
+      "count": 5
+    },
+    "status": "accepted",
+    "resolution": "Same shaft repeated per floor, intentionally same name; refs unique."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-dev-000-F0-S010|proc-campus-dev-000-F1-S010|proc-campus-dev-000-F2-S010|proc-campus-dev-000-F3-S010|proc-campus-dev-000-F4-S010",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S010",
+      "proc-campus-dev-000-F1-S010",
+      "proc-campus-dev-000-F2-S010",
+      "proc-campus-dev-000-F3-S010",
+      "proc-campus-dev-000-F4-S010"
+    ],
+    "message": "5 spaces share name 'Lift 2'",
+    "details": {
+      "value": "Lift 2",
+      "count": 5
+    },
+    "status": "accepted",
+    "resolution": "Same shaft repeated per floor, intentionally same name; refs unique."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-dev-000-F0-S014|proc-campus-dev-000-F1-S014|proc-campus-dev-000-F2-S014|proc-campus-dev-000-F3-S014|proc-campus-dev-000-F4-S014",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S014",
+      "proc-campus-dev-000-F1-S014",
+      "proc-campus-dev-000-F2-S014",
+      "proc-campus-dev-000-F3-S014",
+      "proc-campus-dev-000-F4-S014"
+    ],
+    "message": "5 spaces share name 'Staircase 3'",
+    "details": {
+      "value": "Staircase 3",
+      "count": 5
+    },
+    "status": "accepted",
+    "resolution": "Same shaft repeated per floor, intentionally same name; refs unique."
+  },
+  {
+    "id": "duplicate_space_name:proc-campus-dev-000-F0-S015|proc-campus-dev-000-F1-S015|proc-campus-dev-000-F2-S015|proc-campus-dev-000-F3-S015|proc-campus-dev-000-F4-S015",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "proc-campus-dev-000-F0-S015",
+      "proc-campus-dev-000-F1-S015",
+      "proc-campus-dev-000-F2-S015",
+      "proc-campus-dev-000-F3-S015",
+      "proc-campus-dev-000-F4-S015"
+    ],
+    "message": "5 spaces share name 'Lift 3'",
+    "details": {
+      "value": "Lift 3",
+      "count": 5
+    },
+    "status": "accepted",
+    "resolution": "Same shaft repeated per floor, intentionally same name; refs unique."
+  }
+]

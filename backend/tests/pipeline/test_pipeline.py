@@ -350,3 +350,25 @@ def test_offline_summary_describes_what_the_site_is_for() -> None:
     assert "CNC milling" in text.summary and "injection moulding" in text.summary
     assert "forklift" not in text.summary
     assert text.floors[1].description.startswith("Floor 1: offices")
+
+
+def test_offline_suggestions_use_real_names() -> None:
+    from app.domain.building import BuildingFile
+    from app.pipeline.agents.suggester import MAX_LEN, template_suggestions
+    from app.pipeline.tools.stats import compute_location_stats
+
+    raw = (BACKEND_DIR / "data" / "datasets" / DATASET / "building.json").read_text()
+    stats = compute_location_stats(BuildingFile.model_validate_json(raw))
+    suggestions = template_suggestions(stats)
+
+    assert len(suggestions) == 3 and len(set(suggestions)) == 3
+    assert all(s.strip() and len(s) <= MAX_LEN for s in suggestions)
+    names = {s.name for s in stats.spaces.values()} | {f.name for f in stats.floors}
+    assert any(n in s for s in suggestions for n in names)
+
+
+def test_pipeline_writes_three_suggestions(runner: PipelineRunner) -> None:
+    runner.run_sync(DATASET)
+    location = runner.workspace.locations.get(DATASET)
+    assert location is not None and location.metadata is not None
+    assert len(location.metadata.suggestions) == 3

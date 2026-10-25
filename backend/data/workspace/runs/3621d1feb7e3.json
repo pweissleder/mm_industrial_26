@@ -1,0 +1,198 @@
+{
+  "run_id": "3621d1feb7e3",
+  "dataset": "proc-factory-dev-003",
+  "location_id": "proc-factory-dev-003",
+  "status": "completed",
+  "current_stage": null,
+  "offline": false,
+  "owner_pid": 80272,
+  "owner_boot": "984607d205094f43a693ff3c86768ae7",
+  "created_at": "2026-10-24T16:38:49.060746Z",
+  "updated_at": "2026-10-24T16:40:12.130486Z",
+  "stages": {
+    "raw_validation": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:38:49.138635Z",
+      "ended_at": "2026-10-24T16:38:54.919542Z",
+      "summary": "1 issues found, 0 fixed deterministically. The building had one open issue, an info-level overlapping_storeys between F0 and F1. F0 is 8 m tall and F1 starts at 3.5 m. I accepted it as an intended mezzanine inside a tall factory hall and made no data changes. I did not re-run the checks after accepting, but the accept call reported no open issues."
+    },
+    "graph_build": {
+      "status": "skipped",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:38:56.624359Z",
+      "ended_at": "2026-10-24T16:38:56.625003Z",
+      "summary": "Relationship graph builder is not implemented yet."
+    },
+    "graph_validate": {
+      "status": "skipped",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:38:56.627190Z",
+      "ended_at": "2026-10-24T16:38:56.627981Z",
+      "summary": "Relationship graph validator is not implemented yet."
+    },
+    "floorplan": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:38:58.346341Z",
+      "ended_at": "2026-10-24T16:39:05.232089Z",
+      "summary": "Floorplan built: 79 spaces on 2 floors; numeric check passed."
+    },
+    "equipment": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:39:05.234780Z",
+      "ended_at": "2026-10-24T16:39:10.036175Z",
+      "summary": "Placed 505 assets of 49 types; 0 types without a library model, 1 flagged as implausible."
+    },
+    "variant_creator": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:39:10.039273Z",
+      "ended_at": "2026-10-24T16:39:20.273187Z",
+      "summary": "Created 1 of 1 library models."
+    },
+    "model_validate": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:39:20.275702Z",
+      "ended_at": "2026-10-24T16:39:47.299926Z",
+      "summary": "Numeric check passed: 1616 elements checked, max errors {'space_xy_m': 3.3569335897709607e-06, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations on either floor, so the model passes. The numeric check passed with nothing flagged. It covered 743 nodes: 79 spaces, 85 openings, 2 connectors and 505 assets. The largest position error was about 3e-6 m on space outlines. Every other measured error was zero, and no warnings were raised. Ground floor (level 0): the generated plan matches the dataset plan. It has the same 3x5 hall grid (columns C, B, A; rows 1-5) and corridor 0.16 with side rooms 0.19-0.33 and 0.17-0.47. The room proportions match, and so do the four exterior doors (top of H-B5, two on the left of H-C3 and H-C2, top of the corridor). The side doors from 0.33 to H-A4 and from 0.19 to H-A1 are also in place. My count of openings from the dataset plan, across both floors, comes to 85, which matches the numeric check. Floor 1 (level 1): corridor 1.01 with rooms 1.04-1.18 and 1.02, 1.03, 1.19-1.32 matches the dataset layout and room sizes, and every room has its corridor door. The dataset plans don't show equipment, so I relied on the numeric check for asset positions; it found no errors in position, rotation, scale or height. The B-column halls are almost empty in the generated plan, which looks plausible for halls that act as through-routes, and it is consistent with the matched asset count. A few assets sit right against walls, for example one in room 1.10 that reaches slightly into the corridor. Their positions are exactly the dataset's, so I didn't count them as deviations. Fill colours and label positions differ between the two plans, but that is styling only."
+    },
+    "summarize": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:39:49.524689Z",
+      "ended_at": "2026-10-24T16:40:09.069679Z",
+      "summary": "Metadata written for 79 spaces on 2 floors."
+    }
+  },
+  "pending_review": null,
+  "decisions": [
+    {
+      "stage": "raw_validation",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Stage passed with no open issues. The single info-level overlap was accepted as a plausible mezzanine inside a tall factory hall, and no data was changed."
+    },
+    {
+      "stage": "graph_build",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_build skipped."
+    },
+    {
+      "stage": "graph_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_validate is skipped because the validator is not implemented yet. A retry won't change that, and there are no deviations or open issues, so proceed to floorplan."
+    },
+    {
+      "stage": "floorplan",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "floorplan passed."
+    },
+    {
+      "stage": "equipment",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "equipment passed."
+    },
+    {
+      "stage": "variant_creator",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "variant_creator passed."
+    },
+    {
+      "stage": "model_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "model_validate passed with negligible errors (max ~3e-6 m), no deviations or open issues; proceed to summarize."
+    },
+    {
+      "stage": "summarize",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Summarize passed with no open issues or deviations; metadata was written for 79 spaces on 2 floors. The pipeline is complete."
+    }
+  ],
+  "usage": {
+    "raw_validation": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 13978,
+      "output_tokens": 396,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    },
+    "orchestrator": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 4639,
+      "output_tokens": 265,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "graph_build": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "graph_validate": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "floorplan": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 7660,
+      "output_tokens": 362,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    },
+    "equipment": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 5172,
+      "output_tokens": 307,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "variant_creator": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 19392,
+      "output_tokens": 1097,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "model_validate": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 7115,
+      "output_tokens": 2330,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "summarize": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 8034,
+      "output_tokens": 6792,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    }
+  },
+  "artifacts": [
+    "3d/floorplan.glb",
+    "3d/model.glb",
+    "3d/previews/plan_floor_0.png",
+    "3d/previews/plan_floor_1.png",
+    "building.json",
+    "issues.json",
+    "location.json",
+    "patches.json",
+    "reports/validation_3d.json"
+  ],
+  "error": null
+}

@@ -1,0 +1,49 @@
+{
+  "stage": "model_validate",
+  "status": "passed",
+  "summary": "Numeric check passed: 5707 elements checked, max errors {'space_xy_m': 2.383499048822179e-06, 'space_z_m': 3.8146972691777137e-07, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations, so the model passes. The numeric check passed on all 2684 nodes: 284 spaces, 280 openings, 6 connectors and 1780 assets. It reported no failures or warnings. The largest errors were tiny: about 2.4e-6 m for space position, and exactly 0 for openings and assets. I then compared the generated plan with the dataset's plan image for each of the 7 floors (-1 to 5). Every floor has the same L-shaped layout: a north-south corridor (x.01) with rooms on both sides, joined to an east-west corridor (x.02) with rooms north and south of it. The room numbers, sizes and walls match on every floor. The doors line up with the dataset's door markers, all on the corridor sides. On the ground floor, all three exits from the dataset appear in the right places: the north end of corridor 0.01, the east side of 0.10 and the east end of 0.02. The stair and lift shafts (x.05/x.06, x.11/x.12, x.30/x.31) are in the right places on every floor. Equipment sits inside the rooms on every floor, and none of it looks misplaced or wrong. The only differences are room fill colours, which are styling and were ignored.",
+  "metrics": {
+    "checked": {
+      "nodes": 2684,
+      "geometries": 673,
+      "spaces": 284,
+      "openings": 280,
+      "connectors": 6,
+      "assets": 1780
+    },
+    "max_error": {
+      "space_xy_m": 2.383499048822179e-06,
+      "space_z_m": 3.8146972691777137e-07,
+      "opening_xy_m": 0.0,
+      "opening_z_m": 0.0,
+      "opening_width_m": 0.0,
+      "asset_xy_m": 0.0,
+      "asset_z_m": 0.0,
+      "asset_rotation_deg": 0.0,
+      "asset_scale_m": 0.0,
+      "asset_height_m": 0.0
+    }
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb",
+    "reports/validation_3d.json",
+    "3d/previews/plan_floor_-1.png",
+    "3d/previews/plan_floor_0.png",
+    "3d/previews/plan_floor_1.png",
+    "3d/previews/plan_floor_2.png",
+    "3d/previews/plan_floor_3.png",
+    "3d/previews/plan_floor_4.png",
+    "3d/previews/plan_floor_5.png"
+  ],
+  "usage": {
+    "model": "claude-opus-5-5",
+    "input_tokens": 19667,
+    "output_tokens": 1002,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:16:16.354429Z"
+}

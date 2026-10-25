@@ -1,0 +1,30 @@
+{
+  "stage": "raw_validation",
+  "status": "passed",
+  "summary": "37 issues found, 0 fixed deterministically. All 37 open issues were info-level, and I accepted all of them without changing any geometry. 31 were name_ref_mismatch: the generator names stairs, lifts and the main lobby by role, so the names don't contain the refs. 6 were duplicate_space_name: the same staircase or lift name repeats on each of the 5 floors, while every ref stays unique. I saved a note about this naming pattern for future runs on this source. I didn't re-run the checks, but the last accept call reported no open issues.",
+  "metrics": {
+    "issues_found": 37,
+    "fixed": 0,
+    "accepted": 37,
+    "open": 0,
+    "open_errors": 0,
+    "patches": 0,
+    "open_by_class": {}
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "building.json",
+    "issues.json",
+    "patches.json"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 58419,
+    "output_tokens": 3769,
+    "cache_read_input_tokens": 0,
+    "calls": 5
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:40:39.430008Z"
+}

@@ -1,0 +1,47 @@
+{
+  "stage": "equipment",
+  "status": "passed",
+  "summary": "Placed 1780 assets of 54 types; 3 types without a library model, 3 flagged as implausible.",
+  "metrics": {
+    "placed": 1780,
+    "types": 54,
+    "missing_types": [
+      "boiler",
+      "electrical_panel",
+      "hvac_unit"
+    ],
+    "flagged": [
+      {
+        "type": "boiler",
+        "reason": "Library entry is missing, so it is shown as a placeholder box with no height."
+      },
+      {
+        "type": "electrical_panel",
+        "reason": "Library entry is missing, so it is shown as a placeholder box with no height."
+      },
+      {
+        "type": "hvac_unit",
+        "reason": "Library entry is missing, so it is shown as a placeholder box with no height."
+      }
+    ],
+    "to_create": [
+      "boiler",
+      "electrical_panel",
+      "hvac_unit"
+    ]
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 5503,
+    "output_tokens": 303,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:15:50.859766Z"
+}

@@ -1,0 +1,18 @@
+{
+  "stage": "graph_validate",
+  "status": "skipped",
+  "summary": "Relationship graph validator is not implemented yet.",
+  "metrics": {},
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [],
+  "usage": {
+    "model": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "calls": 0
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:38:56.627885Z"
+}

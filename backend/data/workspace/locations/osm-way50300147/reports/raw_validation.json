@@ -1,0 +1,34 @@
+{
+  "stage": "raw_validation",
+  "status": "passed",
+  "summary": "14 issues found, 0 fixed deterministically. I renamed the second duplicate room (F1-S029) to ref and name '1253B'. That cleared the duplicate name and ref issues. I accepted the other 12 issues rather than fixing them. After re-running the checks, no issues are open.",
+  "metrics": {
+    "issues_found": 14,
+    "fixed": 2,
+    "accepted": 12,
+    "open": 0,
+    "open_errors": 0,
+    "patches": 1,
+    "open_by_class": {}
+  },
+  "open_issues": [
+    "I did not inspect the two accepted overlaps (F0-S002 with F0-S048, and F0-S049 with F0-S050) beyond the first pair. Each overlaps by about 42%, so one polygon in each pair could be wrong.",
+    "I accepted connector V02 as skipping floor 1 without checking whether floor 1 has a matching stair space.",
+    "Nine stair spaces (F0-S016, F0-S052, and seven on F2) are still not linked to any connector. I accepted them as unmodelled in the source, so vertical routing through them is missing."
+  ],
+  "deviations": [],
+  "artifacts": [
+    "building.json",
+    "issues.json",
+    "patches.json"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 52413,
+    "output_tokens": 1731,
+    "cache_read_input_tokens": 0,
+    "calls": 6
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:11:25.790446Z"
+}

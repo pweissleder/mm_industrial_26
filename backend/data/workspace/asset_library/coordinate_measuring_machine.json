@@ -1,0 +1,127 @@
+{
+  "spec": {
+    "type": "coordinate_measuring_machine",
+    "category": "machine",
+    "description": "Bridge CMM: granite base and table, two uprights, bridge beam, carriage, quill with probe",
+    "default_height_m": 2.4,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.17
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.34
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.37
+        ],
+        "size": [
+          0.92,
+          0.92,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.42,
+          0.0,
+          0.62
+        ],
+        "size": [
+          0.1,
+          0.2,
+          0.44
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.42,
+          0.0,
+          0.62
+        ],
+        "size": [
+          0.1,
+          0.2,
+          0.44
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.82
+        ],
+        "size": [
+          0.94,
+          0.2,
+          0.14
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.1,
+          0.0,
+          0.72
+        ],
+        "size": [
+          0.18,
+          0.26,
+          0.16
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.1,
+          0.0,
+          0.57
+        ],
+        "radius": 0.025,
+        "length": 0.16,
+        "axis": "z"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.1,
+          0.0,
+          0.47
+        ],
+        "radius": 0.012,
+        "length": 0.06,
+        "axis": "z"
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.2,
+          0.1,
+          0.45
+        ],
+        "size": [
+          0.3,
+          0.3,
+          0.1
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:33:54.462598Z"
+}

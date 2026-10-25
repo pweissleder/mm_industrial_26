@@ -1,0 +1,129 @@
+{
+  "spec": {
+    "type": "microwave",
+    "category": "equipment",
+    "description": "Countertop microwave with door window, control panel and handle",
+    "default_height_m": 0.3,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.03
+        ],
+        "size": [
+          0.94,
+          0.8,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.04,
+          0.53
+        ],
+        "size": [
+          1.0,
+          0.92,
+          0.94
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.15,
+          -0.44,
+          0.52
+        ],
+        "size": [
+          0.62,
+          0.04,
+          0.8
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.15,
+          -0.465,
+          0.52
+        ],
+        "size": [
+          0.5,
+          0.02,
+          0.6
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.34,
+          -0.455,
+          0.52
+        ],
+        "size": [
+          0.26,
+          0.03,
+          0.8
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.34,
+          -0.475,
+          0.74
+        ],
+        "size": [
+          0.18,
+          0.02,
+          0.2
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.34,
+          -0.475,
+          0.5
+        ],
+        "radius": 0.07,
+        "length": 0.03,
+        "axis": "y"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.34,
+          -0.475,
+          0.28
+        ],
+        "size": [
+          0.16,
+          0.02,
+          0.07
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.1,
+          -0.48,
+          0.52
+        ],
+        "size": [
+          0.03,
+          0.04,
+          0.64
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:34:43.957525Z"
+}

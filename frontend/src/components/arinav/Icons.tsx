@@ -61,6 +61,18 @@ export const PinIcon = (p: P) => (
     <circle cx="12" cy="10" r="2.4" />
   </Icon>
 );
+export const NavigateIcon = (p: P) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+  </Icon>
+);
+export const UserIcon = (p: P) => (
+  <Icon {...p}>
+    <circle cx="12" cy="8" r="3.6" />
+    <path d="M5 20a7 7 0 0 1 14 0" />
+  </Icon>
+);
 export const CubeIcon = (p: P) => (
   <Icon {...p}>
     <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" />
@@ -141,6 +153,13 @@ export const SpeakerIcon = (p: P) => (
   <Icon {...p}>
     <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
     <path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" />
+  </Icon>
+);
+
+export const SpeakerOffIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+    <path d="M16 9.5l5 5M21 9.5l-5 5" />
   </Icon>
 );
 

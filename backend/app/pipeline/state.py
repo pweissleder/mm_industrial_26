@@ -21,6 +21,7 @@ Stage = Literal[
     "variant_creator",
     "model_validate",
     "summarize",
+    "suggest",
 ]
 STAGE_ORDER: tuple[Stage, ...] = (
     "raw_validation",
@@ -31,6 +32,7 @@ STAGE_ORDER: tuple[Stage, ...] = (
     "variant_creator",
     "model_validate",
     "summarize",
+    "suggest",
 )
 
 

@@ -1,0 +1,44 @@
+{
+  "stage": "model_validate",
+  "status": "passed",
+  "summary": "Numeric check passed: 1616 elements checked, max errors {'space_xy_m': 3.3569335897709607e-06, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations on either floor, so the model passes. The numeric check passed with nothing flagged. It covered 743 nodes: 79 spaces, 85 openings, 2 connectors and 505 assets. The largest position error was about 3e-6 m on space outlines. Every other measured error was zero, and no warnings were raised. Ground floor (level 0): the generated plan matches the dataset plan. It has the same 3x5 hall grid (columns C, B, A; rows 1-5) and corridor 0.16 with side rooms 0.19-0.33 and 0.17-0.47. The room proportions match, and so do the four exterior doors (top of H-B5, two on the left of H-C3 and H-C2, top of the corridor). The side doors from 0.33 to H-A4 and from 0.19 to H-A1 are also in place. My count of openings from the dataset plan, across both floors, comes to 85, which matches the numeric check. Floor 1 (level 1): corridor 1.01 with rooms 1.04-1.18 and 1.02, 1.03, 1.19-1.32 matches the dataset layout and room sizes, and every room has its corridor door. The dataset plans don't show equipment, so I relied on the numeric check for asset positions; it found no errors in position, rotation, scale or height. The B-column halls are almost empty in the generated plan, which looks plausible for halls that act as through-routes, and it is consistent with the matched asset count. A few assets sit right against walls, for example one in room 1.10 that reaches slightly into the corridor. Their positions are exactly the dataset's, so I didn't count them as deviations. Fill colours and label positions differ between the two plans, but that is styling only.",
+  "metrics": {
+    "checked": {
+      "nodes": 743,
+      "geometries": 202,
+      "spaces": 79,
+      "openings": 85,
+      "connectors": 2,
+      "assets": 505
+    },
+    "max_error": {
+      "space_xy_m": 3.3569335897709607e-06,
+      "space_z_m": 0.0,
+      "opening_xy_m": 0.0,
+      "opening_z_m": 0.0,
+      "opening_width_m": 0.0,
+      "asset_xy_m": 0.0,
+      "asset_z_m": 0.0,
+      "asset_rotation_deg": 0.0,
+      "asset_scale_m": 0.0,
+      "asset_height_m": 0.0
+    }
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb",
+    "reports/validation_3d.json",
+    "3d/previews/plan_floor_0.png",
+    "3d/previews/plan_floor_1.png"
+  ],
+  "usage": {
+    "model": "claude-opus-5-5",
+    "input_tokens": 7115,
+    "output_tokens": 2330,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:39:47.299320Z"
+}

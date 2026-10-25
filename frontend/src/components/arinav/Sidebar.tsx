@@ -9,26 +9,14 @@ import {
 } from 'react';
 import {
   ASSET_COLORS,
-  floorLabel,
   humanize,
   polygonArea,
   spaceColor,
   type BuildingModel,
   type Selection,
 } from '../../lib/building';
-import {
-  ChevronIcon,
-  CloseIcon,
-  CodeIcon,
-  CubeIcon,
-  FitIcon,
-  FrontIcon,
-  LayersIcon,
-  PinIcon,
-  SearchIcon,
-  TopIcon,
-} from './Icons';
-import { LAYERS, type CameraAction, type ViewSettings } from './view';
+import { ChevronIcon, CloseIcon, CodeIcon, LayersIcon, PinIcon, SearchIcon } from './Icons';
+import { LAYERS, type ViewSettings } from './view';
 
 export const GENERATED_SOURCE = '';
 /** The ingestion pipeline's model.glb; dataset file names can't start with ':'. */
@@ -50,7 +38,6 @@ interface Props {
   onSettings: (settings: ViewSettings) => void;
   selection: Selection | null;
   onSelect: (selection: Selection) => void;
-  onCamera: (action: CameraAction) => void;
   onClose: () => void;
   /** Developer mode: the developer controls, shown in their own tab. */
   developer?: ReactNode;
@@ -125,7 +112,6 @@ function LocationTab({
   source,
   onSource,
   settings,
-  onSettings,
   selection,
   onSelect,
 }: Props) {
@@ -156,7 +142,6 @@ function LocationTab({
   }, [model, settings.floor, floorOf]);
 
   const focusFloor = floors.find((f) => f.level === settings.floor);
-  const setFloor = (floor: ViewSettings['floor']) => onSettings({ ...settings, floor });
 
   return (
     <>
@@ -232,34 +217,6 @@ function LocationTab({
           </>
         )}
       </section>
-
-      {floors.length > 0 && (
-        <section className="section">
-          <span className="section__title">Floor</span>
-          <div className="floor-picker" role="radiogroup" aria-label="Floor">
-            <button
-              role="radio"
-              aria-checked={settings.floor === 'all'}
-              className="chip"
-              onClick={() => setFloor('all')}
-            >
-              All
-            </button>
-            {floors.map((f) => (
-              <button
-                key={f.id}
-                role="radio"
-                aria-checked={settings.floor === f.level}
-                className="chip"
-                title={f.name}
-                onClick={() => setFloor(f.level)}
-              >
-                {floorLabel(f)}
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
 
       {model && (
         <section className="section section--grow">
@@ -406,30 +363,12 @@ function LocationRow(props: {
   );
 }
 
-function ViewTab({ settings, onSettings, onCamera }: Props) {
+function ViewTab({ settings, onSettings }: Props) {
   const set = <K extends keyof ViewSettings>(key: K, value: ViewSettings[K]) =>
     onSettings({ ...settings, [key]: value });
 
   return (
     <>
-      <section className="section">
-        <span className="section__title">Camera</span>
-        <div className="camera-grid">
-          <button className="tile" onClick={() => onCamera('iso')}>
-            <CubeIcon /> 3D
-          </button>
-          <button className="tile" onClick={() => onCamera('top')}>
-            <TopIcon /> Top
-          </button>
-          <button className="tile" onClick={() => onCamera('front')}>
-            <FrontIcon /> Front
-          </button>
-          <button className="tile" onClick={() => onCamera('fit')}>
-            <FitIcon /> Fit
-          </button>
-        </div>
-      </section>
-
       <CollapsibleSection title="Layers">
         <div className="toggle-list">
           {LAYERS.map((l) => (
@@ -506,10 +445,18 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
   );
 }
 
-/** A settings section that starts folded; the header toggles it. */
-function CollapsibleSection({ title, children }: { title: string; children: ReactNode }) {
+/** A settings section that starts folded (unless `defaultOpen`); the header toggles it. */
+export function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
   return (
-    <details className="section section--collapsible">
+    <details className="section section--collapsible" open={defaultOpen || undefined}>
       <summary className="section__title section__toggle">
         {title}
         <ChevronIcon width={16} height={16} className="section__chevron" aria-hidden="true" />

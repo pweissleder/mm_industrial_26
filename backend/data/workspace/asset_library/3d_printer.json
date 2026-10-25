@@ -1,0 +1,142 @@
+{
+  "spec": {
+    "type": "3d_printer",
+    "category": "machine",
+    "description": "Enclosed desktop FDM 3D printer on a base with frame, build chamber, gantry and spool",
+    "default_height_m": 0.7,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.07
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.14
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.46,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.08,
+          0.96,
+          0.72
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.46,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.08,
+          0.96,
+          0.72
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.45,
+          0.5
+        ],
+        "size": [
+          0.84,
+          0.08,
+          0.72
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.95
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.05,
+          0.3
+        ],
+        "size": [
+          0.6,
+          0.6,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.7
+        ],
+        "size": [
+          0.84,
+          0.08,
+          0.05
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.65
+        ],
+        "size": [
+          0.14,
+          0.14,
+          0.08
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          0.3,
+          0.97
+        ],
+        "radius": 0.03,
+        "length": 0.3,
+        "axis": "x"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.25,
+          -0.48,
+          0.07
+        ],
+        "size": [
+          0.2,
+          0.04,
+          0.06
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:33:38.372949Z"
+}

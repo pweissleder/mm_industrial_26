@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "checked": {
+    "nodes": 1456,
+    "geometries": 523,
+    "spaces": 239,
+    "openings": 274,
+    "connectors": 7,
+    "assets": 663
+  },
+  "max_error": {
+    "space_xy_m": 3.6010767693461028e-6,
+    "space_z_m": 0.0,
+    "opening_xy_m": 0.0,
+    "opening_z_m": 0.0,
+    "opening_width_m": 1.1102230246251565e-16,
+    "asset_xy_m": 0.0,
+    "asset_z_m": 0.0,
+    "asset_rotation_deg": 5.684341886080802e-14,
+    "asset_scale_m": 2.220446049250313e-16,
+    "asset_height_m": 0.0
+  },
+  "failures": [],
+  "warnings": []
+}

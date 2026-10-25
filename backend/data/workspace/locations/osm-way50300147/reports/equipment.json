@@ -1,0 +1,35 @@
+{
+  "stage": "equipment",
+  "status": "passed",
+  "summary": "Placed 663 assets of 7 types; 1 types without a library model, 1 flagged as implausible.",
+  "metrics": {
+    "placed": 663,
+    "types": 7,
+    "missing_types": [
+      "defibrillator"
+    ],
+    "flagged": [
+      {
+        "type": "defibrillator",
+        "reason": "Library entry is missing, so it renders as a placeholder box with no height."
+      }
+    ],
+    "to_create": [
+      "defibrillator"
+    ]
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 2279,
+    "output_tokens": 77,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:11:41.078640Z"
+}

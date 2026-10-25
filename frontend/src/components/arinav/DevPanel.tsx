@@ -20,7 +20,7 @@ import {
 } from '../../lib/nav';
 import { RouteBadge } from './ChatReply';
 import { CloseIcon, PinIcon, SearchIcon } from './Icons';
-import { Slider, Switch } from './Sidebar';
+import { CollapsibleSection, Slider, Switch } from './Sidebar';
 import type { Navigation, Which } from './useNavigation';
 
 interface Props {
@@ -60,7 +60,7 @@ export default function DevPanel(props: Props) {
       )}
       <EndpointsSection {...props} />
       <OptionsSection nav={nav} exactPoint={props.exactPoint} onExactPoint={props.onExactPoint} />
-      <section className="section">
+      <CollapsibleSection title="Route actions" defaultOpen>
         <div className="dev-actions">
           <button
             className="btn btn--primary btn--sm"
@@ -81,12 +81,11 @@ export default function DevPanel(props: Props) {
             {nav.message}
           </p>
         )}
-      </section>
+      </CollapsibleSection>
       <RouteFacts nav={nav} model={model} onSelect={props.onSelect} />
       <ScenarioSection nav={nav} model={model} selection={props.selection} />
       <ExamplesSection nav={nav} buildingId={buildingId} />
-      <section className="section">
-        <span className="section__title">HQ model</span>
+      <CollapsibleSection title="HQ model">
         <div className="toggle-list">
           <Switch label="Auto-build HQ for new buildings" checked={props.autoHq} onChange={props.onAutoHq} />
         </div>
@@ -95,9 +94,8 @@ export default function DevPanel(props: Props) {
             ? 'Opening or uploading an unprocessed building starts the ingestion pipeline. With an API key on the server it calls Claude (about $0.30 to $1.50 per building).'
             : 'Off: new buildings stay in the free browser preview (LQ). Start a build from the “LQ only” chip in the top bar. Buildings already processed still load their HQ model.'}
         </p>
-      </section>
-      <section className="section">
-        <span className="section__title">Last assistant turn</span>
+      </CollapsibleSection>
+      <CollapsibleSection title="Last assistant turn">
         {nav.lastTurn ? (
           <details className="tool-calls">
             <summary>Tool calls ({nav.lastTurn.tools?.length ?? 0})</summary>
@@ -106,7 +104,7 @@ export default function DevPanel(props: Props) {
         ) : (
           <p className="muted">No assistant turn yet.</p>
         )}
-      </section>
+      </CollapsibleSection>
     </>
   );
 }
@@ -196,8 +194,7 @@ function EndpointsSection({ nav, model, buildingId, selection, picking, onPick }
   );
 
   return (
-    <section className="section">
-      <span className="section__title">Route endpoints</span>
+    <CollapsibleSection title="Route endpoints" defaultOpen>
       {row('start', nav.start)}
       {row('target', nav.target)}
       <div className="search">
@@ -254,7 +251,7 @@ function EndpointsSection({ nav, model, buildingId, selection, picking, onPick }
           })}
         </ul>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }
 
@@ -271,8 +268,7 @@ function OptionsSection({
   const support = nav.state?.support;
   const precisionOff = support ? !support.precision : false;
   return (
-    <section className="section">
-      <span className="section__title">Routing options</span>
+    <CollapsibleSection title="Routing options" defaultOpen>
       <div className="segmented segmented--small" role="group" aria-label="Route mode">
         <button
           className="segmented__item"
@@ -346,7 +342,7 @@ function OptionsSection({
         )}
         <Switch label="Map pick uses exact point" checked={exactPoint} onChange={onExactPoint} />
       </div>
-    </section>
+    </CollapsibleSection>
   );
 }
 
@@ -373,8 +369,7 @@ function RouteFacts({
   if (!route && !failure && !nav.nearest) return null;
   const diag = failure?.diagnosis;
   return (
-    <section className="section" aria-label="Route result">
-      <span className="section__title">Route result</span>
+    <CollapsibleSection title="Route result" defaultOpen>
       {route && (
         <>
           <RouteBadge route={route} />
@@ -454,7 +449,7 @@ function RouteFacts({
           )}
         </>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }
 
@@ -472,8 +467,7 @@ function ScenarioSection({
     selection && ['space', 'opening', 'connector'].includes(selection.kind) ? selection.id : null;
   const isClosed = !!element && !!state?.closed.includes(element);
   return (
-    <section className="section">
-      <span className="section__title">Scenario</span>
+    <CollapsibleSection title="Scenario">
       <p className="muted">
         {state
           ? `Revision ${state.revision} · ${state.closed.length} closed`
@@ -532,7 +526,7 @@ function ScenarioSection({
           <pre>{json(nav.preview)}</pre>
         </details>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }
 
@@ -574,8 +568,7 @@ function ExamplesSection({ nav, buildingId }: { nav: Navigation; buildingId: str
   const otherBuilding = example?.building_id && example.building_id !== buildingId;
 
   return (
-    <section className="section">
-      <span className="section__title">Train / dev examples</span>
+    <CollapsibleSection title="Train / dev examples">
       <div className="dev-actions">
         <div className="segmented segmented--small" role="group" aria-label="Example split">
           {(['dev', 'train'] as const).map((s) => (
@@ -647,6 +640,6 @@ function ExamplesSection({ nav, buildingId }: { nav: Navigation; buildingId: str
           </details>
         </div>
       )}
-    </section>
+    </CollapsibleSection>
   );
 }

@@ -1,0 +1,66 @@
+{
+  "spec": {
+    "type": "lectern",
+    "category": "furniture",
+    "description": "Lectern with base, body column, and reading top with front lip",
+    "default_height_m": 1.1,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.03
+        ],
+        "size": [
+          0.9,
+          0.9,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.4
+        ],
+        "size": [
+          0.75,
+          0.7,
+          0.68
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.76
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.05
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.46,
+          0.82
+        ],
+        "size": [
+          1.0,
+          0.08,
+          0.08
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "508b61330234",
+  "version": 1,
+  "created_at": "2026-10-24T16:41:24.489055Z"
+}

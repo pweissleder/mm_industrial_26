@@ -1,0 +1,173 @@
+{
+  "spec": {
+    "type": "injection_moulding_machine",
+    "category": "machine",
+    "description": "Horizontal injection moulding machine: bed, clamp unit with platens and tie bars, injection barrel with hopper, control cabinet",
+    "default_height_m": 2.0,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.2
+        ],
+        "size": [
+          1.0,
+          0.7,
+          0.4
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.35,
+          0.0,
+          0.65
+        ],
+        "size": [
+          0.06,
+          0.7,
+          0.5
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.05,
+          0.0,
+          0.65
+        ],
+        "size": [
+          0.06,
+          0.7,
+          0.5
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.2,
+          0.25,
+          0.8
+        ],
+        "radius": 0.03,
+        "length": 0.34,
+        "axis": "x"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.2,
+          -0.25,
+          0.8
+        ],
+        "radius": 0.03,
+        "length": 0.34,
+        "axis": "x"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.2,
+          0.25,
+          0.5
+        ],
+        "radius": 0.03,
+        "length": 0.34,
+        "axis": "x"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.2,
+          -0.25,
+          0.5
+        ],
+        "radius": 0.03,
+        "length": 0.34,
+        "axis": "x"
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.2,
+          0.0,
+          0.65
+        ],
+        "size": [
+          0.2,
+          0.3,
+          0.3
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.3,
+          0.0,
+          0.52
+        ],
+        "size": [
+          0.3,
+          0.4,
+          0.24
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.1,
+          0.0,
+          0.6
+        ],
+        "radius": 0.07,
+        "length": 0.5,
+        "axis": "x"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.3,
+          0.0,
+          0.82
+        ],
+        "size": [
+          0.12,
+          0.2,
+          0.2
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.3,
+          0.0,
+          0.95
+        ],
+        "size": [
+          0.2,
+          0.3,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.4,
+          -0.38,
+          0.7
+        ],
+        "size": [
+          0.18,
+          0.24,
+          0.6
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:34:27.244001Z"
+}

@@ -14,6 +14,7 @@ const STAGES: [string, string][] = [
   ['variant_creator', 'Design missing models'],
   ['model_validate', 'Check 3D model'],
   ['summarize', 'Describe building'],
+  ['suggest', 'Suggest questions'],
 ];
 const stageLabel = (stage: string | null | undefined) =>
   STAGES.find(([id]) => id === stage)?.[1] ?? stage ?? '';

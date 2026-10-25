@@ -1,0 +1,25 @@
+[
+  {
+    "id": "P0001",
+    "ops": [
+      {
+        "op": "replace",
+        "path": "/spaces/79/ref",
+        "value": "1253B"
+      },
+      {
+        "op": "replace",
+        "path": "/spaces/79/name",
+        "value": "Generic room 1253B"
+      }
+    ],
+    "reason": "Disambiguate distinct rooms",
+    "issue_ids": [
+      "duplicate_space_ref:osm-way50300147-F1-S008|osm-way50300147-F1-S029",
+      "duplicate_space_name:osm-way50300147-F1-S008|osm-way50300147-F1-S029"
+    ],
+    "issue_class": "duplicate_space_ref",
+    "author": "agent",
+    "applied_at": "2026-10-24T18:11:19.680673Z"
+  }
+]

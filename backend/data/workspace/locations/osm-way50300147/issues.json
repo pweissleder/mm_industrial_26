@@ -1,0 +1,208 @@
+[
+  {
+    "id": "overlapping_spaces:osm-way50300147-F0-S002|osm-way50300147-F0-S048",
+    "issue_class": "overlapping_spaces",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F0-S002",
+      "osm-way50300147-F0-S048"
+    ],
+    "message": "spaces osm-way50300147-F0-S002 and osm-way50300147-F0-S048 overlap by 10.58 m2 (42%)",
+    "details": {
+      "overlap_area_m2": 10.578,
+      "overlap_fraction": 0.416
+    },
+    "status": "accepted",
+    "resolution": "Overlaps involve stairwell/nested OSM geometry with no clearly wrong polygon; V02 has no identifiable F1 stair stop, so it is treated as bypassing F1."
+  },
+  {
+    "id": "overlapping_spaces:osm-way50300147-F0-S049|osm-way50300147-F0-S050",
+    "issue_class": "overlapping_spaces",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F0-S049",
+      "osm-way50300147-F0-S050"
+    ],
+    "message": "spaces osm-way50300147-F0-S049 and osm-way50300147-F0-S050 overlap by 11.42 m2 (42%)",
+    "details": {
+      "overlap_area_m2": 11.42,
+      "overlap_fraction": 0.424
+    },
+    "status": "accepted",
+    "resolution": "Overlaps involve stairwell/nested OSM geometry with no clearly wrong polygon; V02 has no identifiable F1 stair stop, so it is treated as bypassing F1."
+  },
+  {
+    "id": "duplicate_space_name:osm-way50300147-F1-S008|osm-way50300147-F1-S029",
+    "issue_class": "duplicate_space_name",
+    "severity": "info",
+    "entity_ids": [
+      "osm-way50300147-F1-S008",
+      "osm-way50300147-F1-S029"
+    ],
+    "message": "2 spaces share name 'Generic room 1253'",
+    "details": {
+      "value": "Generic room 1253",
+      "count": 2
+    },
+    "status": "fixed",
+    "resolution": "fixed by patch"
+  },
+  {
+    "id": "duplicate_space_ref:osm-way50300147-F1-S008|osm-way50300147-F1-S029",
+    "issue_class": "duplicate_space_ref",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F1-S008",
+      "osm-way50300147-F1-S029"
+    ],
+    "message": "2 spaces share ref '1253'",
+    "details": {
+      "value": "1253",
+      "count": 2
+    },
+    "status": "fixed",
+    "resolution": "fixed by patch"
+  },
+  {
+    "id": "connector_skips_floor:osm-way50300147-V02",
+    "issue_class": "connector_skips_floor",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-V02"
+    ],
+    "message": "connector osm-way50300147-V02 jumps from level 0 to 2, skipping level(s) [1]",
+    "details": {
+      "skipped_levels": [
+        1
+      ]
+    },
+    "status": "accepted",
+    "resolution": "Overlaps involve stairwell/nested OSM geometry with no clearly wrong polygon; V02 has no identifiable F1 stair stop, so it is treated as bypassing F1."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F0-S016",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F0-S016"
+    ],
+    "message": "stair space osm-way50300147-F0-S016 (Stairwell 0261A) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F0-S052",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F0-S052"
+    ],
+    "message": "stair space osm-way50300147-F0-S052 (Stairwell 0210B) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S019",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S019"
+    ],
+    "message": "stair space osm-way50300147-F2-S019 (Stairwell 2203B) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S025",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S025"
+    ],
+    "message": "stair space osm-way50300147-F2-S025 (Stairwell 2270B) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S028",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S028"
+    ],
+    "message": "stair space osm-way50300147-F2-S028 (Stairwell 2230A) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S035",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S035"
+    ],
+    "message": "stair space osm-way50300147-F2-S035 (Stairwell 2216B) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S040",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S040"
+    ],
+    "message": "stair space osm-way50300147-F2-S040 (Stairwell 2266A) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S046",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S046"
+    ],
+    "message": "stair space osm-way50300147-F2-S046 (Stairwell 2260B) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  },
+  {
+    "id": "unused_vertical_space:osm-way50300147-F2-S047",
+    "issue_class": "unused_vertical_space",
+    "severity": "warning",
+    "entity_ids": [
+      "osm-way50300147-F2-S047"
+    ],
+    "message": "stair space osm-way50300147-F2-S047 (Stairwell 2272A) is used by no connector",
+    "details": {
+      "space_type": "stair"
+    },
+    "status": "accepted",
+    "resolution": "Stairwells mapped in OSM without connector data; vertical links cannot be derived reliably, so left as faithful source."
+  }
+]

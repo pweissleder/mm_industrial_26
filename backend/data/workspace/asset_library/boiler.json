@@ -1,0 +1,108 @@
+{
+  "spec": {
+    "type": "boiler",
+    "category": "machine",
+    "description": "Floor-standing boiler: base, cylindrical tank, control panel, flue pipes",
+    "default_height_m": 1.6,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.03
+        ],
+        "size": [
+          0.9,
+          0.9,
+          0.06
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          0.0,
+          0.5
+        ],
+        "radius": 0.4,
+        "length": 0.84,
+        "axis": "z"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          0.0,
+          0.93
+        ],
+        "radius": 0.3,
+        "length": 0.06,
+        "axis": "z"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.4,
+          0.35
+        ],
+        "size": [
+          0.4,
+          0.1,
+          0.4
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.2,
+          0.2,
+          0.95
+        ],
+        "radius": 0.07,
+        "length": 0.1,
+        "axis": "z"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.2,
+          0.2,
+          0.95
+        ],
+        "radius": 0.07,
+        "length": 0.1,
+        "axis": "z"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.46,
+          0.72
+        ],
+        "size": [
+          0.3,
+          0.06,
+          0.15
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.45,
+          0.0,
+          0.2
+        ],
+        "radius": 0.04,
+        "length": 0.1,
+        "axis": "x"
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "4ee02ae586af",
+  "version": 1,
+  "created_at": "2026-10-24T18:15:59.354158Z"
+}

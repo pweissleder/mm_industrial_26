@@ -11,7 +11,7 @@ import type {
 } from './api';
 import type { BuildingModel, Point, Selection } from './building';
 
-export type AppMode = 'assistant' | 'developer';
+export type AppMode = 'navigator' | 'user' | 'developer';
 
 export interface NavSettings {
   mode: NavMode;

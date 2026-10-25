@@ -1,0 +1,39 @@
+{
+  "stage": "floorplan",
+  "status": "passed",
+  "summary": "Floorplan built: 284 spaces on 7 floors; numeric check passed.",
+  "metrics": {
+    "stats": {
+      "overlapping_floors": [],
+      "spaces": 284,
+      "door_gaps": 555,
+      "capped_walls": 0,
+      "walls": 283,
+      "markers": 42,
+      "openings": 280,
+      "connectors": 6,
+      "build_s": 0.184
+    },
+    "max_error": {
+      "space_xy_m": 2.383499048822179e-06,
+      "space_z_m": 3.8146972691777137e-07,
+      "opening_xy_m": 0.0,
+      "opening_z_m": 0.0,
+      "opening_width_m": 0.0
+    }
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/floorplan.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 5959,
+    "output_tokens": 138,
+    "cache_read_input_tokens": 0,
+    "calls": 3
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:15:46.297593Z"
+}

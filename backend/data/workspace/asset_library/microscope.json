@@ -1,0 +1,172 @@
+{
+  "spec": {
+    "type": "microscope",
+    "category": "equipment",
+    "description": "Compound lab microscope with base, arm, stage, objective turret and angled eyepiece tube",
+    "default_height_m": 0.5,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.05
+        ],
+        "size": [
+          0.8,
+          0.96,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.3,
+          0.4
+        ],
+        "size": [
+          0.24,
+          0.2,
+          0.6
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.34,
+          0.8
+        ],
+        "size": [
+          0.24,
+          0.28,
+          0.3
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.4
+        ],
+        "size": [
+          0.6,
+          0.5,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.05,
+          0.44
+        ],
+        "size": [
+          0.4,
+          0.3,
+          0.03
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.18
+        ],
+        "size": [
+          0.12,
+          0.12,
+          0.12
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          -0.08,
+          0.6
+        ],
+        "radius": 0.07,
+        "length": 0.18,
+        "axis": "z"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          -0.08,
+          0.52
+        ],
+        "radius": 0.03,
+        "length": 0.1,
+        "axis": "z"
+      },
+      {
+        "kind": "prism",
+        "polygon": [
+          [
+            -0.07,
+            -0.1
+          ],
+          [
+            0.07,
+            -0.1
+          ],
+          [
+            0.07,
+            -0.02
+          ],
+          [
+            -0.07,
+            -0.02
+          ]
+        ],
+        "z0": 0.69,
+        "z1": 0.9
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.02,
+          0.86
+        ],
+        "size": [
+          0.16,
+          0.3,
+          0.14
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          -0.2,
+          0.93
+        ],
+        "radius": 0.05,
+        "length": 0.2,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.17,
+          0.2,
+          0.35
+        ],
+        "radius": 0.06,
+        "length": 0.08,
+        "axis": "x"
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:34:29.703488Z"
+}

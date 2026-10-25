@@ -124,6 +124,7 @@ export interface LocationRecord {
     summary: string;
     key_facts: string[];
     spaces: Record<string, SpaceMeta>;
+    suggestions?: string[];
   } | null;
   artifacts: Record<string, string>;
 }

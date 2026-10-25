@@ -1,0 +1,26 @@
+{
+  "stage": "variant_creator",
+  "status": "passed",
+  "summary": "Created 1 of 1 library models.",
+  "metrics": {
+    "created": [
+      "defibrillator"
+    ],
+    "failed": [],
+    "still_missing": []
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 21515,
+    "output_tokens": 1424,
+    "cache_read_input_tokens": 0,
+    "calls": 4
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:11:54.634386Z"
+}

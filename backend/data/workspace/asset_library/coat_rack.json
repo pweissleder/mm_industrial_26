@@ -1,0 +1,149 @@
+{
+  "spec": {
+    "type": "coat_rack",
+    "category": "furniture",
+    "description": "Freestanding hall coat rack with feet, posts, hook rail, top shelf and hooks",
+    "default_height_m": 1.8,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          -0.44,
+          0.0,
+          0.02
+        ],
+        "size": [
+          0.1,
+          1.0,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.44,
+          0.0,
+          0.02
+        ],
+        "size": [
+          0.1,
+          1.0,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.44,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.07,
+          0.12,
+          0.96
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.44,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.07,
+          0.12,
+          0.96
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.3
+        ],
+        "size": [
+          0.8,
+          0.08,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.84
+        ],
+        "size": [
+          0.8,
+          0.14,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.97
+        ],
+        "size": [
+          1.0,
+          0.9,
+          0.04
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.27,
+          0.25,
+          0.84
+        ],
+        "radius": 0.025,
+        "length": 0.36,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          -0.09,
+          0.25,
+          0.84
+        ],
+        "radius": 0.025,
+        "length": 0.36,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.09,
+          0.25,
+          0.84
+        ],
+        "radius": 0.025,
+        "length": 0.36,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.27,
+          0.25,
+          0.84
+        ],
+        "radius": 0.025,
+        "length": 0.36,
+        "axis": "y"
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:33:51.254953Z"
+}

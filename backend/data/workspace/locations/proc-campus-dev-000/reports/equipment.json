@@ -1,0 +1,131 @@
+{
+  "stage": "equipment",
+  "status": "passed",
+  "summary": "Placed 944 assets of 47 types; 17 types without a library model, 17 flagged as implausible.",
+  "metrics": {
+    "placed": 944,
+    "types": 47,
+    "missing_types": [
+      "canteen_table",
+      "chemical_cabinet",
+      "eyewash_station",
+      "fume_hood",
+      "lab_bench",
+      "laser_cutter",
+      "lectern",
+      "lecture_seating_row",
+      "multifunction_printer",
+      "oscilloscope_station",
+      "paper_shelf",
+      "printer",
+      "projector",
+      "projector_screen",
+      "reading_table",
+      "serving_counter",
+      "soldering_station"
+    ],
+    "flagged": [
+      {
+        "type": "canteen_table",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "chemical_cabinet",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "eyewash_station",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "fume_hood",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "lab_bench",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "laser_cutter",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "lectern",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "lecture_seating_row",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "multifunction_printer",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "oscilloscope_station",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "paper_shelf",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "printer",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "projector",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "projector_screen",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "reading_table",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "serving_counter",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      },
+      {
+        "type": "soldering_station",
+        "reason": "Library entry missing, so it is drawn as a placeholder box."
+      }
+    ],
+    "to_create": [
+      "canteen_table",
+      "chemical_cabinet",
+      "eyewash_station",
+      "fume_hood",
+      "lab_bench",
+      "laser_cutter",
+      "lectern",
+      "lecture_seating_row",
+      "multifunction_printer",
+      "oscilloscope_station",
+      "paper_shelf",
+      "printer",
+      "projector",
+      "projector_screen",
+      "reading_table",
+      "serving_counter",
+      "soldering_station"
+    ]
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 4983,
+    "output_tokens": 888,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:40:57.189529Z"
+}

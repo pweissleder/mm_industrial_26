@@ -1,7 +1,7 @@
 """The ingestion pipeline as a LangGraph graph.
 
     load -> raw_validation -> graph_build -> graph_validate -> floorplan -> equipment
-         -> [variant_creator] -> model_validate -> summarize -> finalize
+         -> [variant_creator] -> model_validate -> summarize -> suggest -> finalize
 
 Every stage node is followed by the orchestrator `gate`, which routes to the next
 stage, back to a stage for a retry, to `review` (a human decision via `interrupt`), or
@@ -30,6 +30,7 @@ from app.pipeline.agents import (
     graph_validator,
     model_validator,
     raw_validation,
+    suggester,
     summarizer,
     variant_creator,
 )
@@ -56,7 +57,7 @@ PILLAR_STAGES: dict[str, list[Stage]] = {
     "validation": ["raw_validation"],
     "graph": ["graph_build", "graph_validate"],
     "assets_3d": ["floorplan", "equipment", "variant_creator", "model_validate"],
-    "metadata": ["summarize"],
+    "metadata": ["summarize", "suggest"],
 }
 
 
@@ -78,6 +79,7 @@ STAGES: dict[Stage, StageFn] = {
     "variant_creator": lambda ctx, s: variant_creator.run(ctx, *_variant_inputs(s)),
     "model_validate": lambda ctx, s: model_validator.run(ctx),
     "summarize": lambda ctx, s: summarizer.run(ctx),
+    "suggest": lambda ctx, s: suggester.run(ctx),
 }
 
 

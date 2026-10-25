@@ -28,6 +28,7 @@ import {
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import { routeDrawing } from './routeGeometry';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
+import { assetCapFor, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
 
 const SLAB = 0.15;
 const WALL_T = 0.1;
@@ -179,10 +180,16 @@ export class BuildingScene {
   private readonly edgeTip: CSS2DObject;
   /** Assets of the selected room, painted along with it. */
   private litAssets: THREE.Object3D[] = [];
-  // A selected room's equipment, a lighter tint of the selection colour.
+  /** Asset culling for huge buildings: null = off, else the ids currently shown. */
+  private assetIndex: AssetIndex | null = null;
+  private shownAssets: Set<string> | null = null;
+  private assetCap = assetCapFor(0);
+  // A selected room's equipment, in the selection orange like a selected asset.
   private readonly roomAssetMat = new THREE.MeshStandardMaterial({
-    color: '#fdc9a6',
-    roughness: 0.6,
+    color: SELECT,
+    emissive: SELECT,
+    emissiveIntensity: 0.2,
+    roughness: 0.55,
     flatShading: true,
   });
   private readonly pin: CSS2DObject;
@@ -212,7 +219,13 @@ export class BuildingScene {
     opacity: 0.55,
   });
   private readonly diagnosisMat = new THREE.MeshStandardMaterial({ color: '#e0115f', roughness: 0.6, flatShading: true });
-  private readonly highlightMat = new THREE.MeshStandardMaterial({ color: '#ffc61a', roughness: 0.6, flatShading: true });
+  private readonly highlightMat = new THREE.MeshStandardMaterial({
+    color: SELECT,
+    emissive: SELECT,
+    emissiveIntensity: 0.2,
+    roughness: 0.55,
+    flatShading: true,
+  });
   // Route: shared materials and marker geometry, so a redraw allocates only line buffers.
   private readonly routeGroup = new THREE.Group();
   // Guidance: the walker figure, camera follow and a skippable route preview.
@@ -380,6 +393,7 @@ export class BuildingScene {
     this.clear();
     this.model = model;
     if (model) this.build(model);
+    this.initAssetCulling();
     this.markClosed();
     this.applySettings();
     this.applyOverlays();
@@ -398,6 +412,7 @@ export class BuildingScene {
     this.model = model;
     this.hq = true;
     this.buildHq(gltf.scene, model);
+    this.initAssetCulling();
     this.markClosed();
     this.applySettings();
     this.applyOverlays();
@@ -453,7 +468,7 @@ export class BuildingScene {
     }
   }
 
-  /** Elements the assistant points at (yellow). */
+  /** Elements the assistant points at (orange, like the selection). */
   /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
   setWalker(pose: WalkerPose | null) {
     this.walkerPose = pose;
@@ -632,6 +647,7 @@ export class BuildingScene {
 
   setHighlight(ids: readonly string[]) {
     this.highlightIds = [...ids];
+    this.updateAssetCulling();
     this.applyOverlays();
   }
 
@@ -658,8 +674,11 @@ export class BuildingScene {
     for (const a of this.litAssets) this.restoreMaterial(a);
     this.litAssets = [];
     this.selection = selection;
+    this.updateAssetCulling();
     this.clearHighlight();
     this.pin.visible = false;
+    // The pin takes over from the hover pill once the hovered thing is selected.
+    if (this.hovered && selection && this.lookup(selection) === this.hovered) this.hoverTip.visible = false;
     const obj = selection && this.lookup(selection);
     if (obj) {
       this.paint(obj, this.selectMat);
@@ -733,6 +752,8 @@ export class BuildingScene {
     this.overlaid.clear();
     this.byId.clear();
     this.litAssets = [];
+    this.assetIndex = null;
+    this.shownAssets = null;
     this.clearHighlight();
     this.pin.visible = false;
     for (const f of this.floors) for (const m of f.materials) m.dispose();
@@ -763,6 +784,55 @@ export class BuildingScene {
     this.byId.set(sel.id, obj);
   }
 
+  // ---------------------------------------------------------------- asset culling
+
+  /** Index assets and hide them all; only buildings above the cap are culled. */
+  private initAssetCulling() {
+    this.assetIndex = null;
+    this.shownAssets = null;
+    if (!this.model) return;
+    this.assetCap = assetCapFor(this.container.clientWidth);
+    const index = buildAssetIndex(this.model.assets);
+    if (visibleAssetIds(index, { selection: null, focusFloorId: null, cap: this.assetCap }) === null) {
+      // Under the cap (e.g. after growing the window): everything shows.
+      for (const a of this.model.assets) {
+        const obj = this.objects.get(`asset:${a.id}`);
+        if (obj) obj.visible = true;
+      }
+      return;
+    }
+    this.assetIndex = index;
+    this.shownAssets = new Set();
+    for (const a of this.model.assets) {
+      const obj = this.objects.get(`asset:${a.id}`);
+      if (obj) obj.visible = false;
+    }
+  }
+
+  /** Show the assets of the selection/route/focused floor; touches only what changed. */
+  private updateAssetCulling() {
+    const index = this.assetIndex;
+    const prev = this.shownAssets;
+    if (!index || !prev) return;
+    const focus = this.settings.floor;
+    const floorId = focus === 'all' ? null : (this.floors.find((f) => f.floor.level === focus)?.floor.id ?? null);
+    const next = visibleAssetIds(index, {
+      selection: this.selection,
+      focusFloorId: floorId,
+      highlightIds: this.highlightIds,
+      cap: this.assetCap,
+    });
+    if (!next) return;
+    const set = (id: string, visible: boolean) => {
+      const obj = this.objects.get(`asset:${id}`);
+      if (obj) obj.visible = visible;
+    };
+    for (const id of prev) if (!next.has(id)) set(id, false);
+    for (const id of next) if (!prev.has(id)) set(id, true);
+    this.shownAssets = next;
+    this.needsRender = true;
+  }
+
   // ---------------------------------------------------------------- overlays + route
 
   /** Swap an element's resting material (null = its own), keeping hover/selection logic intact. */
@@ -789,7 +859,17 @@ export class BuildingScene {
     };
     paint(this.closedIds, this.closedMat);
     paint(this.diagnosisIds, this.diagnosisMat);
-    paint(this.highlightIds, this.highlightMat);
+    // When the assistant marks objects, mark only those, not the rooms they stand in.
+    const assetRooms = new Set<string>();
+    const assetById = new Map(this.model?.assets.map((a) => [a.id, a]) ?? []);
+    for (const id of this.highlightIds) {
+      const room = assetById.get(id)?.space_id;
+      if (room) assetRooms.add(room);
+    }
+    paint(
+      this.highlightIds.filter((id) => !assetRooms.has(id)),
+      this.highlightMat,
+    );
     const selected = this.selection && this.lookup(this.selection);
     if (selected) this.paint(selected, this.selectMat);
     this.needsRender = true;
@@ -1374,6 +1454,7 @@ export class BuildingScene {
     this.root.traverse((o) => {
       if (o instanceof THREE.Mesh && o.material instanceof THREE.Material) o.material.needsUpdate = true;
     });
+    this.updateAssetCulling();
     this.buildGraph();
     this.updateGridAndShadows();
     if (this.selection) this.setSelection(this.selection, false);
@@ -1485,6 +1566,10 @@ export class BuildingScene {
     this.labelRenderer.setSize(w, h);
     for (const m of Object.values(this.routeMats)) m.resolution.set(w, h);
     this.doneMat.resolution.set(w, h);
+    if (assetCapFor(w) !== this.assetCap) {
+      this.initAssetCulling();
+      this.updateAssetCulling();
+    }
     this.needsRender = true;
   }
 
@@ -1509,21 +1594,38 @@ export class BuildingScene {
   /**
    * Show a room's pill only when the room looks wider on screen than the pill itself, so a
    * distant overview (and small phone screens) isn't buried under overlapping labels.
+   * Every room is measured at the orbit target's distance, so the choice follows room size
+   * (not which rooms happen to be nearer the camera); bigger rooms claim their spot first,
+   * overlapping pills are dropped, and a small hysteresis stops pills flickering while orbiting.
    */
   private cullRoomLabels() {
+    const w = this.container.clientWidth;
     const h = this.container.clientHeight;
     if (!h) return;
     const pxPerUnit = h / 2 / Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
-    const margin = this.container.clientWidth < 640 ? 2.6 : 2;
+    const margin = w < 640 ? 2.6 : 2;
+    const dist = Math.max(1e-3, this.camera.position.distanceTo(this.controls.target));
+    const labels: THREE.Object3D[] = [];
+    for (const fv of this.floors) if (fv.labels.visible) labels.push(...fv.labels.children);
+    labels.sort((a, b) => (b.userData.roomSize ?? 0) - (a.userData.roomSize ?? 0));
+    const placed: number[][] = [];
     const at = new THREE.Vector3();
-    for (const fv of this.floors) {
-      if (!fv.labels.visible) continue;
-      for (const label of fv.labels.children) {
-        const { roomSize, pillPx } = label.userData as { roomSize?: number; pillPx?: number };
-        if (!roomSize || !pillPx) continue;
-        const dist = this.camera.position.distanceTo(label.getWorldPosition(at));
-        label.visible = (roomSize / dist) * pxPerUnit >= pillPx * margin;
+    for (const label of labels) {
+      const { roomSize, pillPx } = label.userData as { roomSize?: number; pillPx?: number };
+      if (!roomSize || !pillPx) continue;
+      const needed = pillPx * margin * (label.visible ? 0.85 : 1);
+      let show = (roomSize / dist) * pxPerUnit >= needed;
+      if (show) {
+        label.getWorldPosition(at).project(this.camera);
+        const x = ((at.x + 1) / 2) * w;
+        const y = ((1 - at.y) / 2) * h;
+        const box = [x - pillPx / 2 - 2, y - 12, x + pillPx / 2 + 2, y + 12];
+        show =
+          at.z < 1 &&
+          !placed.some((p) => box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1]);
+        if (show) placed.push(box);
       }
+      label.visible = show;
     }
   }
 
@@ -1622,7 +1724,9 @@ export class BuildingScene {
     this.hovered = obj;
     this.renderer.domElement.style.cursor = obj ? 'pointer' : '';
     if (obj && !isSelected(obj) && !this.glb) this.paint(obj, this.hoverMat);
-    const title = obj && (obj.userData.title ?? obj.name);
+    // Selected or highlighted things already carry the pin/colour, so no second pill over them.
+    const marked = !!obj && (isSelected(obj) || this.highlightIds.includes(obj.userData.sel?.id));
+    const title = obj && !marked && (obj.userData.title ?? obj.name);
     this.hoverTip.visible = !!title;
     if (obj && title) {
       const box = new THREE.Box3().setFromObject(obj);

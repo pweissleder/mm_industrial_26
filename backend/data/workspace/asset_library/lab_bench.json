@@ -1,0 +1,142 @@
+{
+  "spec": {
+    "type": "lab_bench",
+    "category": "furniture",
+    "description": "Laboratory bench: worktop on cabinet blocks with kick base, rear reagent shelf and a sink basin.",
+    "default_height_m": 0.9,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.03
+        ],
+        "size": [
+          0.96,
+          0.9,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.3,
+          0.0,
+          0.36
+        ],
+        "size": [
+          0.38,
+          0.86,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.3,
+          0.0,
+          0.36
+        ],
+        "size": [
+          0.38,
+          0.86,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.4,
+          0.36
+        ],
+        "size": [
+          0.24,
+          0.06,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.65
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.4,
+          0.78
+        ],
+        "size": [
+          0.9,
+          0.04,
+          0.2
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.44,
+          0.9
+        ],
+        "size": [
+          0.9,
+          0.1,
+          0.03
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.3,
+          -0.2,
+          0.7
+        ],
+        "size": [
+          0.1,
+          0.1,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.35,
+          -0.15,
+          0.7
+        ],
+        "size": [
+          0.15,
+          0.1,
+          0.06
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.05,
+          0.3,
+          0.78
+        ],
+        "radius": 0.03,
+        "length": 0.2,
+        "axis": "z"
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "508b61330234",
+  "version": 1,
+  "created_at": "2026-10-24T16:41:10.837726Z"
+}

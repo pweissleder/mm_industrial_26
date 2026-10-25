@@ -1,0 +1,242 @@
+{
+  "spec": {
+    "type": "oscilloscope_station",
+    "category": "equipment",
+    "description": "Lab bench with oscilloscope, screen, knobs and instrument shelf",
+    "default_height_m": 1.4,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.58
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.05
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.46,
+          -0.44,
+          0.275
+        ],
+        "size": [
+          0.06,
+          0.08,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.46,
+          -0.44,
+          0.275
+        ],
+        "size": [
+          0.06,
+          0.08,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.46,
+          0.44,
+          0.275
+        ],
+        "size": [
+          0.06,
+          0.08,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.46,
+          0.44,
+          0.275
+        ],
+        "size": [
+          0.06,
+          0.08,
+          0.55
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.44,
+          0.15
+        ],
+        "size": [
+          0.86,
+          0.04,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.1,
+          0.12
+        ],
+        "size": [
+          0.85,
+          0.7,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.1,
+          0.05,
+          0.72
+        ],
+        "size": [
+          0.45,
+          0.5,
+          0.23
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.1,
+          -0.21,
+          0.73
+        ],
+        "size": [
+          0.3,
+          0.02,
+          0.15
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.12,
+          -0.21,
+          0.73
+        ],
+        "size": [
+          0.1,
+          0.02,
+          0.15
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.1,
+          -0.23,
+          0.8
+        ],
+        "radius": 0.025,
+        "length": 0.03,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.14,
+          -0.23,
+          0.74
+        ],
+        "radius": 0.025,
+        "length": 0.03,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.1,
+          -0.23,
+          0.68
+        ],
+        "radius": 0.025,
+        "length": 0.03,
+        "axis": "y"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.33,
+          0.05,
+          0.65
+        ],
+        "size": [
+          0.25,
+          0.4,
+          0.09
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.4,
+          0.4,
+          0.785
+        ],
+        "size": [
+          0.1,
+          0.1,
+          0.37
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.4,
+          0.4,
+          0.785
+        ],
+        "size": [
+          0.1,
+          0.1,
+          0.37
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.4,
+          0.97
+        ],
+        "size": [
+          0.9,
+          0.2,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.4,
+          0.89
+        ],
+        "size": [
+          0.6,
+          0.2,
+          0.1
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "508b61330234",
+  "version": 1,
+  "created_at": "2026-10-24T16:41:31.979838Z"
+}
