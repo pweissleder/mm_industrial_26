@@ -149,6 +149,20 @@ def build_tools(operation_fields: str) -> list[dict[str, Any]]:
             },
         ),
         tool(
+            "describe_surroundings",
+            "What is around the user right now (things, doors, exits), from their current position "
+            "and view direction in session_state.pose: sides ahead/left/right/behind are relative "
+            "to where they look; 'visible' only for a clear line in the same room. Use for "
+            "'what is on my right / behind me / in front of me'. If the view direction is unknown, "
+            "ask which way they face.",
+            {
+                "direction": {
+                    "type": "string",
+                    "enum": ["all", "ahead", "left", "right", "behind"],
+                }
+            },
+        ),
+        tool(
             "list_buildings",
             "List available buildings, optionally filtered by words.",
             {"query": {"type": ["string", "null"]}},

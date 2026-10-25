@@ -375,3 +375,28 @@ def test_c02_c03_wheelchair_with_closed_lift_never_gets_stairs(
             },
         ).json()
         assert r["constraints"]["step_free"] is True and r["reachable"] is False
+
+
+def test_s01_whats_on_my_right_uses_the_pose_and_view_direction(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    script = [
+        ("describe_surroundings", {"direction": "right"}),
+        "The door to the corridor is on your right.",
+        ("describe_surroundings", {"direction": "right"}),
+        "Which way are you facing?",
+    ]
+    with make_client(settings, datasets_dir, script) as client:
+        ingest(client)
+        pose = {
+            "floor_id": f"{B}-F1",
+            "space_id": OFFICE_F1,
+            "position": [2.5, 2.7],
+            "heading_deg": 90,
+        }
+        out = turn(client, "What's on my right?", pose=pose)
+        items = out["tools"][0]["output"]["items"]
+        assert items and all(i["side"] == "right" for i in items)
+        assert any(i["kind"] == "door" for i in items)
+        out = turn(client, "And now?", pose=None)  # pose cleared: must ask, not guess
+        assert out["tools"][0]["status"] == "error"

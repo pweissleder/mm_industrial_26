@@ -40,6 +40,7 @@ PHASES = {
     "building_fact": "Looking up building facts",
     "list_buildings": "Looking up buildings",
     "select_building": "Switching building",
+    "describe_surroundings": "Looking around you",
 }
 
 STEP_FREE_NOTE = (
@@ -71,6 +72,11 @@ Understanding requests
 - session_state.inspected is what the user is looking at on the map ("this", "what am I
   looking at", "how do I get there"). It is not their position; use it as a destination only
   when they say so. session_state.ui_note reports a map choice that could not be used.
+- "What's on my right / behind me": describe_surroundings (sides come from the view
+  direction; only 'visible' things are in sight; never claim something behind a wall is seen).
+- Something leaking, dripping or falling through the floor ("which room below is affected?"):
+  building_fact room_stacked for the room directly below (largest overlap on the floor below).
+  Say that this is the room directly underneath; do not simulate or promise water flow.
 - Search results never change the user's start or destination. Only use update_session for what
   the user actually said ("I'm in ...", "I'm next to the hand dryer", "I use a wheelchair").
 - "I don't know where I am, but there is X here": find_places for X. If one room matches, use it
@@ -129,6 +135,8 @@ def default_state() -> JSON:
         "last_route": None,
         # What the user is looking at on the map (not a start or destination).
         "inspected": None,
+        # The person's simulated pose and view direction (walker or manual walking), if any.
+        "pose": None,
         # A UI choice that could not be used this turn, told to the model once.
         "ui_note": None,
         # The start/destination as last sent by the UI (to notice when the UI drops it).
@@ -194,6 +202,7 @@ class Assistant:
             "building_fact": self.tool_building_fact,
             "list_buildings": self.tool_list_buildings,
             "select_building": self.tool_select_building,
+            "describe_surroundings": self.tool_describe_surroundings,
         }
 
     def _operation_fields(self) -> str:
@@ -349,6 +358,15 @@ class Assistant:
                 out["start"]["known_from"] = state["start_source"]
             out["destination"] = self.describe(data, state["destination"])
             out["inspected"] = self.describe(data, state.get("inspected"))
+            pose = state.get("pose")
+            if pose:
+                room = self.describe(data, {"kind": "space", "id": pose["space_id"]}) or {}
+                out["pose"] = {
+                    "room": room.get("name"),
+                    "floor": room.get("floor"),
+                    "view_direction_known": pose.get("heading_deg") is not None,
+                    "known_from": "simulated navigation",
+                }
             if state.get("ui_note"):
                 out["ui_note"] = state["ui_note"]
             closed = nav_state.get("closed", [])
@@ -407,6 +425,8 @@ class Assistant:
                 # Never fall back silently to an older place: drop it and tell the model.
                 state[key] = None
                 state["ui_note"] = f"The {key} the user picked could not be used: {error.message}"
+        if "pose" in ui:
+            state["pose"] = self._check_pose(data, ui.get("pose"))
         if "inspected" in ui or "selection" in ui:  # "selection": alias used by early clients
             inspected = ui.get("inspected", ui.get("selection"))
             state["inspected"] = (
@@ -725,6 +745,46 @@ class Assistant:
             ui["highlight"] = ids[:30]
         keep = ("operation", "value", "unit", "formatted_answer", "space_name", "space_ref")
         return {k: result[k] for k in keep if result.get(k) not in (None, "", [])}
+
+    @staticmethod
+    def _check_pose(data: JSON, pose: Any) -> JSON | None:
+        if not isinstance(pose, dict):
+            return None
+        spaces = {s["id"] for s in data["spaces"]}
+        position = pose.get("position")
+        heading = pose.get("heading_deg")
+        ok_pos = (
+            isinstance(position, list | tuple)
+            and len(position) == 2
+            and all(isinstance(v, int | float) and math.isfinite(v) for v in position)
+        )
+        if pose.get("space_id") not in spaces or not ok_pos:
+            return None
+        if not (isinstance(heading, int | float) and math.isfinite(heading)):
+            heading = None
+        return {
+            "space_id": pose["space_id"],
+            "position": [float(position[0]), float(position[1])],
+            "heading_deg": None if heading is None else float(heading) % 360,
+        }
+
+    def tool_describe_surroundings(self, session: Session, args: JSON, ui: JSON) -> JSON:
+        pose = session.state.get("pose")
+        if not session.state["building_id"]:
+            raise NavigationError("no_building", "No building is selected yet")
+        if not pose:
+            raise NavigationError(
+                "missing_pose",
+                "The user's position in the building is not known; ask where they are",
+            )
+        result = self.navigation.surroundings(
+            session.state["building_id"], pose["space_id"], pose["position"], pose["heading_deg"]
+        )
+        direction = args.get("direction") or "all"
+        if direction != "all" and result.get("heading_known"):
+            result["items"] = [i for i in result["items"] if i.get("side") == direction]
+            result["filtered_to"] = direction
+        return result
 
     def tool_list_buildings(self, session: Session, args: JSON, ui: JSON) -> JSON:
         words = [w for w in str(args.get("query") or "").lower().split() if w]

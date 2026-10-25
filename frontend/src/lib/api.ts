@@ -360,6 +360,14 @@ export interface UiState {
   destination?: Endpoint | null;
   /** What the user is looking at on the map (context for "this"), not a start/destination. */
   inspected?: { kind: string; id: string } | null;
+  /** The person's simulated pose and view heading (deg CCW from +X), for spatial questions. */
+  pose?: {
+    floor_id: string;
+    space_id: string;
+    position: Point;
+    heading_deg: number | null;
+    source: string;
+  } | null;
   mode?: NavMode;
   step_free?: boolean;
   profile?: ClearanceProfile;
