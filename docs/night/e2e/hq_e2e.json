@@ -1,0 +1,114 @@
+{
+  "when": "2026-10-25T01:18:38.522Z",
+  "passed": 8,
+  "total": 8,
+  "results": [
+    {
+      "name": "Q03_proc-factory-dev-003_opens_saved_hq_without_a_run",
+      "pass": true,
+      "ms": 4275,
+      "detail": {
+        "chip": "HQ ready. Show processing details",
+        "badge": "HQ",
+        "name": "Fertigung Ost 27"
+      }
+    },
+    {
+      "name": "Q03_proc-campus-dev-001_opens_saved_hq_without_a_run",
+      "pass": true,
+      "ms": 3977,
+      "detail": {
+        "chip": "HQ ready. Show processing details",
+        "badge": "HQ",
+        "name": "Laborgebäude 025"
+      }
+    },
+    {
+      "name": "Q03_swiss-1689_opens_saved_hq_without_a_run",
+      "pass": true,
+      "ms": 4676,
+      "detail": {
+        "chip": "HQ ready. Show processing details",
+        "badge": "HQ",
+        "name": "Residential building 1689"
+      }
+    },
+    {
+      "name": "Q03_second_open_reuses_the_file_no_generation",
+      "pass": true,
+      "ms": 3147,
+      "detail": {
+        "pipeline_posts": 0,
+        "glb_fetches_total": 4,
+        "glb_fetches_second_open": 1,
+        "runs": {
+          "proc-factory-dev-003": 1,
+          "proc-campus-dev-001": 4,
+          "swiss-1689": 1
+        }
+      }
+    },
+    {
+      "name": "Q06_frame_time_desktop_overview_hq",
+      "pass": true,
+      "ms": 3684,
+      "detail": {
+        "frames": 40,
+        "camera": "overview",
+        "median_ms": 43.6,
+        "p95_ms": 49,
+        "est_fps": 23,
+        "draw_calls": 753,
+        "triangles": 13804,
+        "context": "headless Chrome, SwiftShader software GL, 1440x900, this laptop"
+      }
+    },
+    {
+      "name": "Q06_frame_time_mobile_emulation_overview",
+      "pass": true,
+      "ms": 14737,
+      "detail": {
+        "frames": 40,
+        "camera": "overview",
+        "median_ms": 242.1,
+        "p95_ms": 275.3,
+        "est_fps": 4,
+        "draw_calls": 1779,
+        "triangles": 144620,
+        "context": "390x844 DPR2 emulation, CPU throttled 4x, SwiftShader; not a real phone"
+      }
+    },
+    {
+      "name": "Q05_moved_thing_shows_live_view_and_outdated_hq",
+      "pass": true,
+      "ms": 6712,
+      "detail": {
+        "moved": "Chair 0.20-A",
+        "chip": "HQ outdated · showing LQ. Show processing details",
+        "badge": "Low",
+        "note": "The high-quality model is outdated: Chair 0.20-A changed after it was built. You see the live low-quality view, which matches routing. Rebuild starts from the d"
+      }
+    },
+    {
+      "name": "Q04_explicit_rebuild_runs_with_unchanged_input",
+      "pass": true,
+      "ms": 9437,
+      "detail": {
+        "run": "2f082e3c538f",
+        "offline": true,
+        "stages": {
+          "raw_validation": "passed",
+          "graph_build": "passed",
+          "graph_validate": "passed",
+          "floorplan": "passed",
+          "equipment": "passed",
+          "variant_creator": "skipped",
+          "model_validate": "passed",
+          "summarize": "passed"
+        },
+        "updated_before": "2026-10-25T01:17:10.955919Z",
+        "updated_after": "2026-10-25T01:18:35.084238Z"
+      }
+    }
+  ]
+}

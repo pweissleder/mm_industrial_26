@@ -52,6 +52,7 @@ import RecapCard from './RecapCard';
 import { MemoryRecorder, downloadExport, memoryApi, type MemoryRecap } from '../../lib/memory';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
+import { hqDifferences } from '../../lib/hqStale';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
 import {
   DEFAULT_VIEW,
@@ -263,7 +264,9 @@ export default function AriNavApp() {
     }
   }, [reviewId]);
 
-  const showingHq = source === HQ_SOURCE && !!hq;
+  // Baked HQ furniture must not drift from the router's building: if things moved, show LQ (Q05).
+  const hqStale = useMemo(() => (hq && model ? hqDifferences(hq.building, model) : []), [hq, model]);
+  const showingHq = source === HQ_SOURCE && !!hq && hqStale.length === 0;
   // The HQ model is baked, so only closures (painted red) follow the agent's edits there.
   const hqBuilding = hq?.building;
   const modelClosed = model?.closed;
@@ -784,7 +787,7 @@ export default function AriNavApp() {
             <span className="mode-toggle__label">Developer</span>
           </button>
         </div>
-        <PipelineChip state={run} onOpen={() => setPipelineOpen(true)} />
+        <PipelineChip state={run} stale={hqStale} onOpen={() => setPipelineOpen(true)} />
         <button className="btn btn--accent topbar__upload" onClick={() => setUploadOpen(true)}>
           <UploadIcon width={17} height={17} />
           <span className="topbar__upload-label">Upload assets</span>
@@ -1002,7 +1005,7 @@ export default function AriNavApp() {
         onUploaded={(r) => void handleUploaded(r)}
       />
 
-      <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />
+      <PipelineDialog open={pipelineOpen} pipeline={pipeline} stale={hqStale} onClose={() => setPipelineOpen(false)} />
 
       {toast && (
         <div className="toast" role="status">

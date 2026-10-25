@@ -24,10 +24,25 @@ function progress(run: RunRecord): string {
   return `${Math.min(done + 1, STAGES.length)}/${STAGES.length}`;
 }
 
-export function PipelineChip({ state, onOpen }: { state: PipelineState; onOpen: () => void }) {
+export function PipelineChip({
+  state,
+  onOpen,
+  stale = [],
+}: {
+  state: PipelineState;
+  onOpen: () => void;
+  /** Things changed since the HQ build: the HQ view is outdated and the live view is shown. */
+  stale?: string[];
+}) {
   if (state.phase === 'idle') return null;
   const [tone, label, title] =
-    state.phase === 'not_built'
+    state.phase === 'ready' && stale.length
+      ? [
+          'attention',
+          'HQ outdated · showing LQ',
+          `${stale.length} thing(s) changed since the HQ model was built; the live view is shown until a rebuild.`,
+        ]
+      : state.phase === 'not_built'
       ? [
           'off',
           'LQ only · Build HQ',
@@ -66,9 +81,10 @@ interface DialogProps {
   open: boolean;
   pipeline: Pipeline;
   onClose: () => void;
+  stale?: string[];
 }
 
-export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
+export function PipelineDialog({ open, pipeline, onClose, stale = [] }: DialogProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const { state } = pipeline;
   const run =
@@ -114,7 +130,9 @@ export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
       : state.phase === 'review'
       ? 'Your decision is needed'
       : state.phase === 'ready'
-        ? 'High-quality model ready'
+        ? stale.length
+          ? 'High-quality model outdated'
+          : 'High-quality model ready'
         : state.phase === 'failed'
           ? 'High-quality build failed'
           : 'Building the high-quality model';
@@ -144,6 +162,15 @@ export function PipelineDialog({ open, pipeline, onClose }: DialogProps) {
             assistant work on it as usual. Building the high-quality version runs the ingestion
             pipeline, which calls Claude (Opus, Sonnet, Haiku; roughly $0.30 to $1.50 per building)
             when the server has an API key. Automatic builds are off; change that in Developer mode.
+          </p>
+        )}
+
+        {state.phase === 'ready' && stale.length > 0 && (
+          <p className="muted" role="note">
+            The high-quality model is outdated: {stale.slice(0, 3).join(', ')}
+            {stale.length > 3 ? ` and ${stale.length - 3} more` : ''} changed after it was built.
+            You see the live low-quality view, which matches routing. Rebuild starts from the
+            dataset file, so changes made only in this session stay marked until they are in it.
           </p>
         )}
 
