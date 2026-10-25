@@ -23,6 +23,7 @@ from app.pipeline.state import (
     RunStatus,
     StageReport,
 )
+from tests.pipeline.factories import asset, make_building_dict, opening
 
 DATASET = "proc-factory-dev-003"
 SAMPLE = BACKEND_DIR / "data" / "datasets" / DATASET
@@ -78,6 +79,78 @@ def test_unchanged_input_is_skipped_unless_forced(runner: PipelineRunner) -> Non
 
     forced = runner.run_sync(DATASET, force=True)
     assert forced.stages["raw_validation"].status == "passed"
+
+
+def test_graph_mode_runs_cleanup_and_graph_only(runner: PipelineRunner) -> None:
+    record = runner.run_sync(DATASET, mode="graph")
+
+    assert record.status == RunStatus.COMPLETED, record
+    assert record.mode == "graph"
+    for stage in ("raw_validation", "graph_build", "graph_validate"):
+        assert record.stages[stage].status == "passed"
+    for stage in ("floorplan", "equipment", "model_validate", "summarize", "suggest"):
+        assert record.stages[stage].status == "skipped"
+    assert not record.decisions or all(d["action"] == "proceed" for d in record.decisions)
+
+    store = runner.workspace.locations
+    location = store.get(DATASET)
+    assert location is not None and location.metadata is None
+    assert location.pillars["validation"].status == "done"
+    assert location.pillars["graph"].status == "done"
+    assert location.pillars["assets_3d"].status == "skipped"
+    assert location.pillars["metadata"].status == "skipped"
+    assert "model" not in location.artifacts
+    assert not store.path(DATASET, "3d/model.glb").exists()
+    assert store.path(DATASET, "graph/room_graph.json").is_file()
+
+
+def test_graph_mode_keeps_the_source_geometry(runner: PipelineRunner) -> None:
+    runner.run_sync(DATASET, mode="graph")
+
+    raw = json.loads((SAMPLE / "building.json").read_bytes())
+    cleaned = runner.workspace.locations.read_building(DATASET)
+    for group in ("floors", "spaces", "openings", "vertical_connectors"):
+        assert cleaned[group] == raw[group], group
+
+
+@pytest.mark.parametrize(("mode", "openings_left"), [("graph", 3), ("full", 2)])
+def test_only_graph_mode_keeps_a_duplicate_entrance(
+    pipeline_settings: Settings, mode: str, openings_left: int
+) -> None:
+    building = make_building_dict(
+        building_id="dup-001",
+        openings=[
+            opening("O1", ["S1", "S2"]),
+            opening("E1", ["S1", "outside"], (0.0, 5.0), kind="entrance"),
+            opening("E2", ["S1", "outside"], (0.0, 5.0), kind="entrance"),
+        ],
+        assets=[asset("A1", rotation_deg=450.0)],
+    )
+    folder = pipeline_settings.datasets_dir / "dup-001"
+    folder.mkdir()
+    (folder / "building.json").write_text(json.dumps(building))
+    runner = PipelineRunner.from_settings(pipeline_settings, offline=True)
+
+    record = runner.run_sync("dup-001", mode=mode)  # type: ignore[arg-type]
+
+    assert record.stages["raw_validation"].status == "passed"
+    cleaned = runner.workspace.locations.read_building("dup-001")
+    assert len(cleaned["openings"]) == openings_left
+    assert cleaned["assets"][0]["footprint"]["rotation_deg"] == 90.0  # safe fix in both modes
+
+
+def test_graph_mode_is_skipped_after_a_run_and_full_mode_still_builds(
+    runner: PipelineRunner,
+) -> None:
+    runner.run_sync(DATASET, mode="graph")
+
+    again = runner.run_sync(DATASET, mode="graph")
+    assert again.stages["raw_validation"].status == "pending"
+    assert again.decisions[-1]["action"] == "skip"
+
+    full = runner.run_sync(DATASET)
+    assert full.stages["floorplan"].status == "passed"
+    assert runner.workspace.locations.path(DATASET, "3d/model.glb").is_file()
 
 
 def _failing_floorplan(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -162,6 +235,21 @@ def test_api_runs_pipeline_and_serves_location(client: TestClient) -> None:
     assert building.status_code == 200 and building.json()["building"]["id"] == DATASET
     preview = client.get(f"/api/locations/{DATASET}/files/3d/previews/plan_floor_0.png")
     assert preview.status_code == 200 and preview.headers["content-type"] == "image/png"
+
+
+def test_api_starts_a_graph_only_run(client: TestClient) -> None:
+    started = client.post("/api/pipeline-runs", json={"dataset": DATASET, "mode": "graph"})
+    assert started.status_code == 202 and started.json()["mode"] == "graph"
+
+    client.portal.call(client.app.state.pipeline_runner.wait)  # type: ignore[union-attr,attr-defined]
+
+    run = client.get(f"/api/pipeline-runs/{started.json()['run_id']}").json()
+    assert run["status"] == "completed", run
+    assert run["stages"]["floorplan"]["status"] == "skipped"
+    assert client.get("/api/locations").json()[0]["has_model"] is False
+    assert client.get(f"/api/buildings/{DATASET}").status_code == 200
+    bad = client.post("/api/pipeline-runs", json={"dataset": DATASET, "mode": "3d"})
+    assert bad.status_code == 422
 
 
 def test_api_location_files_stay_inside_the_location(client: TestClient) -> None:
@@ -350,3 +438,25 @@ def test_offline_summary_describes_what_the_site_is_for() -> None:
     assert "CNC milling" in text.summary and "injection moulding" in text.summary
     assert "forklift" not in text.summary
     assert text.floors[1].description.startswith("Floor 1: offices")
+
+
+def test_offline_suggestions_use_real_names() -> None:
+    from app.domain.building import BuildingFile
+    from app.pipeline.agents.suggester import MAX_LEN, template_suggestions
+    from app.pipeline.tools.stats import compute_location_stats
+
+    raw = (BACKEND_DIR / "data" / "datasets" / DATASET / "building.json").read_text()
+    stats = compute_location_stats(BuildingFile.model_validate_json(raw))
+    suggestions = template_suggestions(stats)
+
+    assert len(suggestions) == 3 and len(set(suggestions)) == 3
+    assert all(s.strip() and len(s) <= MAX_LEN for s in suggestions)
+    names = {s.name for s in stats.spaces.values()} | {f.name for f in stats.floors}
+    assert any(n in s for s in suggestions for n in names)
+
+
+def test_pipeline_writes_three_suggestions(runner: PipelineRunner) -> None:
+    runner.run_sync(DATASET)
+    location = runner.workspace.locations.get(DATASET)
+    assert location is not None and location.metadata is not None
+    assert len(location.metadata.suggestions) == 3

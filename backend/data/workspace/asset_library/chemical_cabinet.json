@@ -1,0 +1,144 @@
+{
+  "spec": {
+    "type": "chemical_cabinet",
+    "category": "furniture",
+    "description": "Two-door chemical storage cabinet with plinth, handles, vents",
+    "default_height_m": 1.9,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.025
+        ],
+        "size": [
+          0.96,
+          0.9,
+          0.05
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.01,
+          0.52
+        ],
+        "size": [
+          1.0,
+          0.96,
+          0.94
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.99
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.02
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.25,
+          -0.485,
+          0.5
+        ],
+        "size": [
+          0.46,
+          0.02,
+          0.8
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.25,
+          -0.485,
+          0.5
+        ],
+        "size": [
+          0.46,
+          0.02,
+          0.8
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.06,
+          -0.49,
+          0.5
+        ],
+        "size": [
+          0.03,
+          0.02,
+          0.25
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.06,
+          -0.49,
+          0.5
+        ],
+        "size": [
+          0.03,
+          0.02,
+          0.25
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.25,
+          -0.485,
+          0.94
+        ],
+        "size": [
+          0.3,
+          0.02,
+          0.03
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.25,
+          -0.485,
+          0.94
+        ],
+        "size": [
+          0.3,
+          0.02,
+          0.03
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.485,
+          0.09
+        ],
+        "size": [
+          0.9,
+          0.02,
+          0.03
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "508b61330234",
+  "version": 1,
+  "created_at": "2026-10-24T16:41:09.424380Z"
+}

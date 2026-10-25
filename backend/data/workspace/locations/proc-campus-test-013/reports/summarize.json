@@ -1,0 +1,23 @@
+{
+  "stage": "summarize",
+  "status": "passed",
+  "summary": "Metadata written for 284 spaces on 7 floors.",
+  "metrics": {
+    "spaces": 284,
+    "key_facts": 7
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "location.json"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 23801,
+    "output_tokens": 19870,
+    "cache_read_input_tokens": 0,
+    "calls": 6
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:16:46.820562Z"
+}

@@ -1,0 +1,30 @@
+{
+  "stage": "raw_validation",
+  "status": "passed",
+  "summary": "1 issues found, 0 fixed deterministically. The building had one open issue, an info-level overlapping_storeys between F0 and F1. F0 is 8 m tall and F1 starts at 3.5 m. I accepted it as an intended mezzanine inside a tall factory hall and made no data changes. I did not re-run the checks after accepting, but the accept call reported no open issues.",
+  "metrics": {
+    "issues_found": 1,
+    "fixed": 0,
+    "accepted": 1,
+    "open": 0,
+    "open_errors": 0,
+    "patches": 0,
+    "open_by_class": {}
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "building.json",
+    "issues.json",
+    "patches.json"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 13978,
+    "output_tokens": 396,
+    "cache_read_input_tokens": 0,
+    "calls": 3
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:38:54.919422Z"
+}

@@ -221,5 +221,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Ingestion pipeline output (locations, runs, asset library, memory)
-backend/data/workspace/
+
+# Benchmark runs: keep reports, not the per-run pipeline workspace
+benchmark_results/*/workspace/
+benchmark_results/*.log
+
+# Playwright MCP browser session data
+.playwright-mcp/

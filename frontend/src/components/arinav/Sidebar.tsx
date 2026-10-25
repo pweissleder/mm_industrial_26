@@ -9,25 +9,14 @@ import {
 } from 'react';
 import {
   ASSET_COLORS,
-  floorLabel,
   humanize,
   polygonArea,
   spaceColor,
   type BuildingModel,
   type Selection,
 } from '../../lib/building';
-import {
-  CloseIcon,
-  CodeIcon,
-  CubeIcon,
-  FitIcon,
-  FrontIcon,
-  LayersIcon,
-  PinIcon,
-  SearchIcon,
-  TopIcon,
-} from './Icons';
-import { LAYERS, type CameraAction, type ViewSettings } from './view';
+import { ChevronIcon, CloseIcon, CodeIcon, LayersIcon, PinIcon, SearchIcon } from './Icons';
+import { LAYERS, type ViewSettings } from './view';
 
 export const GENERATED_SOURCE = '';
 /** The ingestion pipeline's model.glb; dataset file names can't start with ':'. */
@@ -42,6 +31,10 @@ interface Props {
   /** The pipeline's building summary, when its result is shown. */
   summary?: string;
   hqAvailable: boolean;
+  /** No building.json yet (being reconstructed from floor plans): no browser preview. */
+  lowUnavailable?: boolean;
+  /** Uploaded datasets without a building.json, listed as "(from floor plans)". */
+  pending?: string[];
   sources: string[];
   source: string;
   onSource: (source: string) => void;
@@ -49,7 +42,6 @@ interface Props {
   onSettings: (settings: ViewSettings) => void;
   selection: Selection | null;
   onSelect: (selection: Selection) => void;
-  onCamera: (action: CameraAction) => void;
   onClose: () => void;
   /** Developer mode: the developer controls, shown in their own tab. */
   developer?: ReactNode;
@@ -120,11 +112,12 @@ function LocationTab({
   model,
   summary,
   hqAvailable,
+  lowUnavailable = false,
+  pending = [],
   sources,
   source,
   onSource,
   settings,
-  onSettings,
   selection,
   onSelect,
 }: Props) {
@@ -155,7 +148,6 @@ function LocationTab({
   }, [model, settings.floor, floorOf]);
 
   const focusFloor = floors.find((f) => f.level === settings.floor);
-  const setFloor = (floor: ViewSettings['floor']) => onSettings({ ...settings, floor });
 
   return (
     <>
@@ -173,7 +165,7 @@ function LocationTab({
             {!datasets.length && <option value="">No buildings yet — upload one</option>}
             {datasets.map((d) => (
               <option key={d} value={d}>
-                {d}
+                {pending.includes(d) ? `${d} (from floor plans)` : d}
               </option>
             ))}
           </select>
@@ -190,7 +182,7 @@ function LocationTab({
           </div>
         )}
         {loading && <p className="muted">Loading building…</p>}
-        {(sources.length > 0 || hqAvailable) && (
+        {(sources.length > 0 || hqAvailable || lowUnavailable) && (
           <>
             <span className="section__title" id="source-label">
               3D source
@@ -207,8 +199,13 @@ function LocationTab({
               </button>
               <button
                 className="segmented__item"
-                aria-pressed={source === GENERATED_SOURCE}
-                title="Quick preview generated in the browser"
+                aria-pressed={source === GENERATED_SOURCE && !lowUnavailable}
+                disabled={lowUnavailable}
+                title={
+                  lowUnavailable
+                    ? 'Not available – this dataset has no building.json; it is being reconstructed from the floor plans'
+                    : 'Quick preview generated in the browser'
+                }
                 onClick={() => onSource(GENERATED_SOURCE)}
               >
                 Preview
@@ -231,34 +228,6 @@ function LocationTab({
           </>
         )}
       </section>
-
-      {floors.length > 0 && (
-        <section className="section">
-          <span className="section__title">Floor</span>
-          <div className="floor-picker" role="radiogroup" aria-label="Floor">
-            <button
-              role="radio"
-              aria-checked={settings.floor === 'all'}
-              className="chip"
-              onClick={() => setFloor('all')}
-            >
-              All
-            </button>
-            {floors.map((f) => (
-              <button
-                key={f.id}
-                role="radio"
-                aria-checked={settings.floor === f.level}
-                className="chip"
-                title={f.name}
-                onClick={() => setFloor(f.level)}
-              >
-                {floorLabel(f)}
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
 
       {model && (
         <section className="section section--grow">
@@ -405,32 +374,13 @@ function LocationRow(props: {
   );
 }
 
-function ViewTab({ settings, onSettings, onCamera }: Props) {
+function ViewTab({ settings, onSettings }: Props) {
   const set = <K extends keyof ViewSettings>(key: K, value: ViewSettings[K]) =>
     onSettings({ ...settings, [key]: value });
 
   return (
     <>
-      <section className="section">
-        <span className="section__title">Camera</span>
-        <div className="camera-grid">
-          <button className="tile" onClick={() => onCamera('iso')}>
-            <CubeIcon /> 3D
-          </button>
-          <button className="tile" onClick={() => onCamera('top')}>
-            <TopIcon /> Top
-          </button>
-          <button className="tile" onClick={() => onCamera('front')}>
-            <FrontIcon /> Front
-          </button>
-          <button className="tile" onClick={() => onCamera('fit')}>
-            <FitIcon /> Fit
-          </button>
-        </div>
-      </section>
-
-      <section className="section">
-        <span className="section__title">Layers</span>
+      <CollapsibleSection title="Layers">
         <div className="toggle-list">
           {LAYERS.map((l) => (
             <Switch
@@ -441,10 +391,9 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
             />
           ))}
         </div>
-      </section>
+      </CollapsibleSection>
 
-      <section className="section">
-        <span className="section__title">Detail settings</span>
+      <CollapsibleSection title="Detail settings">
         <Slider
           label="Explode floors"
           value={settings.explode}
@@ -486,7 +435,7 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
           <Switch label="Shadows" checked={settings.shadows} onChange={(v) => set('shadows', v)} />
           <Switch label="Ground grid" checked={settings.grid} onChange={(v) => set('grid', v)} />
         </div>
-      </section>
+      </CollapsibleSection>
 
       <section className="section">
         <span className="section__title">Legend</span>
@@ -504,6 +453,27 @@ function ViewTab({ settings, onSettings, onCamera }: Props) {
         </ul>
       </section>
     </>
+  );
+}
+
+/** A settings section that starts folded (unless `defaultOpen`); the header toggles it. */
+export function CollapsibleSection({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string;
+  children: ReactNode;
+  defaultOpen?: boolean;
+}) {
+  return (
+    <details className="section section--collapsible" open={defaultOpen || undefined}>
+      <summary className="section__title section__toggle">
+        {title}
+        <ChevronIcon width={16} height={16} className="section__chevron" aria-hidden="true" />
+      </summary>
+      <div className="section__content">{children}</div>
+    </details>
   );
 }
 

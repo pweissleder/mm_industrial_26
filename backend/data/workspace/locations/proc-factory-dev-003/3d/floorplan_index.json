@@ -1,0 +1,2665 @@
+{
+ "building": {
+  "id": "proc-factory-dev-003",
+  "kind": "building"
+ },
+ "floor:proc-factory-dev-003-F0": {
+  "elevation_m": 0.0,
+  "height_m": 8.0,
+  "id": "proc-factory-dev-003-F0",
+  "kind": "floor",
+  "level": 0
+ },
+ "floor:proc-factory-dev-003-F1": {
+  "elevation_m": 3.5,
+  "height_m": 3.5,
+  "id": "proc-factory-dev-003-F1",
+  "kind": "floor",
+  "level": 1
+ },
+ "hall_lines:proc-factory-dev-003-F0": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "kind": "hall_lines"
+ },
+ "marker:proc-factory-dev-003-F0-S017": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-factory-dev-003-F0-S017"
+ },
+ "marker:proc-factory-dev-003-F0-S018": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-factory-dev-003-F0-S018"
+ },
+ "marker:proc-factory-dev-003-F1-S002": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-factory-dev-003-F1-S002"
+ },
+ "marker:proc-factory-dev-003-F1-S003": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-factory-dev-003-F1-S003"
+ },
+ "proc-factory-dev-003-F0-O0001": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0001",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -14.5,
+   8.55
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S001",
+   "proc-factory-dev-003-F0-S006"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0002": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0002",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -7.25,
+   17.1
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S001",
+   "proc-factory-dev-003-F0-S002"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0003": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0003",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -14.5,
+   25.65
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S002",
+   "proc-factory-dev-003-F0-S007"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0004": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0004",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -7.25,
+   34.2
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S002",
+   "proc-factory-dev-003-F0-S003"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0005": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0005",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -14.5,
+   42.75
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S003",
+   "proc-factory-dev-003-F0-S008"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0006": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0006",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -7.25,
+   51.3
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S003",
+   "proc-factory-dev-003-F0-S004"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0007": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0007",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -14.5,
+   59.85
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S004",
+   "proc-factory-dev-003-F0-S009"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0008": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0008",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -14.5,
+   76.95
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S005",
+   "proc-factory-dev-003-F0-S010"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0009": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0009",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -29.0,
+   8.55
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S006",
+   "proc-factory-dev-003-F0-S011"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0010": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0010",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -21.75,
+   17.1
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S006",
+   "proc-factory-dev-003-F0-S007"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0011": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0011",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -29.0,
+   25.65
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S007",
+   "proc-factory-dev-003-F0-S012"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0012": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0012",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -21.75,
+   34.2
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S007",
+   "proc-factory-dev-003-F0-S008"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0013": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0013",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -29.0,
+   42.75
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S008",
+   "proc-factory-dev-003-F0-S013"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0014": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0014",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -21.75,
+   51.3
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S008",
+   "proc-factory-dev-003-F0-S009"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0015": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0015",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -29.0,
+   59.85
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S009",
+   "proc-factory-dev-003-F0-S014"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0016": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0016",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -21.75,
+   68.4
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S009",
+   "proc-factory-dev-003-F0-S010"
+  ],
+  "width_m": 14.6
+ },
+ "proc-factory-dev-003-F0-O0017": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0017",
+  "kind": "opening",
+  "opening_kind": "opening",
+  "position": [
+   -29.0,
+   76.95
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S010",
+   "proc-factory-dev-003-F0-S015"
+  ],
+  "width_m": 17.2
+ },
+ "proc-factory-dev-003-F0-O0018": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0018",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   -43.5,
+   25.65
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S012",
+   "outside"
+  ],
+  "width_m": 4.0
+ },
+ "proc-factory-dev-003-F0-O0019": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0019",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   -43.5,
+   42.75
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S013",
+   "outside"
+  ],
+  "width_m": 4.0
+ },
+ "proc-factory-dev-003-F0-O0020": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0020",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   -21.75,
+   85.5
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S010",
+   "outside"
+  ],
+  "width_m": 5.0
+ },
+ "proc-factory-dev-003-F0-O0021": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0021",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   2.003
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S017",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0022": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0022",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   5.25
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S018",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.1
+ },
+ "proc-factory-dev-003-F0-O0023": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0023",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   2.718
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S019",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0024": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0024",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   0.0,
+   2.718
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S019",
+   "proc-factory-dev-003-F0-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0025": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0025",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   7.585
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S020",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0026": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0026",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   12.3
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S021",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0027": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0027",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   17.04
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S022",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0028": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0028",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   20.905
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S023",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0029": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0029",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   25.33
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S024",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0030": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0030",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   30.32
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S025",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0031": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0031",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   35.195
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S026",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0032": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0032",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   39.705
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S027",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0033": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0033",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   44.07
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S028",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0034": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0034",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   49.35
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S029",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0035": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0035",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   55.105
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S030",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0036": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0036",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   60.12
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S031",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0037": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0037",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   64.085
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S032",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0038": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0038",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   67.892
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S033",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0039": {
+  "depth_m": 0.6,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0039",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   0.0,
+   67.195
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S033",
+   "proc-factory-dev-003-F0-S004"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0040": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0040",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   8.675
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S034",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0041": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0041",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   13.81
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S035",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0042": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0042",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   19.54
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S036",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0043": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0043",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   24.5
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S037",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0044": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0044",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   28.38
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S038",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0045": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0045",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   33.015
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S039",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0046": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0046",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   38.315
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S040",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0047": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0047",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   42.97
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S041",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F0-O0048": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0048",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   47.11
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S042",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0049": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0049",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   51.34
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S043",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0050": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0050",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   55.385
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S044",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0051": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0051",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   59.895
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S045",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F0-O0052": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0052",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   64.51
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S046",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0053": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0053",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   68.032
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S047",
+   "proc-factory-dev-003-F0-S016"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F0-O0054": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-O0054",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   6.0,
+   69.8
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F0-S016",
+   "outside"
+  ],
+  "width_m": 1.8
+ },
+ "proc-factory-dev-003-F0-S001": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S001",
+  "kind": "space",
+  "name": "Production zone H-A1",
+  "ref": "H-A1",
+  "room_type": "production_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S002": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S002",
+  "kind": "space",
+  "name": "Assembly zone H-A2",
+  "ref": "H-A2",
+  "room_type": "assembly_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S003": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S003",
+  "kind": "space",
+  "name": "Additive zone H-A3",
+  "ref": "H-A3",
+  "room_type": "additive_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S004": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S004",
+  "kind": "space",
+  "name": "Production zone H-A4",
+  "ref": "H-A4",
+  "room_type": "production_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S005": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S005",
+  "kind": "space",
+  "name": "Warehouse zone H-A5",
+  "ref": "H-A5",
+  "room_type": "warehouse_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S006": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S006",
+  "kind": "space",
+  "name": "Main aisle H-B1",
+  "ref": "H-B1",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F0-S007": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S007",
+  "kind": "space",
+  "name": "Main aisle H-B2",
+  "ref": "H-B2",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F0-S008": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S008",
+  "kind": "space",
+  "name": "Main aisle H-B3",
+  "ref": "H-B3",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F0-S009": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S009",
+  "kind": "space",
+  "name": "Main aisle H-B4",
+  "ref": "H-B4",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F0-S010": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S010",
+  "kind": "space",
+  "name": "Main aisle H-B5",
+  "ref": "H-B5",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F0-S011": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S011",
+  "kind": "space",
+  "name": "Warehouse zone H-C1",
+  "ref": "H-C1",
+  "room_type": "warehouse_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S012": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S012",
+  "kind": "space",
+  "name": "Warehouse zone H-C2",
+  "ref": "H-C2",
+  "room_type": "warehouse_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S013": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S013",
+  "kind": "space",
+  "name": "Warehouse zone H-C3",
+  "ref": "H-C3",
+  "room_type": "warehouse_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S014": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S014",
+  "kind": "space",
+  "name": "Warehouse zone H-C4",
+  "ref": "H-C4",
+  "room_type": "warehouse_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S015": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S015",
+  "kind": "space",
+  "name": "Logistics zone H-C5",
+  "ref": "H-C5",
+  "room_type": "logistics_zone",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S016": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S016",
+  "kind": "space",
+  "name": "Office corridor 0.16",
+  "ref": "0.16",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F0-S017": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S017",
+  "kind": "space",
+  "name": "Staircase 0.17",
+  "ref": "0.17",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-factory-dev-003-F0-S018": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S018",
+  "kind": "space",
+  "name": "Lift 0.18",
+  "ref": "0.18",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-factory-dev-003-F0-S019": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S019",
+  "kind": "space",
+  "name": "Hall access 0.19",
+  "ref": "0.19",
+  "room_type": "lobby",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S020": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S020",
+  "kind": "space",
+  "name": "Meeting room 0.20",
+  "ref": "0.20",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S021": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S021",
+  "kind": "space",
+  "name": "Quality lab 0.21",
+  "ref": "0.21",
+  "room_type": "quality_lab",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S022": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S022",
+  "kind": "space",
+  "name": "Toilet 0.22",
+  "ref": "0.22",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S023": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S023",
+  "kind": "space",
+  "name": "Office 0.23",
+  "ref": "0.23",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S024": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S024",
+  "kind": "space",
+  "name": "Meeting room 0.24",
+  "ref": "0.24",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S025": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S025",
+  "kind": "space",
+  "name": "Office 0.25",
+  "ref": "0.25",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S026": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S026",
+  "kind": "space",
+  "name": "Office 0.26",
+  "ref": "0.26",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S027": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S027",
+  "kind": "space",
+  "name": "Meeting room 0.27",
+  "ref": "0.27",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S028": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S028",
+  "kind": "space",
+  "name": "Kitchen 0.28",
+  "ref": "0.28",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S029": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S029",
+  "kind": "space",
+  "name": "Server room 0.29",
+  "ref": "0.29",
+  "room_type": "server_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S030": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S030",
+  "kind": "space",
+  "name": "Office 0.30",
+  "ref": "0.30",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S031": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S031",
+  "kind": "space",
+  "name": "Kitchen 0.31",
+  "ref": "0.31",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S032": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S032",
+  "kind": "space",
+  "name": "Office 0.32",
+  "ref": "0.32",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S033": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S033",
+  "kind": "space",
+  "name": "Hall access 0.33",
+  "ref": "0.33",
+  "room_type": "lobby",
+  "type": "hall"
+ },
+ "proc-factory-dev-003-F0-S034": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S034",
+  "kind": "space",
+  "name": "Office 0.34",
+  "ref": "0.34",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S035": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S035",
+  "kind": "space",
+  "name": "Meeting room 0.35",
+  "ref": "0.35",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S036": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S036",
+  "kind": "space",
+  "name": "Meeting room 0.36",
+  "ref": "0.36",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S037": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S037",
+  "kind": "space",
+  "name": "Office 0.37",
+  "ref": "0.37",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S038": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S038",
+  "kind": "space",
+  "name": "Office 0.38",
+  "ref": "0.38",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S039": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S039",
+  "kind": "space",
+  "name": "Locker room 0.39",
+  "ref": "0.39",
+  "room_type": "locker_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S040": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S040",
+  "kind": "space",
+  "name": "Meeting room 0.40",
+  "ref": "0.40",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S041": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S041",
+  "kind": "space",
+  "name": "Meeting room 0.41",
+  "ref": "0.41",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S042": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S042",
+  "kind": "space",
+  "name": "Office 0.42",
+  "ref": "0.42",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S043": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S043",
+  "kind": "space",
+  "name": "Server room 0.43",
+  "ref": "0.43",
+  "room_type": "server_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S044": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S044",
+  "kind": "space",
+  "name": "Office 0.44",
+  "ref": "0.44",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S045": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S045",
+  "kind": "space",
+  "name": "Server room 0.45",
+  "ref": "0.45",
+  "room_type": "server_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S046": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S046",
+  "kind": "space",
+  "name": "Office 0.46",
+  "ref": "0.46",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F0-S047": {
+  "floor_id": "proc-factory-dev-003-F0",
+  "id": "proc-factory-dev-003-F0-S047",
+  "kind": "space",
+  "name": "Office 0.47",
+  "ref": "0.47",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-O0055": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0055",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   2.003
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S002",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F1-O0056": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0056",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   5.25
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S003",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-factory-dev-003-F1-O0057": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0057",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   2.718
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S004",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0058": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0058",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   7.585
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S005",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F1-O0059": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0059",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   12.3
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S006",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0060": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0060",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   17.04
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S007",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0061": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0061",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   20.905
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S008",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0062": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0062",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   25.33
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S009",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0063": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0063",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   30.32
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S010",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F1-O0064": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0064",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   35.195
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S011",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0065": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0065",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   39.705
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S012",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F1-O0066": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0066",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   44.07
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S013",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-factory-dev-003-F1-O0067": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0067",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   49.35
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S014",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0068": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0068",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   55.105
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S015",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0069": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0069",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   60.12
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S016",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0070": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0070",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   64.085
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S017",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0071": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0071",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   5.0,
+   67.892
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S018",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0072": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0072",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   8.675
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S019",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F1-O0073": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0073",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   13.81
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S020",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0074": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0074",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   19.54
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S021",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0075": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0075",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   24.5
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S022",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0076": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0076",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   28.38
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S023",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0077": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0077",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   33.015
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S024",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0078": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0078",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   38.315
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S025",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0079": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0079",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   42.97
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S026",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0080": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0080",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   47.11
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S027",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0081": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0081",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   51.34
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S028",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0082": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0082",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   55.385
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S029",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0083": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0083",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   59.895
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S030",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-factory-dev-003-F1-O0084": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0084",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   64.51
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S031",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F1-O0085": {
+  "depth_m": 0.2,
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-O0085",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   7.0,
+   68.032
+  ],
+  "space_ids": [
+   "proc-factory-dev-003-F1-S032",
+   "proc-factory-dev-003-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-factory-dev-003-F1-S001": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S001",
+  "kind": "space",
+  "name": "Office corridor 1.01",
+  "ref": "1.01",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-factory-dev-003-F1-S002": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S002",
+  "kind": "space",
+  "name": "Staircase 1.02",
+  "ref": "1.02",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-factory-dev-003-F1-S003": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S003",
+  "kind": "space",
+  "name": "Lift 1.03",
+  "ref": "1.03",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-factory-dev-003-F1-S004": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S004",
+  "kind": "space",
+  "name": "Office 1.04",
+  "ref": "1.04",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S005": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S005",
+  "kind": "space",
+  "name": "Server room 1.05",
+  "ref": "1.05",
+  "room_type": "server_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S006": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S006",
+  "kind": "space",
+  "name": "Office 1.06",
+  "ref": "1.06",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S007": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S007",
+  "kind": "space",
+  "name": "Kitchen 1.07",
+  "ref": "1.07",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S008": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S008",
+  "kind": "space",
+  "name": "Kitchen 1.08",
+  "ref": "1.08",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S009": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S009",
+  "kind": "space",
+  "name": "Office 1.09",
+  "ref": "1.09",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S010": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S010",
+  "kind": "space",
+  "name": "Meeting room 1.10",
+  "ref": "1.10",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S011": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S011",
+  "kind": "space",
+  "name": "Office 1.11",
+  "ref": "1.11",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S012": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S012",
+  "kind": "space",
+  "name": "Server room 1.12",
+  "ref": "1.12",
+  "room_type": "server_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S013": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S013",
+  "kind": "space",
+  "name": "Server room 1.13",
+  "ref": "1.13",
+  "room_type": "server_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S014": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S014",
+  "kind": "space",
+  "name": "Kitchen 1.14",
+  "ref": "1.14",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S015": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S015",
+  "kind": "space",
+  "name": "Office 1.15",
+  "ref": "1.15",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S016": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S016",
+  "kind": "space",
+  "name": "Office 1.16",
+  "ref": "1.16",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S017": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S017",
+  "kind": "space",
+  "name": "Office 1.17",
+  "ref": "1.17",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S018": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S018",
+  "kind": "space",
+  "name": "Office 1.18",
+  "ref": "1.18",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S019": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S019",
+  "kind": "space",
+  "name": "Meeting room 1.19",
+  "ref": "1.19",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S020": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S020",
+  "kind": "space",
+  "name": "Office 1.20",
+  "ref": "1.20",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S021": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S021",
+  "kind": "space",
+  "name": "Office 1.21",
+  "ref": "1.21",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S022": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S022",
+  "kind": "space",
+  "name": "Office 1.22",
+  "ref": "1.22",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S023": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S023",
+  "kind": "space",
+  "name": "Office 1.23",
+  "ref": "1.23",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S024": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S024",
+  "kind": "space",
+  "name": "Office 1.24",
+  "ref": "1.24",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S025": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S025",
+  "kind": "space",
+  "name": "Office 1.25",
+  "ref": "1.25",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S026": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S026",
+  "kind": "space",
+  "name": "Office 1.26",
+  "ref": "1.26",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S027": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S027",
+  "kind": "space",
+  "name": "Kitchen 1.27",
+  "ref": "1.27",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S028": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S028",
+  "kind": "space",
+  "name": "Kitchen 1.28",
+  "ref": "1.28",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S029": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S029",
+  "kind": "space",
+  "name": "Office 1.29",
+  "ref": "1.29",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S030": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S030",
+  "kind": "space",
+  "name": "Office 1.30",
+  "ref": "1.30",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S031": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S031",
+  "kind": "space",
+  "name": "Meeting room 1.31",
+  "ref": "1.31",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-factory-dev-003-F1-S032": {
+  "floor_id": "proc-factory-dev-003-F1",
+  "id": "proc-factory-dev-003-F1-S032",
+  "kind": "space",
+  "name": "Toilet 1.32",
+  "ref": "1.32",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-factory-dev-003-V01": {
+  "connector_kind": "stairs",
+  "floor_ids": [
+   "proc-factory-dev-003-F0",
+   "proc-factory-dev-003-F1"
+  ],
+  "id": "proc-factory-dev-003-V01",
+  "kind": "connector",
+  "space_ids": [
+   "proc-factory-dev-003-F0-S017",
+   "proc-factory-dev-003-F1-S002"
+  ],
+  "stops_z": [
+   0.0,
+   3.5
+  ]
+ },
+ "proc-factory-dev-003-V02": {
+  "connector_kind": "lift",
+  "floor_ids": [
+   "proc-factory-dev-003-F0",
+   "proc-factory-dev-003-F1"
+  ],
+  "id": "proc-factory-dev-003-V02",
+  "kind": "connector",
+  "space_ids": [
+   "proc-factory-dev-003-F0-S018",
+   "proc-factory-dev-003-F1-S003"
+  ],
+  "stops_z": [
+   0.0,
+   3.5
+  ]
+ },
+ "walls:proc-factory-dev-003-F0-S006": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 8.0,
+  "space_id": "proc-factory-dev-003-F0-S006"
+ },
+ "walls:proc-factory-dev-003-F0-S010": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 8.0,
+  "space_id": "proc-factory-dev-003-F0-S010"
+ },
+ "walls:proc-factory-dev-003-F0-S016": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S016"
+ },
+ "walls:proc-factory-dev-003-F0-S017": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S017"
+ },
+ "walls:proc-factory-dev-003-F0-S018": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S018"
+ },
+ "walls:proc-factory-dev-003-F0-S020": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S020"
+ },
+ "walls:proc-factory-dev-003-F0-S021": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S021"
+ },
+ "walls:proc-factory-dev-003-F0-S022": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S022"
+ },
+ "walls:proc-factory-dev-003-F0-S023": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S023"
+ },
+ "walls:proc-factory-dev-003-F0-S024": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S024"
+ },
+ "walls:proc-factory-dev-003-F0-S025": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S025"
+ },
+ "walls:proc-factory-dev-003-F0-S026": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S026"
+ },
+ "walls:proc-factory-dev-003-F0-S027": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S027"
+ },
+ "walls:proc-factory-dev-003-F0-S028": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S028"
+ },
+ "walls:proc-factory-dev-003-F0-S029": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S029"
+ },
+ "walls:proc-factory-dev-003-F0-S030": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S030"
+ },
+ "walls:proc-factory-dev-003-F0-S031": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S031"
+ },
+ "walls:proc-factory-dev-003-F0-S032": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S032"
+ },
+ "walls:proc-factory-dev-003-F0-S034": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S034"
+ },
+ "walls:proc-factory-dev-003-F0-S035": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S035"
+ },
+ "walls:proc-factory-dev-003-F0-S036": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S036"
+ },
+ "walls:proc-factory-dev-003-F0-S037": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S037"
+ },
+ "walls:proc-factory-dev-003-F0-S038": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S038"
+ },
+ "walls:proc-factory-dev-003-F0-S039": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S039"
+ },
+ "walls:proc-factory-dev-003-F0-S040": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S040"
+ },
+ "walls:proc-factory-dev-003-F0-S041": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S041"
+ },
+ "walls:proc-factory-dev-003-F0-S042": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S042"
+ },
+ "walls:proc-factory-dev-003-F0-S043": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S043"
+ },
+ "walls:proc-factory-dev-003-F0-S044": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S044"
+ },
+ "walls:proc-factory-dev-003-F0-S045": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S045"
+ },
+ "walls:proc-factory-dev-003-F0-S046": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S046"
+ },
+ "walls:proc-factory-dev-003-F0-S047": {
+  "capped": true,
+  "floor_id": "proc-factory-dev-003-F0",
+  "height_m": 8.0,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F0-S047"
+ },
+ "walls:proc-factory-dev-003-F1-S001": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S001"
+ },
+ "walls:proc-factory-dev-003-F1-S002": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S002"
+ },
+ "walls:proc-factory-dev-003-F1-S003": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S003"
+ },
+ "walls:proc-factory-dev-003-F1-S004": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S004"
+ },
+ "walls:proc-factory-dev-003-F1-S005": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S005"
+ },
+ "walls:proc-factory-dev-003-F1-S006": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S006"
+ },
+ "walls:proc-factory-dev-003-F1-S007": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S007"
+ },
+ "walls:proc-factory-dev-003-F1-S008": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S008"
+ },
+ "walls:proc-factory-dev-003-F1-S009": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S009"
+ },
+ "walls:proc-factory-dev-003-F1-S010": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S010"
+ },
+ "walls:proc-factory-dev-003-F1-S011": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S011"
+ },
+ "walls:proc-factory-dev-003-F1-S012": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S012"
+ },
+ "walls:proc-factory-dev-003-F1-S013": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S013"
+ },
+ "walls:proc-factory-dev-003-F1-S014": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S014"
+ },
+ "walls:proc-factory-dev-003-F1-S015": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S015"
+ },
+ "walls:proc-factory-dev-003-F1-S016": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S016"
+ },
+ "walls:proc-factory-dev-003-F1-S017": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S017"
+ },
+ "walls:proc-factory-dev-003-F1-S018": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S018"
+ },
+ "walls:proc-factory-dev-003-F1-S019": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S019"
+ },
+ "walls:proc-factory-dev-003-F1-S020": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S020"
+ },
+ "walls:proc-factory-dev-003-F1-S021": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S021"
+ },
+ "walls:proc-factory-dev-003-F1-S022": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S022"
+ },
+ "walls:proc-factory-dev-003-F1-S023": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S023"
+ },
+ "walls:proc-factory-dev-003-F1-S024": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S024"
+ },
+ "walls:proc-factory-dev-003-F1-S025": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S025"
+ },
+ "walls:proc-factory-dev-003-F1-S026": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S026"
+ },
+ "walls:proc-factory-dev-003-F1-S027": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S027"
+ },
+ "walls:proc-factory-dev-003-F1-S028": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S028"
+ },
+ "walls:proc-factory-dev-003-F1-S029": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S029"
+ },
+ "walls:proc-factory-dev-003-F1-S030": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S030"
+ },
+ "walls:proc-factory-dev-003-F1-S031": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S031"
+ },
+ "walls:proc-factory-dev-003-F1-S032": {
+  "capped": false,
+  "floor_id": "proc-factory-dev-003-F1",
+  "height_m": 3.5,
+  "kind": "walls",
+  "min_height_m": 3.5,
+  "space_id": "proc-factory-dev-003-F1-S032"
+ }
+}

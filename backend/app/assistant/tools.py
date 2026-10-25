@@ -172,6 +172,21 @@ def build_tools(operation_fields: str) -> list[dict[str, Any]]:
             "Switch the active building (clears start, destination and conversation context).",
             {"building_id": {"type": "string"}},
         ),
+        tool(
+            "recall_memory",
+            "Memory across all conversations (read-only). topic 'stats': how often each place "
+            "type was searched (e.g. toilet, coffee_machine), routes planned, metres, floor "
+            "changes and metres climbed/descended by stairs vs lift; 'recent_chats': the latest "
+            "messages; 'search_chats': messages containing query; 'recent_routes': the last "
+            "planned routes.",
+            {
+                "topic": {
+                    "type": "string",
+                    "enum": ["stats", "recent_chats", "search_chats", "recent_routes"],
+                },
+                "query": {"type": "string", "description": "Words for search_chats, else ''"},
+            },
+        ),
     ]
 
 

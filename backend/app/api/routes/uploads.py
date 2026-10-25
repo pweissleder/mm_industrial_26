@@ -11,6 +11,7 @@ from app.ingestion import (
     DatasetNotFoundError,
     InvalidUploadError,
     dataset_file,
+    dataset_inputs,
     dataset_name_taken,
     list_files,
     remove_dataset,
@@ -41,7 +42,9 @@ async def upload_files(
 ) -> UploadResponse:
     """Store files in `DATASETS_DIR/<dataset>/`; the dataset is created if it doesn't exist.
 
-    Upload a `building.json` to make the dataset ingestible via `POST /api/ingestions`.
+    Upload a `building.json` to make the dataset ingestible via `POST /api/ingestions`;
+    floor plans (`floor_<level>.svg/.png/.jpg`) plus `equipment.csv` suffice for a pipeline run,
+    which reconstructs the building first.
     With `new=true` the name must be unused, and a failed upload leaves nothing behind.
     """
     if new and dataset_name_taken(settings.datasets_dir, dataset):
@@ -54,8 +57,13 @@ async def upload_files(
         if new:
             remove_dataset(settings.datasets_dir, dataset)
         raise
-    ingestible = (settings.datasets_dir / dataset / "building.json").is_file()
-    return UploadResponse(dataset=dataset, files=saved, ingestible=ingestible)
+    inputs = dataset_inputs(settings.datasets_dir / dataset)
+    return UploadResponse(
+        dataset=dataset,
+        files=saved,
+        ingestible=inputs.has_building,
+        reconstructable=inputs.reconstructable,
+    )
 
 
 async def _save_all(

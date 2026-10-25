@@ -16,10 +16,17 @@ from anthropic import Anthropic
 from langgraph.types import Command
 
 from app.config import Settings
-from app.ingestion.service import DATASET_NAME, DatasetNotFoundError
+from app.ingestion.service import DATASET_NAME, DatasetNotFoundError, dataset_inputs
 from app.pipeline.agents.base import AgentModels
 from app.pipeline.graph import PipelineGraph, build_pipeline_graph
-from app.pipeline.state import ReviewDecision, RunRecord, RunStatus
+from app.pipeline.state import (
+    MODE_STAGES,
+    PipelineMode,
+    ReviewDecision,
+    RunRecord,
+    RunStatus,
+    StageRun,
+)
 from app.pipeline.store import Pillar, Workspace
 from app.storage import BuildingRepository
 from app.tracing import graph_config
@@ -135,7 +142,10 @@ class PipelineRunner:
 
     def dataset_dir(self, dataset: str, datasets_dir: Path | None = None) -> Path:
         root = datasets_dir or self.settings.datasets_dir
-        if not DATASET_NAME.match(dataset) or not (root / dataset / "building.json").is_file():
+        if not DATASET_NAME.match(dataset):
+            raise DatasetNotFoundError(dataset)
+        inputs = dataset_inputs(root / dataset)
+        if not (inputs.has_building or inputs.reconstructable):  # else "reconstruct" builds it
             raise DatasetNotFoundError(dataset)
         return root / dataset
 
@@ -151,7 +161,9 @@ class PipelineRunner:
     def list(self) -> list[RunRecord]:
         return self.workspace.runs.all()
 
-    def create(self, dataset: str, datasets_dir: Path | None = None) -> tuple[RunRecord, Path]:
+    def create(
+        self, dataset: str, datasets_dir: Path | None = None, mode: PipelineMode = "full"
+    ) -> tuple[RunRecord, Path]:
         dataset_dir = self.dataset_dir(dataset, datasets_dir)
         with self._lock:  # one unfinished run per dataset: runs rewrite the same location
             for other in self.workspace.runs.all():
@@ -163,10 +175,14 @@ class PipelineRunner:
             record = RunRecord(
                 run_id=uuid.uuid4().hex[:12],
                 dataset=dataset,
+                mode=mode,
                 offline=self.offline,
                 owner_pid=os.getpid(),
                 owner_boot=BOOT_ID,
             )
+            for stage in record.stages:
+                if stage not in MODE_STAGES[mode]:
+                    record.stages[stage] = StageRun(status="skipped", summary=f"{mode}-only run")
             self.workspace.runs.save(record)
             self._active.add(record.run_id)
         return record, dataset_dir
@@ -200,17 +216,23 @@ class PipelineRunner:
         return current
 
     def run_sync(
-        self, dataset: str, force: bool = False, datasets_dir: Path | None = None
+        self,
+        dataset: str,
+        force: bool = False,
+        datasets_dir: Path | None = None,
+        mode: PipelineMode = "full",
     ) -> RunRecord:
-        record, dataset_dir = self.create(dataset, datasets_dir)
+        record, dataset_dir = self.create(dataset, datasets_dir, mode)
         return self._drive(record, self._initial(record, dataset_dir, force))
 
     def resume_sync(self, run_id: str, decision: ReviewDecision) -> RunRecord:
         record = self._check_review(run_id, decision)
         return self._drive(record, Command(resume=decision.model_dump(mode="json")))
 
-    async def start(self, dataset: str, force: bool = False) -> RunRecord:
-        record, dataset_dir = self.create(dataset)
+    async def start(
+        self, dataset: str, force: bool = False, mode: PipelineMode = "full"
+    ) -> RunRecord:
+        record, dataset_dir = self.create(dataset, mode=mode)
         self._spawn(
             asyncio.to_thread(self._drive, record, self._initial(record, dataset_dir, force))
         )
@@ -239,6 +261,7 @@ class PipelineRunner:
             "dataset": record.dataset,
             "dataset_dir": str(dataset_dir),
             "force": force,
+            "mode": record.mode,
         }
 
     def _check_review(self, run_id: str, decision: ReviewDecision) -> RunRecord:

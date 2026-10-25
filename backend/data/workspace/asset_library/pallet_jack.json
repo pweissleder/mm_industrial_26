@@ -1,0 +1,153 @@
+{
+  "spec": {
+    "type": "pallet_jack",
+    "category": "equipment",
+    "description": "Manual pallet jack: two forks, pump body, drawbar handle",
+    "default_height_m": 1.2,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          -0.2,
+          -0.3,
+          0.06
+        ],
+        "size": [
+          0.6,
+          0.24,
+          0.12
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.2,
+          0.3,
+          0.06
+        ],
+        "size": [
+          0.6,
+          0.24,
+          0.12
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.47,
+          -0.3,
+          0.04
+        ],
+        "size": [
+          0.06,
+          0.2,
+          0.08
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.47,
+          0.3,
+          0.04
+        ],
+        "size": [
+          0.06,
+          0.2,
+          0.08
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.2,
+          0.0,
+          0.08
+        ],
+        "size": [
+          0.2,
+          0.84,
+          0.16
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.35,
+          0.0,
+          0.22
+        ],
+        "size": [
+          0.3,
+          0.6,
+          0.2
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          -0.3,
+          0.05
+        ],
+        "radius": 0.05,
+        "length": 0.1,
+        "axis": "y"
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.0,
+          0.3,
+          0.05
+        ],
+        "radius": 0.05,
+        "length": 0.1,
+        "axis": "y"
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.4,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.06,
+          0.1,
+          0.5
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.42,
+          0.0,
+          0.85
+        ],
+        "size": [
+          0.14,
+          0.1,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.44,
+          0.0,
+          0.94
+        ],
+        "size": [
+          0.1,
+          0.5,
+          0.06
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:34:46.849148Z"
+}

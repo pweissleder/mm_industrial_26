@@ -12,17 +12,26 @@ from app.pipeline.agents.base import AgentError, dataset_json, run_structured
 from app.pipeline.state import Decision, Stage, StageReport, Usage
 
 # Gates where the orchestrator is consulted even when the stage passed.
-CHECKPOINTS: set[Stage] = {"raw_validation", "graph_validate", "model_validate", "summarize"}
+CHECKPOINTS: set[Stage] = {
+    "reconstruct",
+    "raw_validation",
+    "graph_validate",
+    "model_validate",
+    "summarize",
+}
 # Stages a failure of a stage may be sent back to.
 RETRY_TARGETS: dict[Stage, list[Stage]] = {
+    "reconstruct": ["reconstruct"],
     "model_validate": ["floorplan", "equipment", "variant_creator", "model_validate"],
     "graph_validate": ["graph_build", "graph_validate"],
 }
 
 SYSTEM_PROMPT = """\
-You orchestrate a building ingestion pipeline with fixed stages: raw_validation ->
-graph_build -> graph_validate -> floorplan -> equipment -> variant_creator ->
-model_validate -> summarize. After a stage you get its report and decide:
+You orchestrate a building ingestion pipeline with fixed stages: reconstruct ->
+raw_validation -> graph_build -> graph_validate -> floorplan -> equipment ->
+variant_creator -> model_validate -> summarize -> suggest. reconstruct rebuilds
+building.json from floor plan SVGs/images + equipment.csv when the dataset has none; it is
+skipped when building.json is provided. After a stage you get its report and decide:
 - proceed: the result is good enough for the next stage (open info-level notes are fine).
 - retry: re-run a stage (target_stage) when the report shows a fixable problem; target
   the stage the deviations are attributed to.

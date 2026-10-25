@@ -67,6 +67,7 @@ format = { sequence = [
 ], help = "Format and auto-fix" }
 setup-managed-agent = { cmd = "python -m scripts.setup_managed_agent", help = "Create the Managed Agent once" }
 ingest = { cmd = "python -m scripts.ingest", help = "Run the agentic ingestion pipeline on datasets" }
+benchmark = { cmd = "python -m scripts.benchmark", help = "Graph-only ingest + answer + score every benchmark question" }
 
 # trimesh is only partially typed; geometry code calls its untyped helpers.
 [[tool.mypy.overrides]]

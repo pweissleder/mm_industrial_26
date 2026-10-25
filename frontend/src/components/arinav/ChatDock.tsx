@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -15,11 +16,12 @@ import {
   type GuardrailInfo,
   type HealthResponse,
   type Proposal,
+  type RecapStub,
   type TurnResponse,
   type UiState,
 } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
-import { LOCATION_SOURCE_LABEL, replyAsks, type SimulatedLocation } from '../../lib/nav';
+import { LOCATION_SOURCE_LABEL, replyAsks, type AppMode, type SimulatedLocation } from '../../lib/nav';
 import { voiceSupported } from '../../lib/voice';
 import { AssistantReply, ProposalCard, type ProposalState } from './ChatReply';
 import { LogoMark } from './Logo';
@@ -32,6 +34,7 @@ import {
   SendIcon,
   SparkleIcon,
   SpeakerIcon,
+  SpeakerOffIcon,
 } from './Icons';
 import { useVoice } from './useVoice';
 
@@ -47,7 +50,7 @@ type Entry =
       audio?: { pcm: string; rate: number };
     }
   | { id: number; role: 'proposal'; proposal: Proposal; state: ProposalState }
-  | { id: number; role: 'notice'; text: string };
+  | { id: number; role: 'notice'; text: string; offerReset?: boolean; recap?: RecapStub };
 
 type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never) : never;
 
@@ -73,7 +76,10 @@ interface Props {
   draft: Draft | null;
   /** The assistant (`/api/assistant`); without it the dock talks to the plain `/api/chat` agent. */
   assistant?: AssistantStatus | null;
-  developer?: boolean;
+  /** Who is using the app; decides which chat controls exist. */
+  profile?: AppMode;
+  /** Location-specific prompts from the HQ pipeline; replace the static ones when non-empty. */
+  suggestions?: string[];
   /** Explicit user choices, sent with every turn. */
   ui?: UiState;
   selection?: { name: string; room: boolean } | null;
@@ -92,6 +98,8 @@ interface Props {
   onBuildingChanged?: () => void;
   /** Navigation/POV: keep the conversation folded; show only the last exchange in one line. */
   compact?: boolean;
+  /** Show a Call Wrapped recap (the backend starts one after every N ended conversations). */
+  onOpenRecap?: (id: string) => void;
 }
 
 /** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
@@ -131,9 +139,81 @@ const WAITING = [
 ];
 
 const SESSION_KEY = 'arinav:assistant-session';
+/** Idle time before the open conversation folds down to the input bar. */
+const CHAT_IDLE_MS = 15_000;
 const SPEAK_KEY = 'arinav:speak-replies';
 const SPEED_KEY = 'arinav:speech-speed';
 const NO_UI: UiState = { building_id: null };
+const PaperclipIcon = (p: { width?: number; height?: number; className?: string }) => (
+  <svg
+    className={p.className}
+    viewBox="0 0 24 24"
+    width={p.width ?? 16}
+    height={p.height ?? 16}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="m21 11.5-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l9-9a3.7 3.7 0 0 1 5.2 5.2l-9 9a1.8 1.8 0 0 1-2.6-2.6l8.3-8.3" />
+  </svg>
+);
+
+// Pill geometry in px (see .attach-chip): the name's max width, everything around the name
+// when unfolded (padding, leading icon, gaps, remove button) and the folded icon-only size.
+const PILL_TEXT_MAX = 200;
+const PILL_CHROME = 68;
+const PILL_COMPACT = 34;
+// Measures the input's text (placeholder or typed), with a rough fallback where canvas is missing.
+let measureCtx: { font: string; measureText: (t: string) => { width: number } } | null = null;
+function textWidth(text: string, font: string): number {
+  if (!measureCtx) {
+    const canvas = document.createElement('canvas');
+    measureCtx = (typeof canvas.getContext === 'function' && !navigator.userAgent.includes('jsdom')
+      ? canvas.getContext('2d')
+      : null) ?? { font: '', measureText: (t: string) => ({ width: t.length * 7.5 }) };
+  }
+  measureCtx.font = font;
+  return measureCtx.measureText(text).width;
+}
+
+/**
+ * Context sent with each question (location, selected item), shown inside the input bar.
+ * Compact: only its icon, which turns into the remove cross on hover or focus.
+ */
+function ContextPill(props: {
+  Icon: (p: { width?: number; height?: number; className?: string }) => ReactNode;
+  text: string;
+  title: string;
+  compact: boolean;
+  removeLabel: string;
+  onRemove: () => void;
+  location?: boolean;
+}) {
+  const { Icon } = props;
+  return (
+    <span
+      className={`attach-chip${props.location ? ' attach-chip--location' : ''}${
+        props.compact ? ' attach-chip--compact' : ''
+      }`}
+      title={props.title}
+    >
+      <Icon width={14} height={14} className="attach-chip__clip" />
+      <span className="attach-chip__text">{props.text}</span>
+      <button
+        type="button"
+        className="icon-btn icon-btn--sm"
+        onClick={props.onRemove}
+        aria-label={props.removeLabel}
+      >
+        <Icon width={14} height={14} className="attach-chip__icon-clip" />
+        <CloseIcon width={14} height={14} className="attach-chip__icon-x" />
+      </button>
+    </span>
+  );
+}
 
 function read(storage: () => Storage, key: string): string | null {
   try {
@@ -167,7 +247,8 @@ export default function ChatDock({
   backendDown,
   draft,
   assistant = null,
-  developer = false,
+  profile = 'user',
+  suggestions,
   ui = NO_UI,
   selection = null,
   simulated = null,
@@ -181,8 +262,13 @@ export default function ChatDock({
   onSelect,
   onBuildingChanged,
   compact = false,
+  onOpenRecap,
 }: Props) {
+  const developer = profile === 'developer';
+  const isNavigator = profile === 'navigator';
   const [entries, setEntries] = useState<Entry[]>([]);
+  // The selection the user detached from the chat; a different selection attaches again.
+  const [detachedKey, setDetachedKey] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [threadId, setThreadId] = useState<string>();
   const [pending, setPending] = useState<false | 'thinking' | 'transcribing'>(false);
@@ -207,11 +293,18 @@ export default function ChatDock({
   const busy = pending !== false;
   // Async callers (transcription, drafts) can't rely on the `busy` of their render.
   const busyRef = useRef(false);
+  // Bumped by a reset, so replies still in flight from the old conversation are dropped.
+  const epoch = useRef(0);
   const targets = useMemo(() => (model ? linkTargets(model) : new Map<string, Selection>()), [model]);
   const names = useMemo(() => {
     const m = new Map<string, string>();
     if (model)
-      for (const e of [...model.spaces, ...model.assets, ...model.openings, ...model.vertical_connectors])
+      for (const e of [
+        ...(model.spaces ?? []),
+        ...(model.assets ?? []),
+        ...(model.openings ?? []),
+        ...(model.vertical_connectors ?? []),
+      ])
         if ('name' in e && e.name) m.set(e.id, e.name);
     return m;
   }, [model]);
@@ -228,8 +321,28 @@ export default function ChatDock({
       ),
     );
 
-  // A thread's memory belongs to one building, so a new building starts a new thread.
-  useEffect(() => setThreadId(undefined), [buildingId]);
+  // A thread's memory belongs to one building, so a new building starts a new thread; an
+  // assistant session can span buildings, so offer to start over instead of wiping the log.
+  const seenBuilding = useRef(buildingId);
+  useEffect(() => {
+    setThreadId(undefined);
+    const previous = seenBuilding.current;
+    seenBuilding.current = buildingId;
+    if (!previous || !buildingId || previous === buildingId) return;
+    setEntries((prev) =>
+      prev.some((e) => e.role === 'user')
+        ? [
+            ...prev,
+            {
+              id: nextId.current++,
+              role: 'notice',
+              text: 'You switched buildings. Start a new conversation for a clean context?',
+              offerReset: true,
+            },
+          ]
+        : prev,
+    );
+  }, [buildingId]);
 
   const live = !!assistant;
   const canSpeak = live && !!assistant?.voice;
@@ -269,29 +382,68 @@ export default function ChatDock({
     return () => window.clearInterval(timer);
   }, [pending]);
 
+  const selKey = selection
+    ? `${ui.inspected ? `${ui.inspected.kind}:${ui.inspected.id}` : ''}|${selection.name}`
+    : null;
+  const attached = !!selection && detachedKey !== selKey;
+  // Context pills in the input bar fold to their icons one after the other (the one next to the
+  // text first) as soon as the typed text, or the placeholder, would run into them. The room is
+  // worked out from the pills' target sizes, so folding animations don't feed back into it.
+  const [folded, setFolded] = useState(0);
+  const fitPills = useCallback(() => {
+    const el = inputRef.current;
+    const bar = el?.parentElement;
+    if (!el || !bar) return;
+    const pills = [...bar.querySelectorAll<HTMLElement>('.attach-chip')];
+    const need = textWidth(el.value || el.placeholder, getComputedStyle(el).font) + 12;
+    const total = el.clientWidth + pills.reduce((sum, p) => sum + p.getBoundingClientRect().width, 0);
+    const full = pills.map(
+      (p) => Math.min(PILL_TEXT_MAX, p.querySelector('.attach-chip__text')?.scrollWidth ?? 0) + PILL_CHROME,
+    );
+    let k = 0;
+    const roomFor = (n: number) =>
+      total - n * PILL_COMPACT - full.slice(n).reduce((sum, w) => sum + w, 0);
+    while (k < pills.length && need > roomFor(k)) k += 1;
+    setFolded(k);
+  }, []);
+  useLayoutEffect(fitPills, [fitPills, input, voice.recording, simulated, attached, selection]);
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => fitPills());
+    observer.observe(el.parentElement ?? el);
+    return () => observer.disconnect();
+  }, [fitPills]);
+
   async function sendLegacy(text: string) {
+    const started = epoch.current;
     try {
       const { reply, thread_id, guardrail, building_changed } = await api.chat(text, threadId, buildingId);
+      if (started !== epoch.current) return;
       setThreadId(thread_id);
       if (building_changed) onBuildingChanged?.();
       push({ role: 'assistant', text: reply, guardrail });
     } catch {
+      if (started !== epoch.current) return;
       setError('The building is not answering. Is the backend running?');
     }
   }
 
   async function sendTurn(text: string, viaVoice: boolean) {
     const sessionId = read(session, SESSION_KEY) ?? undefined;
-    const wantSpeech = viaVoice || (speak && canSpeak);
+    const wantSpeech = canSpeak && (viaVoice || isNavigator || speak);
+    const sendUi = selection && detachedKey === selKey ? { ...ui, inspected: null } : ui;
+    const started = epoch.current;
     try {
       const turn = await api.assistantTurn({
         ...(sessionId && { session_id: sessionId }),
         text,
-        ui,
+        ui: sendUi,
         speak: wantSpeech,
         voice: viaVoice,
         ...(wantSpeech && ttsSpeed !== undefined && { tts_speed: ttsSpeed }),
       });
+      if (started !== epoch.current) return;
       if (turn.session_id) write(session, SESSION_KEY, turn.session_id);
       const audio = turn.audio_pcm16
         ? { pcm: turn.audio_pcm16, rate: turn.sample_rate ?? 16000 }
@@ -302,9 +454,12 @@ export default function ChatDock({
         push({ role: 'notice', text: 'The spoken reply failed; the text answer is complete.' });
       }
       onTurn?.(turn);
+      // Starting this conversation completed a recap batch: offer it without interrupting.
+      if (turn.recap) push({ role: 'notice', text: 'Your Call Wrapped is ready.', recap: turn.recap });
       if (audio) void voice.play(audio.pcm, audio.rate);
     } catch {
-      setError('The assistant is not answering right now. Please try again.');
+      if (started !== epoch.current) return;
+      setError('The assistant is not answering right now. Please try again, or start a new conversation.');
     }
   }
 
@@ -317,12 +472,15 @@ export default function ChatDock({
     setPending('thinking');
     setError(null);
     voice.stopPlayback();
+    const started = epoch.current;
     try {
       if (live) await sendTurn(text, viaVoice);
       else await sendLegacy(text);
     } finally {
-      busyRef.current = false;
-      setPending(false);
+      if (started === epoch.current) {
+        busyRef.current = false;
+        setPending(false);
+      }
     }
   }
 
@@ -333,11 +491,15 @@ export default function ChatDock({
     setPending('transcribing');
     setError(null);
     let text = '';
+    const started = epoch.current;
     try {
       text = (await api.assistantTranscribe(wav)).text.trim();
     } catch {
-      setError('Could not transcribe the recording. Please try again or type your question.');
+      if (started === epoch.current) {
+        setError('Could not transcribe the recording. Please try again or type your question.');
+      }
     }
+    if (started !== epoch.current) return;
     busyRef.current = false;
     setPending(false);
     if (!text) return;
@@ -385,6 +547,19 @@ export default function ChatDock({
     };
   }, [voiceOn, busy, startTalk, stopTalk, recording]);
 
+  // The conversation folds away after a while without interaction (pointer, keys, scrolling).
+  // It stays open while a reply is pending, while recording, while the pointer is over it and
+  // while a proposal waits for an answer; a new message restarts the clock.
+  const [activity, setActivity] = useState(0);
+  const [hovering, setHovering] = useState(false);
+  const touch = () => setActivity((n) => n + 1);
+  const awaitingAnswer = entries.some((e) => e.role === 'proposal' && e.state === 'open');
+  useEffect(() => {
+    if (!open || busy || recording || hovering || awaitingAnswer || !entries.length) return;
+    const timer = window.setTimeout(() => setOpen(false), CHAT_IDLE_MS);
+    return () => window.clearTimeout(timer);
+  }, [open, busy, recording, hovering, awaitingAnswer, entries.length, activity]);
+
   async function answerProposal(entryId: number, proposal: Proposal, approved: boolean) {
     const sessionId = read(session, SESSION_KEY) ?? '';
     const mark = (state: ProposalState) =>
@@ -403,10 +578,20 @@ export default function ChatDock({
     }
   }
 
-  async function newConversation() {
+  /** Start over: forget the server-side session or thread and drop any reply still on its way. */
+  function newConversation() {
     const sessionId = read(session, SESSION_KEY);
+    epoch.current++;
+    busyRef.current = false;
+    setPending(false);
     voice.stopPlayback();
-    if (sessionId) await api.assistantReset(sessionId).catch(() => undefined);
+    // Fire and forget: a backend that is down must not block starting over.
+    if (sessionId) {
+      void api
+        .assistantReset(sessionId)
+        .then((r) => r.recap && onOpenRecap?.(r.recap.id))
+        .catch(() => undefined);
+    }
     write(session, SESSION_KEY, null);
     setThreadId(undefined);
     setEntries([]);
@@ -449,38 +634,59 @@ export default function ChatDock({
   // Quick answers when the last reply asks for something the map can answer.
   const last = entries[entries.length - 1];
   const asks = live && !busy && last?.role === 'assistant' ? replyAsks(last.text) : null;
-  let lastAudio: { pcm: string; rate: number } | undefined;
-  for (const e of entries) if (e.role === 'assistant' && e.audio) lastAudio = e.audio;
-
-  const talkTitle = !canSpeak
-    ? 'Voice is not available on this server'
-    : !voiceSupported()
-      ? 'This browser cannot record audio'
-      : 'Hold to talk (or hold Space)';
+  const latestReply = last?.role === 'assistant' && !busy ? last.text : null;
 
   return (
-    <section className={`chat${compact ? ' chat--compact' : ''}`} aria-label="Chat with AriNav">
-      {compact && !open && hasLog && (
+    <section
+      className={`chat${compact ? ' chat--compact' : ''}`}
+      aria-label="Chat with AriNav"
+      onPointerDown={touch}
+      onKeyDown={touch}
+      onWheel={touch}
+      onPointerEnter={() => setHovering(true)}
+      onPointerLeave={() => setHovering(false)}
+    >
+      {compact && !open && hasLog && !isNavigator && (
         <ChatMini entries={entries} pending={pending} onOpen={() => setOpen(true)} />
       )}
 
-      {hasLog && open && (
+      {hasLog && open && !isNavigator && (
         <div className="chat__panel card">
           <header className="chat__head">
             <LogoMark size={22} />
-            <span className="chat__name">{live ? 'AriNav assistant' : 'AriNav agent'}</span>
-            <span className={`status status--${statusTone}`} role="status">
-              {status}
-            </span>
-            {live && (
+            <span className="chat__name">{live ? 'AriNav Assistant' : 'AriNav Agent'}</span>
+            {developer && (
+              <span className={`status status--${statusTone}`} role="status">
+                {status}
+              </span>
+            )}
+            {canSpeak && (
               <button
-                className="btn btn--ghost btn--sm chat__new"
-                onClick={() => void newConversation()}
-                disabled={busy}
+                className="icon-btn chat__speak-toggle"
+                aria-pressed={speak}
+                onClick={toggleSpeak}
+                aria-label={speak ? 'Stop reading replies aloud' : 'Read replies aloud'}
+                title={
+                  speak
+                    ? 'Reading replies aloud (click to mute)'
+                    : 'Replies muted (click to read them aloud)'
+                }
               >
-                New conversation
+                {speak ? (
+                  <SpeakerIcon width={20} height={20} />
+                ) : (
+                  <SpeakerOffIcon width={20} height={20} />
+                )}
               </button>
             )}
+            <button
+              className="btn btn--ghost btn--sm chat__new"
+              onClick={newConversation}
+              title="Clear the conversation and start a fresh session"
+            >
+              <ReplayIcon width={14} height={14} />
+              <span className="chat__new-label">New conversation</span>
+            </button>
             <button className="icon-btn" onClick={() => setOpen(false)} aria-label="Minimise chat">
               <ChevronIcon />
             </button>
@@ -502,6 +708,19 @@ export default function ChatDock({
                 return (
                   <li key={m.id} className="chat__msg chat__msg--notice">
                     {m.text}
+                    {m.offerReset && (
+                      <button className="chip chat__reset-chip" onClick={newConversation}>
+                        Start new conversation
+                      </button>
+                    )}
+                    {m.recap && onOpenRecap && (
+                      <button
+                        className="chip chat__reset-chip"
+                        onClick={() => m.recap && onOpenRecap(m.recap.id)}
+                      >
+                        Watch your Call Wrapped
+                      </button>
+                    )}
                   </li>
                 );
               }
@@ -578,16 +797,19 @@ export default function ChatDock({
             </div>
           )}
           {error && (
-            <p className="chat__error" role="alert">
-              {error}
-            </p>
+            <div className="chat__error" role="alert">
+              <span>{error}</span>
+              <button className="chip chat__reset-chip" onClick={newConversation}>
+                <ReplayIcon width={13} height={13} /> Start over
+              </button>
+            </div>
           )}
         </div>
       )}
 
-      {!hasLog && !compact && (
+      {!hasLog && !compact && !isNavigator && (
         <div className="chat__suggestions" aria-label="Suggestions">
-          {SUGGESTIONS.map((s) => (
+          {(suggestions?.length ? suggestions : SUGGESTIONS).map((s) => (
             <button key={s} className="chip chip--soft" onClick={() => void send(s)}>
               {s}
             </button>
@@ -595,37 +817,19 @@ export default function ChatDock({
         </div>
       )}
 
-      {live && (
+      {isNavigator && (error || latestReply) && (
+        <div className={`chat__latest card${error ? ' chat__latest--error' : ''}`} role={error ? 'alert' : 'status'}>
+          {error ?? (latestReply && onSelect ? renderReply(latestReply) : latestReply)}
+        </div>
+      )}
+
+      {live && developer && (!simulated || (speak && canSpeak)) && (
         <div className="chat__context">
-          {simulated ? (
-            <span className="sim-chip" title="Simulated location, sent as your start">
-              <PinIcon width={14} height={14} />
-              <span className="sim-chip__text">
-                Location: {simulated.label}
-                {simulated.source ? ` · ${LOCATION_SOURCE_LABEL[simulated.source]}` : ''}
-              </span>
-              <button
-                className="icon-btn icon-btn--sm"
-                onClick={() => onClearSimulated?.()}
-                aria-label="Clear simulated location"
-              >
-                <CloseIcon width={14} height={14} />
-              </button>
-            </span>
-          ) : (
+          {!simulated && (
             <button className="chip chip--soft" onClick={() => onPick?.('location', false)}>
               <PinIcon width={14} height={14} /> Set simulated location
             </button>
           )}
-          <button
-            className="chip chip--soft chat__speak"
-            aria-pressed={speak && canSpeak}
-            onClick={toggleSpeak}
-            disabled={!canSpeak}
-            title={canSpeak ? 'Read replies aloud' : 'Voice is not available on this server'}
-          >
-            <SpeakerIcon width={14} height={14} /> Speak replies
-          </button>
           {speak && canSpeak && range && ttsSpeed !== undefined && (
             <label className="chat__speed">
               <span>Speed {ttsSpeed.toFixed(2)}×</span>
@@ -646,21 +850,11 @@ export default function ChatDock({
               />
             </label>
           )}
-          {lastAudio && (
-            <button
-              className="icon-btn icon-btn--sm chat__replay-last"
-              onClick={() => lastAudio && void voice.play(lastAudio.pcm, lastAudio.rate)}
-              aria-label="Replay last spoken reply"
-              title="Replay last spoken reply"
-            >
-              <ReplayIcon width={15} height={15} />
-            </button>
-          )}
         </div>
       )}
 
       <form className="chat__bar" onSubmit={handleSubmit}>
-        {hasLog && !open ? (
+        {hasLog && !open && !isNavigator ? (
           <button
             type="button"
             className="icon-btn chat__expand"
@@ -687,20 +881,43 @@ export default function ChatDock({
           enterKeyHint="send"
           maxLength={2000}
         />
-        {!hasLog && (
+        {!hasLog && developer && (
           <span className={`status status--${statusTone} chat__status`} role="status">
             {status}
           </span>
         )}
-        {live && (
+        {live && !isNavigator && simulated && (
+          <ContextPill
+            Icon={PinIcon}
+            text={`Location: ${simulated.label}`}
+            title={`Location: ${simulated.label}${
+              simulated.source ? ` (${LOCATION_SOURCE_LABEL[simulated.source]})` : ''
+            } · sent as your start`}
+            compact={folded >= 1}
+            removeLabel="Clear location"
+            onRemove={() => onClearSimulated?.()}
+            location
+          />
+        )}
+        {live && !isNavigator && selection && attached && (
+          <ContextPill
+            Icon={PaperclipIcon}
+            text={selection.name}
+            title={`${selection.name} · sent with your questions as context`}
+            compact={folded >= (simulated ? 2 : 1)}
+            removeLabel={`Detach ${selection.name}`}
+            onRemove={() => setDetachedKey(selKey)}
+          />
+        )}
+        {voiceOn && (
           <button
             ref={talkRef}
             type="button"
             className={`talk-btn${voice.recording ? ' talk-btn--on' : ''}`}
-            disabled={!voiceOn || (busy && !voice.recording)}
+            disabled={busy && !voice.recording}
             aria-label="Hold to talk"
             aria-pressed={voice.recording}
-            title={talkTitle}
+            title="Hold to talk (or hold Space)"
             onPointerDown={(e) => {
               e.preventDefault();
               e.currentTarget.setPointerCapture?.(e.pointerId);

@@ -1,0 +1,215 @@
+{
+  "run_id": "6019bbc266f8",
+  "dataset": "proc-factory-dev-003",
+  "location_id": "proc-factory-dev-003",
+  "status": "completed",
+  "current_stage": null,
+  "offline": false,
+  "owner_pid": 72485,
+  "owner_boot": "fd48935ddd4a41998ea5e064cef3f13c",
+  "created_at": "2026-10-24T16:32:38.763918Z",
+  "updated_at": "2026-10-24T16:36:24.034595Z",
+  "stages": {
+    "raw_validation": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:32:38.901520Z",
+      "ended_at": "2026-10-24T16:32:49.075174Z",
+      "summary": "1 issues found, 0 fixed deterministically. The building had one open issue, an info-level overlapping_storeys between F0 and F1. F0 is 8 m high and F1 starts at 3.5 m. I accepted it as an intentional mezzanine inside a factory production hall. I made no data changes and did not re-run the checks, but accepting the issue left no open issues."
+    },
+    "graph_build": {
+      "status": "skipped",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:32:52.220517Z",
+      "ended_at": "2026-10-24T16:32:52.221209Z",
+      "summary": "Relationship graph builder is not implemented yet."
+    },
+    "graph_validate": {
+      "status": "skipped",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:32:52.223790Z",
+      "ended_at": "2026-10-24T16:32:52.224368Z",
+      "summary": "Relationship graph validator is not implemented yet."
+    },
+    "floorplan": {
+      "status": "failed",
+      "attempts": 2,
+      "started_at": "2026-10-24T16:33:07.110196Z",
+      "ended_at": "2026-10-24T16:33:12.767740Z",
+      "summary": "Floorplan built: 79 spaces on 2 floors; numeric check passed."
+    },
+    "equipment": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:33:18.381202Z",
+      "ended_at": "2026-10-24T16:33:27.435919Z",
+      "summary": "Placed 505 assets of 49 types; 30 types without a library model, 30 flagged as implausible."
+    },
+    "variant_creator": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:33:27.440201Z",
+      "ended_at": "2026-10-24T16:35:21.820617Z",
+      "summary": "Created 30 of 30 library models."
+    },
+    "model_validate": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:35:21.824498Z",
+      "ended_at": "2026-10-24T16:35:59.567088Z",
+      "summary": "Numeric check passed: 1616 elements checked, max errors {'space_xy_m': 3.3569335897709607e-06, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations, so the model passes. The numeric check passed: all 743 nodes matched the dataset (79 spaces, 85 openings, 2 connectors, 505 assets), with no failures or warnings. The largest error was about 3e-6 m in space position; every other error was zero. Ground floor (level 0): the room layout matches the dataset plan. That covers the 5×3 grid of halls (H-A, H-B and H-C, rows 1 to 5, with H-A5/B5/C5 sticking out to the north), the office rooms 0.19–0.33 west of corridor 0.16, and rooms 0.17, 0.18 and 0.34–0.47 to its east. After scaling, each room's height along the strip matches the dataset. The four outside doors match: the top of H-B5, the top of corridor 0.16, and the west walls of H-C3 and H-C2. The side doors from 0.33 to H-A4 and from 0.19 to H-A1 are in the right places. Equipment sits in the H-A and H-C halls and the offices; the grey H-B halls have little or none, which fits their role as walkways. Floor 1 (level 1): rooms 1.04–1.18 west of corridor 1.01 and rooms 1.02, 1.03 and 1.19–1.32 east of it match the dataset in order and size. Most of the hall-to-hall doors and the office doors onto the corridors are too small to read in the generated images, so I couldn't check them by eye; for those I'm relying on the numeric check, which found zero error for all 85 openings. The other differences I saw are only colours, fills and labels."
+    },
+    "summarize": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:36:01.852758Z",
+      "ended_at": "2026-10-24T16:36:22.482111Z",
+      "summary": "Metadata written for 79 spaces on 2 floors."
+    }
+  },
+  "pending_review": null,
+  "decisions": [
+    {
+      "stage": "raw_validation",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Raw validation passed with no open issues or deviations. The single info-level storey overlap was accepted as an intentional mezzanine in the factory hall."
+    },
+    {
+      "stage": "graph_build",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_build skipped."
+    },
+    {
+      "stage": "graph_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_validate is skipped because the validator is not implemented. It reports no issues or deviations, so retrying would change nothing; continue to floorplan."
+    },
+    {
+      "stage": "floorplan",
+      "action": "retry",
+      "target_stage": "floorplan",
+      "reason": "Floorplan failed with review deviations attributed to floorplan: an overlapping floor (F0), inconsistent hall boundaries, missing walls and openings, and possibly missing connectors. Numeric accuracy is fine, so a retry may resolve these. This is attempt 1 of 2."
+    },
+    {
+      "stage": "floorplan",
+      "action": "ask_human",
+      "target_stage": null,
+      "reason": "Floorplan failed on attempt 2 of 2, so retries are exhausted. Open review findings: overlapping floors on F0, inconsistent hall boundaries with grey strips, unclear access between halls, rooms 0.19 and 0.33 missing walls, and few connectors. These need a human judgment call."
+    },
+    {
+      "stage": "floorplan",
+      "review": {
+        "review_id": "6019bbc266f8:floorplan:5",
+        "option": "accept_with_warnings",
+        "note": null
+      },
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Accepted by reviewer."
+    },
+    {
+      "stage": "equipment",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "equipment passed."
+    },
+    {
+      "stage": "variant_creator",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "variant_creator passed."
+    },
+    {
+      "stage": "model_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Model validation passed with negligible error (~3e-6 m), no deviations or open issues; proceed to summarize."
+    },
+    {
+      "stage": "summarize",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Summarize passed with no open issues or deviations; pipeline complete."
+    }
+  ],
+  "usage": {
+    "raw_validation": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 19874,
+      "output_tokens": 502,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "orchestrator": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 7732,
+      "output_tokens": 469,
+      "cache_read_input_tokens": 0,
+      "calls": 6
+    },
+    "graph_build": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "graph_validate": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "floorplan": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 8098,
+      "output_tokens": 870,
+      "cache_read_input_tokens": 0,
+      "calls": 5
+    },
+    "equipment": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 5082,
+      "output_tokens": 1051,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "variant_creator": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 725038,
+      "output_tokens": 51100,
+      "cache_read_input_tokens": 0,
+      "calls": 138
+    },
+    "model_validate": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 7115,
+      "output_tokens": 3329,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "summarize": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 8034,
+      "output_tokens": 6652,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    }
+  },
+  "artifacts": [
+    "3d/floorplan.glb",
+    "3d/model.glb",
+    "3d/previews/plan_floor_0.png",
+    "3d/previews/plan_floor_1.png",
+    "building.json",
+    "issues.json",
+    "location.json",
+    "patches.json",
+    "reports/validation_3d.json"
+  ],
+  "error": null
+}

@@ -13,6 +13,7 @@ from typing import Annotated, Any, Literal, TypedDict
 from pydantic import BaseModel, Field
 
 Stage = Literal[
+    "reconstruct",
     "raw_validation",
     "graph_build",
     "graph_validate",
@@ -21,8 +22,10 @@ Stage = Literal[
     "variant_creator",
     "model_validate",
     "summarize",
+    "suggest",
 ]
 STAGE_ORDER: tuple[Stage, ...] = (
+    "reconstruct",
     "raw_validation",
     "graph_build",
     "graph_validate",
@@ -31,7 +34,17 @@ STAGE_ORDER: tuple[Stage, ...] = (
     "variant_creator",
     "model_validate",
     "summarize",
+    "suggest",
 )
+
+# "full" builds the whole location (3D model, metadata). "graph" is the benchmark variant:
+# deterministic, geometry-preserving cleanup plus the relationship graph, nothing else.
+# Both start with "reconstruct", which is skipped when the dataset ships a building.json.
+PipelineMode = Literal["full", "graph"]
+MODE_STAGES: dict[PipelineMode, tuple[Stage, ...]] = {
+    "full": STAGE_ORDER,
+    "graph": ("reconstruct", "raw_validation", "graph_build", "graph_validate"),
+}
 
 
 def utcnow() -> datetime:
@@ -186,6 +199,7 @@ class RunRecord(BaseModel):
     location_id: str | None = None
     status: RunStatus = RunStatus.QUEUED
     current_stage: Stage | None = None
+    mode: PipelineMode = "full"
     offline: bool = False
     owner_pid: int | None = Field(default=None, description="Process driving the run.")
     owner_boot: str | None = Field(default=None, description="Id of that process's runner.")
@@ -214,6 +228,7 @@ class PipelineState(TypedDict, total=False):
     dataset_dir: str
     location_id: str
     force: bool
+    mode: PipelineMode
     # Stage results as StageReport dumps, keyed by stage (last attempt wins).
     reports: Annotated[dict[str, dict[str, Any]], _merge]
     attempts: Annotated[dict[str, int], _merge]
@@ -223,4 +238,5 @@ class PipelineState(TypedDict, total=False):
     feedback: Annotated[dict[str, str], _merge]  # stage -> why its last attempt was rejected
     graph_ref: str | None  # filled by the relationship-graph stage once implemented
     skipped: bool  # input unchanged since the last completed run
+    reconstruct: bool  # load found no building.json: "reconstruct" runs, then load again
     aborted: bool

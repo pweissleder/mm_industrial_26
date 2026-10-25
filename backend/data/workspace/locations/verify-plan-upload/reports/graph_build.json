@@ -1,0 +1,23 @@
+{
+  "stage": "graph_build",
+  "status": "passed",
+  "summary": "Room graph built: 8 nodes, 7 edges.",
+  "metrics": {
+    "nodes": 8,
+    "edges": 7
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "graph/room_graph.json"
+  ],
+  "usage": {
+    "model": null,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "calls": 0
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-25T06:56:18.878557Z"
+}

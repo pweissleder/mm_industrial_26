@@ -1,0 +1,80 @@
+[
+  {
+    "dataset": "osm-way37850565",
+    "location_id": "osm-way37850565",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.06363045900070574,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way52060470",
+    "location_id": "osm-way52060470",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.20778508399962448,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way58216509",
+    "location_id": "osm-way58216509",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.5199322080006823,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-006",
+    "location_id": "proc-factory-train-006",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1508150830049999,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1650",
+    "location_id": "swiss-1650",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.18830679199891165,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way27917482",
+    "location_id": "osm-way27917482",
+    "status": "completed",
+    "passed": true,
+    "seconds": 2.4004182079952443,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  }
+]

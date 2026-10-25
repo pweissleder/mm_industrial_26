@@ -1,0 +1,201 @@
+{
+  "run_id": "508b61330234",
+  "dataset": "proc-campus-dev-000",
+  "location_id": "proc-campus-dev-000",
+  "status": "completed",
+  "current_stage": null,
+  "offline": false,
+  "owner_pid": 80272,
+  "owner_boot": "984607d205094f43a693ff3c86768ae7",
+  "created_at": "2026-10-24T16:40:12.132082Z",
+  "updated_at": "2026-10-24T16:42:34.045888Z",
+  "stages": {
+    "raw_validation": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:40:12.178616Z",
+      "ended_at": "2026-10-24T16:40:39.430267Z",
+      "summary": "37 issues found, 0 fixed deterministically. All 37 open issues were info-level, and I accepted all of them without changing any geometry. 31 were name_ref_mismatch: the generator names stairs, lifts and the main lobby by role, so the names don't contain the refs. 6 were duplicate_space_name: the same staircase or lift name repeats on each of the 5 floors, while every ref stays unique. I saved a note about this naming pattern for future runs on this source. I didn't re-run the checks, but the last accept call reported no open issues."
+    },
+    "graph_build": {
+      "status": "skipped",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:40:42.237767Z",
+      "ended_at": "2026-10-24T16:40:42.238435Z",
+      "summary": "Relationship graph builder is not implemented yet."
+    },
+    "graph_validate": {
+      "status": "skipped",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:40:42.240015Z",
+      "ended_at": "2026-10-24T16:40:42.240974Z",
+      "summary": "Relationship graph validator is not implemented yet."
+    },
+    "floorplan": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:40:43.974312Z",
+      "ended_at": "2026-10-24T16:40:50.296396Z",
+      "summary": "Floorplan built: 152 spaces on 5 floors; numeric check passed."
+    },
+    "equipment": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:40:50.300056Z",
+      "ended_at": "2026-10-24T16:40:57.190821Z",
+      "summary": "Placed 944 assets of 47 types; 17 types without a library model, 17 flagged as implausible."
+    },
+    "variant_creator": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:40:57.193735Z",
+      "ended_at": "2026-10-24T16:41:57.879552Z",
+      "summary": "Created 17 of 17 library models."
+    },
+    "model_validate": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:41:57.882247Z",
+      "ended_at": "2026-10-24T16:42:10.923573Z",
+      "summary": "Numeric check passed: 3079 elements checked, max errors {'space_xy_m': 1.8703690618205397e-06, 'space_z_m': 3.8146972691777137e-07, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations, so the model passes. The numeric check passed: it compared 1439 nodes, including 152 spaces, 149 openings, 6 connectors and 944 assets, with no failures or warnings. All errors were below 2e-6 m, and openings and assets matched exactly. I compared the plan of each floor (levels 0 to 4) with the dataset's plan image. On every floor the layout matches: a long central corridor (x.01) with rooms x.02–x.17 on the west side and x.18–x.31 on the east (0.18–0.28 on the ground floor). Room order, sizes and colour-coded types match too. Door positions along the corridor line up with the dataset's door markers. The ground-floor entrances, at the north end of corridor 0.01 and on the east side of 0.18, are in the right places. Equipment clusters look plausible for their room types. A few rooms have little or no equipment (for example 3.18 and 0.18). The numeric check found no missing or extra assets, so this appears to match the dataset. No missing or extra spaces, openings or assets showed up, and none of the library models looked wrong."
+    },
+    "summarize": {
+      "status": "passed",
+      "attempts": 1,
+      "started_at": "2026-10-24T16:42:12.603202Z",
+      "ended_at": "2026-10-24T16:42:32.343374Z",
+      "summary": "Metadata written for 152 spaces on 5 floors."
+    }
+  },
+  "pending_review": null,
+  "decisions": [
+    {
+      "stage": "raw_validation",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Raw validation passed with 0 open issues. All 37 issues were info-level naming patterns (role-based names, names repeated per floor with unique refs), and they were accepted without any geometry changes."
+    },
+    {
+      "stage": "graph_build",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_build skipped."
+    },
+    {
+      "stage": "graph_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "graph_validate is skipped because the validator is not implemented. There are no issues or deviations, and retrying would not change the result, so proceed to floorplan."
+    },
+    {
+      "stage": "floorplan",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "floorplan passed."
+    },
+    {
+      "stage": "equipment",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "equipment passed."
+    },
+    {
+      "stage": "variant_creator",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "variant_creator passed."
+    },
+    {
+      "stage": "model_validate",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Model validation passed with errors below 2e-6 m, no deviations or open issues, and plans match the dataset on all floors."
+    },
+    {
+      "stage": "summarize",
+      "action": "proceed",
+      "target_stage": null,
+      "reason": "Summarize passed with no issues or deviations; pipeline complete."
+    }
+  ],
+  "usage": {
+    "raw_validation": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 58419,
+      "output_tokens": 3769,
+      "cache_read_input_tokens": 0,
+      "calls": 5
+    },
+    "orchestrator": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 4562,
+      "output_tokens": 246,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    },
+    "graph_build": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "graph_validate": {
+      "model": null,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "calls": 0
+    },
+    "floorplan": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 9607,
+      "output_tokens": 313,
+      "cache_read_input_tokens": 0,
+      "calls": 3
+    },
+    "equipment": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 4983,
+      "output_tokens": 888,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "variant_creator": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 344973,
+      "output_tokens": 24212,
+      "cache_read_input_tokens": 0,
+      "calls": 68
+    },
+    "model_validate": {
+      "model": "claude-opus-5-5",
+      "input_tokens": 7997,
+      "output_tokens": 956,
+      "cache_read_input_tokens": 0,
+      "calls": 2
+    },
+    "summarize": {
+      "model": "claude-sonnet-5-5",
+      "input_tokens": 14072,
+      "output_tokens": 11307,
+      "cache_read_input_tokens": 0,
+      "calls": 4
+    }
+  },
+  "artifacts": [
+    "3d/floorplan.glb",
+    "3d/model.glb",
+    "3d/previews/plan_floor_0.png",
+    "3d/previews/plan_floor_1.png",
+    "3d/previews/plan_floor_2.png",
+    "3d/previews/plan_floor_3.png",
+    "3d/previews/plan_floor_4.png",
+    "building.json",
+    "issues.json",
+    "location.json",
+    "patches.json",
+    "reports/validation_3d.json"
+  ],
+  "error": null
+}

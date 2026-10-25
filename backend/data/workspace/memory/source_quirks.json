@@ -1,0 +1,10 @@
+{
+  "procedural": [
+    {
+      "issue_class": "name_ref_mismatch",
+      "lesson": "Procedural campus source: stair/lift/lobby names (e.g. 'Staircase 1', 'Lift 2') never contain the ref and repeat on every floor; these info issues are harmless and can be accepted.",
+      "run_id": "508b61330234",
+      "at": "2026-10-24 16:40:24.496501+00:00"
+    }
+  ]
+}

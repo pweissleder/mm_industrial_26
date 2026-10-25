@@ -99,6 +99,7 @@ class LocationMetadata(BaseModel):
     stats: dict[str, Any] = Field(default_factory=dict)
     floors: list[FloorMeta] = Field(default_factory=list)
     spaces: dict[str, SpaceMeta] = Field(default_factory=dict)
+    suggestions: list[str] = Field(default_factory=list)
 
 
 class LocationRecord(BaseModel):

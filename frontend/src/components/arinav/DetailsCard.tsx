@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import {
   assetColor,
   assetHeight,
@@ -10,7 +9,7 @@ import {
   type Selection,
 } from '../../lib/building';
 import type { SpaceMeta } from '../../lib/api';
-import { ChatIcon, CloseIcon, LayersIcon } from './Icons';
+import { ChevronIcon, CloseIcon, PinIcon, RouteIcon } from './Icons';
 import type { ObjectInfo } from './view';
 
 interface Details {
@@ -117,11 +116,22 @@ interface Props {
   info?: ObjectInfo;
   onClose: () => void;
   onAsk: (question: string) => void;
-  onFocusFloor: (level: number) => void;
   /** Closed in the current navigation scenario. */
   closed?: boolean;
-  /** Mode-specific actions, e.g. set as simulated location or as route start. */
-  extraActions?: ReactNode;
+  /** Activate/Deactivate (user and developer profiles). */
+  canToggle?: boolean;
+  /** Route section: "From here" / "To here" (user and developer profiles). */
+  onFromHere?: () => void;
+  onToHere?: () => void;
+  /** A start / destination is already chosen: that button turns white, the open one stays blue. */
+  startSet?: boolean;
+  targetSet?: boolean;
+  /** Pointer/focus over the card, so the user profile can keep it open. */
+  onHold?: (held: boolean) => void;
+  /** Folded to its title row (user profile, after a few seconds). */
+  collapsed?: boolean;
+  /** Fold/unfold control; without it the card can't be folded. */
+  onToggleCollapsed?: () => void;
 }
 
 export default function DetailsCard({
@@ -131,60 +141,102 @@ export default function DetailsCard({
   info,
   onClose,
   onAsk,
-  onFocusFloor,
   closed = false,
-  extraActions,
+  canToggle = false,
+  onFromHere,
+  onToHere,
+  startSet = false,
+  targetSet = false,
+  onHold,
+  collapsed = false,
+  onToggleCollapsed,
 }: Props) {
   const d = describe(model, selection, info, spaceMeta);
   if (!d) return null;
-  const floor = d.floor;
-  // Closing goes through the agent (its set_closed tool), so the chat explains what changes.
+  // Deactivating goes through the agent (its set_closed tool), so the chat explains what changes.
   const closable = selection.kind === 'space' || selection.kind === 'opening' || selection.kind === 'connector';
   const isClosed = !!model?.closed?.includes(selection.id);
+  const routable = selection.kind !== 'object' && (onFromHere || onToHere);
   return (
-    <section className="details card" aria-label="Selection details">
+    <section
+      className={`details card${collapsed ? ' details--collapsed' : ''}`}
+      aria-label="Selection details"
+      onMouseEnter={() => onHold?.(true)}
+      onMouseLeave={() => onHold?.(false)}
+      onFocus={() => onHold?.(true)}
+      onBlur={() => onHold?.(false)}
+    >
       <header className="details__head">
         <span className="swatch swatch--lg" style={{ background: d.swatch }} />
         <div className="details__titles">
           <span className="eyebrow">{d.kind}</span>
           <h2 className="details__title">{d.title}</h2>
         </div>
+        {onToggleCollapsed && (
+          <button
+            className="icon-btn details__fold"
+            onClick={onToggleCollapsed}
+            aria-expanded={!collapsed}
+            aria-label={collapsed ? 'Show details' : 'Collapse details'}
+          >
+            <ChevronIcon />
+          </button>
+        )}
         <button className="icon-btn" onClick={onClose} aria-label="Clear selection">
           <CloseIcon />
         </button>
       </header>
-      {closed && (
-        <p className="details__closed" role="status">
-          Closed in the current scenario
-        </p>
-      )}
-      {d.description && <p className="details__description">{d.description}</p>}
-      <dl className="details__rows">
-        {d.rows.map(([k, v]) => (
-          <div key={k} className="details__row">
-            <dt>{k}</dt>
-            <dd>{v}</dd>
-          </div>
-        ))}
-      </dl>
-      <div className="details__actions">
-        <button className="btn btn--primary btn--sm" onClick={() => onAsk(`How do I get to ${d.title}?`)}>
-          <ChatIcon width={16} height={16} /> Ask AriNav
-        </button>
-        {closable && (
-          <button
-            className="btn btn--ghost btn--sm"
-            onClick={() => onAsk(`${isClosed ? 'Reopen' : 'Close'} ${d.title} (${selection.id}).`)}
-          >
-            {isClosed ? 'Reopen' : 'Close'}
-          </button>
-        )}
-        {floor && (
-          <button className="btn btn--ghost btn--sm" onClick={() => onFocusFloor(floor.level)}>
-            <LayersIcon width={16} height={16} /> Show floor
-          </button>
-        )}
-        {extraActions}
+      {/* Always rendered, so folding can slide the body shut instead of cutting it off. */}
+      <div className="details__body" inert={collapsed}>
+        <div className="details__body-inner">
+          {closed && (
+            <p className="details__closed" role="status">
+              Deactivated in the current scenario
+            </p>
+          )}
+          {d.description && <p className="details__description">{d.description}</p>}
+          <dl className="details__rows">
+            {d.rows.map(([k, v]) => (
+              <div key={k} className="details__row">
+                <dt>{k}</dt>
+                <dd>{v}</dd>
+              </div>
+            ))}
+          </dl>
+          {routable && (
+            <div className="details__group" role="group" aria-label="Route">
+              <span className="details__group-title">Route</span>
+              <div className="details__group-buttons">
+                {onFromHere && (
+                  <button
+                    className={`btn btn--sm ${startSet ? 'btn--ghost' : 'btn--primary'}`}
+                    onClick={onFromHere}
+                  >
+                    <PinIcon width={16} height={16} /> From here
+                  </button>
+                )}
+                {onToHere && (
+                  <button
+                    className={`btn btn--sm ${targetSet ? 'btn--ghost' : 'btn--primary'}`}
+                    onClick={onToHere}
+                  >
+                    <RouteIcon width={16} height={16} /> To here
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+          {canToggle && closable && (
+            <div className="details__actions">
+              <button
+                className="btn btn--ghost btn--sm"
+                onClick={() => onAsk(`${isClosed ? 'Reopen' : 'Close'} ${d.title} (${selection.id}).`)}
+              >
+                {isClosed ? 'Activate' : 'Deactivate'}
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

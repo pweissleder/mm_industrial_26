@@ -1,0 +1,33 @@
+{
+  "stage": "equipment",
+  "status": "passed",
+  "summary": "Placed 505 assets of 49 types; 0 types without a library model, 1 flagged as implausible.",
+  "metrics": {
+    "placed": 505,
+    "types": 49,
+    "missing_types": [],
+    "flagged": [
+      {
+        "type": "inspection_bench",
+        "reason": "Height is 1.4 m for a 2.0 x 0.8 m bench. A real inspection bench is about 0.9 m high, so 1.4 m is too tall for a work surface."
+      }
+    ],
+    "to_create": [
+      "inspection_bench"
+    ]
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 5172,
+    "output_tokens": 307,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:39:10.035779Z"
+}

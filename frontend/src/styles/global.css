@@ -457,7 +457,7 @@ code {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #ec1c7f;
+  background: var(--orange);
   border: 2px solid #fff;
   transform: translateX(-50%);
 }
@@ -569,6 +569,8 @@ code {
 
 .sidebar__close {
   display: none;
+  width: 38px;
+  height: 38px;
 }
 
 .sidebar__body {
@@ -598,6 +600,38 @@ code {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.section__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.section__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.section__toggle:hover {
+  color: var(--ink-2);
+}
+
+.section__chevron {
+  transition: transform 0.2s;
+}
+
+.section--collapsible[open] .section__chevron {
+  transform: rotate(180deg);
+}
+
+.section__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .building-meta {
@@ -689,7 +723,6 @@ code {
 
 .list__row[aria-current='true'] {
   background: var(--orange-50);
-  box-shadow: inset 3px 0 0 var(--orange);
 }
 
 .list__text {
@@ -872,13 +905,29 @@ code {
   gap: 8px;
 }
 
-/* Camera HUD on the right edge. */
-.hud {
+/* Right edge: camera HUD above the floor rail, pinned just above the chat bar's height so
+   the opening conversation never pushes it around. */
+.right-rail {
   position: absolute;
   z-index: 10;
   right: var(--gutter);
-  top: 50%;
-  transform: translateY(-50%);
+  top: calc(var(--gutter) * 2 + var(--topbar-h));
+  bottom: calc(var(--gutter) + var(--safe-b) + 64px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.right-rail > * {
+  pointer-events: auto;
+}
+
+/* Camera HUD. */
+.hud {
+  flex: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -894,10 +943,99 @@ code {
   cursor: grabbing;
 }
 
+/* Buttons the short camera bar brings back fade in. */
+.hud > * {
+  animation: hud-in 0.22s ease-out;
+}
+
+@keyframes hud-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
 .hud__sep {
   height: 1px;
   margin: 3px 8px;
   background: var(--line);
+}
+
+/* Floor rail: under the HUD at the bottom of the right rail; scrolls when floors run long. */
+.floor-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 4px;
+  border-radius: 14px;
+}
+
+.floor-rail__item {
+  min-width: 40px;
+  height: 36px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.floor-rail__item:hover {
+  color: var(--blue);
+}
+
+/* Only the selected floor's text is highlighted. */
+.floor-rail__item[aria-checked='true'] {
+  background: transparent;
+  color: var(--blue);
+}
+
+/* Top right, on the camera bar's margin: the details card above the navigation panel, ending
+   just above the camera bar (--rail-top, measured by the app) so the two never overlap. */
+.top-stack {
+  position: absolute;
+  z-index: 25;
+  top: calc(var(--gutter) * 2 + var(--topbar-h));
+  right: var(--gutter);
+  bottom: calc(100% - var(--rail-top, 100%) + 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.top-stack > * {
+  pointer-events: auto;
+}
+
+.top-stack > .details,
+.top-stack > .guidance {
+  position: static;
+  min-height: 0;
+  max-height: none;
+}
+
+/* Both scroll when space runs out; a folded card always keeps its title row. */
+.top-stack > .details,
+.top-stack > .guidance {
+  flex: 0 1 auto;
+  overflow-y: auto;
+}
+
+.top-stack > .details--collapsed {
+  flex: none;
+}
+
+.top-stack > .guidance {
+  min-height: 120px;
 }
 
 /* Details of the selected element. */
@@ -907,7 +1045,8 @@ code {
   top: calc(var(--gutter) * 2 + var(--topbar-h));
   right: calc(var(--gutter) * 2 + 48px);
   width: 320px;
-  max-height: calc(100% - 220px);
+  /* Stay above the chat dock (suggestions and context chips grow it). */
+  max-height: calc(100% - var(--gutter) * 3 - var(--topbar-h) - var(--chat-h, 110px) - 8px);
   overflow-y: auto;
   padding: 16px;
   animation: rise 0.22s ease-out;
@@ -924,6 +1063,47 @@ code {
   display: flex;
   align-items: flex-start;
   gap: 12px;
+}
+
+/* Folding slides the body shut (grid rows 1fr -> 0fr) and tightens the padding. */
+.details {
+  transition: padding 0.28s ease;
+}
+
+.details__body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 0.28s ease,
+    opacity 0.2s ease;
+}
+
+.details__body-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.details--collapsed .details__body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+}
+
+/* Folded to the title row (after a few seconds, while navigating, or short of room). */
+.details--collapsed {
+  padding: 10px 12px;
+}
+
+.details--collapsed .details__head {
+  align-items: center;
+}
+
+.details__fold svg {
+  transition: transform 0.15s;
+}
+
+.details:not(.details--collapsed) .details__fold svg {
+  transform: rotate(180deg);
 }
 
 .details__titles {
@@ -969,6 +1149,40 @@ code {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin-top: 12px;
+}
+
+/* Route section: visually grouped, concise. */
+.details__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+}
+
+.details__group-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.details__group-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.details__group-buttons .btn {
+  justify-content: center;
+}
+
+.floor-rail__item[aria-checked='true'] {
+  font-weight: 700;
 }
 
 /* Chat dock: bottom centre, in the space right of the sidebar. */
@@ -1117,11 +1331,14 @@ code {
 
 .chat__suggestions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
-  overflow-x: auto;
-  scrollbar-width: none;
   padding: 4px 2px;
   justify-content: center;
+}
+
+.chat__suggestions > .chip {
+  flex: none;
 }
 
 .chat__bar {
@@ -1375,50 +1592,48 @@ code {
   box-shadow: inset 0 0 0 1px rgba(251, 121, 40, 0.35);
 }
 
+.quality--button {
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .quality--hq {
   background: rgba(18, 165, 148, 0.12);
   color: #0b7c6f;
   box-shadow: inset 0 0 0 1px rgba(18, 165, 148, 0.35);
 }
 
-.pipeline-chip {
+.quality--button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  flex: none;
-  height: 34px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: var(--pill);
-  background: var(--gray-100);
-  color: var(--navy);
-  font-size: 13px;
-  font-weight: 600;
+  gap: 5px;
   white-space: nowrap;
-  transition: background 0.15s;
 }
 
-.pipeline-chip:hover {
-  background: #e6e7ec;
+/* Pipeline states on the same pill: building, needs a review, failed. */
+.quality--busy {
+  background: var(--blue-50);
+  color: var(--blue);
+  box-shadow: inset 0 0 0 1px rgba(0, 79, 171, 0.25);
 }
 
-.pipeline-chip--good {
-  color: #0b7c6f;
-}
-
-.pipeline-chip--attention {
+.quality--attention {
   background: var(--orange);
   color: #fff;
   animation: attention 1.6s ease-in-out infinite;
 }
 
-.pipeline-chip--attention:hover {
-  background: var(--orange-600);
-}
-
-.pipeline-chip--bad {
+.quality--bad {
   background: #fdecec;
   color: var(--bad);
+  box-shadow: inset 0 0 0 1px rgba(179, 38, 30, 0.3);
+}
+
+.spinner--xs {
+  width: 10px;
+  height: 10px;
+  border-width: 1.5px;
 }
 
 @keyframes attention {
@@ -1446,7 +1661,7 @@ code {
 
 @media (prefers-reduced-motion: reduce) {
   .spinner,
-  .pipeline-chip--attention {
+  .quality--attention {
     animation-duration: 3s;
   }
 }
@@ -1661,18 +1876,6 @@ code {
   font-size: 13px;
 }
 
-@media (max-width: 640px) {
-  .pipeline-chip {
-    width: 34px;
-    padding: 0;
-    justify-content: center;
-  }
-
-  .pipeline-chip__label {
-    display: none;
-  }
-}
-
 /* ------------------------------------------------------------ responsive */
 
 /* Desktop / iPad landscape: the sidebar is docked and the chat sits beside it. */
@@ -1694,6 +1897,13 @@ code {
 
   .sidebar__close {
     display: inline-grid;
+  }
+
+  /* Overlaying the map, the sheet is opaque so the scene doesn't show through. */
+  .sidebar {
+    background: #fff;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .scrim {
@@ -1720,6 +1930,21 @@ code {
   }
 }
 
+/* Narrow desktops and below: icon-only profile toggle and upload, wordmark without the mark. */
+@media (max-width: 1200px) {
+  /* The wordmark stays; the globe mark goes. */
+  .topbar .logo__mark,
+  .topbar__upload-label {
+    display: none;
+  }
+
+  .topbar__upload {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+  }
+}
+
 /* Phones: compact top bar, bottom sheets, full-width chat. */
 @media (max-width: 640px) {
   :root {
@@ -1732,19 +1957,8 @@ code {
     gap: 6px;
   }
 
-  .logo__word {
-    font-size: 18px;
-  }
-
-  .topbar__building,
-  .topbar__upload-label {
+  .topbar__building {
     display: none;
-  }
-
-  .topbar__upload {
-    width: 42px;
-    height: 42px;
-    padding: 0;
   }
 
   .sidebar-slot {
@@ -1782,16 +1996,40 @@ code {
     padding-top: 18px;
   }
 
-  .hud {
-    top: calc(var(--gutter) * 2 + var(--topbar-h));
-    transform: none;
+  /* Phones: the details sheet sits at the bottom and navigation at the top, so no stacking. */
+  .top-stack {
+    display: contents;
+  }
+
+  .top-stack > .details {
+    position: absolute;
+    max-height: 42dvh;
+  }
+
+  .top-stack > .guidance {
+    position: fixed;
+    max-height: calc(100dvh - var(--topbar-h) - 220px);
+    overflow-y: auto;
+  }
+
+  /* Phones: the bottom belongs to the sheets, so the right rail hangs from the top. */
+  .right-rail {
+    bottom: auto;
+    justify-content: flex-start;
+  }
+
+  /* The details sheet and the open panel cover the bottom; the rail steps aside. */
+  .app--selection .floor-rail,
+  .app--sidebar .floor-rail,
+  .app:has(.chat__panel) .floor-rail {
+    display: none;
   }
 
   .details {
     left: var(--gutter);
     right: var(--gutter);
     width: auto;
-    bottom: calc(var(--gutter) + var(--safe-b) + 66px);
+    bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 56px) + 8px);
     max-height: 42dvh;
     padding: 14px;
   }
@@ -1817,11 +2055,22 @@ code {
     display: none;
   }
 
+  /* One swipeable row, edge to edge; the end spacer keeps the last chip clear of the edge. */
   .chat__suggestions {
+    flex-wrap: nowrap;
     justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: none;
     margin: 0 calc(-1 * var(--gutter));
-    padding: 4px var(--gutter);
+    padding: 4px var(--gutter) 8px;
     width: calc(100% + 2 * var(--gutter));
+    scroll-padding-inline: var(--gutter);
+  }
+
+  .chat__suggestions::after {
+    content: '';
+    flex: none;
+    width: 1px;
   }
 
   .chat__status {

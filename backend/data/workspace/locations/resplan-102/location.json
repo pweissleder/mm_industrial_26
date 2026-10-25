@@ -1,0 +1,274 @@
+{
+  "id": "resplan-102",
+  "dataset": "resplan-102",
+  "name": "Residence 102",
+  "source": "resplan",
+  "raw_sha256": "42ddfe1734b683da2c36271442192f283a55fee2172d793e6ed5fe5c3d90d60a",
+  "created_at": "2026-10-25T01:39:37.251718Z",
+  "updated_at": "2026-10-25T01:40:26.671909Z",
+  "pillars": {
+    "validation": {
+      "status": "done",
+      "updated_at": "2026-10-25T01:40:26.671887Z",
+      "note": null
+    },
+    "graph": {
+      "status": "done",
+      "updated_at": "2026-10-25T01:40:26.671892Z",
+      "note": null
+    },
+    "assets_3d": {
+      "status": "done",
+      "updated_at": "2026-10-25T01:40:26.671896Z",
+      "note": null
+    },
+    "metadata": {
+      "status": "done",
+      "updated_at": "2026-10-25T01:40:26.671898Z",
+      "note": null
+    }
+  },
+  "metadata": {
+    "summary": "Residence 102 is a single-storey home set up for everyday living, with a living room, bedrooms, a kitchen and bathrooms, furnished with beds, a sofa and a stove. It has one step-free entrance and no stairs or lifts.",
+    "key_facts": [
+      "One floor, about 87 m² in total",
+      "Seven spaces, six of them rooms",
+      "Kitchen has a fridge, stove and counter",
+      "Two toilets and two sinks",
+      "One entrance, step-free throughout",
+      "Small outdoor area of 3.6 m²"
+    ],
+    "stats": {
+      "building_id": "resplan-102",
+      "name": "Residence 102",
+      "source": "resplan",
+      "license": "CC-BY-4.0",
+      "attribution": "ResPlan, Agour et al., https://github.com/m-agour/ResPlan (CC BY 4.0)",
+      "floor_count": 1,
+      "levels": [
+        0
+      ],
+      "missing_levels": [],
+      "total_area_m2": 87.0,
+      "space_count": 7,
+      "room_count": 6,
+      "asset_count": 19,
+      "equipment_by_category": {
+        "furniture": 11,
+        "fixture": 5,
+        "equipment": 3
+      },
+      "top_equipment": {
+        "plant": 2,
+        "sink": 2,
+        "toilet": 2,
+        "wardrobe": 2,
+        "bed": 1,
+        "bookshelf": 1,
+        "coffee_machine": 1,
+        "coffee_table": 1,
+        "fridge": 1,
+        "kitchen_counter": 1,
+        "nightstand": 1,
+        "single_bed": 1,
+        "sofa": 1,
+        "stove": 1,
+        "tv_stand": 1
+      },
+      "machines": {},
+      "has_lift": false,
+      "has_stairs": false,
+      "has_step_free_entrance": true,
+      "step_free_coverage": 1.0,
+      "connectors": []
+    },
+    "floors": [
+      {
+        "floor_id": "resplan-102-F0",
+        "level": 0,
+        "name": "Ground floor",
+        "description": "Ground floor holds the living room, bedrooms, kitchen and bathrooms, with furniture, fixtures and one entrance, plus a small outdoor area.",
+        "stats": {
+          "floor_id": "resplan-102-F0",
+          "level": 0,
+          "name": "Ground floor",
+          "elevation_m": 0.0,
+          "height_m": 3.0,
+          "space_count": 7,
+          "room_count": 6,
+          "area_m2": 87.0,
+          "outdoor_area_m2": 3.6,
+          "area_by_type": {
+            "room": 87.0
+          },
+          "area_by_room_type": {
+            "living_room": 34.22,
+            "bedroom": 31.82,
+            "bathroom": 7.88,
+            "kitchen": 13.08
+          },
+          "equipment_by_category": {
+            "furniture": 11,
+            "fixture": 5,
+            "equipment": 3
+          },
+          "top_equipment": {
+            "plant": 2,
+            "sink": 2,
+            "toilet": 2,
+            "wardrobe": 2,
+            "bed": 1,
+            "bookshelf": 1,
+            "coffee_machine": 1,
+            "coffee_table": 1,
+            "fridge": 1,
+            "kitchen_counter": 1
+          },
+          "entrances": 1
+        }
+      }
+    ],
+    "spaces": {
+      "resplan-102-F0-S001": {
+        "space_id": "resplan-102-F0-S001",
+        "floor_id": "resplan-102-F0",
+        "name": "Living room 0.01",
+        "ref": "0.01",
+        "type": "room",
+        "room_type": "living_room",
+        "area_m2": 34.22,
+        "description": "Living room with sofa, coffee table, TV stand, bookshelf and plant; step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "coffee_table": 1,
+          "plant": 1,
+          "sofa": 1,
+          "tv_stand": 1
+        },
+        "doors": 6,
+        "step_free_access": true,
+        "issues": []
+      },
+      "resplan-102-F0-S002": {
+        "space_id": "resplan-102-F0-S002",
+        "floor_id": "resplan-102-F0",
+        "name": "Bedroom 0.02",
+        "ref": "0.02",
+        "type": "room",
+        "room_type": "bedroom",
+        "area_m2": 17.02,
+        "description": "Bedroom with a single bed and wardrobe; step-free.",
+        "equipment": {
+          "single_bed": 1,
+          "wardrobe": 1
+        },
+        "doors": 2,
+        "step_free_access": true,
+        "issues": []
+      },
+      "resplan-102-F0-S003": {
+        "space_id": "resplan-102-F0-S003",
+        "floor_id": "resplan-102-F0",
+        "name": "Bedroom 0.03",
+        "ref": "0.03",
+        "type": "room",
+        "room_type": "bedroom",
+        "area_m2": 14.8,
+        "description": "Bedroom with a bed, nightstand and wardrobe; step-free.",
+        "equipment": {
+          "bed": 1,
+          "nightstand": 1,
+          "wardrobe": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "resplan-102-F0-S004": {
+        "space_id": "resplan-102-F0-S004",
+        "floor_id": "resplan-102-F0",
+        "name": "Bathroom 0.04",
+        "ref": "0.04",
+        "type": "room",
+        "room_type": "bathroom",
+        "area_m2": 3.91,
+        "description": "Small bathroom with a sink and toilet; step-free.",
+        "equipment": {
+          "sink": 1,
+          "toilet": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "resplan-102-F0-S005": {
+        "space_id": "resplan-102-F0-S005",
+        "floor_id": "resplan-102-F0",
+        "name": "Bathroom 0.05",
+        "ref": "0.05",
+        "type": "room",
+        "room_type": "bathroom",
+        "area_m2": 3.97,
+        "description": "Small bathroom with a sink and toilet; step-free.",
+        "equipment": {
+          "sink": 1,
+          "toilet": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "resplan-102-F0-S006": {
+        "space_id": "resplan-102-F0-S006",
+        "floor_id": "resplan-102-F0",
+        "name": "Kitchen 0.06",
+        "ref": "0.06",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 13.08,
+        "description": "Kitchen with stove, fridge, kitchen counter and coffee machine; step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "resplan-102-F0-S007": {
+        "space_id": "resplan-102-F0-S007",
+        "floor_id": "resplan-102-F0",
+        "name": "Balcony 0.07",
+        "ref": "0.07",
+        "type": "outdoor",
+        "room_type": "balcony",
+        "area_m2": 3.6,
+        "description": "Outdoor balcony with a plant; step-free.",
+        "equipment": {
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      }
+    },
+    "suggestions": [
+      "Which rooms are on the ground floor of Residence 102?",
+      "Is there a step-free route from Living room 0.01 to Kitchen 0.06?",
+      "How do I get from Bedroom 0.02 to Balcony 0.07 in Residence 102?"
+    ]
+  },
+  "artifacts": {
+    "source_dir": "/Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/backend/data/datasets/resplan-102",
+    "building": "building.json",
+    "model": "3d/model.glb",
+    "model_index": "3d/model_index.json",
+    "issues": "issues.json",
+    "patches": "patches.json"
+  },
+  "runs": [
+    "70258016c596"
+  ]
+}

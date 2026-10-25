@@ -1,0 +1,541 @@
+{
+  "directed": false,
+  "multigraph": true,
+  "graph": {
+    "building": {
+      "id": "verify-plan-upload",
+      "name": "Residence 102",
+      "source": "reconstructed",
+      "source_ref": {
+        "dataset": "verify-plan-upload",
+        "files": [
+          "floor_0.svg",
+          "floor_0_plain.png",
+          "equipment.csv"
+        ]
+      },
+      "license": "unknown",
+      "attribution": "Reconstructed from uploaded floor plans",
+      "split": "uploaded",
+      "units": "m"
+    },
+    "floors": [
+      {
+        "id": "verify-plan-upload-F0",
+        "level": 0,
+        "name": "Ground floor",
+        "elevation_m": 0.0,
+        "height_m": 3.0
+      }
+    ],
+    "closed": []
+  },
+  "nodes": [
+    {
+      "kind": "outside",
+      "name": "Outside",
+      "connected_to_outside": true,
+      "id": "outside"
+    },
+    {
+      "kind": "space",
+      "name": "Living room 0.01",
+      "ref": "0.01",
+      "type": "room",
+      "room_type": "living_room",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 34.22,
+      "centroid": [
+        7.905926066907162,
+        7.343727673656531
+      ],
+      "anchor": [
+        9.650500000000001,
+        5.714
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00001",
+          "name": "Sofa 0.01",
+          "type": "sofa",
+          "category": "furniture",
+          "position": [
+            6.736,
+            9.738
+          ]
+        },
+        {
+          "id": "resplan-102-A00002",
+          "name": "Coffee table 0.01",
+          "type": "coffee_table",
+          "category": "furniture",
+          "position": [
+            8.882,
+            6.774
+          ]
+        },
+        {
+          "id": "resplan-102-A00003",
+          "name": "TV stand 0.01",
+          "type": "tv_stand",
+          "category": "furniture",
+          "position": [
+            7.969,
+            6.111
+          ]
+        },
+        {
+          "id": "resplan-102-A00004",
+          "name": "Bookshelf 0.01",
+          "type": "bookshelf",
+          "category": "furniture",
+          "position": [
+            7.87,
+            8.787
+          ]
+        },
+        {
+          "id": "resplan-102-A00005",
+          "name": "Plant 0.01",
+          "type": "plant",
+          "category": "furniture",
+          "position": [
+            11.332,
+            4.651
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S001"
+    },
+    {
+      "kind": "space",
+      "name": "Bedroom 0.02",
+      "ref": "0.02",
+      "type": "room",
+      "room_type": "bedroom",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 17.02,
+      "centroid": [
+        13.670000000000002,
+        6.102999999999999
+      ],
+      "anchor": [
+        13.67,
+        6.103
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00006",
+          "name": "Single bed 0.02",
+          "type": "single_bed",
+          "category": "furniture",
+          "position": [
+            14.529,
+            6.762
+          ]
+        },
+        {
+          "id": "resplan-102-A00007",
+          "name": "Wardrobe 0.02",
+          "type": "wardrobe",
+          "category": "furniture",
+          "position": [
+            12.111,
+            5.838
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S002"
+    },
+    {
+      "kind": "space",
+      "name": "Bedroom 0.03",
+      "ref": "0.03",
+      "type": "room",
+      "room_type": "bedroom",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 14.8,
+      "centroid": [
+        1.9965,
+        10.5885
+      ],
+      "anchor": [
+        1.9965,
+        10.5885
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00008",
+          "name": "Bed 0.03",
+          "type": "bed",
+          "category": "furniture",
+          "position": [
+            2.694,
+            11.372
+          ]
+        },
+        {
+          "id": "resplan-102-A00009",
+          "name": "Wardrobe 0.03",
+          "type": "wardrobe",
+          "category": "furniture",
+          "position": [
+            0.37,
+            11.32
+          ]
+        },
+        {
+          "id": "resplan-102-A00010",
+          "name": "Nightstand 0.03",
+          "type": "nightstand",
+          "category": "furniture",
+          "position": [
+            3.723,
+            11.515
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S003"
+    },
+    {
+      "kind": "space",
+      "name": "Bathroom 0.04",
+      "ref": "0.04",
+      "type": "room",
+      "room_type": "bathroom",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 3.91,
+      "centroid": [
+        1.19,
+        7.7745
+      ],
+      "anchor": [
+        1.19,
+        7.7745
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00011",
+          "name": "Toilet 0.04",
+          "type": "toilet",
+          "category": "fixture",
+          "position": [
+            0.42,
+            8.094
+          ]
+        },
+        {
+          "id": "resplan-102-A00012",
+          "name": "Sink 0.04",
+          "type": "sink",
+          "category": "fixture",
+          "position": [
+            0.366,
+            7.249
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S004"
+    },
+    {
+      "kind": "space",
+      "name": "Bathroom 0.05",
+      "ref": "0.05",
+      "type": "room",
+      "room_type": "bathroom",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 3.97,
+      "centroid": [
+        14.5015,
+        9.353499999999999
+      ],
+      "anchor": [
+        14.5015,
+        9.3535
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00013",
+          "name": "Toilet 0.05",
+          "type": "toilet",
+          "category": "fixture",
+          "position": [
+            13.824,
+            9.783
+          ]
+        },
+        {
+          "id": "resplan-102-A00014",
+          "name": "Sink 0.05",
+          "type": "sink",
+          "category": "fixture",
+          "position": [
+            15.304,
+            9.419
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S005"
+    },
+    {
+      "kind": "space",
+      "name": "Kitchen 0.06",
+      "ref": "0.06",
+      "type": "room",
+      "room_type": "kitchen",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 13.08,
+      "centroid": [
+        5.943444731820476,
+        5.012608717827324
+      ],
+      "anchor": [
+        5.935499999999999,
+        5.243499999999999
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00015",
+          "name": "Kitchen counter 0.06",
+          "type": "kitchen_counter",
+          "category": "fixture",
+          "position": [
+            4.542,
+            5.146
+          ]
+        },
+        {
+          "id": "resplan-102-A00016",
+          "name": "Fridge 0.06",
+          "type": "fridge",
+          "category": "equipment",
+          "position": [
+            5.159,
+            3.592
+          ]
+        },
+        {
+          "id": "resplan-102-A00017",
+          "name": "Stove 0.06",
+          "type": "stove",
+          "category": "equipment",
+          "position": [
+            7.368,
+            4.256
+          ]
+        },
+        {
+          "id": "resplan-102-A00018",
+          "name": "Coffee machine 0.06",
+          "type": "coffee_machine",
+          "category": "equipment",
+          "position": [
+            4.442,
+            3.521
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S006"
+    },
+    {
+      "kind": "space",
+      "name": "Balcony 0.07",
+      "ref": "0.07",
+      "type": "outdoor",
+      "room_type": "balcony",
+      "floor_id": "verify-plan-upload-F0",
+      "level": 0,
+      "elevation_m": 0.0,
+      "area_m2": 3.6,
+      "centroid": [
+        9.773,
+        9.714500000000001
+      ],
+      "anchor": [
+        9.773,
+        9.714500000000001
+      ],
+      "circulation": false,
+      "production_bay": false,
+      "synthetic": false,
+      "closed": false,
+      "assets": [
+        {
+          "id": "resplan-102-A00019",
+          "name": "Plant 0.07",
+          "type": "plant",
+          "category": "furniture",
+          "position": [
+            8.264,
+            9.948
+          ]
+        }
+      ],
+      "connected_to_outside": true,
+      "id": "verify-plan-upload-F0-S007"
+    }
+  ],
+  "edges": [
+    {
+      "kind": "entrance",
+      "element": "verify-plan-upload-F0-O0007",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        10.129,
+        3.768
+      ],
+      "entrance": true,
+      "synthetic": false,
+      "closed": false,
+      "source": "outside",
+      "target": "verify-plan-upload-F0-S001",
+      "key": "verify-plan-upload-F0-O0007"
+    },
+    {
+      "kind": "door",
+      "element": "verify-plan-upload-F0-O0002",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        11.671,
+        7.808
+      ],
+      "entrance": false,
+      "synthetic": false,
+      "closed": false,
+      "source": "verify-plan-upload-F0-S001",
+      "target": "verify-plan-upload-F0-S002",
+      "key": "verify-plan-upload-F0-O0002"
+    },
+    {
+      "kind": "door",
+      "element": "verify-plan-upload-F0-O0003",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        3.474,
+        8.665
+      ],
+      "entrance": false,
+      "synthetic": false,
+      "closed": false,
+      "source": "verify-plan-upload-F0-S001",
+      "target": "verify-plan-upload-F0-S003",
+      "key": "verify-plan-upload-F0-O0003"
+    },
+    {
+      "kind": "door",
+      "element": "verify-plan-upload-F0-O0004",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        2.45,
+        8.068
+      ],
+      "entrance": false,
+      "synthetic": false,
+      "closed": false,
+      "source": "verify-plan-upload-F0-S001",
+      "target": "verify-plan-upload-F0-S004",
+      "key": "verify-plan-upload-F0-O0004"
+    },
+    {
+      "kind": "door",
+      "element": "verify-plan-upload-F0-O0005",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        9.748,
+        9.101
+      ],
+      "entrance": false,
+      "synthetic": false,
+      "closed": false,
+      "source": "verify-plan-upload-F0-S001",
+      "target": "verify-plan-upload-F0-S007",
+      "key": "verify-plan-upload-F0-O0005"
+    },
+    {
+      "kind": "opening",
+      "element": "verify-plan-upload-F0-O0006",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        6.607,
+        6.775
+      ],
+      "entrance": false,
+      "synthetic": false,
+      "closed": false,
+      "source": "verify-plan-upload-F0-S001",
+      "target": "verify-plan-upload-F0-S006",
+      "key": "verify-plan-upload-F0-O0006"
+    },
+    {
+      "kind": "door",
+      "element": "verify-plan-upload-F0-O0001",
+      "width_m": 0.9,
+      "step_free": true,
+      "floor_id": "verify-plan-upload-F0",
+      "position": [
+        13.922,
+        8.379
+      ],
+      "entrance": false,
+      "synthetic": false,
+      "closed": false,
+      "source": "verify-plan-upload-F0-S002",
+      "target": "verify-plan-upload-F0-S005",
+      "key": "verify-plan-upload-F0-O0001"
+    }
+  ]
+}

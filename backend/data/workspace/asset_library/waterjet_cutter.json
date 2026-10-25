@@ -1,0 +1,131 @@
+{
+  "spec": {
+    "type": "waterjet_cutter",
+    "category": "machine",
+    "description": "Gantry waterjet cutter with tank, bridge, head and control cabinet.",
+    "default_height_m": 2.0,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          -0.1,
+          0.0,
+          0.2
+        ],
+        "size": [
+          0.76,
+          1.0,
+          0.4
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.1,
+          0.0,
+          0.42
+        ],
+        "size": [
+          0.7,
+          0.92,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.46,
+          0.0,
+          0.45
+        ],
+        "size": [
+          0.08,
+          1.0,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.26,
+          0.0,
+          0.45
+        ],
+        "size": [
+          0.08,
+          1.0,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.1,
+          0.05,
+          0.6
+        ],
+        "size": [
+          0.8,
+          0.14,
+          0.1
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.46,
+          0.05,
+          0.35
+        ],
+        "size": [
+          0.08,
+          0.14,
+          0.7
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.26,
+          0.05,
+          0.35
+        ],
+        "size": [
+          0.08,
+          0.14,
+          0.7
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.1,
+          -0.07,
+          0.55
+        ],
+        "size": [
+          0.12,
+          0.1,
+          0.2
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.4,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.2,
+          0.9,
+          1.0
+        ]
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:35:18.181817Z"
+}

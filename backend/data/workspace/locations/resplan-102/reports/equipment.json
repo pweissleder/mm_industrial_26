@@ -1,0 +1,35 @@
+{
+  "stage": "equipment",
+  "status": "passed",
+  "summary": "Placed 19 assets of 15 types; 1 types without a library model, 1 flagged as implausible.",
+  "metrics": {
+    "placed": 19,
+    "types": 15,
+    "missing_types": [
+      "tv_stand"
+    ],
+    "flagged": [
+      {
+        "type": "tv_stand",
+        "reason": "The library entry is missing, so it renders as a placeholder box with no height."
+      }
+    ],
+    "to_create": [
+      "tv_stand"
+    ]
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 3076,
+    "output_tokens": 145,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-25T01:39:48.470932Z"
+}

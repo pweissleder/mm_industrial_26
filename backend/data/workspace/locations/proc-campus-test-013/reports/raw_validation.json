@@ -1,0 +1,30 @@
+{
+  "stage": "raw_validation",
+  "status": "passed",
+  "summary": "49 issues found, 0 fixed deterministically. I accepted all 49 open issues and made no data changes. 43 were name_ref_mismatch issues: the stair, lift and lobby names never contain their ref codes, which is how this procedural source names them. 6 were duplicate_space_name issues: each is one stair or lift shaft repeated on every floor, so the shared name is intended. I did not re-run the checks, but the last accept call reported no open issues.",
+  "metrics": {
+    "issues_found": 49,
+    "fixed": 0,
+    "accepted": 49,
+    "open": 0,
+    "open_errors": 0,
+    "patches": 0,
+    "open_by_class": {}
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "building.json",
+    "issues.json",
+    "patches.json"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 35975,
+    "output_tokens": 2286,
+    "cache_read_input_tokens": 0,
+    "calls": 3
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T18:15:35.216281Z"
+}

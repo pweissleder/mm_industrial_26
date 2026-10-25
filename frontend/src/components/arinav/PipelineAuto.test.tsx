@@ -2,7 +2,7 @@ import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { api, type RunRecord } from '../../lib/api';
-import { PipelineChip, PipelineDialog } from './PipelineStatus';
+import { HqPill, PipelineDialog } from './PipelineStatus';
 import { usePipeline, type Pipeline } from './usePipeline';
 
 beforeAll(() => {
@@ -79,8 +79,8 @@ describe('not built yet', () => {
     };
     const user = userEvent.setup();
 
-    render(<PipelineChip state={pipeline.state} onOpen={() => {}} />);
-    expect(screen.getByRole('button', { name: /LQ only/ })).toBeInTheDocument();
+    render(<HqPill state={pipeline.state} showingHq={false} onOpen={() => {}} />);
+    expect(screen.getByRole('button', { name: /Low · Build HQ/ })).toBeInTheDocument();
 
     render(<PipelineDialog open pipeline={pipeline} onClose={() => {}} />);
     await user.click(screen.getByRole('button', { name: 'Build HQ model' }));

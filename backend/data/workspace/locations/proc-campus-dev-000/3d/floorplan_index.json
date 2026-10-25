@@ -1,0 +1,5341 @@
+{
+ "building": {
+  "id": "proc-campus-dev-000",
+  "kind": "building"
+ },
+ "floor:proc-campus-dev-000-F0": {
+  "elevation_m": 0.0,
+  "height_m": 3.8,
+  "id": "proc-campus-dev-000-F0",
+  "kind": "floor",
+  "level": 0
+ },
+ "floor:proc-campus-dev-000-F1": {
+  "elevation_m": 3.8,
+  "height_m": 3.8,
+  "id": "proc-campus-dev-000-F1",
+  "kind": "floor",
+  "level": 1
+ },
+ "floor:proc-campus-dev-000-F2": {
+  "elevation_m": 7.6,
+  "height_m": 3.8,
+  "id": "proc-campus-dev-000-F2",
+  "kind": "floor",
+  "level": 2
+ },
+ "floor:proc-campus-dev-000-F3": {
+  "elevation_m": 11.4,
+  "height_m": 3.8,
+  "id": "proc-campus-dev-000-F3",
+  "kind": "floor",
+  "level": 3
+ },
+ "floor:proc-campus-dev-000-F4": {
+  "elevation_m": 15.2,
+  "height_m": 3.8,
+  "id": "proc-campus-dev-000-F4",
+  "kind": "floor",
+  "level": 4
+ },
+ "hall_lines:proc-campus-dev-000-F0": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "hall_lines"
+ },
+ "marker:proc-campus-dev-000-F0-S004": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F0-S004"
+ },
+ "marker:proc-campus-dev-000-F0-S005": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F0-S005"
+ },
+ "marker:proc-campus-dev-000-F0-S009": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F0-S009"
+ },
+ "marker:proc-campus-dev-000-F0-S010": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F0-S010"
+ },
+ "marker:proc-campus-dev-000-F0-S014": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F0-S014"
+ },
+ "marker:proc-campus-dev-000-F0-S015": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F0-S015"
+ },
+ "marker:proc-campus-dev-000-F1-S004": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F1-S004"
+ },
+ "marker:proc-campus-dev-000-F1-S005": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F1-S005"
+ },
+ "marker:proc-campus-dev-000-F1-S009": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F1-S009"
+ },
+ "marker:proc-campus-dev-000-F1-S010": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F1-S010"
+ },
+ "marker:proc-campus-dev-000-F1-S014": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F1-S014"
+ },
+ "marker:proc-campus-dev-000-F1-S015": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F1-S015"
+ },
+ "marker:proc-campus-dev-000-F2-S004": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F2-S004"
+ },
+ "marker:proc-campus-dev-000-F2-S005": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F2-S005"
+ },
+ "marker:proc-campus-dev-000-F2-S009": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F2-S009"
+ },
+ "marker:proc-campus-dev-000-F2-S010": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F2-S010"
+ },
+ "marker:proc-campus-dev-000-F2-S014": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F2-S014"
+ },
+ "marker:proc-campus-dev-000-F2-S015": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F2-S015"
+ },
+ "marker:proc-campus-dev-000-F3-S004": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F3-S004"
+ },
+ "marker:proc-campus-dev-000-F3-S005": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F3-S005"
+ },
+ "marker:proc-campus-dev-000-F3-S009": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F3-S009"
+ },
+ "marker:proc-campus-dev-000-F3-S010": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F3-S010"
+ },
+ "marker:proc-campus-dev-000-F3-S014": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F3-S014"
+ },
+ "marker:proc-campus-dev-000-F3-S015": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F3-S015"
+ },
+ "marker:proc-campus-dev-000-F4-S004": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F4-S004"
+ },
+ "marker:proc-campus-dev-000-F4-S005": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F4-S005"
+ },
+ "marker:proc-campus-dev-000-F4-S009": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F4-S009"
+ },
+ "marker:proc-campus-dev-000-F4-S010": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F4-S010"
+ },
+ "marker:proc-campus-dev-000-F4-S014": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "kind": "marker",
+  "marker": "stair",
+  "space_id": "proc-campus-dev-000-F4-S014"
+ },
+ "marker:proc-campus-dev-000-F4-S015": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "kind": "marker",
+  "marker": "lift",
+  "space_id": "proc-campus-dev-000-F4-S015"
+ },
+ "proc-campus-dev-000-F0-O0001": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0001",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -2.088
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S002",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0002": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0002",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -6.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S003",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0003": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0003",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -10.35
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S004",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0004": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0004",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -13.6
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S005",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F0-O0005": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0005",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -16.685
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S006",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0006": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0006",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -21.96
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S007",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0007": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0007",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -28.475
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S008",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F0-O0008": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0008",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -33.55
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S009",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0009": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0009",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -36.8
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S010",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F0-O0010": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0010",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -41.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S011",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0011": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0011",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -47.39
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S012",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0012": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0012",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -52.53
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S013",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0013": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0013",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -56.75
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S014",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0014": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0014",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -60.0
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S015",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F0-O0015": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0015",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -63.23
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S016",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0016": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0016",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -67.402
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S017",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0017": {
+  "depth_m": 0.6,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0017",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -3.178
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S018",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F0-O0018": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0018",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -8.18
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S019",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0019": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0019",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -12.89
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S020",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0020": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0020",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -18.28
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S021",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0021": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0021",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -23.13
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S022",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F0-O0022": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0022",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -36.985
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S023",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0023": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0023",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -57.085
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S024",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0024": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0024",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -61.585
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S025",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F0-O0025": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0025",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -66.882
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S026",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F0-O0026": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0026",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -47.62
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S027",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F0-O0027": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0027",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -29.685
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S028",
+   "proc-campus-dev-000-F0-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F0-O0028": {
+  "depth_m": 0.6,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0028",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   14.4,
+   -3.175
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S018",
+   "outside"
+  ],
+  "width_m": 1.8
+ },
+ "proc-campus-dev-000-F0-O0029": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-O0029",
+  "kind": "opening",
+  "opening_kind": "entrance",
+  "position": [
+   7.2,
+   -0.0
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F0-S001",
+   "outside"
+  ],
+  "width_m": 1.8
+ },
+ "proc-campus-dev-000-F0-S001": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S001",
+  "kind": "space",
+  "name": "Corridor 0.01",
+  "ref": "0.01",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-campus-dev-000-F0-S002": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S002",
+  "kind": "space",
+  "name": "Office 0.02",
+  "ref": "0.02",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S003": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S003",
+  "kind": "space",
+  "name": "Kitchen 0.03",
+  "ref": "0.03",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S004": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S004",
+  "kind": "space",
+  "name": "Staircase 1",
+  "ref": "0.04",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F0-S005": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S005",
+  "kind": "space",
+  "name": "Lift 1",
+  "ref": "0.05",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F0-S006": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S006",
+  "kind": "space",
+  "name": "Meeting room 0.06",
+  "ref": "0.06",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S007": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S007",
+  "kind": "space",
+  "name": "Office 0.07",
+  "ref": "0.07",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S008": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S008",
+  "kind": "space",
+  "name": "Makerspace 0.08",
+  "ref": "0.08",
+  "room_type": "makerspace",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S009": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S009",
+  "kind": "space",
+  "name": "Staircase 2",
+  "ref": "0.09",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F0-S010": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S010",
+  "kind": "space",
+  "name": "Lift 2",
+  "ref": "0.10",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F0-S011": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S011",
+  "kind": "space",
+  "name": "Lab 0.11",
+  "ref": "0.11",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S012": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S012",
+  "kind": "space",
+  "name": "Office 0.12",
+  "ref": "0.12",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S013": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S013",
+  "kind": "space",
+  "name": "Office 0.13",
+  "ref": "0.13",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S014": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S014",
+  "kind": "space",
+  "name": "Staircase 3",
+  "ref": "0.14",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F0-S015": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S015",
+  "kind": "space",
+  "name": "Lift 3",
+  "ref": "0.15",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F0-S016": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S016",
+  "kind": "space",
+  "name": "Print room 0.16",
+  "ref": "0.16",
+  "room_type": "print_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S017": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S017",
+  "kind": "space",
+  "name": "Seminar room 0.17",
+  "ref": "0.17",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S018": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S018",
+  "kind": "space",
+  "name": "Main lobby",
+  "ref": "0.18",
+  "room_type": "lobby",
+  "type": "hall"
+ },
+ "proc-campus-dev-000-F0-S019": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S019",
+  "kind": "space",
+  "name": "Office 0.19",
+  "ref": "0.19",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S020": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S020",
+  "kind": "space",
+  "name": "Toilet 0.20",
+  "ref": "0.20",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S021": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S021",
+  "kind": "space",
+  "name": "Office 0.21",
+  "ref": "0.21",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S022": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S022",
+  "kind": "space",
+  "name": "Storage 0.22",
+  "ref": "0.22",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S023": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S023",
+  "kind": "space",
+  "name": "Toilet 0.23",
+  "ref": "0.23",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S024": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S024",
+  "kind": "space",
+  "name": "Toilet 0.24",
+  "ref": "0.24",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S025": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S025",
+  "kind": "space",
+  "name": "Office 0.25",
+  "ref": "0.25",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S026": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S026",
+  "kind": "space",
+  "name": "Lab 0.26",
+  "ref": "0.26",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S027": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S027",
+  "kind": "space",
+  "name": "Lecture hall 0.27",
+  "ref": "0.27",
+  "room_type": "lecture_hall",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F0-S028": {
+  "floor_id": "proc-campus-dev-000-F0",
+  "id": "proc-campus-dev-000-F0-S028",
+  "kind": "space",
+  "name": "Canteen 0.28",
+  "ref": "0.28",
+  "room_type": "canteen",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-O0030": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0030",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -2.088
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S002",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0031": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0031",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -6.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S003",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0032": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0032",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -10.35
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S004",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0033": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0033",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -13.6
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S005",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F1-O0034": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0034",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -16.685
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S006",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0035": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0035",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -21.96
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S007",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0036": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0036",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -28.475
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S008",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0037": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0037",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -33.55
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S009",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0038": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0038",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -36.8
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S010",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F1-O0039": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0039",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -41.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S011",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0040": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0040",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -47.39
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S012",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0041": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0041",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -52.53
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S013",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0042": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0042",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -56.75
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S014",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0043": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0043",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -60.0
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S015",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F1-O0044": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0044",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -63.23
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S016",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0045": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0045",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -67.402
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S017",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0046": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0046",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -3.178
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S018",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0047": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0047",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -8.18
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S019",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0048": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0048",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -12.89
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S020",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0049": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0049",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -18.28
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S021",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0050": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0050",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -23.13
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S022",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0051": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0051",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -27.185
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S023",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0052": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0052",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -31.4
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S024",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0053": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0053",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -36.985
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S025",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0054": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0054",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -43.145
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S026",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-O0055": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0055",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -48.46
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S027",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F1-O0056": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0056",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -52.935
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S028",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0057": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0057",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -57.085
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S029",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F1-O0058": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0058",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -61.585
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S030",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F1-O0059": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-O0059",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -66.882
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F1-S031",
+   "proc-campus-dev-000-F1-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F1-S001": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S001",
+  "kind": "space",
+  "name": "Corridor 1.01",
+  "ref": "1.01",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-campus-dev-000-F1-S002": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S002",
+  "kind": "space",
+  "name": "Office 1.02",
+  "ref": "1.02",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S003": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S003",
+  "kind": "space",
+  "name": "Lab 1.03",
+  "ref": "1.03",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S004": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S004",
+  "kind": "space",
+  "name": "Staircase 1",
+  "ref": "1.04",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F1-S005": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S005",
+  "kind": "space",
+  "name": "Lift 1",
+  "ref": "1.05",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F1-S006": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S006",
+  "kind": "space",
+  "name": "Seminar room 1.06",
+  "ref": "1.06",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S007": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S007",
+  "kind": "space",
+  "name": "Kitchen 1.07",
+  "ref": "1.07",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S008": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S008",
+  "kind": "space",
+  "name": "Lab 1.08",
+  "ref": "1.08",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S009": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S009",
+  "kind": "space",
+  "name": "Staircase 2",
+  "ref": "1.09",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F1-S010": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S010",
+  "kind": "space",
+  "name": "Lift 2",
+  "ref": "1.10",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F1-S011": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S011",
+  "kind": "space",
+  "name": "Lab 1.11",
+  "ref": "1.11",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S012": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S012",
+  "kind": "space",
+  "name": "Meeting room 1.12",
+  "ref": "1.12",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S013": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S013",
+  "kind": "space",
+  "name": "Print room 1.13",
+  "ref": "1.13",
+  "room_type": "print_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S014": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S014",
+  "kind": "space",
+  "name": "Staircase 3",
+  "ref": "1.14",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F1-S015": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S015",
+  "kind": "space",
+  "name": "Lift 3",
+  "ref": "1.15",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F1-S016": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S016",
+  "kind": "space",
+  "name": "Seminar room 1.16",
+  "ref": "1.16",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S017": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S017",
+  "kind": "space",
+  "name": "Lab 1.17",
+  "ref": "1.17",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S018": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S018",
+  "kind": "space",
+  "name": "Office 1.18",
+  "ref": "1.18",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S019": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S019",
+  "kind": "space",
+  "name": "Lab 1.19",
+  "ref": "1.19",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S020": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S020",
+  "kind": "space",
+  "name": "Toilet 1.20",
+  "ref": "1.20",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S021": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S021",
+  "kind": "space",
+  "name": "Office 1.21",
+  "ref": "1.21",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S022": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S022",
+  "kind": "space",
+  "name": "Meeting room 1.22",
+  "ref": "1.22",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S023": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S023",
+  "kind": "space",
+  "name": "Office 1.23",
+  "ref": "1.23",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S024": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S024",
+  "kind": "space",
+  "name": "Lab 1.24",
+  "ref": "1.24",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S025": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S025",
+  "kind": "space",
+  "name": "Toilet 1.25",
+  "ref": "1.25",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S026": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S026",
+  "kind": "space",
+  "name": "Office 1.26",
+  "ref": "1.26",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S027": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S027",
+  "kind": "space",
+  "name": "Storage 1.27",
+  "ref": "1.27",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S028": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S028",
+  "kind": "space",
+  "name": "Library 1.28",
+  "ref": "1.28",
+  "room_type": "library",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S029": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S029",
+  "kind": "space",
+  "name": "Toilet 1.29",
+  "ref": "1.29",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S030": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S030",
+  "kind": "space",
+  "name": "Storage 1.30",
+  "ref": "1.30",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F1-S031": {
+  "floor_id": "proc-campus-dev-000-F1",
+  "id": "proc-campus-dev-000-F1-S031",
+  "kind": "space",
+  "name": "Office 1.31",
+  "ref": "1.31",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-O0060": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0060",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -2.088
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S002",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0061": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0061",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -6.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S003",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0062": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0062",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -10.35
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S004",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0063": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0063",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -13.6
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S005",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F2-O0064": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0064",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -16.685
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S006",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0065": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0065",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -21.96
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S007",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0066": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0066",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -28.475
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S008",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0067": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0067",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -33.55
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S009",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0068": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0068",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -36.8
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S010",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F2-O0069": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0069",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -41.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S011",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0070": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0070",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -47.39
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S012",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0071": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0071",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -52.53
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S013",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0072": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0072",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -56.75
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S014",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0073": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0073",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -60.0
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S015",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F2-O0074": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0074",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -63.23
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S016",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0075": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0075",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -67.402
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S017",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0076": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0076",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -3.178
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S018",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0077": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0077",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -8.18
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S019",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0078": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0078",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -12.89
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S020",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0079": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0079",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -18.28
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S021",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0080": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0080",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -23.13
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S022",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0081": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0081",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -27.185
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S023",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0082": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0082",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -31.4
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S024",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0083": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0083",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -36.985
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S025",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0084": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0084",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -43.145
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S026",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0085": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0085",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -48.46
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S027",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0086": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0086",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -52.935
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S028",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F2-O0087": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0087",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -57.085
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S029",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0088": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0088",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -61.585
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S030",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-O0089": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-O0089",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -66.882
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F2-S031",
+   "proc-campus-dev-000-F2-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F2-S001": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S001",
+  "kind": "space",
+  "name": "Corridor 2.01",
+  "ref": "2.01",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-campus-dev-000-F2-S002": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S002",
+  "kind": "space",
+  "name": "Lab 2.02",
+  "ref": "2.02",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S003": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S003",
+  "kind": "space",
+  "name": "Office 2.03",
+  "ref": "2.03",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S004": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S004",
+  "kind": "space",
+  "name": "Staircase 1",
+  "ref": "2.04",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F2-S005": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S005",
+  "kind": "space",
+  "name": "Lift 1",
+  "ref": "2.05",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F2-S006": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S006",
+  "kind": "space",
+  "name": "Seminar room 2.06",
+  "ref": "2.06",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S007": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S007",
+  "kind": "space",
+  "name": "Kitchen 2.07",
+  "ref": "2.07",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S008": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S008",
+  "kind": "space",
+  "name": "Lab 2.08",
+  "ref": "2.08",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S009": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S009",
+  "kind": "space",
+  "name": "Staircase 2",
+  "ref": "2.09",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F2-S010": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S010",
+  "kind": "space",
+  "name": "Lift 2",
+  "ref": "2.10",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F2-S011": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S011",
+  "kind": "space",
+  "name": "Seminar room 2.11",
+  "ref": "2.11",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S012": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S012",
+  "kind": "space",
+  "name": "Office 2.12",
+  "ref": "2.12",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S013": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S013",
+  "kind": "space",
+  "name": "Seminar room 2.13",
+  "ref": "2.13",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S014": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S014",
+  "kind": "space",
+  "name": "Staircase 3",
+  "ref": "2.14",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F2-S015": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S015",
+  "kind": "space",
+  "name": "Lift 3",
+  "ref": "2.15",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F2-S016": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S016",
+  "kind": "space",
+  "name": "Office 2.16",
+  "ref": "2.16",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S017": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S017",
+  "kind": "space",
+  "name": "Lab 2.17",
+  "ref": "2.17",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S018": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S018",
+  "kind": "space",
+  "name": "Office 2.18",
+  "ref": "2.18",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S019": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S019",
+  "kind": "space",
+  "name": "Lab 2.19",
+  "ref": "2.19",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S020": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S020",
+  "kind": "space",
+  "name": "Toilet 2.20",
+  "ref": "2.20",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S021": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S021",
+  "kind": "space",
+  "name": "Lab 2.21",
+  "ref": "2.21",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S022": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S022",
+  "kind": "space",
+  "name": "Office 2.22",
+  "ref": "2.22",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S023": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S023",
+  "kind": "space",
+  "name": "Office 2.23",
+  "ref": "2.23",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S024": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S024",
+  "kind": "space",
+  "name": "Office 2.24",
+  "ref": "2.24",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S025": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S025",
+  "kind": "space",
+  "name": "Toilet 2.25",
+  "ref": "2.25",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S026": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S026",
+  "kind": "space",
+  "name": "Print room 2.26",
+  "ref": "2.26",
+  "room_type": "print_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S027": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S027",
+  "kind": "space",
+  "name": "Office 2.27",
+  "ref": "2.27",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S028": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S028",
+  "kind": "space",
+  "name": "Office 2.28",
+  "ref": "2.28",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S029": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S029",
+  "kind": "space",
+  "name": "Toilet 2.29",
+  "ref": "2.29",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S030": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S030",
+  "kind": "space",
+  "name": "Seminar room 2.30",
+  "ref": "2.30",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F2-S031": {
+  "floor_id": "proc-campus-dev-000-F2",
+  "id": "proc-campus-dev-000-F2-S031",
+  "kind": "space",
+  "name": "Seminar room 2.31",
+  "ref": "2.31",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-O0090": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0090",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -2.088
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S002",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0091": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0091",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -6.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S003",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0092": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0092",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -10.35
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S004",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0093": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0093",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -13.6
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S005",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F3-O0094": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0094",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -16.685
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S006",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0095": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0095",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -21.96
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S007",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0096": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0096",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -28.475
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S008",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0097": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0097",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -33.55
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S009",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0098": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0098",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -36.8
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S010",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F3-O0099": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0099",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -41.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S011",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0100": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0100",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -47.39
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S012",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0101": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0101",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -52.53
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S013",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0102": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0102",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -56.75
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S014",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0103": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0103",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -60.0
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S015",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F3-O0104": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0104",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -63.23
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S016",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0105": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0105",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -67.402
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S017",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0106": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0106",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -3.178
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S018",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0107": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0107",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -8.18
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S019",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0108": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0108",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -12.89
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S020",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0109": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0109",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -18.28
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S021",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0110": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0110",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -23.13
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S022",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0111": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0111",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -27.185
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S023",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0112": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0112",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -31.4
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S024",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F3-O0113": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0113",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -36.985
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S025",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0114": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0114",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -43.145
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S026",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0115": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0115",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -48.46
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S027",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0116": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0116",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -52.935
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S028",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0117": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0117",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -57.085
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S029",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F3-O0118": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0118",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -61.585
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S030",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-O0119": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-O0119",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -66.882
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F3-S031",
+   "proc-campus-dev-000-F3-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F3-S001": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S001",
+  "kind": "space",
+  "name": "Corridor 3.01",
+  "ref": "3.01",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-campus-dev-000-F3-S002": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S002",
+  "kind": "space",
+  "name": "Seminar room 3.02",
+  "ref": "3.02",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S003": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S003",
+  "kind": "space",
+  "name": "Seminar room 3.03",
+  "ref": "3.03",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S004": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S004",
+  "kind": "space",
+  "name": "Staircase 1",
+  "ref": "3.04",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F3-S005": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S005",
+  "kind": "space",
+  "name": "Lift 1",
+  "ref": "3.05",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F3-S006": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S006",
+  "kind": "space",
+  "name": "Lab 3.06",
+  "ref": "3.06",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S007": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S007",
+  "kind": "space",
+  "name": "Office 3.07",
+  "ref": "3.07",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S008": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S008",
+  "kind": "space",
+  "name": "Office 3.08",
+  "ref": "3.08",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S009": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S009",
+  "kind": "space",
+  "name": "Staircase 2",
+  "ref": "3.09",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F3-S010": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S010",
+  "kind": "space",
+  "name": "Lift 2",
+  "ref": "3.10",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F3-S011": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S011",
+  "kind": "space",
+  "name": "Lab 3.11",
+  "ref": "3.11",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S012": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S012",
+  "kind": "space",
+  "name": "Seminar room 3.12",
+  "ref": "3.12",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S013": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S013",
+  "kind": "space",
+  "name": "Seminar room 3.13",
+  "ref": "3.13",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S014": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S014",
+  "kind": "space",
+  "name": "Staircase 3",
+  "ref": "3.14",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F3-S015": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S015",
+  "kind": "space",
+  "name": "Lift 3",
+  "ref": "3.15",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F3-S016": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S016",
+  "kind": "space",
+  "name": "Office 3.16",
+  "ref": "3.16",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S017": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S017",
+  "kind": "space",
+  "name": "Office 3.17",
+  "ref": "3.17",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S018": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S018",
+  "kind": "space",
+  "name": "Print room 3.18",
+  "ref": "3.18",
+  "room_type": "print_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S019": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S019",
+  "kind": "space",
+  "name": "Office 3.19",
+  "ref": "3.19",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S020": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S020",
+  "kind": "space",
+  "name": "Toilet 3.20",
+  "ref": "3.20",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S021": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S021",
+  "kind": "space",
+  "name": "Office 3.21",
+  "ref": "3.21",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S022": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S022",
+  "kind": "space",
+  "name": "Office 3.22",
+  "ref": "3.22",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S023": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S023",
+  "kind": "space",
+  "name": "Office 3.23",
+  "ref": "3.23",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S024": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S024",
+  "kind": "space",
+  "name": "Storage 3.24",
+  "ref": "3.24",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S025": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S025",
+  "kind": "space",
+  "name": "Toilet 3.25",
+  "ref": "3.25",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S026": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S026",
+  "kind": "space",
+  "name": "Seminar room 3.26",
+  "ref": "3.26",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S027": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S027",
+  "kind": "space",
+  "name": "Kitchen 3.27",
+  "ref": "3.27",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S028": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S028",
+  "kind": "space",
+  "name": "Office 3.28",
+  "ref": "3.28",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S029": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S029",
+  "kind": "space",
+  "name": "Toilet 3.29",
+  "ref": "3.29",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S030": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S030",
+  "kind": "space",
+  "name": "Office 3.30",
+  "ref": "3.30",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F3-S031": {
+  "floor_id": "proc-campus-dev-000-F3",
+  "id": "proc-campus-dev-000-F3-S031",
+  "kind": "space",
+  "name": "Office 3.31",
+  "ref": "3.31",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-O0120": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0120",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -2.088
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S002",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0121": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0121",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -6.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S003",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0122": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0122",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -10.35
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S004",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0123": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0123",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -13.6
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S005",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F4-O0124": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0124",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -16.685
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S006",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F4-O0125": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0125",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -21.96
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S007",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0126": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0126",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -28.475
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S008",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F4-O0127": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0127",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -33.55
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S009",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0128": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0128",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -36.8
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S010",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F4-O0129": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0129",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -41.26
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S011",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0130": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0130",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -47.39
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S012",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0131": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0131",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -52.53
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S013",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0132": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0132",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -56.75
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S014",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0133": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0133",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -60.0
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S015",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.1
+ },
+ "proc-campus-dev-000-F4-O0134": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0134",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -63.23
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S016",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0135": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0135",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   6.0,
+   -67.402
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S017",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.6
+ },
+ "proc-campus-dev-000-F4-O0136": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0136",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -3.178
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S018",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0137": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0137",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -8.18
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S019",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0138": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0138",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -12.89
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S020",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0139": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0139",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -18.28
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S021",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0140": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0140",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -23.13
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S022",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0141": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0141",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -27.185
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S023",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0142": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0142",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -31.4
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S024",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0143": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0143",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -36.985
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S025",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0144": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0144",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -43.145
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S026",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0145": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0145",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -48.46
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S027",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0146": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0146",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -52.935
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S028",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0147": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0147",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -57.085
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S029",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 1.2
+ },
+ "proc-campus-dev-000-F4-O0148": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0148",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -61.585
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S030",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-O0149": {
+  "depth_m": 0.2,
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-O0149",
+  "kind": "opening",
+  "opening_kind": "door",
+  "position": [
+   8.4,
+   -66.882
+  ],
+  "space_ids": [
+   "proc-campus-dev-000-F4-S031",
+   "proc-campus-dev-000-F4-S001"
+  ],
+  "width_m": 0.9
+ },
+ "proc-campus-dev-000-F4-S001": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S001",
+  "kind": "space",
+  "name": "Corridor 4.01",
+  "ref": "4.01",
+  "room_type": "corridor",
+  "type": "corridor"
+ },
+ "proc-campus-dev-000-F4-S002": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S002",
+  "kind": "space",
+  "name": "Seminar room 4.02",
+  "ref": "4.02",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S003": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S003",
+  "kind": "space",
+  "name": "Lab 4.03",
+  "ref": "4.03",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S004": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S004",
+  "kind": "space",
+  "name": "Staircase 1",
+  "ref": "4.04",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F4-S005": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S005",
+  "kind": "space",
+  "name": "Lift 1",
+  "ref": "4.05",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F4-S006": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S006",
+  "kind": "space",
+  "name": "Storage 4.06",
+  "ref": "4.06",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S007": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S007",
+  "kind": "space",
+  "name": "Office 4.07",
+  "ref": "4.07",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S008": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S008",
+  "kind": "space",
+  "name": "Storage 4.08",
+  "ref": "4.08",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S009": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S009",
+  "kind": "space",
+  "name": "Staircase 2",
+  "ref": "4.09",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F4-S010": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S010",
+  "kind": "space",
+  "name": "Lift 2",
+  "ref": "4.10",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F4-S011": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S011",
+  "kind": "space",
+  "name": "Meeting room 4.11",
+  "ref": "4.11",
+  "room_type": "meeting_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S012": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S012",
+  "kind": "space",
+  "name": "Seminar room 4.12",
+  "ref": "4.12",
+  "room_type": "seminar_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S013": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S013",
+  "kind": "space",
+  "name": "Lab 4.13",
+  "ref": "4.13",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S014": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S014",
+  "kind": "space",
+  "name": "Staircase 3",
+  "ref": "4.14",
+  "room_type": "stairwell",
+  "type": "stair"
+ },
+ "proc-campus-dev-000-F4-S015": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S015",
+  "kind": "space",
+  "name": "Lift 3",
+  "ref": "4.15",
+  "room_type": "lift",
+  "type": "lift"
+ },
+ "proc-campus-dev-000-F4-S016": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S016",
+  "kind": "space",
+  "name": "Office 4.16",
+  "ref": "4.16",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S017": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S017",
+  "kind": "space",
+  "name": "Storage 4.17",
+  "ref": "4.17",
+  "room_type": "storage",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S018": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S018",
+  "kind": "space",
+  "name": "Office 4.18",
+  "ref": "4.18",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S019": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S019",
+  "kind": "space",
+  "name": "Office 4.19",
+  "ref": "4.19",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S020": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S020",
+  "kind": "space",
+  "name": "Toilet 4.20",
+  "ref": "4.20",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S021": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S021",
+  "kind": "space",
+  "name": "Lab 4.21",
+  "ref": "4.21",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S022": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S022",
+  "kind": "space",
+  "name": "Lab 4.22",
+  "ref": "4.22",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S023": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S023",
+  "kind": "space",
+  "name": "Print room 4.23",
+  "ref": "4.23",
+  "room_type": "print_room",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S024": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S024",
+  "kind": "space",
+  "name": "Office 4.24",
+  "ref": "4.24",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S025": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S025",
+  "kind": "space",
+  "name": "Toilet 4.25",
+  "ref": "4.25",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S026": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S026",
+  "kind": "space",
+  "name": "Lab 4.26",
+  "ref": "4.26",
+  "room_type": "lab",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S027": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S027",
+  "kind": "space",
+  "name": "Office 4.27",
+  "ref": "4.27",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S028": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S028",
+  "kind": "space",
+  "name": "Kitchen 4.28",
+  "ref": "4.28",
+  "room_type": "kitchen",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S029": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S029",
+  "kind": "space",
+  "name": "Toilet 4.29",
+  "ref": "4.29",
+  "room_type": "toilet",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S030": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S030",
+  "kind": "space",
+  "name": "Office 4.30",
+  "ref": "4.30",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-F4-S031": {
+  "floor_id": "proc-campus-dev-000-F4",
+  "id": "proc-campus-dev-000-F4-S031",
+  "kind": "space",
+  "name": "Office 4.31",
+  "ref": "4.31",
+  "room_type": "office",
+  "type": "room"
+ },
+ "proc-campus-dev-000-V01": {
+  "connector_kind": "stairs",
+  "floor_ids": [
+   "proc-campus-dev-000-F0",
+   "proc-campus-dev-000-F1",
+   "proc-campus-dev-000-F2",
+   "proc-campus-dev-000-F3",
+   "proc-campus-dev-000-F4"
+  ],
+  "id": "proc-campus-dev-000-V01",
+  "kind": "connector",
+  "space_ids": [
+   "proc-campus-dev-000-F0-S004",
+   "proc-campus-dev-000-F1-S004",
+   "proc-campus-dev-000-F2-S004",
+   "proc-campus-dev-000-F3-S004",
+   "proc-campus-dev-000-F4-S004"
+  ],
+  "stops_z": [
+   0.0,
+   3.8,
+   7.6,
+   11.4,
+   15.2
+  ]
+ },
+ "proc-campus-dev-000-V02": {
+  "connector_kind": "lift",
+  "floor_ids": [
+   "proc-campus-dev-000-F0",
+   "proc-campus-dev-000-F1",
+   "proc-campus-dev-000-F2",
+   "proc-campus-dev-000-F3",
+   "proc-campus-dev-000-F4"
+  ],
+  "id": "proc-campus-dev-000-V02",
+  "kind": "connector",
+  "space_ids": [
+   "proc-campus-dev-000-F0-S005",
+   "proc-campus-dev-000-F1-S005",
+   "proc-campus-dev-000-F2-S005",
+   "proc-campus-dev-000-F3-S005",
+   "proc-campus-dev-000-F4-S005"
+  ],
+  "stops_z": [
+   0.0,
+   3.8,
+   7.6,
+   11.4,
+   15.2
+  ]
+ },
+ "proc-campus-dev-000-V03": {
+  "connector_kind": "stairs",
+  "floor_ids": [
+   "proc-campus-dev-000-F0",
+   "proc-campus-dev-000-F1",
+   "proc-campus-dev-000-F2",
+   "proc-campus-dev-000-F3",
+   "proc-campus-dev-000-F4"
+  ],
+  "id": "proc-campus-dev-000-V03",
+  "kind": "connector",
+  "space_ids": [
+   "proc-campus-dev-000-F0-S009",
+   "proc-campus-dev-000-F1-S009",
+   "proc-campus-dev-000-F2-S009",
+   "proc-campus-dev-000-F3-S009",
+   "proc-campus-dev-000-F4-S009"
+  ],
+  "stops_z": [
+   0.0,
+   3.8,
+   7.6,
+   11.4,
+   15.2
+  ]
+ },
+ "proc-campus-dev-000-V04": {
+  "connector_kind": "lift",
+  "floor_ids": [
+   "proc-campus-dev-000-F0",
+   "proc-campus-dev-000-F1",
+   "proc-campus-dev-000-F2",
+   "proc-campus-dev-000-F3",
+   "proc-campus-dev-000-F4"
+  ],
+  "id": "proc-campus-dev-000-V04",
+  "kind": "connector",
+  "space_ids": [
+   "proc-campus-dev-000-F0-S010",
+   "proc-campus-dev-000-F1-S010",
+   "proc-campus-dev-000-F2-S010",
+   "proc-campus-dev-000-F3-S010",
+   "proc-campus-dev-000-F4-S010"
+  ],
+  "stops_z": [
+   0.0,
+   3.8,
+   7.6,
+   11.4,
+   15.2
+  ]
+ },
+ "proc-campus-dev-000-V05": {
+  "connector_kind": "stairs",
+  "floor_ids": [
+   "proc-campus-dev-000-F0",
+   "proc-campus-dev-000-F1",
+   "proc-campus-dev-000-F2",
+   "proc-campus-dev-000-F3",
+   "proc-campus-dev-000-F4"
+  ],
+  "id": "proc-campus-dev-000-V05",
+  "kind": "connector",
+  "space_ids": [
+   "proc-campus-dev-000-F0-S014",
+   "proc-campus-dev-000-F1-S014",
+   "proc-campus-dev-000-F2-S014",
+   "proc-campus-dev-000-F3-S014",
+   "proc-campus-dev-000-F4-S014"
+  ],
+  "stops_z": [
+   0.0,
+   3.8,
+   7.6,
+   11.4,
+   15.2
+  ]
+ },
+ "proc-campus-dev-000-V06": {
+  "connector_kind": "lift",
+  "floor_ids": [
+   "proc-campus-dev-000-F0",
+   "proc-campus-dev-000-F1",
+   "proc-campus-dev-000-F2",
+   "proc-campus-dev-000-F3",
+   "proc-campus-dev-000-F4"
+  ],
+  "id": "proc-campus-dev-000-V06",
+  "kind": "connector",
+  "space_ids": [
+   "proc-campus-dev-000-F0-S015",
+   "proc-campus-dev-000-F1-S015",
+   "proc-campus-dev-000-F2-S015",
+   "proc-campus-dev-000-F3-S015",
+   "proc-campus-dev-000-F4-S015"
+  ],
+  "stops_z": [
+   0.0,
+   3.8,
+   7.6,
+   11.4,
+   15.2
+  ]
+ },
+ "walls:proc-campus-dev-000-F0-S001": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S001"
+ },
+ "walls:proc-campus-dev-000-F0-S002": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S002"
+ },
+ "walls:proc-campus-dev-000-F0-S003": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S003"
+ },
+ "walls:proc-campus-dev-000-F0-S004": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S004"
+ },
+ "walls:proc-campus-dev-000-F0-S005": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S005"
+ },
+ "walls:proc-campus-dev-000-F0-S006": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S006"
+ },
+ "walls:proc-campus-dev-000-F0-S007": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S007"
+ },
+ "walls:proc-campus-dev-000-F0-S008": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S008"
+ },
+ "walls:proc-campus-dev-000-F0-S009": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S009"
+ },
+ "walls:proc-campus-dev-000-F0-S010": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S010"
+ },
+ "walls:proc-campus-dev-000-F0-S011": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S011"
+ },
+ "walls:proc-campus-dev-000-F0-S012": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S012"
+ },
+ "walls:proc-campus-dev-000-F0-S013": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S013"
+ },
+ "walls:proc-campus-dev-000-F0-S014": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S014"
+ },
+ "walls:proc-campus-dev-000-F0-S015": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S015"
+ },
+ "walls:proc-campus-dev-000-F0-S016": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S016"
+ },
+ "walls:proc-campus-dev-000-F0-S017": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S017"
+ },
+ "walls:proc-campus-dev-000-F0-S019": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S019"
+ },
+ "walls:proc-campus-dev-000-F0-S020": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S020"
+ },
+ "walls:proc-campus-dev-000-F0-S021": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S021"
+ },
+ "walls:proc-campus-dev-000-F0-S022": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S022"
+ },
+ "walls:proc-campus-dev-000-F0-S023": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S023"
+ },
+ "walls:proc-campus-dev-000-F0-S024": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S024"
+ },
+ "walls:proc-campus-dev-000-F0-S025": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S025"
+ },
+ "walls:proc-campus-dev-000-F0-S026": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S026"
+ },
+ "walls:proc-campus-dev-000-F0-S027": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S027"
+ },
+ "walls:proc-campus-dev-000-F0-S028": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F0",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F0-S028"
+ },
+ "walls:proc-campus-dev-000-F1-S001": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S001"
+ },
+ "walls:proc-campus-dev-000-F1-S002": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S002"
+ },
+ "walls:proc-campus-dev-000-F1-S003": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S003"
+ },
+ "walls:proc-campus-dev-000-F1-S004": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S004"
+ },
+ "walls:proc-campus-dev-000-F1-S005": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S005"
+ },
+ "walls:proc-campus-dev-000-F1-S006": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S006"
+ },
+ "walls:proc-campus-dev-000-F1-S007": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S007"
+ },
+ "walls:proc-campus-dev-000-F1-S008": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S008"
+ },
+ "walls:proc-campus-dev-000-F1-S009": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S009"
+ },
+ "walls:proc-campus-dev-000-F1-S010": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S010"
+ },
+ "walls:proc-campus-dev-000-F1-S011": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S011"
+ },
+ "walls:proc-campus-dev-000-F1-S012": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S012"
+ },
+ "walls:proc-campus-dev-000-F1-S013": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S013"
+ },
+ "walls:proc-campus-dev-000-F1-S014": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S014"
+ },
+ "walls:proc-campus-dev-000-F1-S015": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S015"
+ },
+ "walls:proc-campus-dev-000-F1-S016": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S016"
+ },
+ "walls:proc-campus-dev-000-F1-S017": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S017"
+ },
+ "walls:proc-campus-dev-000-F1-S018": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S018"
+ },
+ "walls:proc-campus-dev-000-F1-S019": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S019"
+ },
+ "walls:proc-campus-dev-000-F1-S020": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S020"
+ },
+ "walls:proc-campus-dev-000-F1-S021": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S021"
+ },
+ "walls:proc-campus-dev-000-F1-S022": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S022"
+ },
+ "walls:proc-campus-dev-000-F1-S023": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S023"
+ },
+ "walls:proc-campus-dev-000-F1-S024": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S024"
+ },
+ "walls:proc-campus-dev-000-F1-S025": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S025"
+ },
+ "walls:proc-campus-dev-000-F1-S026": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S026"
+ },
+ "walls:proc-campus-dev-000-F1-S027": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S027"
+ },
+ "walls:proc-campus-dev-000-F1-S028": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S028"
+ },
+ "walls:proc-campus-dev-000-F1-S029": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S029"
+ },
+ "walls:proc-campus-dev-000-F1-S030": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S030"
+ },
+ "walls:proc-campus-dev-000-F1-S031": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F1",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F1-S031"
+ },
+ "walls:proc-campus-dev-000-F2-S001": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S001"
+ },
+ "walls:proc-campus-dev-000-F2-S002": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S002"
+ },
+ "walls:proc-campus-dev-000-F2-S003": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S003"
+ },
+ "walls:proc-campus-dev-000-F2-S004": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S004"
+ },
+ "walls:proc-campus-dev-000-F2-S005": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S005"
+ },
+ "walls:proc-campus-dev-000-F2-S006": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S006"
+ },
+ "walls:proc-campus-dev-000-F2-S007": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S007"
+ },
+ "walls:proc-campus-dev-000-F2-S008": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S008"
+ },
+ "walls:proc-campus-dev-000-F2-S009": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S009"
+ },
+ "walls:proc-campus-dev-000-F2-S010": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S010"
+ },
+ "walls:proc-campus-dev-000-F2-S011": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S011"
+ },
+ "walls:proc-campus-dev-000-F2-S012": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S012"
+ },
+ "walls:proc-campus-dev-000-F2-S013": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S013"
+ },
+ "walls:proc-campus-dev-000-F2-S014": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S014"
+ },
+ "walls:proc-campus-dev-000-F2-S015": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S015"
+ },
+ "walls:proc-campus-dev-000-F2-S016": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S016"
+ },
+ "walls:proc-campus-dev-000-F2-S017": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S017"
+ },
+ "walls:proc-campus-dev-000-F2-S018": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S018"
+ },
+ "walls:proc-campus-dev-000-F2-S019": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S019"
+ },
+ "walls:proc-campus-dev-000-F2-S020": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S020"
+ },
+ "walls:proc-campus-dev-000-F2-S021": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S021"
+ },
+ "walls:proc-campus-dev-000-F2-S022": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S022"
+ },
+ "walls:proc-campus-dev-000-F2-S023": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S023"
+ },
+ "walls:proc-campus-dev-000-F2-S024": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S024"
+ },
+ "walls:proc-campus-dev-000-F2-S025": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S025"
+ },
+ "walls:proc-campus-dev-000-F2-S026": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S026"
+ },
+ "walls:proc-campus-dev-000-F2-S027": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S027"
+ },
+ "walls:proc-campus-dev-000-F2-S028": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S028"
+ },
+ "walls:proc-campus-dev-000-F2-S029": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S029"
+ },
+ "walls:proc-campus-dev-000-F2-S030": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S030"
+ },
+ "walls:proc-campus-dev-000-F2-S031": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F2",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F2-S031"
+ },
+ "walls:proc-campus-dev-000-F3-S001": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S001"
+ },
+ "walls:proc-campus-dev-000-F3-S002": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S002"
+ },
+ "walls:proc-campus-dev-000-F3-S003": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S003"
+ },
+ "walls:proc-campus-dev-000-F3-S004": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S004"
+ },
+ "walls:proc-campus-dev-000-F3-S005": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S005"
+ },
+ "walls:proc-campus-dev-000-F3-S006": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S006"
+ },
+ "walls:proc-campus-dev-000-F3-S007": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S007"
+ },
+ "walls:proc-campus-dev-000-F3-S008": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S008"
+ },
+ "walls:proc-campus-dev-000-F3-S009": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S009"
+ },
+ "walls:proc-campus-dev-000-F3-S010": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S010"
+ },
+ "walls:proc-campus-dev-000-F3-S011": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S011"
+ },
+ "walls:proc-campus-dev-000-F3-S012": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S012"
+ },
+ "walls:proc-campus-dev-000-F3-S013": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S013"
+ },
+ "walls:proc-campus-dev-000-F3-S014": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S014"
+ },
+ "walls:proc-campus-dev-000-F3-S015": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S015"
+ },
+ "walls:proc-campus-dev-000-F3-S016": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S016"
+ },
+ "walls:proc-campus-dev-000-F3-S017": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S017"
+ },
+ "walls:proc-campus-dev-000-F3-S018": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S018"
+ },
+ "walls:proc-campus-dev-000-F3-S019": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S019"
+ },
+ "walls:proc-campus-dev-000-F3-S020": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S020"
+ },
+ "walls:proc-campus-dev-000-F3-S021": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S021"
+ },
+ "walls:proc-campus-dev-000-F3-S022": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S022"
+ },
+ "walls:proc-campus-dev-000-F3-S023": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S023"
+ },
+ "walls:proc-campus-dev-000-F3-S024": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S024"
+ },
+ "walls:proc-campus-dev-000-F3-S025": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S025"
+ },
+ "walls:proc-campus-dev-000-F3-S026": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S026"
+ },
+ "walls:proc-campus-dev-000-F3-S027": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S027"
+ },
+ "walls:proc-campus-dev-000-F3-S028": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S028"
+ },
+ "walls:proc-campus-dev-000-F3-S029": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S029"
+ },
+ "walls:proc-campus-dev-000-F3-S030": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S030"
+ },
+ "walls:proc-campus-dev-000-F3-S031": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F3",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F3-S031"
+ },
+ "walls:proc-campus-dev-000-F4-S001": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S001"
+ },
+ "walls:proc-campus-dev-000-F4-S002": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S002"
+ },
+ "walls:proc-campus-dev-000-F4-S003": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S003"
+ },
+ "walls:proc-campus-dev-000-F4-S004": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S004"
+ },
+ "walls:proc-campus-dev-000-F4-S005": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S005"
+ },
+ "walls:proc-campus-dev-000-F4-S006": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S006"
+ },
+ "walls:proc-campus-dev-000-F4-S007": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S007"
+ },
+ "walls:proc-campus-dev-000-F4-S008": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S008"
+ },
+ "walls:proc-campus-dev-000-F4-S009": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S009"
+ },
+ "walls:proc-campus-dev-000-F4-S010": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S010"
+ },
+ "walls:proc-campus-dev-000-F4-S011": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S011"
+ },
+ "walls:proc-campus-dev-000-F4-S012": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S012"
+ },
+ "walls:proc-campus-dev-000-F4-S013": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S013"
+ },
+ "walls:proc-campus-dev-000-F4-S014": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S014"
+ },
+ "walls:proc-campus-dev-000-F4-S015": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S015"
+ },
+ "walls:proc-campus-dev-000-F4-S016": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S016"
+ },
+ "walls:proc-campus-dev-000-F4-S017": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S017"
+ },
+ "walls:proc-campus-dev-000-F4-S018": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S018"
+ },
+ "walls:proc-campus-dev-000-F4-S019": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S019"
+ },
+ "walls:proc-campus-dev-000-F4-S020": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S020"
+ },
+ "walls:proc-campus-dev-000-F4-S021": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S021"
+ },
+ "walls:proc-campus-dev-000-F4-S022": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S022"
+ },
+ "walls:proc-campus-dev-000-F4-S023": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S023"
+ },
+ "walls:proc-campus-dev-000-F4-S024": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S024"
+ },
+ "walls:proc-campus-dev-000-F4-S025": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S025"
+ },
+ "walls:proc-campus-dev-000-F4-S026": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S026"
+ },
+ "walls:proc-campus-dev-000-F4-S027": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S027"
+ },
+ "walls:proc-campus-dev-000-F4-S028": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S028"
+ },
+ "walls:proc-campus-dev-000-F4-S029": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S029"
+ },
+ "walls:proc-campus-dev-000-F4-S030": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S030"
+ },
+ "walls:proc-campus-dev-000-F4-S031": {
+  "capped": false,
+  "floor_id": "proc-campus-dev-000-F4",
+  "height_m": 3.8,
+  "kind": "walls",
+  "min_height_m": 3.8,
+  "space_id": "proc-campus-dev-000-F4-S031"
+ }
+}

@@ -38,7 +38,10 @@ def test_upload_creates_ingestible_dataset(client: TestClient, datasets_dir: Pat
     assert response.json()["ingestible"] is True
     assert [f["name"] for f in response.json()["files"]] == ["building.json", "floor_0.svg"]
     assert (datasets_dir / "my-plant" / "floor_0.svg").read_bytes() == b"<svg/>"
-    assert client.get("/api/datasets").json() == {"datasets": ["my-plant"]}
+    assert client.get("/api/datasets").json() == {
+        "datasets": ["my-plant"],
+        "needs_reconstruction": [],
+    }
     assert client.post("/api/ingestions", json={"dataset": "my-plant"}).status_code == 201
 
     model = client.get("/api/buildings/proc-factory-dev-003/model").json()
@@ -139,3 +142,42 @@ def test_failed_new_upload_leaves_no_dataset(client: TestClient, datasets_dir: P
 
     assert client.post("/api/datasets/d1/files?new=true", files=files).status_code == 422
     assert list(datasets_dir.iterdir()) == []
+
+
+def test_upload_of_floor_plans_only_is_reconstructable(client: TestClient) -> None:
+    response = client.post(
+        "/api/datasets/plans-only/files",
+        files=[
+            ("files", ("floor_0.svg", b"<svg/>", "image/svg+xml")),
+            ("files", ("equipment.csv", b"id,name\n", "text/csv")),
+        ],
+    )
+
+    assert response.status_code == 201
+    assert response.json()["ingestible"] is False
+    assert response.json()["reconstructable"] is True
+
+
+def test_upload_without_building_or_plans_is_neither(client: TestClient) -> None:
+    response = client.post(
+        "/api/datasets/notes-only/files", files=[("files", ("notes.txt", b"hi", "text/plain"))]
+    )
+
+    assert response.status_code == 201
+    assert response.json()["ingestible"] is False
+    assert response.json()["reconstructable"] is False
+
+
+def test_upload_of_png_plans_only_is_not_reconstructable(client: TestClient) -> None:
+    """Tracing plan images is switched off: without an SVG there is nothing to build from."""
+    response = client.post(
+        "/api/datasets/png-only/files",
+        files=[
+            ("files", ("floor_0.png", b"\x89PNG", "image/png")),
+            ("files", ("equipment.csv", b"id,name\n", "text/csv")),
+        ],
+    )
+
+    assert response.status_code == 201
+    assert response.json()["ingestible"] is False
+    assert response.json()["reconstructable"] is False

@@ -1,11 +1,18 @@
 """The ingestion pipeline as a LangGraph graph.
 
-    load -> raw_validation -> graph_build -> graph_validate -> floorplan -> equipment
-         -> [variant_creator] -> model_validate -> summarize -> finalize
+    load -> [reconstruct -> load] -> raw_validation -> graph_build -> graph_validate
+         -> floorplan -> equipment -> [variant_creator] -> model_validate -> summarize
+         -> suggest -> finalize
 
 Every stage node is followed by the orchestrator `gate`, which routes to the next
 stage, back to a stage for a retry, to `review` (a human decision via `interrupt`), or
-ends the run. Nodes keep the run's `RunRecord` up to date as they go.
+ends the run. Nodes keep the run's `RunRecord` up to date as they go. A dataset without
+building.json first goes through `reconstruct`, which writes one from the floor plans; `load`
+then runs again on it, so every later stage sees an ordinary building.json.
+
+A run in mode "graph" (the benchmark variant) stops after graph_validate and runs
+deterministically: no cleanup agent and no orchestrator model, so the cleaned building keeps
+the source geometry the benchmark answers are computed on.
 """
 
 import hashlib
@@ -30,14 +37,18 @@ from app.pipeline.agents import (
     graph_validator,
     model_validator,
     raw_validation,
+    reconstructor,
+    suggester,
     summarizer,
     variant_creator,
 )
 from app.pipeline.agents.base import AgentModels, StageContext
 from app.pipeline.state import (
     DEFAULT_REVIEW_OPTIONS,
+    MODE_STAGES,
     STAGE_ORDER,
     Decision,
+    PipelineMode,
     PipelineState,
     ReviewDecision,
     ReviewRequest,
@@ -53,10 +64,10 @@ PipelineGraph = CompiledStateGraph[PipelineState, None, PipelineState, PipelineS
 StageFn = Callable[[StageContext, PipelineState], StageReport]
 
 PILLAR_STAGES: dict[str, list[Stage]] = {
-    "validation": ["raw_validation"],
+    "validation": ["reconstruct", "raw_validation"],
     "graph": ["graph_build", "graph_validate"],
     "assets_3d": ["floorplan", "equipment", "variant_creator", "model_validate"],
-    "metadata": ["summarize"],
+    "metadata": ["summarize", "suggest"],
 }
 
 
@@ -70,6 +81,7 @@ def _variant_inputs(state: PipelineState) -> tuple[list[str], dict[str, str]]:
 
 
 STAGES: dict[Stage, StageFn] = {
+    "reconstruct": lambda ctx, s: reconstructor.run(ctx),
     "raw_validation": lambda ctx, s: raw_validation.run(ctx),
     "graph_build": lambda ctx, s: graph_builder.run(ctx),
     "graph_validate": lambda ctx, s: graph_validator.run(ctx),
@@ -78,14 +90,22 @@ STAGES: dict[Stage, StageFn] = {
     "variant_creator": lambda ctx, s: variant_creator.run(ctx, *_variant_inputs(s)),
     "model_validate": lambda ctx, s: model_validator.run(ctx),
     "summarize": lambda ctx, s: summarizer.run(ctx),
+    "suggest": lambda ctx, s: suggester.run(ctx),
 }
 
 
+def run_mode(state: PipelineState) -> PipelineMode:
+    return state.get("mode", "full")
+
+
 def next_stage(stage: Stage, state: PipelineState) -> str:
+    if stage == "reconstruct":
+        return "load"  # load the building.json it wrote
     if stage == "equipment" and not _variant_inputs(state)[0]:
         return "model_validate"
-    position = STAGE_ORDER.index(stage)
-    return STAGE_ORDER[position + 1] if position + 1 < len(STAGE_ORDER) else "finalize"
+    order = MODE_STAGES[run_mode(state)]
+    position = order.index(stage)
+    return order[position + 1] if position + 1 < len(order) else "finalize"
 
 
 def build_pipeline_graph(
@@ -122,21 +142,66 @@ def build_pipeline_graph(
                 record.pillars[name] = Pillar(status="failed", updated_at=utcnow(), note=note)
         locations.save(record)
 
+    def start_reconstruction(state: PipelineState) -> dict[str, Any]:
+        """No building.json (or a forced re-run of a reconstructed one): rebuild it first.
+
+        The location is named after the dataset (the reconstructed building's id), so the
+        stage has a workspace folder for its report before any building exists.
+        """
+        location_id = state["dataset"]
+        record = locations.get(location_id) or LocationRecord(
+            id=location_id,
+            dataset=state["dataset"],
+            name=state["dataset"],
+            source="reconstructed",
+            raw_sha256="",
+        )
+        if state["run_id"] not in record.runs:
+            record.runs.append(state["run_id"])
+        locations.save(record)
+        update_run(state["run_id"], location_id=location_id, status=RunStatus.RUNNING)
+        return {"location_id": location_id, "skipped": False, "reconstruct": True}
+
     def load(state: PipelineState) -> dict[str, Any]:
         dataset_dir = Path(state["dataset_dir"])
-        raw_bytes = (dataset_dir / "building.json").read_bytes()
+        source = dataset_dir / "building.json"
+        reconstructed_now = bool(state.get("reconstruct"))
+        if not reconstructed_now and (
+            not source.is_file()
+            or (state.get("force") and reconstructor.is_reconstructed(dataset_dir))
+        ):
+            return start_reconstruction(state)
+        if not source.is_file():
+            raise FileNotFoundError("reconstruct did not produce a building.json")
+        if not reconstructed_now:
+            summary = (
+                "building.json reconstructed by an earlier run (force re-runs it)"
+                if reconstructor.is_reconstructed(dataset_dir)
+                else "building.json provided"
+            )
+            update_run(
+                state["run_id"],
+                stage_changes=(
+                    "reconstruct",
+                    {"status": "skipped", "summary": summary, "ended_at": utcnow()},
+                ),
+            )
+        raw_bytes = source.read_bytes()
         building = BuildingFile.model_validate_json(raw_bytes)
         location_id = building.building.id
         sha = hashlib.sha256(raw_bytes).hexdigest()
 
         existing = locations.get(location_id)
+        mode = run_mode(state)
+        # A full run also leaves a done graph, so a graph run on it has nothing to add.
+        last_pillar = "graph" if mode == "graph" else "metadata"
         unchanged = (
             existing is not None
             and existing.raw_sha256 == sha
-            and existing.pillars["metadata"].status == "done"
+            and existing.pillars[last_pillar].status == "done"
         )
         update_run(state["run_id"], location_id=location_id, status=RunStatus.RUNNING)
-        if unchanged and not state.get("force"):
+        if unchanged and not state.get("force") and not reconstructed_now:
             if repository is not None:  # the repository may be in-memory and empty again
                 cleaned = BuildingFile.model_validate(locations.read_building(location_id))
                 repository.save(state["dataset"], cleaned)
@@ -150,9 +215,15 @@ def build_pipeline_graph(
             raw_sha256=sha,
         )
         record.raw_sha256 = sha
-        record.pillars = {p: Pillar() for p in PILLAR_STAGES}
+        record.pillars = {
+            p: Pillar()
+            if mode == "full" or set(stages) <= set(MODE_STAGES[mode])
+            else Pillar(status="skipped", updated_at=utcnow(), note=f"{mode}-only run")
+            for p, stages in PILLAR_STAGES.items()
+        }
         record.artifacts["source_dir"] = str(dataset_dir)
-        record.runs.append(state["run_id"])
+        if state["run_id"] not in record.runs:
+            record.runs.append(state["run_id"])
         locations.save(record)
         # Each run starts again from the raw data; patches are replayed by the agents.
         raw = json.loads(raw_bytes)
@@ -160,7 +231,13 @@ def build_pipeline_graph(
         locations.write_building(location_id, raw)
         locations.write_issues(location_id, [])
         write_json(locations.path(location_id, "patches.json"), [])
-        return {"location_id": location_id, "skipped": False, "reports": {}, "attempts": {}}
+        return {
+            "location_id": location_id,
+            "skipped": False,
+            "reconstruct": False,
+            "reports": {},
+            "attempts": {},
+        }
 
     def make_stage_node(stage: Stage) -> Any:
         def node(state: PipelineState) -> dict[str, Any]:
@@ -175,7 +252,7 @@ def build_pipeline_graph(
                 ),
             )
             ctx = StageContext(
-                client=client,
+                client=None if run_mode(state) == "graph" else client,
                 models=models,
                 workspace=workspace,
                 run_id=run_id,
@@ -183,6 +260,7 @@ def build_pipeline_graph(
                 dataset_dir=Path(state["dataset_dir"]),
                 attempt=attempt,
                 feedback=state.get("feedback", {}).get(stage),
+                preserve_geometry=run_mode(state) == "graph",
             )
             try:
                 report = STAGES[stage](ctx, state)
@@ -222,7 +300,11 @@ def build_pipeline_graph(
         stage = state["last_stage"]
         report = StageReport.model_validate(state["reports"][stage])
         decision, usage = orchestrator.decide(
-            client, models.orchestrator, report, state.get("attempts", {}), max_retries
+            None if run_mode(state) == "graph" else client,
+            models.orchestrator,
+            report,
+            state.get("attempts", {}),
+            max_retries,
         )
         record = runs.get(state["run_id"])
         if record is not None:
@@ -308,7 +390,10 @@ def build_pipeline_graph(
         record = locations.get(location_id)
         reports = state.get("reports", {})
         if record is not None:
+            mode = run_mode(state)
             for pillar, stages in PILLAR_STAGES.items():
+                if not set(stages) <= set(MODE_STAGES[mode]):
+                    continue  # marked skipped by load
                 statuses = [reports[s]["status"] for s in stages if s in reports]
                 status = (
                     "skipped"
@@ -320,11 +405,11 @@ def build_pipeline_graph(
                 record.pillars[pillar] = Pillar(status=status, updated_at=utcnow())
             record.artifacts |= {
                 "building": "building.json",
-                "model": "3d/model.glb",
-                "model_index": "3d/model_index.json",
                 "issues": "issues.json",
                 "patches": "patches.json",
             }
+            if mode == "full":
+                record.artifacts |= {"model": "3d/model.glb", "model_index": "3d/model_index.json"}
             locations.save(record)
         if repository is not None:
             cleaned = BuildingFile.model_validate(locations.read_building(location_id))
@@ -343,11 +428,15 @@ def build_pipeline_graph(
     builder.add_node("finalize", finalize)
 
     targets: dict[Hashable, str] = {
-        name: name for name in (*STAGE_ORDER, "review", "abort", "finalize")
+        name: name for name in (*STAGE_ORDER, "load", "review", "abort", "finalize")
     }
     builder.add_edge(START, "load")
     builder.add_conditional_edges(
-        "load", lambda s: END if s.get("skipped") else "raw_validation", [END, "raw_validation"]
+        "load",
+        lambda s: (
+            END if s.get("skipped") else "reconstruct" if s.get("reconstruct") else "raw_validation"
+        ),
+        [END, "reconstruct", "raw_validation"],
     )
     builder.add_conditional_edges("gate", route, targets)
     builder.add_conditional_edges("review", route, targets)

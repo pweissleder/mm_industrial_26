@@ -1,0 +1,620 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Benchmark results</title><style>
+:root{--bg:#f7f7f5;--panel:#fff;--text:#1d1d1b;--muted:#6b6b66;--line:#e3e3de;
+--good:#2f8f5b;--warn:#c58a1b;--bad:#c2412d;--track:#ecece7;--code:#f1f1ed}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;
+--text:#ecece8;--muted:#9a9a93;--line:#33332f;--track:#2c2c29;--code:#262623}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:18px;margin:36px 0 12px}
+.meta{color:var(--muted);margin:0 0 24px;overflow-wrap:anywhere}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card .label{color:var(--muted);font-size:13px}.card .value{font-size:28px;font-weight:650}
+.card .note{color:var(--muted);font-size:13px}
+.card.good .value{color:var(--good)}.card.bad .value{color:var(--bad)}
+.card.warn .value{color:var(--warn)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);
+border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:600}tr.total td{font-weight:650}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{height:8px;background:var(--track);border-radius:4px;min-width:120px;margin-top:7px}
+.fill{height:100%;border-radius:4px}.fill.good{background:var(--good)}
+.fill.warn{background:var(--warn)}.fill.bad{background:var(--bad)}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;
+border:1px solid var(--line)}.tag.bad{color:var(--bad)}.tag.good{color:var(--good)}
+details{margin-top:4px}summary{cursor:pointer;color:var(--muted)}
+pre{background:var(--code);padding:8px 10px;border-radius:6px;white-space:pre-wrap;
+word-break:break-word;font-size:12.5px;margin:6px 0}
+.scroll{overflow-x:auto}code{font-size:13px}
+</style></head><body><main><h1>Graph-only benchmark</h1><p class="meta">2026-10-25 04:34 · model <code>claude-haiku-5-5</code> · /Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/problem_statement/industrial-agents-hackathon-2026/data/train, /Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/problem_statement/industrial-agents-hackathon-2026/data/dev</p><div class="cards"><div class="card good"><div class="label">Pipeline (graph mode)</div><div class="value">240/240</div><div class="note">buildings passed</div></div><div class="card good"><div class="label">Benchmark questions</div><div class="value">99.2%</div><div class="note">650/655 correct</div></div><div class="card good"><div class="label">Warm-up questions</div><div class="value">0.994</div><div class="note">mean score, 2118/2130 full marks</div></div><div class="card "><div class="label">Questions</div><div class="value">2785</div><div class="note">0 failed to run</div></div><div class="card "><div class="label">Cost</div><div class="value">$8.39</div><div class="note">17.5 min</div></div></div><h2>Score by question kind</h2><div class="scroll"><table><tr><th>Group / kind</th><th>Correct</th><th>Accuracy</th><th>Mean score</th></tr><tr class="total"><td>basic/ALL</td><td class="num">2118/2130</td><td class="num">99.4%<div class="bar"><div class="fill good" style="width:99.4%"></div></div></td><td class="num">0.994</td></tr><tr class=""><td>basic/count</td><td class="num">239/239</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>basic/locate</td><td class="num">552/553</td><td class="num">99.8%<div class="bar"><div class="fill good" style="width:99.8%"></div></div></td><td class="num">0.998</td></tr><tr class=""><td>basic/route</td><td class="num">715/720</td><td class="num">99.3%<div class="bar"><div class="fill good" style="width:99.3%"></div></div></td><td class="num">0.993</td></tr><tr class=""><td>basic/route_step_free</td><td class="num">239/240</td><td class="num">99.6%<div class="bar"><div class="fill good" style="width:99.6%"></div></div></td><td class="num">0.996</td></tr><tr class=""><td>basic/route_with_closure</td><td class="num">135/138</td><td class="num">97.8%<div class="bar"><div class="fill good" style="width:97.8%"></div></div></td><td class="num">0.978</td></tr><tr class=""><td>basic/tour</td><td class="num">238/240</td><td class="num">99.2%<div class="bar"><div class="fill good" style="width:99.2%"></div></div></td><td class="num">0.992</td></tr><tr class="total"><td>benchmark/ALL</td><td class="num">650/655</td><td class="num">99.2%<div class="bar"><div class="fill good" style="width:99.2%"></div></div></td><td class="num">0.992</td></tr><tr class=""><td>benchmark/errand</td><td class="num">92/93</td><td class="num">98.9%<div class="bar"><div class="fill good" style="width:98.9%"></div></div></td><td class="num">0.989</td></tr><tr class=""><td>benchmark/floor_area_total</td><td class="num">181/181</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>benchmark/largest_room</td><td class="num">96/96</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>benchmark/room_stacked</td><td class="num">24/26</td><td class="num">92.3%<div class="bar"><div class="fill warn" style="width:92.3%"></div></div></td><td class="num">0.923</td></tr><tr class=""><td>benchmark/shared_walls_count</td><td class="num">142/143</td><td class="num">99.3%<div class="bar"><div class="fill good" style="width:99.3%"></div></div></td><td class="num">0.993</td></tr><tr class=""><td>benchmark/step_free_reachable_count</td><td class="num">2/2</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>benchmark/straight_line_3d</td><td class="num">29/30</td><td class="num">96.7%<div class="bar"><div class="fill good" style="width:96.7%"></div></div></td><td class="num">0.967</td></tr><tr class=""><td>benchmark/what_if_door</td><td class="num">4/4</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>benchmark/wide_delivery_count</td><td class="num">80/80</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr></table></div><p class="meta">Benchmark questions: official scorer. Warm-up routes: organizer rules (valid route, best length ÷ our length, full marks within 1 %). 97 expected answers recomputed with the kit 1.1.0 route model.</p><h2>Pipeline: 240/240 buildings passed</h2><p class="meta">Graph mode: raw validation with deterministic cleanup, graph build, graph validation. Passed = completed without review, every stage passed, floors, outlines, openings and connectors identical to the source.</p><details><summary>240 buildings passed (show)</summary><div class="scroll"><table><tr><th>Building</th><th>Result</th><th>Time</th><th>Stages and problems</th></tr><tr><td><code>osm-way10053349</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way13507441</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way19183732</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way22744230</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way27326387</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way27917482</code></td><td><span class="tag good">passed</span></td><td class="num">2.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way360544293</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way37850565</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way476929995</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way50299720</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way52060470</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way58216509</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way61408163</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-dev-000</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-dev-001</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-dev-002</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-dev-006</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-dev-009</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-dev-013</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-000</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-001</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-002</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-003</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-004</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-011</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-012</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-013</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-014</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-016</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-campus-train-019</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-003</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-004</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-005</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-007</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-008</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-010</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-011</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-dev-012</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-005</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-006</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-007</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-008</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-009</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-010</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-015</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-017</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-018</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-020</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-10002</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-10192</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-10428</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-10504</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-10650</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-10882</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-1095</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-11076</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-11706</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-11816</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-120</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12034</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-1224</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12304</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12336</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12462</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12750</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12844</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12867</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12878</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12897</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-12985</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-13024</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-13846</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-14012</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-14211</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-14407</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-14509</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-14602</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-1465</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-15074</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-15179</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-15183</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-15550</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-15793</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16021</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16154</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16188</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16407</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16484</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16645</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-1677</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-16778</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-1702</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-1804</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-2100</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-2247</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-2478</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-2515</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-2587</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-3207</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-3221</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-3562</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-3806</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-3832</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-3971</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-4294</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-4303</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-433</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-4378</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-439</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-4429</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-4453</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-457</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-47</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-5277</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-553</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-56</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-5783</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-5871</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-6242</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-6565</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-666</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-6994</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-7151</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-7336</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-7471</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-7667</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-7709</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-7948</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8006</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8080</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8169</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8174</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8269</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8431</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8449</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8565</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-8889</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-9082</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-9204</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-9416</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-9515</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-9809</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>resplan-9872</code></td><td><span class="tag good">passed</span></td><td class="num">0.0 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1075</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1104</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1110</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-116</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-120</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1224</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1283</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1355</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1390</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1433</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1444</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1457</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1463</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1470</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-148</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1543</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-15503</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1571</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-16357</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1650</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1689</code></td><td><span class="tag good">passed</span></td><td class="num">0.9 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1785</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-18196</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-18256</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-18260</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1828</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1829</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1860</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1883</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1889</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1898</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1922</code></td><td><span class="tag good">passed</span></td><td class="num">0.9 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1928</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1936</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1956</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1970</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-203</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2049</code></td><td><span class="tag good">passed</span></td><td class="num">0.6 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2074</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2084</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-210</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-22</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2211</code></td><td><span class="tag good">passed</span></td><td class="num">0.8 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2214</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2216</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2221</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2235</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2274</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2314</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2325</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2390</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2476</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2482</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-256</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2798</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-28</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2974</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-2975</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3066</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3092</code></td><td><span class="tag good">passed</span></td><td class="num">0.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3096</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-31</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3197</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-325</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3254</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-328</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3284</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-333</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3338</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3355</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-3418</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-373</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-390</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-401</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-430</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-433</code></td><td><span class="tag good">passed</span></td><td class="num">0.6 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-437</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-442</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-450</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-460</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-474</code></td><td><span class="tag good">passed</span></td><td class="num">0.6 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-4967</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-5097</code></td><td><span class="tag good">passed</span></td><td class="num">0.6 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-5354</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-5422</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-5462</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-5690</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-5779</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-59</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-6148</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-624</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-6456</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-668</code></td><td><span class="tag good">passed</span></td><td class="num">0.3 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-685</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-692</code></td><td><span class="tag good">passed</span></td><td class="num">0.7 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-920</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-921</code></td><td><span class="tag good">passed</span></td><td class="num">0.8 s</td><td>3/3 stages passed</td></tr></table></div></details><h2>Misses and errors: 17</h2><div class="scroll"><table><tr><th>Question</th><th>Kind</th><th>Score</th><th>Why</th></tr><tr><td><code>osm-way37850565-H02</code></td><td>room_stacked</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>There&#x27;s water dripping from the ceiling in Büro (Ground floor). Which room is directly above it? Finish with a line &#x27;Answer: &lt;room name or number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;space&quot;,
+ &quot;space_id&quot;: &quot;osm-way37850565-F1-S002&quot;,
+ &quot;accept&quot;: [
+  &quot;1.02&quot;
+ ],
+ &quot;reject&quot;: [
+  &quot;1.03&quot;
+ ]
+}</pre><pre>There are three rooms named &quot;Büro&quot; on the Ground floor, and none has a room number. I used the first one (the one listed first, which sits next to the Teeküche). Its room directly above is the Büro on Floor 1, with 25.9 m² of overlap.
+
+If you meant one of the other two, the room above is:
+- **Ground floor Büro (second one):** the Büro on Floor 1 that overlaps most, with 20.9 m².
+- **Ground floor Büro (third one):** the Büro on Floor 1 that overlaps most, with 14.0 m².
+
+Answer: Büro</pre></details></td></tr><tr><td><code>osm-way37850565-H03</code></td><td>room_stacked</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>There&#x27;s water dripping from the ceiling in Büro (Ground floor). Which room is directly above it? Finish with a line &#x27;Answer: &lt;room name or number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;space&quot;,
+ &quot;space_id&quot;: &quot;osm-way37850565-F1-S003&quot;,
+ &quot;accept&quot;: [
+  &quot;1.03&quot;
+ ],
+ &quot;reject&quot;: [
+  &quot;1.02&quot;
+ ]
+}</pre><pre>The ground-floor &quot;Büro&quot; has three rooms with that same name, so I went with the first one listed (the one next to the Teeküche). I can&#x27;t tell which one the leak is in, so if it&#x27;s another, let me know.
+
+For that room, the room directly above is the **Büro on Floor 1**, which has the largest overlap (25.9 m²). It has 3 desks, 3 office chairs and a plant. Its door opens onto the Flur.
+
+The other two ground-floor Büros sit above different Floor 1 rooms:
+- The middle Büro is mostly below Floor 1&#x27;s Büro (overlap 20.9 m²).
+- The Büro on the far side is mostly below Floor 1&#x27;s Büro (overlap 14.0 m²) and partly below another Büro (10.2 m²).
+
+Since the water is coming from the ceiling, the Floor 1 room above is where the source is likely to be.
+
+Answer: Büro</pre></details></td></tr><tr><td><code>osm-way37850565-H04</code></td><td>shared_walls_count</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>We&#x27;re soundproofing Büro (Floor 1). How many other rooms on that floor share a wall with it? Count every room whose wall runs along it for at least 1 m, with or without a door between them; corridors, stairwells and lifts don&#x27;t count. Finish with a line &#x27;Answer: &lt;number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;number&quot;,
+ &quot;value&quot;: 3,
+ &quot;unit&quot;: &quot;rooms&quot;,
+ &quot;relative_tolerance&quot;: 0.0,
+ &quot;absolute_tolerance&quot;: 0.0
+}</pre><pre>I found nine rooms named &quot;Büro&quot; on Floor 1, so I used the first one listed (ID osm-way37850565-F1-S001). If you meant a different one, tell me which and I&#x27;ll rerun it.
+
+For that room, two rooms share at least 1 m of wall:
+- Mehrzweckraum (6.85 m of shared wall)
+- Büro (6.8 m of shared wall, the next Büro along)
+
+Answer: 2</pre></details></td></tr><tr><td><code>osm-way37850565-Q05</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Kopierraum (Ground floor) to Büro (Floor 1)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S003&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S002&quot;,
+ &quot;optimal_length_m&quot;: 80.43,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F0-S003&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S002&quot;,
+  &quot;osm-way37850565-F0-S007&quot;,
+  &quot;osm-way37850565-F1-S017&quot;,
+  &quot;osm-way37850565-F1-S016&quot;,
+  &quot;osm-way37850565-F1-S015&quot;,
+  &quot;osm-way37850565-F1-S002&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F0-O0028&quot;,
+  &quot;osm-way37850565-F0-O0028&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0030&quot;,
+  &quot;osm-way37850565-F0-O0030&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-F1-O0025&quot;,
+  &quot;osm-way37850565-F1-O0025&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0018&quot;,
+  &quot;osm-way37850565-F1-O0018&quot;
+ ]
+}</pre><pre>From Kopierraum on the Ground floor, take the stairs up to Floor 1. The walk is about 60 m:
+
+1. Leave Kopierraum into the Flur.
+2. Go through the Eingangshalle.
+3. Enter Stairwell 0.07 and take the stairs to Floor 1.
+4. On Floor 1, go into the Treppenhaus, then along the Flur.
+5. Arrive in the Büro.
+
+The building has nine rooms named just &quot;Büro&quot; on Floor 1, and none has a number. I routed to the first one listed (F1-S001). If you meant a different one, tell me its number or position. This route uses stairs. For a step-free route, the lift would be needed instead.
+
+Answer: osm-way37850565-F0-S003 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S007 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S001</pre></details></td></tr><tr><td><code>osm-way37850565-Q06</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Kitchen 2.05 (Floor 2) to Büro (Floor 1)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F2-S005&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S006&quot;,
+ &quot;optimal_length_m&quot;: 67.45,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F2-S005&quot;,
+  &quot;osm-way37850565-F2-S001&quot;,
+  &quot;osm-way37850565-F2-S006&quot;,
+  &quot;osm-way37850565-F1-S017&quot;,
+  &quot;osm-way37850565-F1-S016&quot;,
+  &quot;osm-way37850565-F1-S015&quot;,
+  &quot;osm-way37850565-F1-S006&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F2-O0003&quot;,
+  &quot;osm-way37850565-F2-O0003&quot;,
+  &quot;osm-way37850565-F2-O0022&quot;,
+  &quot;osm-way37850565-F2-O0022&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-F1-O0025&quot;,
+  &quot;osm-way37850565-F1-O0025&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0010&quot;,
+  &quot;osm-way37850565-F1-O0010&quot;
+ ]
+}</pre><pre>From Kitchen 2.05 on Floor 2, take the stairs down to Floor 1 and walk to the Büro. The route is about 53 m:
+
+1. Leave Kitchen 2.05 into the Treppenhaus (stairwell).
+2. Go through Stairwell 2.06.
+3. Take the stairs down to Floor 1.
+4. Enter the Treppenhaus on Floor 1, then the Flur.
+5. Walk to the Büro.
+
+Floor 1 has nine rooms named &quot;Büro&quot;, so I routed you to the first one listed (room id osm-way37850565-F1-S001). If you meant a different one, tell me its room number and I&#x27;ll route there.
+
+Answer: osm-way37850565-F2-S005 -&gt; osm-way37850565-F2-S001 -&gt; osm-way37850565-F2-S006 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S001</pre></details></td></tr><tr><td><code>osm-way37850565-Q07</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Büro (Ground floor) to Toilet 2.03 (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S011&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F2-S003&quot;,
+ &quot;optimal_length_m&quot;: 59.16,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F0-S011&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S002&quot;,
+  &quot;osm-way37850565-F0-S007&quot;,
+  &quot;osm-way37850565-F1-S017&quot;,
+  &quot;osm-way37850565-F2-S006&quot;,
+  &quot;osm-way37850565-F2-S001&quot;,
+  &quot;osm-way37850565-F2-S002&quot;,
+  &quot;osm-way37850565-F2-S003&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F0-O0034&quot;,
+  &quot;osm-way37850565-F0-O0034&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0030&quot;,
+  &quot;osm-way37850565-F0-O0030&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-F2-O0022&quot;,
+  &quot;osm-way37850565-F2-O0022&quot;,
+  &quot;osm-way37850565-F2-O0004&quot;,
+  &quot;osm-way37850565-F2-O0004&quot;,
+  &quot;osm-way37850565-F2-O0005&quot;,
+  &quot;osm-way37850565-F2-O0005&quot;
+ ]
+}</pre><pre>There are three rooms called &quot;Büro&quot; on the Ground floor. I used the first one (ID S010), so if you meant another, let me know. The walk is about 43 m and uses the stairs, since the route I found has no step-free option. Here are the directions:
+
+1. Start in Büro (Ground floor) and go into Flur.
+2. Continue into Eingangshalle.
+3. Go into Stairwell 0.07 and take the stairs up to Floor 1.
+4. Continue up the stairs to Floor 2.
+5. Go into Treppenhaus, then Foyer.
+6. Arrive at Toilet 2.03 (Floor 2).
+
+Answer: osm-way37850565-F0-S010 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S007 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F2-S006 -&gt; osm-way37850565-F2-S001 -&gt; osm-way37850565-F2-S002 -&gt; osm-way37850565-F2-S003</pre></details></td></tr><tr><td><code>osm-way37850565-Q08</code></td><td>route_step_free</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Is there a step-free route from Büro (Ground floor) to Toilet 0.04 (Ground floor)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S012&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S004&quot;,
+ &quot;optimal_length_m&quot;: 13.22,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F0-S012&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S004&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F0-O0035&quot;,
+  &quot;osm-way37850565-F0-O0035&quot;,
+  &quot;osm-way37850565-F0-O0029&quot;,
+  &quot;osm-way37850565-F0-O0029&quot;
+ ]
+}</pre><pre>Yes, there&#x27;s a step-free route. Three rooms on the Ground floor are called &quot;Büro&quot;, so I used the one with the shortest route, the Büro at osm-way37850565-F0-S011. All three can reach Toilet 0.04 step-free:
+
+- **Büro (S011), about 7.5 m:** go through the Flur, then into Toilet 0.04.
+- **Büro (S010), about 8.2 m:** same route, via the Flur.
+- **Büro (S012), about 11.3 m:** same route, via the Flur.
+
+Answer: osm-way37850565-F0-S011 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S004</pre></details></td></tr><tr><td><code>osm-way37850565-Q09</code></td><td>route_with_closure</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Stairs is closed for maintenance. How do I get from Büro (Floor 1) to Toilet 0.04 (Ground floor)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F1-S006&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S004&quot;,
+ &quot;optimal_length_m&quot;: 80.27,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F1-S006&quot;,
+  &quot;osm-way37850565-F1-S015&quot;,
+  &quot;osm-way37850565-F1-S016&quot;,
+  &quot;osm-way37850565-F1-S018&quot;,
+  &quot;osm-way37850565-F0-S008&quot;,
+  &quot;osm-way37850565-F0-S002&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S004&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F1-O0010&quot;,
+  &quot;osm-way37850565-F1-O0010&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0026&quot;,
+  &quot;osm-way37850565-F1-O0026&quot;,
+  &quot;osm-way37850565-V02&quot;,
+  &quot;osm-way37850565-F0-O0031&quot;,
+  &quot;osm-way37850565-F0-O0031&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0029&quot;,
+  &quot;osm-way37850565-F0-O0029&quot;
+ ],
+ &quot;closed_element_id&quot;: &quot;osm-way37850565-V01&quot;
+}</pre><pre>The stairs are closed, so I routed you via the lift instead. I used the first of the nine rooms named &quot;Büro&quot; on Floor 1 (the building doesn&#x27;t number them, so tell me if you meant a different one).
+
+**Directions (about 65 m):**
+1. Start in Büro (Floor 1).
+2. Go into the Flur, then into the Treppenhaus (stairwell).
+3. Enter Lift 1.18 and ride it down to the Ground floor.
+4. Step out into the Eingangshalle, then continue through the Flur into Toilet 0.04.
+
+I haven&#x27;t changed the stairs&#x27; status. If the closure should stay in the building&#x27;s system, I can close them for you.
+
+Answer: osm-way37850565-F1-S001 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S018 -&gt; osm-way37850565-F0-S008 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S004</pre></details></td></tr><tr><td><code>osm-way37850565-Q10</code></td><td>tour</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Starting at Büro (Ground floor), visit Büro (Ground floor), then Büro (Floor 1) in this order. What is the route?</pre><pre>{
+ &quot;stops&quot;: [
+  &quot;osm-way37850565-F0-S011&quot;,
+  &quot;osm-way37850565-F0-S010&quot;,
+  &quot;osm-way37850565-F1-S010&quot;
+ ],
+ &quot;optimal_length_m&quot;: 81.06,
+ &quot;legs&quot;: [
+  {
+   &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S011&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S010&quot;,
+   &quot;optimal_length_m&quot;: 9.15,
+   &quot;space_path&quot;: [
+    &quot;osm-way37850565-F0-S011&quot;,
+    &quot;osm-way37850565-F0-S001&quot;,
+    &quot;osm-way37850565-F0-S010&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way37850565-F0-O0034&quot;,
+    &quot;osm-way37850565-F0-O0034&quot;,
+    &quot;osm-way37850565-F0-O0033&quot;,
+    &quot;osm-way37850565-F0-O0033&quot;
+   ]
+  },
+  {
+   &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S010&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S010&quot;,
+   &quot;optimal_length_m&quot;: 71.91,
+   &quot;space_path&quot;: [
+    &quot;osm-way37850565-F0-S010&quot;,
+    &quot;osm-way37850565-F0-S001&quot;,
+    &quot;osm-way37850565-F0-S002&quot;,
+    &quot;osm-way37850565-F0-S007&quot;,
+    &quot;osm-way37850565-F1-S017&quot;,
+    &quot;osm-way37850565-F1-S016&quot;,
+    &quot;osm-way37850565-F1-S015&quot;,
+    &quot;osm-way37850565-F1-S010&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way37850565-F0-O0033&quot;,
+    &quot;osm-way37850565-F0-O0033&quot;,
+    &quot;osm-way37850565-F0-O0027&quot;,
+    &quot;osm-way37850565-F0-O0027&quot;,
+    &quot;osm-way37850565-F0-O0030&quot;,
+    &quot;osm-way37850565-F0-O0030&quot;,
+    &quot;osm-way37850565-V01&quot;,
+    &quot;osm-way37850565-F1-O0025&quot;,
+    &quot;osm-way37850565-F1-O0025&quot;,
+    &quot;osm-way37850565-F1-O0008&quot;,
+    &quot;osm-way37850565-F1-O0008&quot;,
+    &quot;osm-way37850565-F1-O0012&quot;,
+    &quot;osm-way37850565-F1-O0012&quot;
+   ]
+  }
+ ]
+}</pre><pre>Starting from Büro on the Ground floor, I used the first Büro on each floor (Ground floor &quot;Büro&quot; and Floor 1 &quot;Büro&quot;). The building has several rooms with that name, so tell me if you meant a different one. The Ground floor Büro is the start, so the tour is just the walk up to Floor 1. It takes about 56 m:
+
+1. Start in Büro (Ground floor).
+2. Go into Flur (Ground floor).
+3. Go into Eingangshalle.
+4. Go into Stairwell 0.07.
+5. Take the stairs up to Floor 1.
+6. Go into Treppenhaus (Floor 1).
+7. Go into Flur (Floor 1).
+8. Arrive in Büro (Floor 1), about 26 m after the Flur, 56 m in total.
+
+Answer: osm-way37850565-F0-S010 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S007 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S001</pre></details></td></tr><tr><td><code>osm-way52060470-H06</code></td><td>straight_line_3d</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>We&#x27;re planning a wireless sensor link between Genusswerk (Floor 1) and Generic room -1.14 (Basement 1). What is the straight-line distance in metres between the centres of the two rooms (each room&#x27;s floor-plan centroid, at its floor&#x27;s elevation)? Finish with a line &#x27;Answer: &lt;number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;number&quot;,
+ &quot;value&quot;: 159.87,
+ &quot;unit&quot;: &quot;m&quot;,
+ &quot;relative_tolerance&quot;: 0.02,
+ &quot;absolute_tolerance&quot;: 0.0
+}</pre><pre>The name &quot;Genusswerk&quot; matches two canteens on Floor 1. I used the larger one (190.95 m², the main hall, room id F1-S046). The other, the 49.96 m² one, is 159.87 m away by the same measure.
+
+The straight-line 3D distance from the centre of Genusswerk (Floor 1) to the centre of Generic room -1.14 (Basement 1) is 142.7 m. That includes the 6 m height difference between the two floors.
+
+Answer: 142.7</pre></details></td></tr><tr><td><code>osm-way58216509-H04</code></td><td>errand</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>I&#x27;m in Generic room N2135 (Floor 2). I need to grab a fire extinguisher from the room that has one closest to me, then carry it to the largest generic room on the ground floor. I can carry it on the stairs. How far will I walk in total, in metres? Finish with a line &#x27;Answer: &lt;number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;number&quot;,
+ &quot;value&quot;: 106.53,
+ &quot;unit&quot;: &quot;m&quot;,
+ &quot;relative_tolerance&quot;: 0.01,
+ &quot;absolute_tolerance&quot;: 1.0,
+ &quot;via&quot;: &quot;osm-way58216509-F2-S012&quot;,
+ &quot;target&quot;: &quot;osm-way58216509-F0-S008&quot;,
+ &quot;kit_value&quot;: 189.96
+}</pre><pre>The nearest fire extinguisher is in Corridor N2195D on Floor 2, about 11.01 m from Generic room N2135. Note that the building has two rooms named &quot;Generic room N2135&quot; on Floor 2, so I used the one whose extinguisher is nearest to it. The walk from there to Generic room N0180 on the ground floor (the largest generic room, 268.28 m²) is 135.96 m via Stairs 3. Carrying the extinguisher on the stairs is fine.
+
+Total walk: 11.01 m + 135.96 m = 146.97 m.
+
+Answer: 146.97</pre></details></td></tr><tr><td><code>osm-way58216509-Q02</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Generic room N2146 (Floor 2) to Generic room N2103 (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way58216509-F2-S152&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S047&quot;,
+ &quot;optimal_length_m&quot;: 219.92,
+ &quot;space_path&quot;: [
+  &quot;osm-way58216509-F2-S152&quot;,
+  &quot;osm-way58216509-F2-S093&quot;,
+  &quot;osm-way58216509-F2-S104&quot;,
+  &quot;osm-way58216509-F2-S030&quot;,
+  &quot;osm-way58216509-F0-S071&quot;,
+  &quot;osm-way58216509-F0-S079&quot;,
+  &quot;outside&quot;,
+  &quot;osm-way58216509-F0-S070&quot;,
+  &quot;osm-way58216509-F0-S013&quot;,
+  &quot;osm-way58216509-F0-S087&quot;,
+  &quot;osm-way58216509-F2-S050&quot;,
+  &quot;osm-way58216509-F2-S007&quot;,
+  &quot;osm-way58216509-F2-S089&quot;,
+  &quot;osm-way58216509-F2-S047&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way58216509-F2-O0326&quot;,
+  &quot;osm-way58216509-F2-O0326&quot;,
+  &quot;osm-way58216509-F2-O0278&quot;,
+  &quot;osm-way58216509-F2-O0278&quot;,
+  &quot;osm-way58216509-F2-O0339&quot;,
+  &quot;osm-way58216509-F2-O0339&quot;,
+  &quot;osm-way58216509-V05&quot;,
+  &quot;osm-way58216509-F0-O0335&quot;,
+  &quot;osm-way58216509-F0-O0335&quot;,
+  &quot;osm-way58216509-F0-O0083&quot;,
+  &quot;osm-way58216509-F0-O0083&quot;,
+  &quot;osm-way58216509-F0-O0118&quot;,
+  &quot;osm-way58216509-F0-O0118&quot;,
+  &quot;osm-way58216509-F0-O0130&quot;,
+  &quot;osm-way58216509-F0-O0130&quot;,
+  &quot;osm-way58216509-F0-O0336&quot;,
+  &quot;osm-way58216509-F0-O0336&quot;,
+  &quot;osm-way58216509-V08&quot;,
+  &quot;osm-way58216509-F2-O0148&quot;,
+  &quot;osm-way58216509-F2-O0148&quot;,
+  &quot;osm-way58216509-F2-O0204&quot;,
+  &quot;osm-way58216509-F2-O0204&quot;,
+  &quot;osm-way58216509-F2-O0207&quot;,
+  &quot;osm-way58216509-F2-O0207&quot;
+ ]
+}</pre><pre>I found two rooms named Generic room N2146 and two named Generic room N2103 on Floor 2. I used the first of each: the N2146 at `osm-way58216509-F2-S062` and the N2103 at `osm-way58216509-F2-S047`. If you meant the other pair, tell me and I&#x27;ll route those instead.
+
+The walk is about 122 m, with no stairs or lifts:
+
+1. Start in Generic room N2146 (Floor 2).
+2. After about 4 m, go into Corridor N2196.
+3. After about 22 m, go into Corridor N2100.
+4. After about 66 m, go into Corridor N2197.
+5. After about 5 m, go into Corridor N2198.
+6. After about 20 m, arrive in Generic room N2103.
+
+Answer: osm-way58216509-F2-S062 -&gt; osm-way58216509-F2-S003 -&gt; osm-way58216509-F2-S014 -&gt; osm-way58216509-F2-S007 -&gt; osm-way58216509-F2-S089 -&gt; osm-way58216509-F2-S047</pre></details></td></tr><tr><td><code>osm-way58216509-Q03</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Generic room N2149 (Floor 2) to Generic room N2197I (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way58216509-F2-S146&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S149&quot;,
+ &quot;optimal_length_m&quot;: 22.45,
+ &quot;space_path&quot;: [
+  &quot;osm-way58216509-F2-S146&quot;,
+  &quot;osm-way58216509-F2-S167&quot;,
+  &quot;osm-way58216509-F2-S093&quot;,
+  &quot;osm-way58216509-F2-S149&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way58216509-F2-O0285&quot;,
+  &quot;osm-way58216509-F2-O0285&quot;,
+  &quot;osm-way58216509-F2-O0286&quot;,
+  &quot;osm-way58216509-F2-O0286&quot;,
+  &quot;osm-way58216509-F2-O0248&quot;,
+  &quot;osm-way58216509-F2-O0248&quot;
+ ]
+}</pre><pre>Both room names exist twice on Floor 2, so I used the first match for each: Generic room N2149 (the one with ID S056) and Generic room N2197I (ID S059). The walk is about 8 m:
+
+1. Start in Generic room N2149.
+2. Go into Generic room N2148A.
+3. Go into Corridor N2196.
+4. Arrive in Generic room N2197I.
+
+If you meant the other N2149 or N2197I on Floor 2, let me know and I&#x27;ll route from or to that one instead.
+
+Answer: osm-way58216509-F2-S056 -&gt; osm-way58216509-F2-S077 -&gt; osm-way58216509-F2-S003 -&gt; osm-way58216509-F2-S059</pre></details></td></tr><tr><td><code>osm-way58216509-Q07</code></td><td>tour</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Starting at Generic room N0131 (Ground floor), visit Generic room N2194 (Floor 2), then Generic room N2175 (Floor 2) in this order. What is the route?</pre><pre>{
+ &quot;stops&quot;: [
+  &quot;osm-way58216509-F0-S088&quot;,
+  &quot;osm-way58216509-F2-S017&quot;,
+  &quot;osm-way58216509-F2-S147&quot;
+ ],
+ &quot;optimal_length_m&quot;: 332.94,
+ &quot;legs&quot;: [
+  {
+   &quot;from_space_id&quot;: &quot;osm-way58216509-F0-S088&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S017&quot;,
+   &quot;optimal_length_m&quot;: 117.74,
+   &quot;space_path&quot;: [
+    &quot;osm-way58216509-F0-S088&quot;,
+    &quot;osm-way58216509-F0-S068&quot;,
+    &quot;osm-way58216509-F0-S077&quot;,
+    &quot;osm-way58216509-F0-S030&quot;,
+    &quot;osm-way58216509-F0-S054&quot;,
+    &quot;osm-way58216509-F2-S049&quot;,
+    &quot;osm-way58216509-F2-S015&quot;,
+    &quot;osm-way58216509-F2-S017&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way58216509-F0-O0104&quot;,
+    &quot;osm-way58216509-F0-O0104&quot;,
+    &quot;osm-way58216509-F0-O0072&quot;,
+    &quot;osm-way58216509-F0-O0072&quot;,
+    &quot;osm-way58216509-F0-O0070&quot;,
+    &quot;osm-way58216509-F0-O0070&quot;,
+    &quot;osm-way58216509-F0-O0331&quot;,
+    &quot;osm-way58216509-F0-O0331&quot;,
+    &quot;osm-way58216509-V07&quot;,
+    &quot;osm-way58216509-F2-O0170&quot;,
+    &quot;osm-way58216509-F2-O0170&quot;,
+    &quot;osm-way58216509-F2-O0017&quot;,
+    &quot;osm-way58216509-F2-O0017&quot;
+   ]
+  },
+  {
+   &quot;from_space_id&quot;: &quot;osm-way58216509-F2-S017&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S147&quot;,
+   &quot;optimal_length_m&quot;: 215.2,
+   &quot;space_path&quot;: [
+    &quot;osm-way58216509-F2-S017&quot;,
+    &quot;osm-way58216509-F2-S015&quot;,
+    &quot;osm-way58216509-F2-S049&quot;,
+    &quot;osm-way58216509-F0-S054&quot;,
+    &quot;osm-way58216509-F0-S030&quot;,
+    &quot;osm-way58216509-F0-S072&quot;,
+    &quot;osm-way58216509-F0-S079&quot;,
+    &quot;osm-way58216509-F0-S071&quot;,
+    &quot;osm-way58216509-F2-S030&quot;,
+    &quot;osm-way58216509-F2-S104&quot;,
+    &quot;osm-way58216509-F2-S097&quot;,
+    &quot;osm-way58216509-F2-S140&quot;,
+    &quot;osm-way58216509-F2-S180&quot;,
+    &quot;osm-way58216509-F2-S159&quot;,
+    &quot;osm-way58216509-F2-S147&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way58216509-F2-O0017&quot;,
+    &quot;osm-way58216509-F2-O0017&quot;,
+    &quot;osm-way58216509-F2-O0170&quot;,
+    &quot;osm-way58216509-F2-O0170&quot;,
+    &quot;osm-way58216509-V07&quot;,
+    &quot;osm-way58216509-F0-O0331&quot;,
+    &quot;osm-way58216509-F0-O0331&quot;,
+    &quot;osm-way58216509-F0-O0057&quot;,
+    &quot;osm-way58216509-F0-O0057&quot;,
+    &quot;osm-way58216509-F0-O0079&quot;,
+    &quot;osm-way58216509-F0-O0079&quot;,
+    &quot;osm-way58216509-F0-O0335&quot;,
+    &quot;osm-way58216509-F0-O0335&quot;,
+    &quot;osm-way58216509-V05&quot;,
+    &quot;osm-way58216509-F2-O0339&quot;,
+    &quot;osm-way58216509-F2-O0339&quot;,
+    &quot;osm-way58216509-F2-O0217&quot;,
+    &quot;osm-way58216509-F2-O0217&quot;,
+    &quot;osm-way58216509-F2-O0258&quot;,
+    &quot;osm-way58216509-F2-O0258&quot;,
+    &quot;osm-way58216509-F2-O0324&quot;,
+    &quot;osm-way58216509-F2-O0324&quot;,
+    &quot;osm-way58216509-F2-O0322&quot;,
+    &quot;osm-way58216509-F2-O0322&quot;,
+    &quot;osm-way58216509-F2-O0261&quot;,
+    &quot;osm-way58216509-F2-O0261&quot;
+   ]
+  }
+ ]
+}</pre><pre>The route is 171 m, using the shortest matching room for each stop. Both Floor 2 names were duplicated, so I used the combination with the shortest total walk: Generic room N2194 (first match) and Generic room N2175 (first match).
+
+**Directions:**
+1. Start in Generic room N0131 (Ground floor). Go through Corridor N0171A, Corridor N0171C and Corridor N0194B.
+2. Take Lift 1 (step-free) up to Floor 2.
+3. Step out into Stairwell N2195 and enter Generic room N2194 (about 78 m so far).
+4. Leave N2194 via Stairwell N2195, then Corridor N2196, Corridor N2195B, Corridor N2195C, Corridor N2197 and Stairwell N2171.
+5. Enter Generic room N2175A, then Generic room N2175 (about 93 m for this leg).
+
+The route uses no outdoor space. The other pairing of duplicate rooms gives a longer 216 m route.
+
+Answer: osm-way58216509-F0-S088 -&gt; osm-way58216509-F0-S068 -&gt; osm-way58216509-F0-S077 -&gt; osm-way58216509-F0-S030 -&gt; osm-way58216509-F0-S054 -&gt; osm-way58216509-F2-S049 -&gt; osm-way58216509-F2-S015 -&gt; osm-way58216509-F2-S017 -&gt; osm-way58216509-F2-S015 -&gt; osm-way58216509-F2-S003 -&gt; osm-way58216509-F2-S023 -&gt; osm-way58216509-F2-S080 -&gt; osm-way58216509-F2-S007 -&gt; osm-way58216509-F2-S090 -&gt; osm-way58216509-F2-S069 -&gt; osm-way58216509-F2-S057</pre></details></td></tr><tr><td><code>proc-factory-train-006-Q09</code></td><td>route_with_closure</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Office staircase is closed for maintenance. How do I get from Office 1.09 (Floor 1) to Meeting room 0.16 (Ground floor)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;proc-factory-train-006-F1-S009&quot;,
+ &quot;to_space_id&quot;: &quot;proc-factory-train-006-F0-S016&quot;,
+ &quot;optimal_length_m&quot;: 62.44,
+ &quot;space_path&quot;: [
+  &quot;proc-factory-train-006-F1-S009&quot;,
+  &quot;proc-factory-train-006-F1-S001&quot;,
+  &quot;proc-factory-train-006-F1-S003&quot;,
+  &quot;proc-factory-train-006-F0-S012&quot;,
+  &quot;proc-factory-train-006-F0-S010&quot;,
+  &quot;proc-factory-train-006-F0-S016&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;proc-factory-train-006-F1-O0038&quot;,
+  &quot;proc-factory-train-006-F1-O0038&quot;,
+  &quot;proc-factory-train-006-F1-O0032&quot;,
+  &quot;proc-factory-train-006-F1-O0032&quot;,
+  &quot;proc-factory-train-006-V02&quot;,
+  &quot;proc-factory-train-006-F0-O0015&quot;,
+  &quot;proc-factory-train-006-F0-O0015&quot;,
+  &quot;proc-factory-train-006-F0-O0020&quot;,
+  &quot;proc-factory-train-006-F0-O0020&quot;
+ ],
+ &quot;closed_element_id&quot;: &quot;proc-factory-train-006-V01&quot;
+}</pre><pre>The Office staircase is now closed, so I&#x27;ve routed you via the Office lift instead. It&#x27;s about 61 m in total:
+
+1. Start in Office 1.09 (Floor 1).
+2. Walk about 2 m into Office corridor 1.01.
+3. Walk about 20 m into Lift 1.03, then ride the Office lift down to the Ground floor.
+4. Step out into Office corridor 0.10.
+5. Walk about 12 m into Meeting room 0.16.
+
+The lift is step-free, so this route also works for wheelchairs and trolleys. I closed the staircase until you reopen it.
+Answer: proc-factory-train-006-F1-S001 -&gt; proc-factory-train-006-F1-S003 -&gt; proc-factory-train-006-F0-S012 -&gt; proc-factory-train-006-F0-S010 -&gt; proc-factory-train-006-F0-S016</pre></details></td></tr><tr><td><code>swiss-1650-Q01</code></td><td>locate</td><td class="num">0.00</td><td>expected Corridor 0.07 (apartment 1)<details><summary>question, expected answer, reply</summary><pre>Where is the internal stairs?</pre><pre>{
+ &quot;asset_id&quot;: &quot;swiss-1650-A00002&quot;,
+ &quot;space_id&quot;: &quot;swiss-1650-F0-S007&quot;,
+ &quot;space_name&quot;: &quot;Corridor 0.07 (apartment 1)&quot;,
+ &quot;floor_level&quot;: 0,
+ &quot;position&quot;: [
+  -2.631,
+  1.404
+ ]
+}</pre><pre>The building has one internal staircase, the **Main staircase**. It serves all four floors: Ground floor (Landing 0.09), Floor 1 (Stair hall 1.26), Floor 2 (Stair hall 2.26) and Floor 3 (Stair hall 3.27). It is not step-free, so use the Main lift if you need step-free access.
+
+Answer: Main staircase</pre></details></td></tr><tr><td><code>osm-way27917482-Q09</code></td><td>route_with_closure</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Stairs 1 is closed for maintenance. How do I get from Generic room 03.08.033 (Floor 3) to Generic room 02.07.044 (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way27917482-F3-S016&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way27917482-F2-S341&quot;,
+ &quot;optimal_length_m&quot;: 154.82,
+ &quot;space_path&quot;: [
+  &quot;osm-way27917482-F3-S016&quot;,
+  &quot;osm-way27917482-F3-S071&quot;,
+  &quot;osm-way27917482-F3-S073&quot;,
+  &quot;osm-way27917482-F3-S403&quot;,
+  &quot;osm-way27917482-F3-S001&quot;,
+  &quot;osm-way27917482-F2-S002&quot;,
+  &quot;osm-way27917482-F1-S002&quot;,
+  &quot;osm-way27917482-F0-S049&quot;,
+  &quot;osm-way27917482-F0-S026&quot;,
+  &quot;outside&quot;,
+  &quot;osm-way27917482-F2-S342&quot;,
+  &quot;osm-way27917482-F2-S341&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way27917482-F3-O0061&quot;,
+  &quot;osm-way27917482-F3-O0061&quot;,
+  &quot;osm-way27917482-F3-O0127&quot;,
+  &quot;osm-way27917482-F3-O0127&quot;,
+  &quot;osm-way27917482-F3-O0128&quot;,
+  &quot;osm-way27917482-F3-O0128&quot;,
+  &quot;osm-way27917482-F3-O0123&quot;,
+  &quot;osm-way27917482-F3-O0123&quot;,
+  &quot;osm-way27917482-V26&quot;,
+  &quot;osm-way27917482-V26&quot;,
+  &quot;osm-way27917482-V26&quot;,
+  &quot;osm-way27917482-F0-O0120&quot;,
+  &quot;osm-way27917482-F0-O0120&quot;,
+  &quot;osm-way27917482-F0-O1763&quot;,
+  &quot;osm-way27917482-F0-O1763&quot;,
+  &quot;osm-way27917482-F2-O1549&quot;,
+  &quot;osm-way27917482-F2-O1549&quot;,
+  &quot;osm-way27917482-F2-O1563&quot;,
+  &quot;osm-way27917482-F2-O1563&quot;
+ ],
+ &quot;closed_element_id&quot;: &quot;osm-way27917482-V01&quot;
+}</pre><pre>The route avoids Stairs 1 and is about 125 m. Three spaces on Floor 3 are named Generic room 03.08.033, so I used the first one (osm-way27917482-F3-S015). If you meant a different one, let me know which.
+
+Directions:
+1. Start in Generic room 03.08.033 on Floor 3 and go into Corridor 3.71, then Corridor 3.73, then Corridor 3.403.
+2. Take Lift 3.01 down to the Ground floor (Lift 1).
+3. Step out into MI Magistrale and walk about 27 m to Corridor 00.07.016.
+4. Go into Stairwell 00.07.101 and take Stairs 10 up to Floor 1, then continue on Stairs 10 to Floor 2.
+5. Walk through Corridor 02.07.016 and Corridor 02.07.030 to Generic room 02.07.044.
+
+Answer: osm-way27917482-F3-S015 -&gt; osm-way27917482-F3-S071 -&gt; osm-way27917482-F3-S073 -&gt; osm-way27917482-F3-S403 -&gt; osm-way27917482-F3-S001 -&gt; osm-way27917482-F0-S049 -&gt; osm-way27917482-F0-S026 -&gt; osm-way27917482-F0-S276 -&gt; osm-way27917482-F0-S283 -&gt; osm-way27917482-F1-S322 -&gt; osm-way27917482-F2-S328 -&gt; osm-way27917482-F2-S325 -&gt; osm-way27917482-F2-S342 -&gt; osm-way27917482-F2-S341</pre></details></td></tr></table></div></main></body></html>

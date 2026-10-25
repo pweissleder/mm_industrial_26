@@ -88,7 +88,7 @@ The frontend is **AriNav** (after Ariadne and her thread), one React island on `
 - **View** (left panel): camera presets, layer toggles, explode floors, wall height, room colours, shadows, grid.
 - **Chat** (bottom): in *Assistant* mode the Claude building assistant with push-to-talk voice (`/api/assistant`, routes drawn on the map, changes only after *Confirm*); without the assistant API it talks to the agent via `POST /api/chat` `{ message, thread_id? }` (one-node LangGraph agent with per-thread memory, returns `{ reply, thread_id }`).
 - **Assistant / Developer** (top bar): *Developer* adds manual routing (official kit 1.1.0 or precision), nearest exit, scenario closures and the kit examples — usable without any AI key. Details, start script and tests: [`docs/PHASE_A_INTEGRATION.md`](docs/PHASE_A_INTEGRATION.md). Live 3D navigation (virtual walker, spoken hints, rerouting): [`docs/PHASE_B_GUIDE.md`](docs/PHASE_B_GUIDE.md).
-- **Upload assets** (top right): creates a new location. You name it first (checked live, case-insensitively, against existing datasets), then add files; the backend stores them in `DATASETS_DIR/<dataset>/`, and a `building.json` is ingested and opened right away.
+- **Upload assets** (top right): creates a new location. You name it first (checked live, case-insensitively, against existing datasets), then add files; the backend stores them in `DATASETS_DIR/<dataset>/`, and a `building.json` is ingested and opened right away. Without one, SVG floor plans (`floor_N.svg`) plus `equipment.csv` are enough (PNG/JPG plans alone are not supported yet): the pipeline's first stage reconstructs `building.json` from them, the Low preview shows *Low n/a* until it has, and the location is named after the dataset.
 - **Two qualities** (tag next to the building name): every building first shows the **Low** preview generated in the browser. The [ingestion pipeline](#agentic-ingestion-pipeline) runs in the background when started from the *LQ only · Build HQ* chip; with *Developer → HQ model → Auto-build* switched on (off by default, because a build calls Claude when a key is set) it also starts on every upload and on opening a dataset that was never processed (a failed run is not restarted on its own). Once it has published a model, the view switches to **HQ**: the pipeline's `model.glb` with the cleaned `building.json` and room descriptions, still clickable and filterable by floor. The *3D source* toggle switches between HQ and the preview.
 - **Processing** (chip in the top bar): stage progress of the run. When the pipeline asks for a review, a dialog opens with the issues, plan previews and a note field, and answers with *Accept with warnings*, *Retry stage* or *Abort run*. Failed runs can be retried and finished ones rebuilt from the same dialog.
 
@@ -100,7 +100,7 @@ Buildings use the starter kit's format (`building.json`: floors, spaces, opening
 
 | Endpoint | What it does |
 |---|---|
-| `GET /api/datasets` | Lists ingestible datasets (subfolders of `DATASETS_DIR` that contain a `building.json`) |
+| `GET /api/datasets` | Lists ingestible datasets (subfolders of `DATASETS_DIR` that contain a `building.json`), plus `needs_reconstruction`: uploads with only SVG floor plans (`floor_N.svg` + `equipment.csv`) whose `building.json` the pipeline's `reconstruct` stage still has to build |
 | `POST /api/ingestions` `{"dataset": "proc-factory-dev-003"}` | Validates and stores that dataset; re-ingesting replaces the building |
 | `GET /api/buildings`, `GET /api/buildings/{id}` | Ingested buildings, with floors and counts |
 | `GET /api/buildings/{id}/model` | The full building (spaces, openings, connectors, assets), used for 3D rendering |
@@ -136,11 +136,14 @@ Without `ANTHROPIC_API_KEY` (or with `--offline`), only the deterministic tools 
 cd backend
 uv run poe ingest proc-factory-dev-003            # asks in the terminal when a run needs review
 uv run poe ingest --all --datasets-dir ../problem_statement/industrial-agents-hackathon-2026/data/dev --offline --on-review accept_with_warnings
+uv run poe ingest proc-factory-dev-003 --graph-only   # benchmark variant: stages 1-2 only, deterministic
 ```
+
+**Graph-only mode** (`--graph-only`, or `"mode": "graph"` in the API) is the benchmark variant: raw validation with deterministic, geometry-preserving cleanup, then graph build and validation; no 3D model, no metadata, no model calls. `uv run poe benchmark` ingests every building this way and answers its questions with Claude Haiku 5.5; see [`SUBMISSION/BENCHMARK.md`](SUBMISSION/BENCHMARK.md).
 
 | Endpoint | What it does |
 |---|---|
-| `POST /api/pipeline-runs` `{"dataset", "force"?}` | Starts a run in the background (202) and returns its `RunRecord` |
+| `POST /api/pipeline-runs` `{"dataset", "force"?, "mode"?}` | Starts a run in the background (202) and returns its `RunRecord`; `mode` is `full` (default) or `graph` |
 | `GET /api/pipeline-runs[/{run_id}]` | Run status, per-stage progress, orchestrator decisions, token usage per agent; `?dataset=` filters the list (newest first) |
 | `POST /api/pipeline-runs/{run_id}/resume` `{"review_id", "option", "note"?}` | Answers a `needs_review` run. `pending_review` holds the prompt for a frontend: title, message, issues, artifacts, and the options `accept_with_warnings`, `retry` or `abort` |
 | `GET /api/locations[/{id}]`, `GET /api/locations/{id}/model.glb` | Locations (`has_model` in the list), their metadata, and the 3D model |

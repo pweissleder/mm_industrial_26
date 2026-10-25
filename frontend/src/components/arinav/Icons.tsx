@@ -61,6 +61,18 @@ export const PinIcon = (p: P) => (
     <circle cx="12" cy="10" r="2.4" />
   </Icon>
 );
+export const NavigateIcon = (p: P) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+  </Icon>
+);
+export const UserIcon = (p: P) => (
+  <Icon {...p}>
+    <circle cx="12" cy="8" r="3.6" />
+    <path d="M5 20a7 7 0 0 1 14 0" />
+  </Icon>
+);
 export const CubeIcon = (p: P) => (
   <Icon {...p}>
     <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z" />
@@ -92,6 +104,11 @@ export const MinusIcon = (p: P) => (
 export const FitIcon = (p: P) => (
   <Icon {...p}>
     <path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4" />
+  </Icon>
+);
+export const MoreIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M6 12h.01M12 12h.01M18 12h.01" strokeWidth="3" />
   </Icon>
 );
 export const SparkleIcon = (p: P) => (
@@ -144,6 +161,13 @@ export const SpeakerIcon = (p: P) => (
   </Icon>
 );
 
+export const SpeakerOffIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" />
+    <path d="M16 9.5l5 5M21 9.5l-5 5" />
+  </Icon>
+);
+
 export const ReplayIcon = (p: P) => (
   <Icon {...p}>
     <path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5" />
@@ -167,8 +191,9 @@ export const CodeIcon = (p: P) => (
 
 export const OrbitIcon = (p: P) => (
   <Icon {...p}>
-    <ellipse cx="12" cy="12" rx="9" ry="4" />
-    <path d="M17.5 4.5 21 8l-3.5 3.5" transform="rotate(20 12 12)" />
+    {/* A circular arrow around the pivot: drag rotates the view. */}
+    <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+    <path d="M20 4v4h-4" />
     <circle cx="12" cy="12" r="1.6" />
   </Icon>
 );
@@ -176,5 +201,17 @@ export const PanIcon = (p: P) => (
   <Icon {...p}>
     <path d="M12 3v18M3 12h18" />
     <path d="m9 6 3-3 3 3M9 18l3 3 3-3M6 9l-3 3 3 3M18 9l3 3-3 3" />
+  </Icon>
+);
+
+export const PauseIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M9 5v14M15 5v14" />
+  </Icon>
+);
+
+export const PlayIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M8 5.5v13l10.5-6.5z" />
   </Icon>
 );

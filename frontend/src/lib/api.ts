@@ -61,6 +61,8 @@ export interface UploadResponse {
   dataset: string;
   files: DatasetFile[];
   ingestible: boolean;
+  /** No building.json, but floor plans: the pipeline's reconstruct stage can rebuild it. */
+  reconstructable: boolean;
 }
 
 // --- ingestion pipeline (backend/app/pipeline) ---------------------------------------
@@ -124,6 +126,7 @@ export interface LocationRecord {
     summary: string;
     key_facts: string[];
     spaces: Record<string, SpaceMeta>;
+    suggestions?: string[];
   } | null;
   artifacts: Record<string, string>;
 }
@@ -449,6 +452,67 @@ export interface TurnResponse {
   audio_pcm16?: string | null;
   sample_rate?: number;
   voice_error?: string | null;
+  /** A Call Wrapped recap the backend just started (enough conversations have ended). */
+  recap?: RecapStub | null;
+}
+
+/** Call Wrapped: `/api/recaps`. Every number is in `facts`; Claude only writes `content`. */
+export interface RecapStub {
+  id: string;
+  status: 'pending' | 'ready' | 'failed';
+}
+
+export interface RecapCount {
+  category: string;
+  label: string;
+  count: number;
+}
+
+export type ByConnector = { stairs: number; lift: number };
+
+export interface RecapFacts {
+  conversations: number;
+  from: string | null;
+  to: string | null;
+  buildings: string[];
+  talk: { minutes: number; questions: number; voice_questions: number };
+  searches: RecapCount[];
+  routes: {
+    count: number;
+    distance_m: number;
+    longest: { from: string | null; to: string | null; distance_m: number } | null;
+    comparison: { unit: string; value: number };
+  };
+  vertical: {
+    floor_changes: ByConnector;
+    climbed_m: ByConnector;
+    descended_m: ByConnector;
+    steps: number;
+  };
+  alltime: {
+    conversations: number;
+    questions: number;
+    distance_m: number;
+    floor_changes: number;
+    top_searches: RecapCount[];
+  };
+}
+
+export interface RecapContent {
+  topTopics: string[];
+  mood: string;
+  moodEmoji: string;
+  bestQuote: string | null;
+  summary: string;
+  nextSteps: string[];
+}
+
+export interface Recap extends RecapStub {
+  created_at: string;
+  session_ids: string[];
+  source?: 'claude' | 'fallback';
+  facts?: RecapFacts;
+  content?: RecapContent;
 }
 
 export interface ConfirmResponse {
@@ -595,6 +659,12 @@ export const api = {
       // building_id gives the agent that building's navgraph tools; without it the agent is blind.
       body: JSON.stringify({ message, thread_id: threadId, building_id: buildingId ?? undefined }),
     }),
+  /** `needs_reconstruction`: uploaded plan-only datasets that have no building.json yet. */
+  datasetIndex: () =>
+    request<{ datasets: string[]; needs_reconstruction: string[] }>('/datasets').then((r) => ({
+      datasets: r.datasets,
+      needs_reconstruction: r.needs_reconstruction ?? [],
+    })),
   datasets: () => request<{ datasets: string[] }>('/datasets').then((r) => r.datasets),
   ingest: (dataset: string) =>
     request<IngestionResponse>('/ingestions', { method: 'POST', body: JSON.stringify({ dataset }) }),
@@ -670,9 +740,15 @@ export const api = {
       post({ session_id: sessionId, proposal_id: proposalId, approved }),
     ),
   assistantReset: (sessionId: string) =>
-    request<{ status: string }>('/assistant/reset', post({ session_id: sessionId })),
+    request<{ status: string; recap?: RecapStub | null }>(
+      '/assistant/reset',
+      post({ session_id: sessionId }),
+    ),
   assistantTranscribe: (audio: string) =>
     request<TranscribeResponse>('/assistant/transcribe', post({ audio })),
+  recap: (id: string) => request<Recap>(`/recaps/${encodeURIComponent(id)}`),
+  /** Recaps the latest conversations now (developer mode; 409 when there are none). */
+  createRecap: () => request<RecapStub>('/recaps', post({})),
   /** Short spoken navigation hint (<= 240 chars); 503 when voice is off, 502 on TTS failure. */
   speak: (text: string, speed: number, signal?: AbortSignal) =>
     request<SpeakResponse>('/assistant/speak', { ...post({ text, speed }), signal }),

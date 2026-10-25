@@ -1,0 +1,42 @@
+{
+  "stage": "variant_creator",
+  "status": "passed",
+  "summary": "Created 17 of 17 library models.",
+  "metrics": {
+    "created": [
+      "canteen_table",
+      "chemical_cabinet",
+      "eyewash_station",
+      "fume_hood",
+      "lab_bench",
+      "laser_cutter",
+      "lectern",
+      "lecture_seating_row",
+      "multifunction_printer",
+      "oscilloscope_station",
+      "paper_shelf",
+      "printer",
+      "projector",
+      "projector_screen",
+      "reading_table",
+      "serving_counter",
+      "soldering_station"
+    ],
+    "failed": [],
+    "still_missing": []
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb"
+  ],
+  "usage": {
+    "model": "claude-sonnet-5-5",
+    "input_tokens": 344973,
+    "output_tokens": 24212,
+    "cache_read_input_tokens": 0,
+    "calls": 68
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-24T16:41:57.879230Z"
+}

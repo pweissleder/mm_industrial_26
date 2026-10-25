@@ -1,0 +1,3266 @@
+{
+  "id": "proc-campus-dev-000",
+  "dataset": "proc-campus-dev-000",
+  "name": "Hörsaalzentrum 024",
+  "source": "procedural",
+  "raw_sha256": "27e16425ae61d7069ce3a5c1b3360b8fc07e197dfe50d79fa13979a108706cfe",
+  "created_at": "2026-10-24T16:40:12.139767Z",
+  "updated_at": "2026-10-24T16:43:18.616198Z",
+  "pillars": {
+    "validation": {
+      "status": "done",
+      "updated_at": "2026-10-24T16:42:34.040319Z",
+      "note": null
+    },
+    "graph": {
+      "status": "skipped",
+      "updated_at": "2026-10-24T16:42:34.040341Z",
+      "note": null
+    },
+    "assets_3d": {
+      "status": "done",
+      "updated_at": "2026-10-24T16:42:34.040354Z",
+      "note": null
+    },
+    "metadata": {
+      "status": "done",
+      "updated_at": "2026-10-24T16:42:34.040362Z",
+      "note": null
+    }
+  },
+  "metadata": {
+    "summary": "Hörsaalzentrum 024 is a procedurally generated five-story campus building (levels 0-4) with about 5,011 m² across 152 spaces, 116 of them rooms. It combines offices, labs, seminar rooms, a lecture hall, a makerspace, a canteen and a library. It holds 944 assets, including 9 machines (8 3D printers and 1 laser cutter). Three lifts and three staircases serve every level, and step-free coverage is 100%.",
+    "key_facts": [
+      "5 floors (levels 0-4), each 3.8 m high and about 1,002 m²",
+      "152 spaces, 116 of them rooms; total area 5,011.2 m²",
+      "944 assets: 659 furniture, 194 equipment, 82 fixtures, 9 machines",
+      "Machines: 8 3D printers and 1 laser cutter",
+      "Lab equipment includes 37 lab benches, 29 microscopes, 23 oscilloscope stations and 18 fume hoods",
+      "3 lifts (step-free) and 3 staircases connect all levels",
+      "Step-free entrance available; step-free coverage 1.0",
+      "Two entrances, both on the ground floor"
+    ],
+    "stats": {
+      "building_id": "proc-campus-dev-000",
+      "name": "Hörsaalzentrum 024",
+      "source": "procedural",
+      "license": "CC0-1.0",
+      "attribution": "Procedurally generated for the Munich hackathon (CC0)",
+      "floor_count": 5,
+      "levels": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "missing_levels": [],
+      "total_area_m2": 5011.2,
+      "space_count": 152,
+      "room_count": 116,
+      "asset_count": 944,
+      "equipment_by_category": {
+        "equipment": 194,
+        "furniture": 659,
+        "fixture": 82,
+        "machine": 9
+      },
+      "top_equipment": {
+        "chair": 192,
+        "desk": 95,
+        "office_chair": 95,
+        "seminar_table": 68,
+        "toilet": 55,
+        "shelf": 42,
+        "lab_bench": 37,
+        "filing_cabinet": 34,
+        "bookshelf": 31,
+        "microscope": 29,
+        "oscilloscope_station": 23,
+        "plant": 21,
+        "sink": 21,
+        "whiteboard": 20,
+        "fume_hood": 18
+      },
+      "machines": {
+        "3d_printer": 8,
+        "laser_cutter": 1
+      },
+      "has_lift": true,
+      "has_stairs": true,
+      "has_step_free_entrance": true,
+      "step_free_coverage": 1.0,
+      "connectors": [
+        {
+          "id": "proc-campus-dev-000-V01",
+          "kind": "stairs",
+          "name": "Staircase 1",
+          "levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "step_free": false
+        },
+        {
+          "id": "proc-campus-dev-000-V02",
+          "kind": "lift",
+          "name": "Lift 1",
+          "levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "step_free": true
+        },
+        {
+          "id": "proc-campus-dev-000-V03",
+          "kind": "stairs",
+          "name": "Staircase 2",
+          "levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "step_free": false
+        },
+        {
+          "id": "proc-campus-dev-000-V04",
+          "kind": "lift",
+          "name": "Lift 2",
+          "levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "step_free": true
+        },
+        {
+          "id": "proc-campus-dev-000-V05",
+          "kind": "stairs",
+          "name": "Staircase 3",
+          "levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "step_free": false
+        },
+        {
+          "id": "proc-campus-dev-000-V06",
+          "kind": "lift",
+          "name": "Lift 3",
+          "levels": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ],
+          "step_free": true
+        }
+      ]
+    },
+    "floors": [
+      {
+        "floor_id": "proc-campus-dev-000-F0",
+        "level": 0,
+        "name": "Ground floor",
+        "description": "Ground floor (level 0) with 2 entrances, 28 spaces and 20 rooms. It has a lobby, a lecture hall (90.6 m²), a canteen, a makerspace, a lab, offices, a kitchen, a meeting room, a seminar room, a print room and storage. It holds 6 machines, including 5 3D printers.",
+        "stats": {
+          "floor_id": "proc-campus-dev-000-F0",
+          "level": 0,
+          "name": "Ground floor",
+          "elevation_m": 0.0,
+          "height_m": 3.8,
+          "space_count": 28,
+          "room_count": 20,
+          "area_m2": 1002.24,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "corridor": 167.04,
+            "room": 680.1,
+            "stair": 72.0,
+            "lift": 45.0,
+            "hall": 38.1
+          },
+          "area_by_room_type": {
+            "corridor": 167.04,
+            "office": 211.08,
+            "kitchen": 25.08,
+            "stairwell": 72.0,
+            "lift": 45.0,
+            "meeting_room": 22.02,
+            "makerspace": 36.9,
+            "lab": 71.1,
+            "print_room": 23.76,
+            "seminar_room": 26.34,
+            "lobby": 38.1,
+            "toilet": 94.56,
+            "storage": 28.08,
+            "lecture_hall": 90.6,
+            "canteen": 50.58
+          },
+          "equipment_by_category": {
+            "equipment": 34,
+            "furniture": 110,
+            "fixture": 17,
+            "machine": 6
+          },
+          "top_equipment": {
+            "chair": 30,
+            "desk": 16,
+            "office_chair": 16,
+            "toilet": 11,
+            "lecture_seating_row": 7,
+            "shelf": 6,
+            "3d_printer": 5,
+            "bookshelf": 5,
+            "plant": 5,
+            "canteen_table": 4
+          },
+          "entrances": 2
+        }
+      },
+      {
+        "floor_id": "proc-campus-dev-000-F1",
+        "level": 1,
+        "name": "Floor 1",
+        "description": "Floor 1 has 31 spaces and 24 rooms. It is lab-heavy (178.8 m²) with offices, meeting rooms, a seminar room, a library, a kitchen, a print room and storage. Equipment includes lab benches and microscopes.",
+        "stats": {
+          "floor_id": "proc-campus-dev-000-F1",
+          "level": 1,
+          "name": "Floor 1",
+          "elevation_m": 3.8,
+          "height_m": 3.8,
+          "space_count": 31,
+          "room_count": 24,
+          "area_m2": 1002.24,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "corridor": 167.04,
+            "room": 718.2,
+            "stair": 72.0,
+            "lift": 45.0
+          },
+          "area_by_room_type": {
+            "corridor": 167.04,
+            "office": 183.3,
+            "lab": 178.8,
+            "stairwell": 72.0,
+            "lift": 45.0,
+            "seminar_room": 45.78,
+            "kitchen": 41.28,
+            "meeting_room": 63.12,
+            "print_room": 26.64,
+            "toilet": 94.56,
+            "storage": 57.9,
+            "library": 26.82
+          },
+          "equipment_by_category": {
+            "equipment": 47,
+            "furniture": 133,
+            "fixture": 17
+          },
+          "top_equipment": {
+            "chair": 40,
+            "desk": 15,
+            "office_chair": 15,
+            "shelf": 12,
+            "lab_bench": 11,
+            "toilet": 11,
+            "bookshelf": 10,
+            "microscope": 10,
+            "filing_cabinet": 9,
+            "seminar_table": 8
+          },
+          "entrances": 0
+        }
+      },
+      {
+        "floor_id": "proc-campus-dev-000-F2",
+        "level": 2,
+        "name": "Floor 2",
+        "description": "Floor 2 has 31 spaces and 24 rooms. It has large seminar room space (150.78 m²), offices, labs, a kitchen and a print room. It has 3 machines, plus oscilloscope stations, microscopes and fume hoods.",
+        "stats": {
+          "floor_id": "proc-campus-dev-000-F2",
+          "level": 2,
+          "name": "Floor 2",
+          "elevation_m": 7.6,
+          "height_m": 3.8,
+          "space_count": 31,
+          "room_count": 24,
+          "area_m2": 1002.24,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "corridor": 167.04,
+            "room": 718.2,
+            "stair": 72.0,
+            "lift": 45.0
+          },
+          "area_by_room_type": {
+            "corridor": 167.04,
+            "lab": 140.34,
+            "office": 254.34,
+            "stairwell": 72.0,
+            "lift": 45.0,
+            "seminar_room": 150.78,
+            "kitchen": 41.28,
+            "toilet": 94.56,
+            "print_room": 36.9
+          },
+          "equipment_by_category": {
+            "equipment": 51,
+            "furniture": 140,
+            "machine": 3,
+            "fixture": 16
+          },
+          "top_equipment": {
+            "chair": 47,
+            "seminar_table": 24,
+            "desk": 20,
+            "office_chair": 20,
+            "toilet": 11,
+            "lab_bench": 9,
+            "microscope": 7,
+            "oscilloscope_station": 7,
+            "filing_cabinet": 6,
+            "fume_hood": 6
+          },
+          "entrances": 0
+        }
+      },
+      {
+        "floor_id": "proc-campus-dev-000-F3",
+        "level": 3,
+        "name": "Floor 3",
+        "description": "Floor 3 has 31 spaces and 24 rooms. It is mostly offices (319.44 m²) and seminar rooms (148.68 m²), with a smaller lab, a print room, storage and a kitchen. Projectors are among its equipment.",
+        "stats": {
+          "floor_id": "proc-campus-dev-000-F3",
+          "level": 3,
+          "name": "Floor 3",
+          "elevation_m": 11.4,
+          "height_m": 3.8,
+          "space_count": 31,
+          "room_count": 24,
+          "area_m2": 1002.24,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "corridor": 167.04,
+            "room": 718.2,
+            "stair": 72.0,
+            "lift": 45.0
+          },
+          "area_by_room_type": {
+            "corridor": 167.04,
+            "seminar_room": 148.68,
+            "stairwell": 72.0,
+            "lift": 45.0,
+            "lab": 60.54,
+            "office": 319.44,
+            "print_room": 38.1,
+            "toilet": 94.56,
+            "storage": 30.0,
+            "kitchen": 26.88
+          },
+          "equipment_by_category": {
+            "furniture": 153,
+            "equipment": 30,
+            "fixture": 15
+          },
+          "top_equipment": {
+            "chair": 46,
+            "desk": 25,
+            "office_chair": 25,
+            "seminar_table": 23,
+            "toilet": 11,
+            "filing_cabinet": 10,
+            "bookshelf": 6,
+            "shelf": 6,
+            "plant": 5,
+            "projector": 5
+          },
+          "entrances": 0
+        }
+      },
+      {
+        "floor_id": "proc-campus-dev-000-F4",
+        "level": 4,
+        "name": "Floor 4",
+        "description": "Floor 4 has 31 spaces and 24 rooms. It has offices, labs (146.82 m²), the most storage of any floor (85.26 m²), seminar and meeting rooms, a print room and a kitchen.",
+        "stats": {
+          "floor_id": "proc-campus-dev-000-F4",
+          "level": 4,
+          "name": "Floor 4",
+          "elevation_m": 15.2,
+          "height_m": 3.8,
+          "space_count": 31,
+          "room_count": 24,
+          "area_m2": 1002.24,
+          "outdoor_area_m2": 0.0,
+          "area_by_type": {
+            "corridor": 167.04,
+            "room": 718.2,
+            "stair": 72.0,
+            "lift": 45.0
+          },
+          "area_by_room_type": {
+            "corridor": 167.04,
+            "seminar_room": 60.06,
+            "lab": 146.82,
+            "stairwell": 72.0,
+            "lift": 45.0,
+            "storage": 85.26,
+            "office": 245.58,
+            "meeting_room": 38.52,
+            "toilet": 94.56,
+            "print_room": 20.58,
+            "kitchen": 26.82
+          },
+          "equipment_by_category": {
+            "furniture": 123,
+            "equipment": 32,
+            "fixture": 17
+          },
+          "top_equipment": {
+            "chair": 29,
+            "desk": 19,
+            "office_chair": 19,
+            "shelf": 18,
+            "toilet": 11,
+            "lab_bench": 10,
+            "seminar_table": 9,
+            "filing_cabinet": 7,
+            "bookshelf": 6,
+            "microscope": 6
+          },
+          "entrances": 0
+        }
+      }
+    ],
+    "spaces": {
+      "proc-campus-dev-000-F0-S001": {
+        "space_id": "proc-campus-dev-000-F0-S001",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Corridor 0.01",
+        "ref": "0.01",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 167.04,
+        "description": "Corridor 0.01 is a 167.0 m² corridor with 28 doors, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 28,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S002": {
+        "space_id": "proc-campus-dev-000-F0-S002",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.02",
+        "ref": "0.02",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 25.02,
+        "description": "Office 0.02 is a 25.0 m² office with one door, two desks, two office chairs, one bookshelf, one filing cabinet, one plant, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S003": {
+        "space_id": "proc-campus-dev-000-F0-S003",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Kitchen 0.03",
+        "ref": "0.03",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 25.08,
+        "description": "Kitchen 0.03 is a 25.1 m² kitchen with one door, one coffee machine, one dining table, one fridge, one kitchen counter, one microwave, one stove, and step-free access.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dining_table": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S004": {
+        "space_id": "proc-campus-dev-000-F0-S004",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Staircase 1",
+        "ref": "0.04",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 1 is a 24.0 m² stairwell with one door, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S004 name 'Staircase 1' does not contain ref '0.04'",
+          "5 spaces share name 'Staircase 1'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S005": {
+        "space_id": "proc-campus-dev-000-F0-S005",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Lift 1",
+        "ref": "0.05",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 1 is a 15.0 m² lift with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S005 name 'Lift 1' does not contain ref '0.05'",
+          "5 spaces share name 'Lift 1'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S006": {
+        "space_id": "proc-campus-dev-000-F0-S006",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Meeting room 0.06",
+        "ref": "0.06",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 22.02,
+        "description": "Meeting room 0.06 is a 22.0 m² meeting room with one door, nine chairs, one display screen, one meeting table, and step-free access.",
+        "equipment": {
+          "chair": 9,
+          "display_screen": 1,
+          "meeting_table": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S007": {
+        "space_id": "proc-campus-dev-000-F0-S007",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.07",
+        "ref": "0.07",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 41.28,
+        "description": "Office 0.07 is a 41.3 m² office with one door, three desks, three office chairs, one bookshelf, one filing cabinet, one plant, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "filing_cabinet": 1,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S008": {
+        "space_id": "proc-campus-dev-000-F0-S008",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Makerspace 0.08",
+        "ref": "0.08",
+        "type": "room",
+        "room_type": "makerspace",
+        "area_m2": 36.9,
+        "description": "Makerspace 0.08 is a 36.9 m² makerspace with one door, five 3D printers, three workbenches, two soldering stations, one laser cutter, one tool cabinet, and step-free access.",
+        "equipment": {
+          "3d_printer": 5,
+          "laser_cutter": 1,
+          "soldering_station": 2,
+          "tool_cabinet": 1,
+          "workbench": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S009": {
+        "space_id": "proc-campus-dev-000-F0-S009",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Staircase 2",
+        "ref": "0.09",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 2 is a 24.0 m² stairwell with one door, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S009 name 'Staircase 2' does not contain ref '0.09'",
+          "5 spaces share name 'Staircase 2'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S010": {
+        "space_id": "proc-campus-dev-000-F0-S010",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Lift 2",
+        "ref": "0.10",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 2 is a 15.0 m² lift with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S010 name 'Lift 2' does not contain ref '0.10'",
+          "5 spaces share name 'Lift 2'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S011": {
+        "space_id": "proc-campus-dev-000-F0-S011",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Lab 0.11",
+        "ref": "0.11",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 38.52,
+        "description": "Lab 0.11 is a 38.5 m² lab with one door, two fume hoods, two lab benches, two microscopes, two oscilloscope stations, one chemical cabinet, one eyewash station, and step-free access.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "fume_hood": 2,
+          "lab_bench": 2,
+          "microscope": 2,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S012": {
+        "space_id": "proc-campus-dev-000-F0-S012",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.12",
+        "ref": "0.12",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 35.04,
+        "description": "Office 0.12 is a 35.0 m² office with one door, three desks, three office chairs, one plant, and step-free access.",
+        "equipment": {
+          "desk": 3,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S013": {
+        "space_id": "proc-campus-dev-000-F0-S013",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.13",
+        "ref": "0.13",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.64,
+        "description": "Office 0.13 is a 26.6 m² office with one door, two desks, two office chairs, one bookshelf, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S014": {
+        "space_id": "proc-campus-dev-000-F0-S014",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Staircase 3",
+        "ref": "0.14",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 3 is a 24.0 m² stairwell with one door, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S014 name 'Staircase 3' does not contain ref '0.14'",
+          "5 spaces share name 'Staircase 3'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S015": {
+        "space_id": "proc-campus-dev-000-F0-S015",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Lift 3",
+        "ref": "0.15",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 3 is a 15.0 m² lift with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S015 name 'Lift 3' does not contain ref '0.15'",
+          "5 spaces share name 'Lift 3'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S016": {
+        "space_id": "proc-campus-dev-000-F0-S016",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Print room 0.16",
+        "ref": "0.16",
+        "type": "room",
+        "room_type": "print_room",
+        "area_m2": 23.76,
+        "description": "Print room 0.16 is a 23.8 m² print room with one door, two multifunction printers, one paper shelf, one printer, and step-free access.",
+        "equipment": {
+          "multifunction_printer": 2,
+          "paper_shelf": 1,
+          "printer": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S017": {
+        "space_id": "proc-campus-dev-000-F0-S017",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Seminar room 0.17",
+        "ref": "0.17",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 26.34,
+        "description": "Seminar room 0.17 is a 26.3 m² seminar room with one door, eight chairs, four seminar tables, one projector, one projector screen, one whiteboard, and step-free access.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S018": {
+        "space_id": "proc-campus-dev-000-F0-S018",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Main lobby",
+        "ref": "0.18",
+        "type": "hall",
+        "room_type": "lobby",
+        "area_m2": 38.1,
+        "description": "Main lobby is a 38.1 m² lobby with two doors, two plants, one bench, one reception desk, and step-free access.",
+        "equipment": {
+          "bench": 1,
+          "plant": 2,
+          "reception_desk": 1
+        },
+        "doors": 2,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F0-S018 name 'Main lobby' does not contain ref '0.18'"
+        ]
+      },
+      "proc-campus-dev-000-F0-S019": {
+        "space_id": "proc-campus-dev-000-F0-S019",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.19",
+        "ref": "0.19",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 21.96,
+        "description": "Office 0.19 is a 22.0 m² office with one door, two desks, two office chairs, one bookshelf, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S020": {
+        "space_id": "proc-campus-dev-000-F0-S020",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Toilet 0.20",
+        "ref": "0.20",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 34.56,
+        "description": "Toilet 0.20 is a 34.6 m² toilet room with one door, four toilets, one sink, and step-free access.",
+        "equipment": {
+          "sink": 1,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S021": {
+        "space_id": "proc-campus-dev-000-F0-S021",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.21",
+        "ref": "0.21",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 30.12,
+        "description": "Office 0.21 is a 30.1 m² office with one door, two desks, two office chairs, and step-free access.",
+        "equipment": {
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S022": {
+        "space_id": "proc-campus-dev-000-F0-S022",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Storage 0.22",
+        "ref": "0.22",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 28.08,
+        "description": "Storage 0.22 is a 28.1 m² storage room with one door, six shelves, and step-free access.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S023": {
+        "space_id": "proc-campus-dev-000-F0-S023",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Toilet 0.23",
+        "ref": "0.23",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 37.02,
+        "description": "Toilet 0.23 is a 37.0 m² toilet room with one door, four toilets, two sinks, and step-free access.",
+        "equipment": {
+          "sink": 2,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S024": {
+        "space_id": "proc-campus-dev-000-F0-S024",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Toilet 0.24",
+        "ref": "0.24",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 22.98,
+        "description": "Toilet 0.24 is a 23.0 m² toilet room with one door, three toilets, one hand dryer, one sink, and step-free access.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S025": {
+        "space_id": "proc-campus-dev-000-F0-S025",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Office 0.25",
+        "ref": "0.25",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 31.02,
+        "description": "Office 0.25 is a 31.0 m² office with one door, two desks, two office chairs, one bookshelf, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S026": {
+        "space_id": "proc-campus-dev-000-F0-S026",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Lab 0.26",
+        "ref": "0.26",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 32.58,
+        "description": "Lab 0.26 is a 32.6 m² lab with one door, two lab benches, two microscopes, two oscilloscope stations, and step-free access.",
+        "equipment": {
+          "lab_bench": 2,
+          "microscope": 2,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S027": {
+        "space_id": "proc-campus-dev-000-F0-S027",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Lecture hall 0.27",
+        "ref": "0.27",
+        "type": "room",
+        "room_type": "lecture_hall",
+        "area_m2": 90.6,
+        "description": "Lecture hall 0.27 is a 90.6 m² lecture hall with one door, seven lecture seating rows, two whiteboards, one lectern, one projector, one projector screen, and step-free access.",
+        "equipment": {
+          "lectern": 1,
+          "lecture_seating_row": 7,
+          "projector": 1,
+          "projector_screen": 1,
+          "whiteboard": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F0-S028": {
+        "space_id": "proc-campus-dev-000-F0-S028",
+        "floor_id": "proc-campus-dev-000-F0",
+        "name": "Canteen 0.28",
+        "ref": "0.28",
+        "type": "room",
+        "room_type": "canteen",
+        "area_m2": 50.58,
+        "description": "Canteen 0.28 is a 50.6 m² canteen with one door, thirteen chairs, four canteen tables, one serving counter, one vending machine, and step-free access.",
+        "equipment": {
+          "canteen_table": 4,
+          "chair": 13,
+          "serving_counter": 1,
+          "vending_machine": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S001": {
+        "space_id": "proc-campus-dev-000-F1-S001",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Corridor 1.01",
+        "ref": "1.01",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 167.04,
+        "description": "Corridor 1.01 is a 167.0 m² corridor with 30 doors, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 30,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S002": {
+        "space_id": "proc-campus-dev-000-F1-S002",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Office 1.02",
+        "ref": "1.02",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 25.02,
+        "description": "Office 1.02 is a 25.0 m² office with one door, two desks, two filing cabinets, two office chairs, and step-free access.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S003": {
+        "space_id": "proc-campus-dev-000-F1-S003",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lab 1.03",
+        "ref": "1.03",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 25.08,
+        "description": "Lab 1.03 is a 25.1 m² lab with one door, two lab benches, two microscopes, two oscilloscope stations, one chemical cabinet, one eyewash station, one fume hood, and step-free access.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "fume_hood": 1,
+          "lab_bench": 2,
+          "microscope": 2,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S004": {
+        "space_id": "proc-campus-dev-000-F1-S004",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Staircase 1",
+        "ref": "1.04",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 1 is a 24.0 m² stairwell with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F1-S004 name 'Staircase 1' does not contain ref '1.04'",
+          "5 spaces share name 'Staircase 1'"
+        ]
+      },
+      "proc-campus-dev-000-F1-S005": {
+        "space_id": "proc-campus-dev-000-F1-S005",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lift 1",
+        "ref": "1.05",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 1 is a 15.0 m² lift with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F1-S005 name 'Lift 1' does not contain ref '1.05'",
+          "5 spaces share name 'Lift 1'"
+        ]
+      },
+      "proc-campus-dev-000-F1-S006": {
+        "space_id": "proc-campus-dev-000-F1-S006",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Seminar room 1.06",
+        "ref": "1.06",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 22.02,
+        "description": "Seminar room 1.06 is a 22.0 m² seminar room with one door, eight chairs, four seminar tables, one projector, one projector screen, one whiteboard, and step-free access.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S007": {
+        "space_id": "proc-campus-dev-000-F1-S007",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Kitchen 1.07",
+        "ref": "1.07",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 41.28,
+        "description": "Kitchen 1.07 is a 41.3 m² kitchen with one door, one coffee machine, one dishwasher, one fridge, one kitchen counter, one microwave, one stove, and step-free access.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S008": {
+        "space_id": "proc-campus-dev-000-F1-S008",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lab 1.08",
+        "ref": "1.08",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 36.9,
+        "description": "Lab 1.08 is a 36.9 m² lab with one door, two lab benches, one eyewash station, one fume hood, and step-free access.",
+        "equipment": {
+          "eyewash_station": 1,
+          "fume_hood": 1,
+          "lab_bench": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S009": {
+        "space_id": "proc-campus-dev-000-F1-S009",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Staircase 2",
+        "ref": "1.09",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 2 is a 24.0 m² stairwell with one door, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F1-S009 name 'Staircase 2' does not contain ref '1.09'",
+          "5 spaces share name 'Staircase 2'"
+        ]
+      },
+      "proc-campus-dev-000-F1-S010": {
+        "space_id": "proc-campus-dev-000-F1-S010",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lift 2",
+        "ref": "1.10",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 2 is a 15.0 m² lift with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F1-S010 name 'Lift 2' does not contain ref '1.10'",
+          "5 spaces share name 'Lift 2'"
+        ]
+      },
+      "proc-campus-dev-000-F1-S011": {
+        "space_id": "proc-campus-dev-000-F1-S011",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lab 1.11",
+        "ref": "1.11",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 38.52,
+        "description": "Lab 1.11 is a 38.5 m² lab with one door, three microscopes, two lab benches, two oscilloscope stations, one chemical cabinet, one fume hood, and step-free access.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "fume_hood": 1,
+          "lab_bench": 2,
+          "microscope": 3,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S012": {
+        "space_id": "proc-campus-dev-000-F1-S012",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Meeting room 1.12",
+        "ref": "1.12",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 35.04,
+        "description": "Meeting room 1.12 is a 35.0 m² meeting room with one door, ten chairs, one display screen, one meeting table, one whiteboard, and step-free access.",
+        "equipment": {
+          "chair": 10,
+          "display_screen": 1,
+          "meeting_table": 1,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S013": {
+        "space_id": "proc-campus-dev-000-F1-S013",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Print room 1.13",
+        "ref": "1.13",
+        "type": "room",
+        "room_type": "print_room",
+        "area_m2": 26.64,
+        "description": "Print room 1.13 is a 26.6 m² print room with one door, two multifunction printers, one paper shelf, one printer, and step-free access.",
+        "equipment": {
+          "multifunction_printer": 2,
+          "paper_shelf": 1,
+          "printer": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S014": {
+        "space_id": "proc-campus-dev-000-F1-S014",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Staircase 3",
+        "ref": "1.14",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 3 is a 24.0 m² stairwell with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F1-S014 name 'Staircase 3' does not contain ref '1.14'",
+          "5 spaces share name 'Staircase 3'"
+        ]
+      },
+      "proc-campus-dev-000-F1-S015": {
+        "space_id": "proc-campus-dev-000-F1-S015",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lift 3",
+        "ref": "1.15",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 3 is a 15.0 m² lift with one door and step-free access.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F1-S015 name 'Lift 3' does not contain ref '1.15'",
+          "5 spaces share name 'Lift 3'"
+        ]
+      },
+      "proc-campus-dev-000-F1-S016": {
+        "space_id": "proc-campus-dev-000-F1-S016",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Seminar room 1.16",
+        "ref": "1.16",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 23.76,
+        "description": "Seminar room 1.16 is a 23.8 m² seminar room with one door, eight chairs, four seminar tables, one projector, one projector screen, one whiteboard, and step-free access.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S017": {
+        "space_id": "proc-campus-dev-000-F1-S017",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lab 1.17",
+        "ref": "1.17",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 26.34,
+        "description": "Lab 1.17 is a 26.3 m² lab with one door, three microscopes, two lab benches, one chemical cabinet, and step-free access.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "lab_bench": 2,
+          "microscope": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S018": {
+        "space_id": "proc-campus-dev-000-F1-S018",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Office 1.18",
+        "ref": "1.18",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 38.1,
+        "description": "Office 1.18 is a 38.1 m² office with one door, three desks, three office chairs, one bookshelf, one plant, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S019": {
+        "space_id": "proc-campus-dev-000-F1-S019",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lab 1.19",
+        "ref": "1.19",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 21.96,
+        "description": "Lab 1.19 is a 22.0 m² lab with one door, two fume hoods, one chemical cabinet, one eyewash station, one lab bench, and step-free access.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "fume_hood": 2,
+          "lab_bench": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S020": {
+        "space_id": "proc-campus-dev-000-F1-S020",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Toilet 1.20",
+        "ref": "1.20",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 34.56,
+        "description": "Toilet 1.20 is a 34.6 m² toilet room with one door, four toilets, two sinks, and step-free access.",
+        "equipment": {
+          "sink": 2,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S021": {
+        "space_id": "proc-campus-dev-000-F1-S021",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Office 1.21",
+        "ref": "1.21",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 30.12,
+        "description": "Office 1.21 is a 30.1 m² office with one door, two desks, two filing cabinets, two office chairs, one plant, and step-free access.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S022": {
+        "space_id": "proc-campus-dev-000-F1-S022",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Meeting room 1.22",
+        "ref": "1.22",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 28.08,
+        "description": "Meeting room 1.22 is a 28.1 m² meeting room with one door, ten chairs, one display screen, one meeting table, one whiteboard, and step-free access.",
+        "equipment": {
+          "chair": 10,
+          "display_screen": 1,
+          "meeting_table": 1,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S023": {
+        "space_id": "proc-campus-dev-000-F1-S023",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Office 1.23",
+        "ref": "1.23",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 20.58,
+        "description": "Office 1.23 is a 20.6 m² office with one door, two desks, two filing cabinets, two office chairs, one plant, and step-free access.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S024": {
+        "space_id": "proc-campus-dev-000-F1-S024",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Lab 1.24",
+        "ref": "1.24",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 30.0,
+        "description": "Lab 1.24 is a 30.0 m² lab with one door, two lab benches, two microscopes, one eyewash station, one fume hood, one oscilloscope station, and step-free access.",
+        "equipment": {
+          "eyewash_station": 1,
+          "fume_hood": 1,
+          "lab_bench": 2,
+          "microscope": 2,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S025": {
+        "space_id": "proc-campus-dev-000-F1-S025",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Toilet 1.25",
+        "ref": "1.25",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 37.02,
+        "description": "Toilet 1.25 is a 37.0 m² toilet room with one door, four toilets, one hand dryer, one sink, and step-free access.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S026": {
+        "space_id": "proc-campus-dev-000-F1-S026",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Office 1.26",
+        "ref": "1.26",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 36.9,
+        "description": "Office 1.26 is a 36.9 m² office with one door, three desks, three office chairs, two filing cabinets, one bookshelf, one plant, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "filing_cabinet": 2,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S027": {
+        "space_id": "proc-campus-dev-000-F1-S027",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Storage 1.27",
+        "ref": "1.27",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 26.88,
+        "description": "Storage 1.27 is a 26.9 m² storage room with one door, six shelves, and step-free access.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S028": {
+        "space_id": "proc-campus-dev-000-F1-S028",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Library 1.28",
+        "ref": "1.28",
+        "type": "room",
+        "room_type": "library",
+        "area_m2": 26.82,
+        "description": "Library 1.28 is a 26.8 m² library with one door, seven bookshelves, four chairs, two reading tables, and step-free access.",
+        "equipment": {
+          "bookshelf": 7,
+          "chair": 4,
+          "reading_table": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S029": {
+        "space_id": "proc-campus-dev-000-F1-S029",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Toilet 1.29",
+        "ref": "1.29",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 22.98,
+        "description": "Toilet 1.29 is a 23.0 m² toilet room with one door, three toilets, two sinks, one hand dryer, and step-free access.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 2,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S030": {
+        "space_id": "proc-campus-dev-000-F1-S030",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Storage 1.30",
+        "ref": "1.30",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 31.02,
+        "description": "Storage 1.30 is a 31.0 m² storage room with one door, six shelves, and step-free access.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F1-S031": {
+        "space_id": "proc-campus-dev-000-F1-S031",
+        "floor_id": "proc-campus-dev-000-F1",
+        "name": "Office 1.31",
+        "ref": "1.31",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 32.58,
+        "description": "Office 1.31 is a 32.6 m² office with one door, three desks, three office chairs, one bookshelf, one filing cabinet, and step-free access.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "filing_cabinet": 1,
+          "office_chair": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S001": {
+        "space_id": "proc-campus-dev-000-F2-S001",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Corridor 2.01",
+        "ref": "2.01",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 167.04,
+        "description": "Corridor 2.01 is a 167.0 m² corridor with 30 doors, one fire extinguisher, and step-free access.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 30,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S002": {
+        "space_id": "proc-campus-dev-000-F2-S002",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lab 2.02",
+        "ref": "2.02",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 25.02,
+        "description": "Lab 2.02 is a 25.0 m² lab with 1 door, equipped with 2 fume hoods, 2 lab benches, a 3D printer, a chemical cabinet, an eyewash station and an oscilloscope station, and it is step-free.",
+        "equipment": {
+          "3d_printer": 1,
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "fume_hood": 2,
+          "lab_bench": 2,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S003": {
+        "space_id": "proc-campus-dev-000-F2-S003",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.03",
+        "ref": "2.03",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 25.08,
+        "description": "Office 2.03 is a 25.1 m² office with 1 door, containing 2 desks, 2 office chairs and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S004": {
+        "space_id": "proc-campus-dev-000-F2-S004",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Staircase 1",
+        "ref": "2.04",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 1 is a 24.0 m² stairwell with 1 door, containing a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F2-S004 name 'Staircase 1' does not contain ref '2.04'",
+          "5 spaces share name 'Staircase 1'"
+        ]
+      },
+      "proc-campus-dev-000-F2-S005": {
+        "space_id": "proc-campus-dev-000-F2-S005",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lift 1",
+        "ref": "2.05",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 1 is a 15.0 m² lift with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F2-S005 name 'Lift 1' does not contain ref '2.05'",
+          "5 spaces share name 'Lift 1'"
+        ]
+      },
+      "proc-campus-dev-000-F2-S006": {
+        "space_id": "proc-campus-dev-000-F2-S006",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Seminar room 2.06",
+        "ref": "2.06",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 22.02,
+        "description": "Seminar room 2.06 is a 22.0 m² seminar room with 1 door, containing 8 chairs, 4 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S007": {
+        "space_id": "proc-campus-dev-000-F2-S007",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Kitchen 2.07",
+        "ref": "2.07",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 41.28,
+        "description": "Kitchen 2.07 is a 41.3 m² kitchen with 1 door, containing a coffee machine, a dishwasher, a fridge, a kitchen counter and a stove, and it is step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S008": {
+        "space_id": "proc-campus-dev-000-F2-S008",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lab 2.08",
+        "ref": "2.08",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 36.9,
+        "description": "Lab 2.08 is a 36.9 m² lab with 1 door, equipped with 2 lab benches, a 3D printer, a chemical cabinet, a fume hood, a microscope and an oscilloscope station, and it is step-free.",
+        "equipment": {
+          "3d_printer": 1,
+          "chemical_cabinet": 1,
+          "fume_hood": 1,
+          "lab_bench": 2,
+          "microscope": 1,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S009": {
+        "space_id": "proc-campus-dev-000-F2-S009",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Staircase 2",
+        "ref": "2.09",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 2 is a 24.0 m² stairwell with 1 door, containing a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F2-S009 name 'Staircase 2' does not contain ref '2.09'",
+          "5 spaces share name 'Staircase 2'"
+        ]
+      },
+      "proc-campus-dev-000-F2-S010": {
+        "space_id": "proc-campus-dev-000-F2-S010",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lift 2",
+        "ref": "2.10",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 2 is a 15.0 m² lift with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F2-S010 name 'Lift 2' does not contain ref '2.10'",
+          "5 spaces share name 'Lift 2'"
+        ]
+      },
+      "proc-campus-dev-000-F2-S011": {
+        "space_id": "proc-campus-dev-000-F2-S011",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Seminar room 2.11",
+        "ref": "2.11",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 38.52,
+        "description": "Seminar room 2.11 is a 38.5 m² seminar room with 1 door, containing 12 chairs, 6 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 12,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 6,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S012": {
+        "space_id": "proc-campus-dev-000-F2-S012",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.12",
+        "ref": "2.12",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 35.04,
+        "description": "Office 2.12 is a 35.0 m² office with 1 door, containing 3 desks, 3 office chairs, a bookshelf, a filing cabinet and a plant, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "filing_cabinet": 1,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S013": {
+        "space_id": "proc-campus-dev-000-F2-S013",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Seminar room 2.13",
+        "ref": "2.13",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 26.64,
+        "description": "Seminar room 2.13 is a 26.6 m² seminar room with 1 door, containing 8 chairs, 4 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S014": {
+        "space_id": "proc-campus-dev-000-F2-S014",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Staircase 3",
+        "ref": "2.14",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 3 is a 24.0 m² stairwell with 1 door, containing a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F2-S014 name 'Staircase 3' does not contain ref '2.14'",
+          "5 spaces share name 'Staircase 3'"
+        ]
+      },
+      "proc-campus-dev-000-F2-S015": {
+        "space_id": "proc-campus-dev-000-F2-S015",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lift 3",
+        "ref": "2.15",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 3 is a 15.0 m² lift with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F2-S015 name 'Lift 3' does not contain ref '2.15'",
+          "5 spaces share name 'Lift 3'"
+        ]
+      },
+      "proc-campus-dev-000-F2-S016": {
+        "space_id": "proc-campus-dev-000-F2-S016",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.16",
+        "ref": "2.16",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 23.76,
+        "description": "Office 2.16 is a 23.8 m² office with 1 door, containing 2 desks, 2 office chairs, a bookshelf and a plant, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S017": {
+        "space_id": "proc-campus-dev-000-F2-S017",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lab 2.17",
+        "ref": "2.17",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 26.34,
+        "description": "Lab 2.17 is a 26.3 m² lab with 1 door, equipped with 2 fume hoods, 2 lab benches, 2 microscopes, 2 oscilloscope stations, a 3D printer and a chemical cabinet, and it is step-free.",
+        "equipment": {
+          "3d_printer": 1,
+          "chemical_cabinet": 1,
+          "fume_hood": 2,
+          "lab_bench": 2,
+          "microscope": 2,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S018": {
+        "space_id": "proc-campus-dev-000-F2-S018",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.18",
+        "ref": "2.18",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 38.1,
+        "description": "Office 2.18 is a 38.1 m² office with 1 door, containing 3 desks, 3 office chairs, 2 filing cabinets and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 3,
+          "filing_cabinet": 2,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S019": {
+        "space_id": "proc-campus-dev-000-F2-S019",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lab 2.19",
+        "ref": "2.19",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 21.96,
+        "description": "Lab 2.19 is a 22.0 m² lab with 1 door, equipped with 3 microscopes, 2 oscilloscope stations, a chemical cabinet, an eyewash station and a lab bench, and it is step-free.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "lab_bench": 1,
+          "microscope": 3,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S020": {
+        "space_id": "proc-campus-dev-000-F2-S020",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Toilet 2.20",
+        "ref": "2.20",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 34.56,
+        "description": "Toilet 2.20 is a 34.6 m² toilet room with 1 door, containing 4 toilets and 2 sinks, and it is step-free.",
+        "equipment": {
+          "sink": 2,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S021": {
+        "space_id": "proc-campus-dev-000-F2-S021",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Lab 2.21",
+        "ref": "2.21",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 30.12,
+        "description": "Lab 2.21 is a 30.1 m² lab with 1 door, equipped with 2 lab benches, an eyewash station, a fume hood, a microscope and an oscilloscope station, and it is step-free.",
+        "equipment": {
+          "eyewash_station": 1,
+          "fume_hood": 1,
+          "lab_bench": 2,
+          "microscope": 1,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S022": {
+        "space_id": "proc-campus-dev-000-F2-S022",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.22",
+        "ref": "2.22",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 28.08,
+        "description": "Office 2.22 is a 28.1 m² office with 1 door, containing 2 desks, 2 office chairs and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S023": {
+        "space_id": "proc-campus-dev-000-F2-S023",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.23",
+        "ref": "2.23",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 20.58,
+        "description": "Office 2.23 is a 20.6 m² office with 1 door, containing 2 desks, 2 office chairs and a filing cabinet, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S024": {
+        "space_id": "proc-campus-dev-000-F2-S024",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.24",
+        "ref": "2.24",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 30.0,
+        "description": "Office 2.24 is a 30.0 m² office with 1 door, containing 2 desks and 2 office chairs, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S025": {
+        "space_id": "proc-campus-dev-000-F2-S025",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Toilet 2.25",
+        "ref": "2.25",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 37.02,
+        "description": "Toilet 2.25 is a 37.0 m² toilet room with 1 door, containing 4 toilets, a hand dryer and a sink, and it is step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S026": {
+        "space_id": "proc-campus-dev-000-F2-S026",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Print room 2.26",
+        "ref": "2.26",
+        "type": "room",
+        "room_type": "print_room",
+        "area_m2": 36.9,
+        "description": "Print room 2.26 is a 36.9 m² print room with 1 door, containing 2 multifunction printers, a paper shelf and a printer, and it is step-free.",
+        "equipment": {
+          "multifunction_printer": 2,
+          "paper_shelf": 1,
+          "printer": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S027": {
+        "space_id": "proc-campus-dev-000-F2-S027",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.27",
+        "ref": "2.27",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.88,
+        "description": "Office 2.27 is a 26.9 m² office with 1 door, containing 2 desks, 2 office chairs, a bookshelf and a filing cabinet, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S028": {
+        "space_id": "proc-campus-dev-000-F2-S028",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Office 2.28",
+        "ref": "2.28",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.82,
+        "description": "Office 2.28 is a 26.8 m² office with 1 door, containing 2 desks, 2 office chairs, a filing cabinet and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S029": {
+        "space_id": "proc-campus-dev-000-F2-S029",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Toilet 2.29",
+        "ref": "2.29",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 22.98,
+        "description": "Toilet 2.29 is a 23.0 m² toilet room with 1 door, containing 3 toilets, a hand dryer and a sink, and it is step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S030": {
+        "space_id": "proc-campus-dev-000-F2-S030",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Seminar room 2.30",
+        "ref": "2.30",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 31.02,
+        "description": "Seminar room 2.30 is a 31.0 m² seminar room with 1 door, containing 9 chairs, 5 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 9,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 5,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F2-S031": {
+        "space_id": "proc-campus-dev-000-F2-S031",
+        "floor_id": "proc-campus-dev-000-F2",
+        "name": "Seminar room 2.31",
+        "ref": "2.31",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 32.58,
+        "description": "Seminar room 2.31 is a 32.6 m² seminar room with 1 door, containing 10 chairs, 5 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 10,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 5,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S001": {
+        "space_id": "proc-campus-dev-000-F3-S001",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Corridor 3.01",
+        "ref": "3.01",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 167.04,
+        "description": "Corridor 3.01 is a 167.0 m² corridor with 30 doors, and it is step-free.",
+        "equipment": {},
+        "doors": 30,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S002": {
+        "space_id": "proc-campus-dev-000-F3-S002",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Seminar room 3.02",
+        "ref": "3.02",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 25.02,
+        "description": "Seminar room 3.02 is a 25.0 m² seminar room with 1 door, containing 8 chairs, 4 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S003": {
+        "space_id": "proc-campus-dev-000-F3-S003",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Seminar room 3.03",
+        "ref": "3.03",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 25.08,
+        "description": "Seminar room 3.03 is a 25.1 m² seminar room with 1 door, containing 8 chairs, 4 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S004": {
+        "space_id": "proc-campus-dev-000-F3-S004",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Staircase 1",
+        "ref": "3.04",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 1 is a 24.0 m² stairwell with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F3-S004 name 'Staircase 1' does not contain ref '3.04'",
+          "5 spaces share name 'Staircase 1'"
+        ]
+      },
+      "proc-campus-dev-000-F3-S005": {
+        "space_id": "proc-campus-dev-000-F3-S005",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Lift 1",
+        "ref": "3.05",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 1 is a 15.0 m² lift with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F3-S005 name 'Lift 1' does not contain ref '3.05'",
+          "5 spaces share name 'Lift 1'"
+        ]
+      },
+      "proc-campus-dev-000-F3-S006": {
+        "space_id": "proc-campus-dev-000-F3-S006",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Lab 3.06",
+        "ref": "3.06",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 22.02,
+        "description": "Lab 3.06 is a 22.0 m² lab with 1 door, equipped with a chemical cabinet, an eyewash station, a fume hood, a lab bench and a microscope, and it is step-free.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "fume_hood": 1,
+          "lab_bench": 1,
+          "microscope": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S007": {
+        "space_id": "proc-campus-dev-000-F3-S007",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.07",
+        "ref": "3.07",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 41.28,
+        "description": "Office 3.07 is a 41.3 m² office with 1 door, containing 3 desks, 3 office chairs and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 3,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S008": {
+        "space_id": "proc-campus-dev-000-F3-S008",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.08",
+        "ref": "3.08",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 36.9,
+        "description": "Office 3.08 is a 36.9 m² office with 1 door, containing 3 desks, 3 office chairs, 2 filing cabinets and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "filing_cabinet": 2,
+          "office_chair": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S009": {
+        "space_id": "proc-campus-dev-000-F3-S009",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Staircase 2",
+        "ref": "3.09",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 2 is a 24.0 m² stairwell with 1 door, containing a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F3-S009 name 'Staircase 2' does not contain ref '3.09'",
+          "5 spaces share name 'Staircase 2'"
+        ]
+      },
+      "proc-campus-dev-000-F3-S010": {
+        "space_id": "proc-campus-dev-000-F3-S010",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Lift 2",
+        "ref": "3.10",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 2 is a 15.0 m² lift with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F3-S010 name 'Lift 2' does not contain ref '3.10'",
+          "5 spaces share name 'Lift 2'"
+        ]
+      },
+      "proc-campus-dev-000-F3-S011": {
+        "space_id": "proc-campus-dev-000-F3-S011",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Lab 3.11",
+        "ref": "3.11",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 38.52,
+        "description": "Lab 3.11 is a 38.5 m² lab with 1 door, equipped with 2 lab benches, a chemical cabinet, an eyewash station, a microscope and an oscilloscope station, and it is step-free.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "lab_bench": 2,
+          "microscope": 1,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S012": {
+        "space_id": "proc-campus-dev-000-F3-S012",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Seminar room 3.12",
+        "ref": "3.12",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 35.04,
+        "description": "Seminar room 3.12 is a 35.0 m² seminar room with 1 door, containing 11 chairs, 5 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 11,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 5,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S013": {
+        "space_id": "proc-campus-dev-000-F3-S013",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Seminar room 3.13",
+        "ref": "3.13",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 26.64,
+        "description": "Seminar room 3.13 is a 26.6 m² seminar room with 1 door, containing 8 chairs, 4 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S014": {
+        "space_id": "proc-campus-dev-000-F3-S014",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Staircase 3",
+        "ref": "3.14",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 3 is a 24.0 m² stairwell with 1 door, containing a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F3-S014 name 'Staircase 3' does not contain ref '3.14'",
+          "5 spaces share name 'Staircase 3'"
+        ]
+      },
+      "proc-campus-dev-000-F3-S015": {
+        "space_id": "proc-campus-dev-000-F3-S015",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Lift 3",
+        "ref": "3.15",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 3 is a 15.0 m² lift with 1 door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F3-S015 name 'Lift 3' does not contain ref '3.15'",
+          "5 spaces share name 'Lift 3'"
+        ]
+      },
+      "proc-campus-dev-000-F3-S016": {
+        "space_id": "proc-campus-dev-000-F3-S016",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.16",
+        "ref": "3.16",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 23.76,
+        "description": "Office 3.16 is a 23.8 m² office with 1 door, containing 2 desks, 2 office chairs, a bookshelf and a filing cabinet, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S017": {
+        "space_id": "proc-campus-dev-000-F3-S017",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.17",
+        "ref": "3.17",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.34,
+        "description": "Office 3.17 is a 26.3 m² office with 1 door, containing 2 desks, 2 filing cabinets and 2 office chairs, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S018": {
+        "space_id": "proc-campus-dev-000-F3-S018",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Print room 3.18",
+        "ref": "3.18",
+        "type": "room",
+        "room_type": "print_room",
+        "area_m2": 38.1,
+        "description": "Print room 3.18 is a 38.1 m² print room with 1 door, containing a multifunction printer and a paper shelf, and it is step-free.",
+        "equipment": {
+          "multifunction_printer": 1,
+          "paper_shelf": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S019": {
+        "space_id": "proc-campus-dev-000-F3-S019",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.19",
+        "ref": "3.19",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 21.96,
+        "description": "Office 3.19 is a 22.0 m² office with 1 door, containing 2 desks and 2 office chairs, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S020": {
+        "space_id": "proc-campus-dev-000-F3-S020",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Toilet 3.20",
+        "ref": "3.20",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 34.56,
+        "description": "Toilet 3.20 is a 34.6 m² toilet room with 1 door, containing 4 toilets, a hand dryer and a sink, and it is step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S021": {
+        "space_id": "proc-campus-dev-000-F3-S021",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.21",
+        "ref": "3.21",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 30.12,
+        "description": "Office 3.21 is a 30.1 m² office with 1 door, containing 2 desks, 2 office chairs, a filing cabinet and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S022": {
+        "space_id": "proc-campus-dev-000-F3-S022",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.22",
+        "ref": "3.22",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 28.08,
+        "description": "Office 3.22 is a 28.1 m² office with 1 door, containing 2 desks, 2 filing cabinets, 2 office chairs and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S023": {
+        "space_id": "proc-campus-dev-000-F3-S023",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.23",
+        "ref": "3.23",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 20.58,
+        "description": "Office 3.23 is a 20.6 m² office with 1 door, containing 2 desks, 2 office chairs, a bookshelf and a filing cabinet, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S024": {
+        "space_id": "proc-campus-dev-000-F3-S024",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Storage 3.24",
+        "ref": "3.24",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 30.0,
+        "description": "Storage 3.24 is a 30.0 m² storage room with 1 door, containing 6 shelves, and it is step-free.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S025": {
+        "space_id": "proc-campus-dev-000-F3-S025",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Toilet 3.25",
+        "ref": "3.25",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 37.02,
+        "description": "Toilet 3.25 is a 37.0 m² toilet room with 1 door, containing 4 toilets and a sink, and it is step-free.",
+        "equipment": {
+          "sink": 1,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S026": {
+        "space_id": "proc-campus-dev-000-F3-S026",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Seminar room 3.26",
+        "ref": "3.26",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 36.9,
+        "description": "Seminar room 3.26 is a 36.9 m² seminar room with 1 door, containing 11 chairs, 6 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 11,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 6,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S027": {
+        "space_id": "proc-campus-dev-000-F3-S027",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Kitchen 3.27",
+        "ref": "3.27",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 26.88,
+        "description": "Kitchen 3.27 is a 26.9 m² kitchen with 1 door, containing a coffee machine, a dining table, a fridge, a kitchen counter, a microwave and a stove, and it is step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dining_table": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "microwave": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S028": {
+        "space_id": "proc-campus-dev-000-F3-S028",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.28",
+        "ref": "3.28",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.82,
+        "description": "Office 3.28 is a 26.8 m² office with 1 door, containing 2 desks, 2 office chairs, a bookshelf and a plant, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S029": {
+        "space_id": "proc-campus-dev-000-F3-S029",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Toilet 3.29",
+        "ref": "3.29",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 22.98,
+        "description": "Toilet 3.29 is a 23.0 m² toilet room with 1 door, containing 3 toilets, a hand dryer and a sink, and it is step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S030": {
+        "space_id": "proc-campus-dev-000-F3-S030",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.30",
+        "ref": "3.30",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 31.02,
+        "description": "Office 3.30 is a 31.0 m² office with 1 door, containing 2 desks, 2 office chairs, a bookshelf and a filing cabinet, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 1,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F3-S031": {
+        "space_id": "proc-campus-dev-000-F3-S031",
+        "floor_id": "proc-campus-dev-000-F3",
+        "name": "Office 3.31",
+        "ref": "3.31",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 32.58,
+        "description": "Office 3.31 is a 32.6 m² office with one door, equipped with 3 desks, 3 office chairs, a bookshelf and a plant, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S001": {
+        "space_id": "proc-campus-dev-000-F4-S001",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Corridor 4.01",
+        "ref": "4.01",
+        "type": "corridor",
+        "room_type": "corridor",
+        "area_m2": 167.04,
+        "description": "Corridor 4.01 is a 167.0 m² corridor with 30 doors and a shoe cabinet, and it is step-free.",
+        "equipment": {
+          "shoe_cabinet": 1
+        },
+        "doors": 30,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S002": {
+        "space_id": "proc-campus-dev-000-F4-S002",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Seminar room 4.02",
+        "ref": "4.02",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 25.02,
+        "description": "Seminar room 4.02 is a 25.0 m² seminar room with one door, equipped with 8 chairs, 4 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 8,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 4,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S003": {
+        "space_id": "proc-campus-dev-000-F4-S003",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lab 4.03",
+        "ref": "4.03",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 25.08,
+        "description": "Lab 4.03 is a 25.1 m² laboratory with one door, equipped with 2 fume hoods, 2 lab benches, a microscope and an oscilloscope station, and it is step-free.",
+        "equipment": {
+          "fume_hood": 2,
+          "lab_bench": 2,
+          "microscope": 1,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S004": {
+        "space_id": "proc-campus-dev-000-F4-S004",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Staircase 1",
+        "ref": "4.04",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 1 is a 24.0 m² stairwell with one door and a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F4-S004 name 'Staircase 1' does not contain ref '4.04'",
+          "5 spaces share name 'Staircase 1'"
+        ]
+      },
+      "proc-campus-dev-000-F4-S005": {
+        "space_id": "proc-campus-dev-000-F4-S005",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lift 1",
+        "ref": "4.05",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 1 is a 15.0 m² lift with one door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F4-S005 name 'Lift 1' does not contain ref '4.05'",
+          "5 spaces share name 'Lift 1'"
+        ]
+      },
+      "proc-campus-dev-000-F4-S006": {
+        "space_id": "proc-campus-dev-000-F4-S006",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Storage 4.06",
+        "ref": "4.06",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 22.02,
+        "description": "Storage 4.06 is a 22.0 m² storage room with one door and 6 shelves, and it is step-free.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S007": {
+        "space_id": "proc-campus-dev-000-F4-S007",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.07",
+        "ref": "4.07",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 41.28,
+        "description": "Office 4.07 is a 41.3 m² office with one door, equipped with 3 desks, 3 office chairs, 2 filing cabinets and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "filing_cabinet": 2,
+          "office_chair": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S008": {
+        "space_id": "proc-campus-dev-000-F4-S008",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Storage 4.08",
+        "ref": "4.08",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 36.9,
+        "description": "Storage 4.08 is a 36.9 m² storage room with one door and 6 shelves, and it is step-free.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S009": {
+        "space_id": "proc-campus-dev-000-F4-S009",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Staircase 2",
+        "ref": "4.09",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 2 is a 24.0 m² stairwell with one door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F4-S009 name 'Staircase 2' does not contain ref '4.09'",
+          "5 spaces share name 'Staircase 2'"
+        ]
+      },
+      "proc-campus-dev-000-F4-S010": {
+        "space_id": "proc-campus-dev-000-F4-S010",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lift 2",
+        "ref": "4.10",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 2 is a 15.0 m² lift with one door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F4-S010 name 'Lift 2' does not contain ref '4.10'",
+          "5 spaces share name 'Lift 2'"
+        ]
+      },
+      "proc-campus-dev-000-F4-S011": {
+        "space_id": "proc-campus-dev-000-F4-S011",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Meeting room 4.11",
+        "ref": "4.11",
+        "type": "room",
+        "room_type": "meeting_room",
+        "area_m2": 38.52,
+        "description": "Meeting room 4.11 is a 38.5 m² meeting room with one door, equipped with 10 chairs, a display screen, a meeting table and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 10,
+          "display_screen": 1,
+          "meeting_table": 1,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S012": {
+        "space_id": "proc-campus-dev-000-F4-S012",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Seminar room 4.12",
+        "ref": "4.12",
+        "type": "room",
+        "room_type": "seminar_room",
+        "area_m2": 35.04,
+        "description": "Seminar room 4.12 is a 35.0 m² seminar room with one door, equipped with 11 chairs, 5 seminar tables, a projector, a projector screen and a whiteboard, and it is step-free.",
+        "equipment": {
+          "chair": 11,
+          "projector": 1,
+          "projector_screen": 1,
+          "seminar_table": 5,
+          "whiteboard": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S013": {
+        "space_id": "proc-campus-dev-000-F4-S013",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lab 4.13",
+        "ref": "4.13",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 26.64,
+        "description": "Lab 4.13 is a 26.6 m² laboratory with one door, equipped with 2 lab benches, 2 oscilloscope stations and a microscope, and it is step-free.",
+        "equipment": {
+          "lab_bench": 2,
+          "microscope": 1,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S014": {
+        "space_id": "proc-campus-dev-000-F4-S014",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Staircase 3",
+        "ref": "4.14",
+        "type": "stair",
+        "room_type": "stairwell",
+        "area_m2": 24.0,
+        "description": "Staircase 3 is a 24.0 m² stairwell with one door and a fire extinguisher, and it is step-free.",
+        "equipment": {
+          "fire_extinguisher": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F4-S014 name 'Staircase 3' does not contain ref '4.14'",
+          "5 spaces share name 'Staircase 3'"
+        ]
+      },
+      "proc-campus-dev-000-F4-S015": {
+        "space_id": "proc-campus-dev-000-F4-S015",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lift 3",
+        "ref": "4.15",
+        "type": "lift",
+        "room_type": "lift",
+        "area_m2": 15.0,
+        "description": "Lift 3 is a 15.0 m² lift with one door, and it is step-free.",
+        "equipment": {},
+        "doors": 1,
+        "step_free_access": true,
+        "issues": [
+          "space proc-campus-dev-000-F4-S015 name 'Lift 3' does not contain ref '4.15'",
+          "5 spaces share name 'Lift 3'"
+        ]
+      },
+      "proc-campus-dev-000-F4-S016": {
+        "space_id": "proc-campus-dev-000-F4-S016",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.16",
+        "ref": "4.16",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 23.76,
+        "description": "Office 4.16 is a 23.8 m² office with one door, equipped with 2 desks, 2 filing cabinets, 2 office chairs and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S017": {
+        "space_id": "proc-campus-dev-000-F4-S017",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Storage 4.17",
+        "ref": "4.17",
+        "type": "room",
+        "room_type": "storage",
+        "area_m2": 26.34,
+        "description": "Storage 4.17 is a 26.3 m² storage room with one door and 6 shelves, and it is step-free.",
+        "equipment": {
+          "shelf": 6
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S018": {
+        "space_id": "proc-campus-dev-000-F4-S018",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.18",
+        "ref": "4.18",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 38.1,
+        "description": "Office 4.18 is a 38.1 m² office with one door, equipped with 3 desks, 3 office chairs, a bookshelf and a plant, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 3,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S019": {
+        "space_id": "proc-campus-dev-000-F4-S019",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.19",
+        "ref": "4.19",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 21.96,
+        "description": "Office 4.19 is a 22.0 m² office with one door, equipped with 2 desks, 2 filing cabinets, 2 office chairs and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "filing_cabinet": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S020": {
+        "space_id": "proc-campus-dev-000-F4-S020",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Toilet 4.20",
+        "ref": "4.20",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 34.56,
+        "description": "Toilet 4.20 is a 34.6 m² toilet room with one door, equipped with 4 toilets and 2 sinks, and it is step-free.",
+        "equipment": {
+          "sink": 2,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S021": {
+        "space_id": "proc-campus-dev-000-F4-S021",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lab 4.21",
+        "ref": "4.21",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 30.12,
+        "description": "Lab 4.21 is a 30.1 m² laboratory with one door, equipped with 2 lab benches, a chemical cabinet and an eyewash station, and it is step-free.",
+        "equipment": {
+          "chemical_cabinet": 1,
+          "eyewash_station": 1,
+          "lab_bench": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S022": {
+        "space_id": "proc-campus-dev-000-F4-S022",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lab 4.22",
+        "ref": "4.22",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 28.08,
+        "description": "Lab 4.22 is a 28.1 m² laboratory with one door, equipped with 2 lab benches, 2 oscilloscope stations, a fume hood and a microscope, and it is step-free.",
+        "equipment": {
+          "fume_hood": 1,
+          "lab_bench": 2,
+          "microscope": 1,
+          "oscilloscope_station": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S023": {
+        "space_id": "proc-campus-dev-000-F4-S023",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Print room 4.23",
+        "ref": "4.23",
+        "type": "room",
+        "room_type": "print_room",
+        "area_m2": 20.58,
+        "description": "Print room 4.23 is a 20.6 m² print room with one door, equipped with a multifunction printer and a paper shelf, and it is step-free.",
+        "equipment": {
+          "multifunction_printer": 1,
+          "paper_shelf": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S024": {
+        "space_id": "proc-campus-dev-000-F4-S024",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.24",
+        "ref": "4.24",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 30.0,
+        "description": "Office 4.24 is a 30.0 m² office with one door, equipped with 2 desks, 2 office chairs and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S025": {
+        "space_id": "proc-campus-dev-000-F4-S025",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Toilet 4.25",
+        "ref": "4.25",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 37.02,
+        "description": "Toilet 4.25 is a 37.0 m² toilet room with one door, equipped with 4 toilets, a hand dryer and a sink, and it is step-free.",
+        "equipment": {
+          "hand_dryer": 1,
+          "sink": 1,
+          "toilet": 4
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S026": {
+        "space_id": "proc-campus-dev-000-F4-S026",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Lab 4.26",
+        "ref": "4.26",
+        "type": "room",
+        "room_type": "lab",
+        "area_m2": 36.9,
+        "description": "Lab 4.26 is a 36.9 m² laboratory with one door, equipped with 3 microscopes, 2 lab benches and an oscilloscope station, and it is step-free.",
+        "equipment": {
+          "lab_bench": 2,
+          "microscope": 3,
+          "oscilloscope_station": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S027": {
+        "space_id": "proc-campus-dev-000-F4-S027",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.27",
+        "ref": "4.27",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 26.88,
+        "description": "Office 4.27 is a 26.9 m² office with one door, equipped with 2 desks and 2 office chairs, and it is step-free.",
+        "equipment": {
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S028": {
+        "space_id": "proc-campus-dev-000-F4-S028",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Kitchen 4.28",
+        "ref": "4.28",
+        "type": "room",
+        "room_type": "kitchen",
+        "area_m2": 26.82,
+        "description": "Kitchen 4.28 is a 26.8 m² kitchen with one door, equipped with a coffee machine, a dishwasher, a fridge, a kitchen counter and a stove, and it is step-free.",
+        "equipment": {
+          "coffee_machine": 1,
+          "dishwasher": 1,
+          "fridge": 1,
+          "kitchen_counter": 1,
+          "stove": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S029": {
+        "space_id": "proc-campus-dev-000-F4-S029",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Toilet 4.29",
+        "ref": "4.29",
+        "type": "room",
+        "room_type": "toilet",
+        "area_m2": 22.98,
+        "description": "Toilet 4.29 is a 23.0 m² toilet room with one door, equipped with 3 toilets and 2 sinks, and it is step-free.",
+        "equipment": {
+          "sink": 2,
+          "toilet": 3
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S030": {
+        "space_id": "proc-campus-dev-000-F4-S030",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.30",
+        "ref": "4.30",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 31.02,
+        "description": "Office 4.30 is a 31.0 m² office with one door, equipped with 2 desks, 2 office chairs and a bookshelf, and it is step-free.",
+        "equipment": {
+          "bookshelf": 1,
+          "desk": 2,
+          "office_chair": 2
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      },
+      "proc-campus-dev-000-F4-S031": {
+        "space_id": "proc-campus-dev-000-F4-S031",
+        "floor_id": "proc-campus-dev-000-F4",
+        "name": "Office 4.31",
+        "ref": "4.31",
+        "type": "room",
+        "room_type": "office",
+        "area_m2": 32.58,
+        "description": "Office 4.31 is a 32.6 m² office with one door, equipped with 3 desks, 3 office chairs, a filing cabinet and a plant, and it is step-free.",
+        "equipment": {
+          "desk": 3,
+          "filing_cabinet": 1,
+          "office_chair": 3,
+          "plant": 1
+        },
+        "doors": 1,
+        "step_free_access": true,
+        "issues": []
+      }
+    }
+  },
+  "artifacts": {
+    "source_dir": "/Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/problem_statement/industrial-agents-hackathon-2026/data/dev/proc-campus-dev-000",
+    "building": "building.json",
+    "model": "3d/model.glb",
+    "model_index": "3d/model_index.json",
+    "issues": "issues.json",
+    "patches": "patches.json"
+  },
+  "runs": [
+    "508b61330234"
+  ]
+}

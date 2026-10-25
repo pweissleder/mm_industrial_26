@@ -1,7 +1,42 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "backend", "runtimeExecutable": "uv", "runtimeArgs": ["run", "--directory", "backend", "poe", "dev"], "port": 8000 },
-    { "name": "frontend", "runtimeExecutable": "npm", "runtimeArgs": ["run", "--prefix", "frontend", "dev"], "port": 4321 }
+    {
+      "name": "backend",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "--directory",
+        "backend",
+        "poe",
+        "dev"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "--prefix",
+        "frontend",
+        "dev"
+      ],
+      "port": 4321
+    },
+    {
+      "name": "backend-memory",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "--directory",
+        "/Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/.claude/worktrees/agent-memory/backend",
+        "uvicorn",
+        "app.main:app",
+        "--port",
+        "8010"
+      ],
+      "port": 8010
+    }
   ]
 }

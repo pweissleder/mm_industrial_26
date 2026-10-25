@@ -77,6 +77,7 @@ class StageContext:
     dataset_dir: Path
     attempt: int = 1
     feedback: str | None = None  # deviations / orchestrator reason when this is a retry
+    preserve_geometry: bool = False  # graph mode: no fix may move or delete measured entities
 
     @property
     def offline(self) -> bool:
@@ -128,9 +129,10 @@ def with_untrusted_note(system: str) -> str:
 
 def image_block(path: Path, caption: str) -> list[Any]:
     data = base64.standard_b64encode(path.read_bytes()).decode()
+    media_type = "image/jpeg" if path.suffix.lower() in (".jpg", ".jpeg") else "image/png"
     return [
         {"type": "text", "text": caption},
-        {"type": "image", "source": {"type": "base64", "media_type": "image/png", "data": data}},
+        {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": data}},
     ]
 
 

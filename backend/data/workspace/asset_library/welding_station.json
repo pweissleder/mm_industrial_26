@@ -1,0 +1,175 @@
+{
+  "spec": {
+    "type": "welding_station",
+    "category": "equipment",
+    "description": "Welding booth with steel table, side walls, back wall, fume hood, welder unit and gas cylinder",
+    "default_height_m": 2.2,
+    "primitives": [
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.0,
+          0.02
+        ],
+        "size": [
+          1.0,
+          1.0,
+          0.04
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          -0.05,
+          0.4
+        ],
+        "size": [
+          0.7,
+          0.5,
+          0.06
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.3,
+          -0.05,
+          0.185
+        ],
+        "size": [
+          0.06,
+          0.46,
+          0.37
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.3,
+          -0.05,
+          0.185
+        ],
+        "size": [
+          0.06,
+          0.46,
+          0.37
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.0,
+          0.47,
+          0.5
+        ],
+        "size": [
+          1.0,
+          0.05,
+          0.92
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.475,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.05,
+          1.0,
+          0.92
+        ]
+      },
+      {
+        "kind": "box",
+        "center": [
+          0.475,
+          0.0,
+          0.5
+        ],
+        "size": [
+          0.05,
+          1.0,
+          0.92
+        ]
+      },
+      {
+        "kind": "prism",
+        "polygon": [
+          [
+            -0.5,
+            0.5
+          ],
+          [
+            0.5,
+            0.5
+          ],
+          [
+            0.5,
+            0.2
+          ],
+          [
+            -0.5,
+            0.2
+          ]
+        ],
+        "z0": 0.92,
+        "z1": 0.96
+      },
+      {
+        "kind": "prism",
+        "polygon": [
+          [
+            -0.25,
+            0.5
+          ],
+          [
+            0.25,
+            0.5
+          ],
+          [
+            0.1,
+            0.35
+          ],
+          [
+            -0.1,
+            0.35
+          ]
+        ],
+        "z0": 0.96,
+        "z1": 1.0
+      },
+      {
+        "kind": "box",
+        "center": [
+          -0.33,
+          0.3,
+          0.2
+        ],
+        "size": [
+          0.2,
+          0.25,
+          0.36
+        ]
+      },
+      {
+        "kind": "cylinder",
+        "center": [
+          0.33,
+          0.35,
+          0.3
+        ],
+        "radius": 0.07,
+        "length": 0.56,
+        "axis": "z"
+      }
+    ]
+  },
+  "provenance": "agent",
+  "run_id": "6019bbc266f8",
+  "version": 1,
+  "created_at": "2026-10-24T16:35:17.418567Z"
+}

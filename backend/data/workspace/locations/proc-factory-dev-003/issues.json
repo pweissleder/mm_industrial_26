@@ -1,0 +1,18 @@
+[
+  {
+    "id": "overlapping_storeys:proc-factory-dev-003-F0|proc-factory-dev-003-F1",
+    "issue_class": "overlapping_storeys",
+    "severity": "info",
+    "entity_ids": [
+      "proc-factory-dev-003-F0",
+      "proc-factory-dev-003-F1"
+    ],
+    "message": "floor proc-factory-dev-003-F1 elevation 3.5 < proc-factory-dev-003-F0 elevation 0.0 + height 8.0",
+    "details": {
+      "expected_elevation_m": 8.0,
+      "elevation_m": 3.5
+    },
+    "status": "accepted",
+    "resolution": "Factory ground floor is 8 m tall (double-height hall); F1 at 3.5 m is an intended mezzanine inside that volume, so the elevation is not an error."
+  }
+]

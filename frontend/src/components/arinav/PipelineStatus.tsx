@@ -1,11 +1,12 @@
-// High-quality build status: a chip for the top bar and a dialog with the stage list,
+// High-quality build status: a pill for the top bar and a dialog with the stage list,
 // the pipeline's review requests (accept / retry / abort with a note) and retry on failure.
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, locationFileUrl, type ReviewOptionId, type RunRecord } from '../../lib/api';
-import { AlertIcon, CheckIcon, CloseIcon, SparkleIcon } from './Icons';
+import { AlertIcon, CheckIcon, CloseIcon } from './Icons';
 import type { Pipeline, PipelineState } from './usePipeline';
 
 const STAGES: [string, string][] = [
+  ['reconstruct', 'Reconstruct from floor plans'],
   ['raw_validation', 'Validate and clean data'],
   ['graph_build', 'Build relationship graph'],
   ['graph_validate', 'Check relationship graph'],
@@ -14,65 +15,111 @@ const STAGES: [string, string][] = [
   ['variant_creator', 'Design missing models'],
   ['model_validate', 'Check 3D model'],
   ['summarize', 'Describe building'],
+  ['suggest', 'Suggest questions'],
 ];
 const stageLabel = (stage: string | null | undefined) =>
   STAGES.find(([id]) => id === stage)?.[1] ?? stage ?? '';
+const LOW_UNAVAILABLE =
+  'Quick preview not available: no building.json yet (being reconstructed from the floor plans)';
 const isImage = (path: string) => /\.(png|jpe?g|svg)$/i.test(path);
+/** How long "HQ finished" shows after a build before the pill settles back to "HQ". */
+export const READY_CHIP_MS = 10_000;
 
 function progress(run: RunRecord): string {
   const done = STAGES.filter(([id]) => ['passed', 'skipped'].includes(run.stages[id]?.status)).length;
   return `${Math.min(done + 1, STAGES.length)}/${STAGES.length}`;
 }
 
-export function PipelineChip({
+/**
+ * The model-quality pill next to the building name: HQ or Low, and while the pipeline works on
+ * it, its progress (building, review, failed). "HQ finished" shows only right after a build
+ * finishes in this session, not when a processed building simply loads. Opens the details.
+ */
+export function HqPill({
   state,
-  onOpen,
+  showingHq,
+  lowUnavailable = false,
   stale = [],
+  onOpen,
 }: {
   state: PipelineState;
-  onOpen: () => void;
+  /** The HQ model is on screen (not the browser preview or an uploaded GLB). */
+  showingHq: boolean;
+  /** No building.json yet (it is being reconstructed), so there is no quick preview. */
+  lowUnavailable?: boolean;
   /** Things changed since the HQ build: the HQ view is outdated and the live view is shown. */
   stale?: string[];
+  onOpen: () => void;
 }) {
-  if (state.phase === 'idle') return null;
+  const { phase } = state;
+  const wasBuilding = useRef(false);
+  const [justFinished, setJustFinished] = useState(false);
+  useEffect(() => {
+    // A new building starts over at idle/checking, so its stored result isn't "just finished".
+    if (phase === 'idle' || phase === 'checking') wasBuilding.current = false;
+    if (phase === 'running' || phase === 'review') wasBuilding.current = true;
+    if (phase !== 'ready') setJustFinished(false);
+    if (phase !== 'ready' || !wasBuilding.current) return;
+    wasBuilding.current = false;
+    setJustFinished(true);
+    const timer = window.setTimeout(() => setJustFinished(false), READY_CHIP_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase]);
   const [tone, label, title] =
     state.phase === 'ready' && stale.length
       ? [
           'attention',
-          'HQ outdated · showing LQ',
+          'HQ outdated · Low',
           `${stale.length} thing(s) changed since the HQ model was built; the live view is shown until a rebuild.`,
         ]
+      : state.phase === 'idle'
+      ? lowUnavailable
+        ? ['low', 'Low n/a', LOW_UNAVAILABLE]
+        : ['low', 'Low', 'Quick preview generated in the browser from building.json']
       : state.phase === 'not_built'
-      ? [
-          'off',
-          'LQ only · Build HQ',
-          'No high-quality model yet. Auto-build is off (Developer mode); open to build it now.',
-        ]
-      : state.phase === 'checking'
-      ? ['busy', 'Checking HQ model…', 'Looking for a processed version of this building']
-      : state.phase === 'running'
+      ? lowUnavailable
         ? [
-            'busy',
-            `Building HQ · ${progress(state.run)}`,
-            `High-quality model in progress: ${stageLabel(state.run.current_stage) || 'queued'}`,
+            'low',
+            'Low n/a · Build',
+            'No building.json yet: it is reconstructed from the floor plans when the pipeline runs; auto-build is off (Developer mode). Open to build it now.',
           ]
-        : state.phase === 'review'
-          ? ['attention', 'Review needed', state.run.pending_review?.title ?? 'The pipeline needs a decision']
-          : state.phase === 'ready'
-            ? ['good', 'HQ ready', 'High-quality model available']
-            : ['bad', 'HQ failed', state.message];
+        : [
+            'low',
+            'Low · Build HQ',
+            'Quick browser preview. No high-quality model yet; auto-build is off (Developer mode). Open to build it now.',
+          ]
+      : state.phase === 'checking'
+        ? ['busy', 'Checking HQ', 'Looking for a processed version of this building']
+        : state.phase === 'running'
+          ? [
+              'busy',
+              `HQ ${progress(state.run)}`,
+              `High-quality model in progress: ${stageLabel(state.run.current_stage) || 'queued'}`,
+            ]
+          : state.phase === 'review'
+            ? ['attention', 'HQ · Review', state.run.pending_review?.title ?? 'The pipeline needs a decision']
+            : state.phase === 'failed'
+              ? ['bad', 'HQ failed', state.message]
+              : !showingHq
+                ? lowUnavailable
+                  ? ['low', 'Low n/a', LOW_UNAVAILABLE]
+                  : ['low', 'Low', 'Quick browser preview; the high-quality model is available under 3D source']
+                : justFinished
+                  ? ['hq', 'HQ finished', 'High-quality model just finished and is now shown']
+                  : ['hq', 'HQ', 'High-quality model from the ingestion pipeline'];
+  // Plain HQ / Low is only a label: small screens drop it, build progress and problems stay.
+  const plain = (tone === 'hq' && !justFinished) || label === 'Low' || label === 'Low n/a';
   return (
     <button
-      className={`pipeline-chip pipeline-chip--${tone}`}
+      className={`quality quality--button quality--${tone}${plain ? ' quality--plain' : ''}`}
       onClick={onOpen}
-      title={title}
+      title={`${title}. Show processing details`}
       aria-label={`${label}. Show processing details`}
     >
-      {tone === 'busy' && <span className="spinner" aria-hidden="true" />}
-      {tone === 'good' && <CheckIcon width={15} height={15} />}
-      {tone === 'off' && <SparkleIcon width={15} height={15} />}
-      {(tone === 'attention' || tone === 'bad') && <AlertIcon width={15} height={15} />}
-      <span className="pipeline-chip__label">{label}</span>
+      {tone === 'busy' && <span className="spinner spinner--xs" aria-hidden="true" />}
+      {justFinished && tone === 'hq' && <CheckIcon width={12} height={12} />}
+      {(tone === 'attention' || tone === 'bad') && <AlertIcon width={12} height={12} />}
+      {label}
     </button>
   );
 }
@@ -80,11 +127,13 @@ export function PipelineChip({
 interface DialogProps {
   open: boolean;
   pipeline: Pipeline;
+  /** No building.json yet: the run first reconstructs it from the floor plans. */
+  lowUnavailable?: boolean;
   onClose: () => void;
   stale?: string[];
 }
 
-export function PipelineDialog({ open, pipeline, onClose, stale = [] }: DialogProps) {
+export function PipelineDialog({ open, pipeline, lowUnavailable = false, onClose, stale = [] }: DialogProps) {
   const dialog = useRef<HTMLDialogElement>(null);
   const { state } = pipeline;
   const run =
@@ -156,7 +205,17 @@ export function PipelineDialog({ open, pipeline, onClose, stale = [] }: DialogPr
           </button>
         </header>
 
-        {state.phase === 'not_built' && (
+        {state.phase === 'not_built' && lowUnavailable && (
+          <p className="muted">
+            This dataset has floor plans but no building.json, so there is no quick preview yet.
+            Building it runs the ingestion pipeline: it first reconstructs the building from the
+            plans, then validates it and builds the 3D model. With an API key it calls Claude (Opus,
+            Sonnet, Haiku; roughly $0.30 to $1.50 per building). Automatic builds are off; change
+            that in Developer mode.
+          </p>
+        )}
+
+        {state.phase === 'not_built' && !lowUnavailable && (
           <p className="muted">
             You are looking at the quick preview generated in the browser; routing, search and the
             assistant work on it as usual. Building the high-quality version runs the ingestion
@@ -176,7 +235,10 @@ export function PipelineDialog({ open, pipeline, onClose, stale = [] }: DialogPr
 
         {state.phase !== 'ready' && state.phase !== 'not_built' && (
           <p className="muted">
-            Until then you see a quick preview generated in the browser. The pipeline validates and
+            {lowUnavailable
+              ? 'The pipeline first reconstructs building.json from the floor plans; the quick preview appears once that step has passed. '
+              : 'Until then you see a quick preview generated in the browser. '}
+            The pipeline validates and
             cleans the data, builds a to-scale 3D model and describes every room; the view switches
             to it once it is ready.
             {run?.offline && ' No API key is set, so only the deterministic checks run.'}
