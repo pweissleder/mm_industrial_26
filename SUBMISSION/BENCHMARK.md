@@ -1,10 +1,18 @@
 # Benchmark
 
-One command, no manual steps between input and output. Run it from `backend/` (needs `uv sync` and `ANTHROPIC_API_KEY` in `backend/.env`):
+One command, no manual steps between input and output. Run it from the repo root, the folder that contains `SUBMISSION/` (needs `uv sync` and `ANTHROPIC_API_KEY` in `backend/.env`):
 
 ```bash
-uv run poe benchmark --data <folder with the building(s)> --submission ../team_answers.csv
+cd backend && uv run poe benchmark --data <folder with the building(s)> --submission ../SUBMISSION/answers.json
 ```
+
+For the kit's test set:
+
+```bash
+cd backend && uv run poe benchmark --data ../problem_statement/industrial-agents-hackathon-2026/data/test --submission ../SUBMISSION/answers.json
+```
+
+`--submission` ends in `.json`, so `answers.json` is a list of `{"question_id", "answer"}` entries. Any other extension (e.g. `team.csv`) writes the kit's CSV (`question_id,answer`) instead.
 
 If the question file comes separately from the building folders, add `--questions <file>` (`.jsonl`, or `.csv` like the kit's `test/questions.csv`: `question_id, building_id, kind, question`).
 
@@ -20,7 +28,7 @@ Outputs go to `--out` (default `benchmark_results/graph-<date>-<time>`):
 
 | File | Content |
 |---|---|
-| `submission.csv` | `question_id,answer` with the full reply per question (also written to `--submission`) |
+| `submission.csv` | `question_id,answer` with the full reply per question (`--submission` gets the same, as JSON for a `.json` path) |
 | `results.jsonl` | Question, expected answer, reply, score and note per question |
 | `pipeline.json` | Per building: run status, stage results, problems found |
 | `report.html` | Static results page (open it straight from disk, no server): summary cards, score per kind, pipeline results, every miss with question, expected answer and reply |
@@ -40,6 +48,8 @@ The exit code is 0 only when every building passed the pipeline, no question fai
 The kit copy in `problem_statement/` is **v1.0.0**. Its errand and what-if-door answers still use the old route model (straight lines through room anchors, 12 m per floor, free walks round the outside). The benchmark recomputes those expected values from each question's `inputs` with the vendored official kit 1.1.0 code (`app/navigation/ported/operations.py`) and lists every changed value in `results.jsonl` (`refreshed`). On kit 1.1.0 data nothing changes. Warm-up routes are judged the same way: the best route under the 1.1.0 rules, not the kit's 1.0.0 `space_path`.
 
 ## Useful variants
+
+Run these from `backend/`.
 
 ```bash
 uv run poe benchmark                                     # whole example set: kit train + dev

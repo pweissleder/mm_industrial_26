@@ -5,6 +5,7 @@ Run from backend/:
     uv run poe benchmark                                  # kit train + dev, every question
     uv run poe benchmark --data <kit>/data/dev --per-kind 2 --no-basic    # quick pilot
     uv run poe benchmark --data <building or split folder> [--questions <file>]
+    uv run poe benchmark --data <kit>/data/test --submission ../SUBMISSION/answers.json
     uv run poe benchmark --ingest-only                    # pipeline check only, no API calls
     uv run poe benchmark --render <run folder>            # rebuild report.html of a run
     uv run poe benchmark --rerun <run folder>             # only what that run got wrong
@@ -90,7 +91,11 @@ def ingest(runner: PipelineRunner, building: BuildingSet) -> Ingested:
         decision = ReviewDecision(review_id=review.review_id, option="accept_with_warnings")
         record = runner.resume_sync(record.run_id, decision)
     stages = {str(s): str(record.stages[s].status) for s in GRAPH_STAGES}
-    problems += [f"{s}: {record.stages[s].summary}" for s, v in stages.items() if v != "passed"]
+    problems += [
+        f"{s}: {record.stages[s].summary}"
+        for s, v in stages.items()
+        if v not in ("passed", "skipped")
+    ]
     if record.error:
         problems.append(record.error)
     cleaned = None
@@ -191,6 +196,18 @@ async def answer_all(
     return rows
 
 
+def write_submission(path: Path, rows: list[dict[str, Any]]) -> None:
+    """The kit's CSV (question_id,answer); a `.json` path gets [{question_id, answer}] instead."""
+    if path.suffix == ".json":
+        entries = [{"question_id": r["id"], "answer": r["reply"]} for r in rows]
+        path.write_text(json.dumps(entries, ensure_ascii=False, indent=2) + "\n", "utf-8")
+        return
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["question_id", "answer"])
+        writer.writerows((r["id"], r["reply"]) for r in rows)
+
+
 def write_report(
     out: Path,
     args: argparse.Namespace,
@@ -267,7 +284,11 @@ def main() -> int:
     parser.add_argument("--workers", type=int, default=16, help="questions answered in parallel")
     parser.add_argument("--ingest-only", action="store_true", help="pipeline check, no answers")
     parser.add_argument("--min-score", type=float, help="fail below this benchmark accuracy")
-    parser.add_argument("--submission", type=Path, help="also write the submission CSV here")
+    parser.add_argument(
+        "--submission",
+        type=Path,
+        help="also write the submission here (.json: question_id/answer list, else kit CSV)",
+    )
     parser.add_argument("--render", type=Path, help="only rebuild report.html of this run folder")
     parser.add_argument(
         "--rerun", type=Path, help="only the questions this earlier run got wrong or couldn't run"
@@ -338,11 +359,10 @@ def main() -> int:
         cost = answerer.cost()
         with (out / "results.jsonl").open("w", encoding="utf-8") as handle:
             handle.writelines(json.dumps(r, ensure_ascii=False) + "\n" for r in rows)
-        for path in {out / "submission.csv", *([args.submission] if args.submission else [])}:
-            with path.open("w", encoding="utf-8", newline="") as handle:
-                writer = csv.writer(handle)
-                writer.writerow(["question_id", "answer"])
-                writer.writerows((r["id"], r["reply"]) for r in rows)
+        write_submission(out / "submission.csv", rows)
+        if args.submission:
+            args.submission.parent.mkdir(parents=True, exist_ok=True)
+            write_submission(args.submission, rows)
 
     seconds = time.perf_counter() - started
     report = write_report(out, args, ingested, rows, cost, seconds)
