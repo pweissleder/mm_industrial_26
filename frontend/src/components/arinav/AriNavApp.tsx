@@ -328,7 +328,8 @@ export default function AriNavApp() {
   const [guidanceHidden, setGuidanceHidden] = useState(false);
   // ---- Night: profiles (core / immersive / showcase) and immersive navigation -------------
   const { profile, features } = useMemo(currentFeatures, []);
-  const simLoc = nav.simulated?.endpoint;
+  // Walking starts where the person is: the simulated location, else the start they stated/chose.
+  const simLoc = nav.simulated?.endpoint ?? nav.start?.endpoint;
   const immersiveLocation = useMemo(() => {
     if (!simLoc || !viewModel) return null;
     if (simLoc.kind === 'point') return { space_id: simLoc.space_id, position: simLoc.position };
@@ -350,6 +351,11 @@ export default function AriNavApp() {
     location: immersiveLocation,
   });
   const navigationMode = guidance.navigating || immersive.view === 'pov' || immersive.driver === 'manual';
+  const povRef = useRef(immersive.view);
+  povRef.current = immersive.view;
+  useEffect(() => {
+    if (immersive.view === 'pov') setSelection(null);
+  }, [immersive.view]);
 
   // Session memory (showcase only, opt-in): demo sessions are labelled as synthetic.
   const [memorySession, setMemorySession] = useState<string | null>(null);
@@ -596,7 +602,8 @@ export default function AriNavApp() {
         );
         if (levels.size > 1 && settings.floor !== 'all') setSettings((s) => ({ ...s, floor: 'all' }));
       }
-      if (ui.focus && !route) {
+      // In first person a focused room would tint the whole view; the answer card is enough there.
+      if (ui.focus && !route && povRef.current !== 'pov') {
         const sel = selectionFromFocus(ui.focus);
         focusFloorOf(sel);
         setSelection(sel);

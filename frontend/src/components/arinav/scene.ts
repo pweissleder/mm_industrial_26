@@ -1538,7 +1538,20 @@ export class BuildingScene {
     }
     r.setViewport(x0, 0, povW, h);
     r.setScissor(x0, 0, povW, h);
+    // HQ walls are squashed to the overview wall height (about 1 m in an 8 m hall storey);
+    // at eye height they must be full storey height, or one looks over every wall.
+    const squashed = this.floors
+      .filter((fv) => fv.hq)
+      .map((fv) => [fv, fv.walls.scale.y, fv.walls.position.y] as const);
+    for (const [fv] of squashed) {
+      fv.walls.scale.y = 1;
+      fv.walls.position.y = 0;
+    }
     r.render(this.scene, this.povCamera);
+    for (const [fv, scale, y] of squashed) {
+      fv.walls.scale.y = scale;
+      fv.walls.position.y = y;
+    }
     if (this.split) {
       // Right half: the whole building from the orbit camera, with the person and the route.
       const half = w - x0 - povW;

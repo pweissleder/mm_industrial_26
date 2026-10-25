@@ -208,6 +208,14 @@ export default function ChatDock({
   // Async callers (transcription, drafts) can't rely on the `busy` of their render.
   const busyRef = useRef(false);
   const targets = useMemo(() => (model ? linkTargets(model) : new Map<string, Selection>()), [model]);
+  const names = useMemo(() => {
+    const m = new Map<string, string>();
+    if (model)
+      for (const e of [...model.spaces, ...model.assets, ...model.openings, ...model.vertical_connectors])
+        if ('name' in e && e.name) m.set(e.id, e.name);
+    return m;
+  }, [model]);
+  const nameOf = useCallback((id: string) => names.get(id) ?? null, [names]);
 
   const renderReply = (text: string): ReactNode =>
     linkify(text, targets).map((part, i) =>
@@ -526,6 +534,7 @@ export default function ChatDock({
                     renderText={onSelect ? renderReply : undefined}
                     turn={m.turn}
                     developer={developer}
+                    nameOf={nameOf}
                     canReplay={!!audio}
                     onReplay={() => audio && void voice.play(audio.pcm, audio.rate)}
                   />

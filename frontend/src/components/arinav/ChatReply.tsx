@@ -22,11 +22,17 @@ export function RouteBadge({ route }: { route: RouteResponse }) {
   return <span className={`route-badge route-badge--${badge.tone}`}>{badge.label}</span>;
 }
 
-function Directions({ route }: { route: RouteResponse }) {
+/** Element ids in router messages -> names (user view); ids stay in the developer view. */
+const ID_IN_TEXT = /[A-Za-z0-9_.]+(?:-[A-Za-z0-9_.]+)*-(?:F-?\d+-[SO]\d+|V\d+|A\d+)/g;
+type NameOf = ((id: string) => string | null) | undefined;
+const humanize = (text: string, nameOf: NameOf) =>
+  nameOf ? text.replace(ID_IN_TEXT, (id) => nameOf(id) ?? 'a closed part of the building') : text;
+
+function Directions({ route, nameOf }: { route: RouteResponse; nameOf?: NameOf }) {
   if (route.status !== 'ok') {
     return (
       <p className="chat__note chat__note--bad">
-        <AlertIcon width={14} height={14} /> {route.unreachable_reason || `No route (${route.status}).`}
+        <AlertIcon width={14} height={14} /> {humanize(route.unreachable_reason || `No route (${route.status}).`, nameOf)}
       </p>
     );
   }
@@ -88,16 +94,19 @@ export function AssistantReply(props: {
   developer: boolean;
   canReplay: boolean;
   onReplay: () => void;
+  /** Element names for router messages; omitted in the developer view (ids are useful there). */
+  nameOf?: (id: string) => string | null;
 }) {
   const { turn } = props;
+  const nameOf = props.developer ? undefined : props.nameOf;
   const routeError = readRouteError(turn?.ui?.route_error);
   return (
     <>
       <span className="chat__text">{props.renderText ? props.renderText(props.text) : props.text}</span>
-      {turn?.ui?.route && <Directions route={turn.ui.route} />}
+      {turn?.ui?.route && <Directions route={turn.ui.route} nameOf={nameOf} />}
       {!turn?.ui?.route && routeError && (
         <p className="chat__note chat__note--bad">
-          <AlertIcon width={14} height={14} /> {routeError.message}
+          <AlertIcon width={14} height={14} /> {humanize(routeError.message, nameOf)}
         </p>
       )}
       {turn && <Phases phases={turn.phases ?? []} />}
