@@ -19,7 +19,7 @@ import {
   type UiState,
 } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
-import { replyAsks, type SimulatedLocation } from '../../lib/nav';
+import { LOCATION_SOURCE_LABEL, replyAsks, type SimulatedLocation } from '../../lib/nav';
 import { voiceSupported } from '../../lib/voice';
 import { AssistantReply, ProposalCard, type ProposalState } from './ChatReply';
 import { LogoMark } from './Logo';
@@ -578,7 +578,10 @@ export default function ChatDock({
           {simulated ? (
             <span className="sim-chip" title="Simulated location, sent as your start">
               <PinIcon width={14} height={14} />
-              <span className="sim-chip__text">Simulated location: {simulated.label}</span>
+              <span className="sim-chip__text">
+                Location: {simulated.label}
+                {simulated.source ? ` · ${LOCATION_SOURCE_LABEL[simulated.source]}` : ''}
+              </span>
               <button
                 className="icon-btn icon-btn--sm"
                 onClick={() => onClearSimulated?.()}

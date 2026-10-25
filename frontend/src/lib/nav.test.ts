@@ -115,3 +115,31 @@ describe('voice encoding', () => {
     expect(out[1]).toBeCloseTo(-0.5, 2);
   });
 });
+
+describe('location after navigation (G07)', () => {
+  it('a walked-to location is the next start, labelled as simulation', () => {
+    const ui = buildUiState({
+      buildingId: 'b',
+      start: { endpoint: { kind: 'space', id: 'S1' }, source: 'user' },
+      target: null,
+      simulated: { endpoint: { kind: 'opening', id: 'EXIT' }, label: 'Exit', source: 'simulation' },
+      settings: DEFAULT_NAV,
+      touched: new Set(),
+    });
+    expect(ui.start).toEqual({ kind: 'opening', id: 'EXIT' });
+    expect(ui.start_source).toBe('simulation');
+  });
+
+  it('a manual start still wins over a manually set simulated room', () => {
+    const ui = buildUiState({
+      buildingId: 'b',
+      start: { endpoint: { kind: 'space', id: 'S1' }, source: 'user' },
+      target: null,
+      simulated: { endpoint: { kind: 'space', id: 'S2' }, label: 'Office', source: 'manual' },
+      settings: DEFAULT_NAV,
+      touched: new Set(),
+    });
+    expect(ui.start).toEqual({ kind: 'space', id: 'S1' });
+    expect(ui.start_source).toBeUndefined();
+  });
+});

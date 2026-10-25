@@ -3,6 +3,7 @@ import {
   api,
   datasetFileUrl,
   type AssistantStatus,
+  type Endpoint,
   type ConfirmResponse,
   type HealthResponse,
   type RoomGraphData,
@@ -330,6 +331,31 @@ export default function AriNavApp() {
     const timer = window.setInterval(() => void navRefresh(), 2000);
     return () => window.clearInterval(timer);
   }, [guidance.navigating, navRefresh]);
+  // Actual simulated movement is the user's position for the next question (not search, focus or
+  // preview): on arrival the real target endpoint (a door stays a door), on pause/stop the point.
+  const navStatus = guidance.snapshot.status;
+  const setSimulatedRef = useRef(nav.setSimulated);
+  setSimulatedRef.current = nav.setSimulated;
+  const lastPoseStatus = useRef(navStatus);
+  useEffect(() => {
+    const prev = lastPoseStatus.current;
+    lastPoseStatus.current = navStatus;
+    if (prev === navStatus) return;
+    const snap = guidance.snapshot;
+    const p = snap.progress;
+    const r = snap.route;
+    if (!p || !r || !['arrived', 'paused', 'stopped', 'blocked'].includes(navStatus)) return;
+    if (navStatus === 'stopped' && snap.distance_m === 0) return; // never moved
+    const t = r.target;
+    const atTarget = navStatus === 'arrived' && t;
+    const endpoint =
+      atTarget && t.kind !== 'point' && t.id
+        ? ({ kind: t.kind, id: t.id } as Endpoint)
+        : ({ kind: 'point', space_id: p.space_id ?? t?.space_id ?? '', position: p.position } as Endpoint);
+    const room = names.space(p.space_id) ?? 'the building';
+    const label = atTarget ? (names.target ?? room) : `a point in ${room}`;
+    setSimulatedRef.current({ endpoint, label, source: 'simulation' });
+  }, [navStatus, guidance.snapshot, names]);
   const wasNavigating = useRef(false);
   useEffect(() => {
     if (wasNavigating.current && !guidance.navigating) setSettings((s) => ({ ...s, floor: 'all' }));
@@ -379,7 +405,7 @@ export default function AriNavApp() {
         return;
       }
       const label = elementLabel(spaceId, viewModel);
-      let location: SimulatedLocation = { endpoint: { kind: 'space', id: spaceId }, label };
+      let location: SimulatedLocation = { endpoint: { kind: 'space', id: spaceId }, label, source: 'manual' };
       try {
         const resolved = await api.resolveLocation({
           building_id: buildingId,
@@ -387,7 +413,7 @@ export default function AriNavApp() {
           space_id: spaceId,
         });
         if (resolved.status === 'resolved' && resolved.endpoint) {
-          location = { endpoint: resolved.endpoint, label };
+          location = { endpoint: resolved.endpoint, label, source: 'manual' };
         }
       } catch {
         // The room itself is a valid start; resolving only refines it.

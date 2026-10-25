@@ -216,7 +216,17 @@ export function useGuidance(args: {
     sim.current.hold('The building changed · checking your route…');
     publish(true);
     const p = snap.progress;
-    const s = latest.current.settings;
+    // The followed route's own constraints win over the current UI settings, and can only be
+    // tightened by them (a step-free walk never reroutes over stairs).
+    const ui = latest.current.settings;
+    const c = snap.route.constraints;
+    const s = {
+      ...ui,
+      step_free: !!(c?.step_free || ui.step_free),
+      profile: c?.profile ?? ui.profile,
+      width_m: Math.max(c?.width_m ?? 0, ui.width_m),
+      safety_m: Math.max(c?.safety_m ?? 0, ui.safety_m),
+    };
     const request: RouteRequest = {
       mode: snap.route.mode,
       start: { kind: 'point', space_id: p.space_id ?? snap.route.start?.space_id ?? '', position: p.position },

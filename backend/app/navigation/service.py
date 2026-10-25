@@ -562,6 +562,12 @@ class NavigationService:
             response["revision"] = entry.revision
         response["closed"] = closed
         response["assume_closed"] = assume
+        # The constraints this route honours, so a later reroute keeps them (never loosens).
+        response["constraints"] = {"step_free": step_free}
+        if mode == "precision":
+            response["constraints"] |= {
+                k: request.get(k) for k in ("profile", "width_m", "safety_m") if k in request
+            }
         response["elapsed_ms"] = _ms(began)
         return response
 

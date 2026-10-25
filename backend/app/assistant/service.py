@@ -42,6 +42,12 @@ PHASES = {
     "select_building": "Switching building",
 }
 
+STEP_FREE_NOTE = (
+    "The user needs a step-free route (e.g. wheelchair). Never suggest stairs or any non-step-free "
+    "way, not even as an alternative. If there is no step-free route, say so plainly and offer "
+    "options such as waiting for the lift to reopen or another destination."
+)
+
 SYSTEM = """You are the building assistant of AriNav, an indoor navigation app. People ask you
 where things are, how to get somewhere and what changes when parts of a building close. You can
 also just chat; not every message needs a tool.
@@ -75,7 +81,9 @@ Understanding requests
   and_route=true when the user wants to go there. Exits are doors; the route ends at the door.
 - If a route needs a start you don't know, ask where the user is (they can also pick it on the
   map). Don't guess a start.
-- Keep restrictions (step-free, width) for the rest of the conversation unless changed.
+- Keep restrictions (step-free, width) for the rest of the conversation unless the user changes
+  them. A wheelchair, pram or "no stairs" need means step-free: never recommend stairs to such a
+  user, even when no step-free route exists. Only the user can lift it (update_session).
 - Few tool calls: prefer find_nearest with and_route over separate search + route; don't repeat
   a search you already have; use building_fact only for explicit fact questions.
 - "Closest", "nearer" and "farther" only from walking distances the tools return; never call
@@ -336,6 +344,9 @@ class Assistant:
                 "precision_routing": nav_state.get("support", {}).get("precision", False),
             }
             out["start"] = self.describe(data, state["start"])
+            if out["start"] and state.get("start_source"):
+                # How the position is known: manual choice, simulated walk, QR anchor or a guess.
+                out["start"]["known_from"] = state["start_source"]
             out["destination"] = self.describe(data, state["destination"])
             out["inspected"] = self.describe(data, state.get("inspected"))
             if state.get("ui_note"):
@@ -385,6 +396,13 @@ class Assistant:
             try:
                 state[key] = self.check_endpoint(data, value)
                 state[from_ui] = state[key]
+                if key == "start":
+                    source = ui.get("start_source")
+                    state["start_source"] = (
+                        source
+                        if source in {"manual", "simulation", "qr", "hypothesis"}
+                        else "manual"
+                    )
             except NavigationError as error:
                 # Never fall back silently to an older place: drop it and tell the model.
                 state[key] = None
@@ -470,7 +488,8 @@ class Assistant:
             raise NavigationError(
                 "missing_start", "The user's position is unknown; ask where they are"
             )
-        step_free = state["step_free"] if args.get("step_free") is None else bool(args["step_free"])
+        # A step-free need is a hard user constraint: tools may tighten it, never loosen it.
+        step_free = bool(state["step_free"] or args.get("step_free"))
         category = str(args.get("category") or "").strip()
         if not category:
             raise NavigationError(
@@ -487,6 +506,8 @@ class Assistant:
         }
         if not results:
             out["note"] = "Nothing reachable of that kind. Say so and offer an alternative."
+            if step_free:
+                out["constraint"] = STEP_FREE_NOTE
             return out
         ui["highlight"] = [r["endpoint"]["id"] for r in results]
         if args.get("and_route"):
@@ -536,7 +557,11 @@ class Assistant:
             raise NavigationError(
                 "missing_endpoint", "Unknown " + " and ".join(missing) + "; ask the user"
             )
-        self._apply_settings(state, {k: args.get(k) for k in ("mode", "step_free")})
+        # Only update_session (what the user said) may lift a step-free need; a tool argument can
+        # add it but never drop it (a wheelchair user must not get a stairs route by accident).
+        self._apply_settings(
+            state, {"mode": args.get("mode"), "step_free": True if args.get("step_free") else None}
+        )
         state["start"], state["destination"] = start, destination
         assume = [str(x) for x in args.get("assume_closed") or []]
         request: JSON = {
@@ -564,7 +589,7 @@ class Assistant:
                 "request": request,
             }
             state["last_route"] = {"mode": state["mode"], "status": "failed"}
-            return {
+            failed: JSON = {
                 "mode": state["mode"],
                 "status": "failed",
                 "explanation": error.message,
@@ -574,6 +599,18 @@ class Assistant:
                 "hint": "Offer the official route (not obstacle-checked)."
                 if state["mode"] == "precision"
                 else None,
+            }
+            if state["step_free"]:
+                failed["constraint"] = STEP_FREE_NOTE
+            return failed
+        stairs = [t for t in result.get("transitions", []) if t.get("kind") == "stairs"]
+        if state["step_free"] and stairs and result.get("status") == "ok":
+            # Defence in depth: the router honours step_free; never pass on a violating route.
+            state["last_route"] = {"mode": state["mode"], "status": "failed"}
+            return {
+                "status": "failed",
+                "explanation": "No step-free route was found.",
+                "constraint": STEP_FREE_NOTE,
             }
         # Contract (docs/PHASE_A_INTERFACES.md): ui.route is the RouteResponse itself.
         ui["route"] = result
@@ -599,7 +636,10 @@ class Assistant:
             "unreachable_reason": result.get("unreachable_reason"),
             "warnings": (result.get("warnings") or [])[:3],
             "assumed_closed": assume or None,
+            "step_free": state["step_free"],
         }
+        if state["step_free"]:
+            summary["constraint"] = STEP_FREE_NOTE
         state["last_route"] = {k: summary[k] for k in ("mode", "status", "length_m", "from", "to")}
         return summary
 
