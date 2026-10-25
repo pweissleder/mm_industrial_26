@@ -80,14 +80,14 @@ try {
 $processes += [Diagnostics.Process]::Start($frontend)
 $mode = if ($Live) { 'live' } else { 'offline' }
 if ($Phone) {
-    # Adapters with a default gateway (Wi-Fi, LAN) first; virtual switches/VPNs only as a fallback.
-    $nets = @(Get-NetIPConfiguration -ErrorAction SilentlyContinue | Where-Object { $_.IPv4DefaultGateway -and $_.NetAdapter.Status -eq 'Up' })
-    $ips = if ($nets) { $nets | ForEach-Object { "$(@($_.IPv4Address)[0].IPAddress) ($($_.InterfaceAlias))" } } else {
-        (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -notmatch '^(127|169\.254)\.' }).IPAddress
-    }
-    foreach ($ip in $ips) {
-        $address, $alias = $ip -split ' ', 2
-        Write-Host "Phone: https://${address}:4321 $alias (same network as the phone; accept the certificate warning once)"
+    # Connected adapters only (Wi-Fi, LAN, this PC's mobile hotspot), no Hyper-V/WSL switches.
+    $up = @(Get-NetAdapter -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq 'Up' -and $_.InterfaceAlias -notmatch '^vEthernet' }).InterfaceIndex
+    $addresses = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+        Where-Object { $_.IPAddress -notmatch '^(127|169\.254)\.' -and ($up -contains $_.InterfaceIndex) }
+    foreach ($a in $addresses) {
+        # Windows' mobile hotspot always hands out 192.168.137.x and is reached at .1
+        $where = if ($a.IPAddress -like '192.168.137.*') { 'phone on this PC''s hotspot' } else { "phone in the same network as '$($a.InterfaceAlias)'" }
+        Write-Host "Phone: https://$($a.IPAddress):4321  ($where; accept the certificate warning once)"
     }
 }
 Write-Host "AriNav: http://localhost:4321  (backend http://localhost:$BackendPort, mode: $mode). Ctrl+C stops both."
