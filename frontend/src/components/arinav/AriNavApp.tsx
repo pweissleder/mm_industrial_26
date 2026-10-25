@@ -26,7 +26,7 @@ import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import GuidancePanel from './GuidancePanel';
-import { ImmersiveBar, LookLayer, PovHud, TouchJoystick } from './ImmersiveControls';
+import { ImmersiveBar, LookLayer, PovHud } from './ImmersiveControls';
 import { useImmersive } from './useImmersive';
 import { currentFeatures } from '../../lib/features';
 import {
@@ -1052,9 +1052,11 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
-  // While navigating, the route has the room: no object details.
+  // While navigating, the route has the room: no object details. In first person a click on a
+  // thing in sight (equipment, door, lift, stairs) still opens its card.
+  const povThing = immersive.view === 'pov' && !!selection && selection.kind !== 'space';
   const showCard =
-    !!selection && !navigationMode && !(navigatorMode && selection.kind === 'space');
+    !!selection && (!navigationMode || povThing) && !(navigatorMode && selection.kind === 'space');
   const routeHandlers =
     selection && selection.kind !== 'object' && !navigatorMode
       ? developer
@@ -1396,7 +1398,6 @@ export default function AriNavApp() {
 
       {features.pov && <LookLayer immersive={immersive} />}
       {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
-      {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
 
       {features.memory && recapOpen && (
         <div className="recap-overlay">

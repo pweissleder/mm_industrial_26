@@ -238,6 +238,8 @@ export class BuildingScene {
   private split = false;
   /** Developer split view: the first-person view as a phone over the overview (CSS frame). */
   private readonly phoneFrame = Object.assign(document.createElement('div'), { className: 'phone-mock' });
+  /** Where the first-person view was last drawn (CSS px in the canvas), for picking in it. */
+  private povRect: { x: number; y: number; w: number; h: number } | null = null;
   private readonly controls: OrbitControls;
   private readonly sun = new THREE.DirectionalLight('#ffffff', 1.5);
   private readonly root = new THREE.Group();
@@ -1818,6 +1820,7 @@ export class BuildingScene {
     const phone = this.split ? this.phoneRect(x0, w, h) : null;
     const povW = phone ? phone.w : w;
     const povH = phone ? phone.h : h;
+    this.povRect = phone ?? { x: 0, y: 0, w, h };
     this.povCamera.aspect = povW / povH;
     // A tall portrait phone would see a narrow slice at a fixed vertical angle (looks zoomed in):
     // keep about 70 deg across, within a 100 deg vertical angle.
@@ -1981,13 +1984,22 @@ export class BuildingScene {
 
   private pickHit(e: PointerEvent): { obj: THREE.Object3D; point: THREE.Vector3 } | null {
     const rect = this.renderer.domElement.getBoundingClientRect();
-    const ndc = new THREE.Vector2(
-      ((e.clientX - rect.left) / rect.width) * 2 - 1,
-      -((e.clientY - rect.top) / rect.height) * 2 + 1,
-    );
-    this.raycaster.setFromCamera(ndc, this.camera);
+    const [px, py] = [e.clientX - rect.left, e.clientY - rect.top];
+    const pov = this.look.view === 'pov' && this.walkerPose ? this.povRect : null;
+    const inPov = !!pov && px >= pov.x && px <= pov.x + pov.w && py >= pov.y && py <= pov.y + pov.h;
+    if (inPov && pov) {
+      // First person: through the eye camera, and nothing behind a wall (walls are not pickable
+      // themselves, so the nearest wall hit limits the pick distance).
+      const ndc = new THREE.Vector2(((px - pov.x) / pov.w) * 2 - 1, -((py - pov.y) / pov.h) * 2 + 1);
+      this.raycaster.setFromCamera(ndc, this.povCamera);
+    } else {
+      const ndc = new THREE.Vector2((px / rect.width) * 2 - 1, -(py / rect.height) * 2 + 1);
+      this.raycaster.setFromCamera(ndc, this.camera);
+    }
+    const wallAt = inPov ? this.nearestWallHit() : Infinity;
     const hits = this.raycaster.intersectObjects([this.root, this.connectors], true);
     for (const hit of hits) {
+      if (hit.distance > wallAt + 0.05) break;
       let visible = true;
       for (let o: THREE.Object3D | null = hit.object; o; o = o.parent) visible &&= o.visible;
       if (!visible || isGhost(hit.object)) continue;
@@ -1997,6 +2009,29 @@ export class BuildingScene {
       }
     }
     return null;
+  }
+
+  /** Distance along the current ray to the first wall at full storey height (first person). */
+  private nearestWallHit(): number {
+    const found: THREE.Intersection[] = [];
+    for (const fv of this.floors) {
+      if (!fv.walls.visible) continue;
+      const [scale, y] = [fv.walls.scale.y, fv.walls.position.y];
+      if (fv.hq) {
+        fv.walls.scale.y = 1;
+        fv.walls.position.y = 0;
+      }
+      fv.walls.updateMatrixWorld(true);
+      fv.walls.traverse((o) => {
+        if (o instanceof THREE.Mesh) THREE.Mesh.prototype.raycast.call(o, this.raycaster, found);
+      });
+      if (fv.hq) {
+        fv.walls.scale.y = scale;
+        fv.walls.position.y = y;
+        fv.walls.updateMatrixWorld(true);
+      }
+    }
+    return found.reduce((best, h) => Math.min(best, h.distance), Infinity);
   }
 
   private handlePointerDown = (e: PointerEvent) => {

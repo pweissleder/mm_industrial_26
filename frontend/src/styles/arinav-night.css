@@ -650,3 +650,9 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* User/navigator profile: the walk along the route is simulated (no indoor positioning). */
+.guidance__sim {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+}

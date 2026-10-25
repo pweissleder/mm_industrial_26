@@ -247,6 +247,7 @@ export function LookLayer(props: { immersive: Immersive }) {
   const { immersive: im } = props;
   const ref = useRef<HTMLDivElement>(null);
   const last = useRef<[number, number] | null>(null);
+  const start = useRef<[number, number] | null>(null);
   const [locked, setLocked] = useState(false);
   useEffect(() => {
     // Only while this layer really holds the pointer lock (null === null must not count).
@@ -264,7 +265,23 @@ export function LookLayer(props: { immersive: Immersive }) {
   if (im.view !== 'pov') return null;
   const down = (e: ReactPointerEvent) => {
     last.current = [e.clientX, e.clientY];
+    start.current = [e.clientX, e.clientY];
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  // A click or tap (no drag) goes through to the 3D view: things in sight open their details.
+  const up = (e: ReactPointerEvent) => {
+    last.current = null;
+    const s = start.current;
+    start.current = null;
+    const el = ref.current;
+    if (!s || !el || locked || Math.hypot(e.clientX - s[0], e.clientY - s[1]) > 6) return;
+    el.style.pointerEvents = 'none';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    el.style.pointerEvents = '';
+    if (!(under instanceof HTMLCanvasElement)) return;
+    const init = { clientX: e.clientX, clientY: e.clientY, bubbles: true, pointerType: e.pointerType, pointerId: e.pointerId };
+    under.dispatchEvent(new PointerEvent('pointerdown', init));
+    under.dispatchEvent(new PointerEvent('pointerup', init));
   };
   const moveLook = (e: ReactPointerEvent) => {
     if (!last.current || locked) return;
@@ -277,7 +294,7 @@ export function LookLayer(props: { immersive: Immersive }) {
       className="look-layer"
       onPointerDown={down}
       onPointerMove={moveLook}
-      onPointerUp={() => (last.current = null)}
+      onPointerUp={up}
       onPointerCancel={() => (last.current = null)}
       onDoubleClick={() => void ref.current?.requestPointerLock?.()}
       title="Drag to look around · double-click to lock the mouse (Esc to release)"

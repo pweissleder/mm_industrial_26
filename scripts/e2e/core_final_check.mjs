@@ -42,7 +42,9 @@ async function open(viewport, contextOptions = {}) {
 }
 const narrow = (p) => (p.viewportSize()?.width ?? 1440) < 1100;
 const panel = async (p, openIt) => {
-  const btn = p.getByRole('button', { name: openIt ? 'Show panel' : 'Hide panel' });
+  const btn = openIt
+    ? p.getByRole('button', { name: 'Show panel' })
+    : p.getByRole('button', { name: /^(Hide panel|Close panel)$/ }).first();
   if (await btn.count()) {
     await btn.click({ force: true });
     await p.waitForTimeout(350);
@@ -85,6 +87,50 @@ const g = (p) => p.evaluate(() => {
   const s = window.__arinavGuidance.snapshot();
   return { status: s.status, d: s.distance_m, total: s.total_m, floor: s.progress?.floor_id, pos: s.progress?.position, route: !!s.route };
 });
+
+
+// Things in the first-person view: assets projected through the eye camera into the POV rect
+// (nearest first). Clicking one must open its card unless a wall is in front of it.
+const inSight = (p) => p.evaluate(() => {
+  const s = window.__arinavScene;
+  const r = s.povRect;
+  const cam = s.povCamera;
+  const out = [];
+  for (const [key, obj] of s.objects) {
+    if (!key.startsWith('asset:')) continue;
+    let shown = true;
+    for (let o = obj; o; o = o.parent) shown &&= o.visible;
+    if (!shown) continue;
+    const v = obj.position.clone();
+    obj.getWorldPosition(v);
+    const dist = v.distanceTo(cam.position);
+    v.project(cam);
+    if (v.z < -1 || v.z > 1 || Math.abs(v.x) > 0.8 || Math.abs(v.y) > 0.7 || dist > 14) continue;
+    out.push({ key, name: obj.userData.title ?? obj.name, x: r.x + ((v.x + 1) / 2) * r.w, y: r.y + ((1 - v.y) / 2) * r.h, dist });
+  }
+  return out.sort((a, b) => a.dist - b.dist).slice(0, 6);
+});
+async function clickThingInSight(p, turn) {
+  const box = await p.locator('canvas').first().boundingBox();
+  const tried = [];
+  for (let step = 0; step < 8; step += 1) {
+    for (const t of await inSight(p)) {
+      // only where the view is not covered by a card or sheet
+      const free = await p.evaluate(([x, y]) => document.elementFromPoint(x, y)?.classList.contains('look-layer'), [box.x + t.x, box.y + t.y]);
+      if (!free) continue;
+      await p.mouse.click(box.x + t.x, box.y + t.y);
+      await p.waitForTimeout(350);
+      tried.push(t.name);
+      if (await p.locator('.details__title').count()) {
+        const title = await p.locator('.details__title').first().innerText();
+        return { clicked: t.name, card: title, dist: +t.dist.toFixed(1), tries: tried.length };
+      }
+    }
+    await turn(step);
+    await p.waitForTimeout(300);
+  }
+  return { clicked: null, tried };
+}
 
 // ------------------------------------------------------------------ desktop 1440
 const page = await open({ width: 1440, height: 900 });
@@ -154,13 +200,22 @@ await check('P1_desktop_dev_split_and_click_object_in_first_person', async () =>
   await page.waitForTimeout(800);
   await page.screenshot({ path: join(OUT, 'P1-desktop-dev-pov-1440.png') });
   const split = await page.evaluate(() => window.__arinavScene?.split ?? null);
-  // click the middle of the first-person view: an object or wall there opens details
+  const rect = await page.evaluate(() => window.__arinavScene.povRect);
   const box = await page.locator('canvas').first().boundingBox();
-  await page.mouse.click(box.x + box.width * 0.25, box.y + box.height * 0.55);
-  await page.waitForTimeout(600);
-  const details = await page.locator('.details__title').first().innerText().catch(() => null);
+  const turn = async () => {
+    // drag inside the phone to look 45 degrees further
+    const [x, y] = [box.x + rect.x + rect.w / 2, box.y + rect.y + rect.h / 3];
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x - 200, y, { steps: 5 });
+    await page.mouse.up();
+  };
+  const result = await clickThingInSight(page, turn);
   await page.screenshot({ path: join(OUT, 'P1-pov-click-1440.png') });
-  return { split, details };
+  assert(result.clicked, `no card for things in sight: ${JSON.stringify(result.tried)}`);
+  const details = result;
+  const moving = await g(page);
+  return { split, details, nav_status: moving.status };
 });
 
 // ------------------------------------------------------------------ phone 390 x 844
@@ -172,9 +227,9 @@ await check('P1_phone_dev_single_fullscreen_view', async () => {
   await phone.getByRole('button', { name: 'Start navigation' }).click();
   await phone.evaluate(() => window.__arinavGuidance.manualClock(true));
   await phone.evaluate(() => window.__arinavGuidance.advance(3));
-  const sw = phone.getByRole('group', { name: 'Camera' });
-  await sw.click();
-  await phone.waitForTimeout(300);
+  // tap the folded switch (the current view's icon) to unfold it, then choose
+  await phone.getByRole('button', { name: 'Overview' }).tap();
+  await phone.waitForTimeout(400);
   await phone.getByRole('button', { name: 'First person' }).click();
   await phone.waitForTimeout(1200);
   const split = await phone.evaluate(() => window.__arinavScene?.split ?? null);

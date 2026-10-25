@@ -10,8 +10,8 @@
      "id": "proc-factory-dev-003-A00001"
     },
     "walker": [
-     -6.9511470124659684,
-     8.299221493050581
+     -6.984408224674022,
+     8.32713219658977
     ],
     "floor": "proc-factory-dev-003-F0"
    }
@@ -41,7 +41,7 @@
    "pass": true,
    "detail": {
     "folded_px": 38,
-    "open_px": 222,
+    "open_px": 221,
     "view": "pov",
     "route_kept": true
    }
@@ -51,7 +51,13 @@
    "pass": true,
    "detail": {
     "split": true,
-    "details": null
+    "details": {
+     "clicked": "Meeting table 0.41",
+     "card": "Meeting table 0.41",
+     "dist": 6.8,
+     "tries": 4
+    },
+    "nav_status": "active"
    }
   },
   {
