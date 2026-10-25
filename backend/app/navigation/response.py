@@ -44,20 +44,39 @@ def official_response(result: JSON, building: JSON) -> JSON:
     transitions: list[JSON] = []
     vertical = list(result["transitions"])
     door_ids = [e for e in result["element_path"] if e in openings]
-    # Walk segments in traversal order; before each one, the vertical moves that bring the walker
-    # from the current floor to the segment's floor (one ride per floor hop; a route may start in
-    # a stairwell or lift, and intermediate floors have no walk segment). See `_ride_to`.
-    floor = (result.get("start") or {}).get("floor_id")
-    for segment in result["segments"]:
-        floor = _ride_to(segment["floor_id"], floor, vertical, path, transitions, lambda m: m)
-        path.append(
-            {
-                "floor_id": segment["floor_id"],
-                "space_id": segment["space_id"],
-                "kind": "walk",
-                "points": [_xy(p) for p in segment["points"]],
-            }
+
+    def walk(segment: JSON) -> JSON:
+        return {
+            "floor_id": segment["floor_id"],
+            "space_id": segment["space_id"],
+            "kind": "walk",
+            "points": [_xy(p) for p in segment["points"]],
+        }
+
+    if all("order" in item for item in [*result["segments"], *vertical]):
+        # Walk segments and vertical moves in the router's step order (`order`, set by
+        # challenge._assemble_leg), so a route that leaves a floor and comes back without walking
+        # in between (stairs down, other stairs up) keeps its rides where they happen.
+        events = sorted(
+            [(s["order"], s, True) for s in result["segments"]]
+            + [(m["order"], m, False) for m in vertical],
+            key=lambda event: event[0],
         )
+        for _, item, is_walk in events:
+            if is_walk:
+                path.append(walk(item))
+            else:
+                path.append(_connector_entry(item["kind"], item["element_id"], item))
+                transitions.append(_vertical_transition(item))
+        vertical = []
+    else:
+        # Without step order: walk segments in traversal order; before each one, the vertical
+        # moves that bring the walker from the current floor to the segment's floor (one ride per
+        # floor hop; a route may start in a stairwell or lift). See `_ride_to`.
+        floor = (result.get("start") or {}).get("floor_id")
+        for segment in result["segments"]:
+            floor = _ride_to(segment["floor_id"], floor, vertical, path, transitions, lambda m: m)
+            path.append(walk(segment))
     for move in vertical:  # vertical moves with no walk after them (e.g. ends at a stair node)
         path.append(_connector_entry(move["kind"], move["element_id"], move))
         transitions.append(_vertical_transition(move))

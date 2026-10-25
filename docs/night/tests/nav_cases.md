@@ -1,8 +1,8 @@
 # Navigation case suite (backend, official mode)
 
-Seed `20261025`, 140 cases, generated 2026-10-25T01:43:16Z by `backend/scripts/nav_cases.py` (run from backend/: `.venv/Scripts/python scripts/nav_cases.py --n 140 --seed 20261025`).
+Seed `20261025`, 140 cases, generated 2026-10-25T01:58:34Z by `backend/scripts/nav_cases.py` (run from backend/: `.venv/Scripts/python scripts/nav_cases.py --n 140 --seed 20261025`).
 
-**139/140 passed.** Expectations come from an independent BFS over the building.json openings/vertical connectors (closures and step-free rules applied), never from the router; every returned route is re-validated independently (adjacency via element_path, closures, step-free, length = drawn polyline + vertical cost from floor elevations within max(1 %, 0.05 m), continuity, polyline inside the path's spaces within 0.3 m, the same length/inside/floor-order/end-space rules on the joined waypoints the UI animates, endpoints preserved, unreachable diagnosis category). See the module docstring for the exact rules.
+**140/140 passed.** Expectations come from an independent BFS over the building.json openings/vertical connectors (closures and step-free rules applied), never from the router; every returned route is re-validated independently (adjacency via element_path, closures, step-free, length = drawn polyline + vertical cost from floor elevations within max(1 %, 0.05 m), continuity, polyline inside the path's spaces within 0.3 m, the same length/inside/floor-order/end-space rules on the joined waypoints the UI animates, endpoints preserved, unreachable diagnosis category). See the module docstring for the exact rules.
 
 Buildings: `proc-campus-dev-000` (proc-campus), `proc-campus-dev-013` (proc-campus), `proc-factory-dev-003` (proc-factory), `proc-factory-dev-007` (proc-factory), `swiss-1785` (swiss), `swiss-2074` (swiss), `resplan-1465` (resplan), `resplan-14509` (resplan), `osm-way360544293` (osm), `osm-way27326387` (osm).
 
@@ -10,14 +10,14 @@ Buildings: `proc-campus-dev-000` (proc-campus), `proc-campus-dev-013` (proc-camp
 
 | | total | pass | fail | guaranteed reachable (pass/total) | blocked/unsupported (pass/total) |
 |---|---:|---:|---:|---:|---:|
-| guaranteed_reachable | 88 | 87 | 1 | 87/88 | 0/0 |
+| guaranteed_reachable | 88 | 88 | 0 | 88/88 | 0/0 |
 | blocked_or_unsupported | 52 | 52 | 0 | 0/0 | 52/52 |
 
 ### By category
 
 | | total | pass | fail | guaranteed reachable (pass/total) | blocked/unsupported (pass/total) |
 |---|---:|---:|---:|---:|---:|
-| reachable | 41 | 40 | 1 | 37/38 | 3/3 |
+| reachable | 41 | 41 | 0 | 38/38 | 3/3 |
 | step_free | 22 | 22 | 0 | 13/13 | 9/9 |
 | endpoints | 30 | 30 | 0 | 28/28 | 2/2 |
 | closures | 25 | 25 | 0 | 9/9 | 16/16 |
@@ -29,7 +29,7 @@ Buildings: `proc-campus-dev-000` (proc-campus), `proc-campus-dev-013` (proc-camp
 |---|---:|---:|---:|---:|---:|
 | proc-campus | 33 | 33 | 0 | 18/18 | 15/15 |
 | proc-factory | 28 | 28 | 0 | 21/21 | 7/7 |
-| swiss | 27 | 26 | 1 | 14/15 | 12/12 |
+| swiss | 27 | 27 | 0 | 15/15 | 12/12 |
 | resplan | 26 | 26 | 0 | 19/19 | 7/7 |
 | osm | 26 | 26 | 0 | 15/15 | 11/11 |
 
@@ -41,7 +41,7 @@ Buildings: `proc-campus-dev-000` (proc-campus), `proc-campus-dev-013` (proc-camp
 | proc-campus-dev-013 | 16 | 16 | 0 | 8/8 | 8/8 |
 | proc-factory-dev-003 | 14 | 14 | 0 | 11/11 | 3/3 |
 | proc-factory-dev-007 | 14 | 14 | 0 | 10/10 | 4/4 |
-| swiss-1785 | 14 | 13 | 1 | 4/5 | 9/9 |
+| swiss-1785 | 14 | 14 | 0 | 5/5 | 9/9 |
 | swiss-2074 | 13 | 13 | 0 | 10/10 | 3/3 |
 | resplan-1465 | 13 | 13 | 0 | 9/9 | 4/4 |
 | resplan-14509 | 13 | 13 | 0 | 10/10 | 3/3 |
@@ -90,16 +90,4 @@ Buildings: `proc-campus-dev-000` (proc-campus), `proc-campus-dev-013` (proc-camp
 
 ## Failures
 
-Failed checks: continuity x2, waypoint_inside x1, waypoint_length x1, endpoint x1
-
-- **#004** `swiss-1785` reachable/same_floor_via_other_floor (case_seed 580143580): expect `reachable`, got `reachable`
-  - request: `{"mode": "official", "start": {"kind": "space", "id": "swiss-1785-F1-S029"}, "target": {"kind": "space", "id": "swiss-1785-F1-S007"}}`
-  - continuity: `{"path_index": 3, "gap_m": 15.5261}`
-  - continuity: `{"path_index": 7, "gap_m": 13.0516}`
-  - waypoint_inside: `[{"from_index": 7, "point": [6.337, -2.035]}, {"from_index": 18, "point": [-2.704, 1.62]}]`
-  - waypoint_length: `{"length_m": 31.85, "waypoint_xy_m": 48.425, "vertical_cost_m": 12.0, "delta_m": -28.575}`
-  - endpoint: `{"target": "first/last waypoint not in the route's end space", "space": "swiss-1785-F1-S007", "waypoint": {"floor_id": "swiss-1785-F1", "position": [0.4426400097823433, 10.443999999999999]}}`
-
-### Note on `continuity` failures
-
-Seen so far only on routes that leave a floor and come back to it without walking on the intermediate floor (e.g. F1 -stairs-> F0 -other stairs-> F1 in swiss-1785, where F0-S035 is only passed through as a node). `app/navigation/response.py` (`official_response` -> `_ride_to`) only consumes a queued vertical move while the next walk segment is on a different floor, so both moves stay queued and are appended after the last walk segment: `path`/`waypoints` jump straight across the floor between the two stairwells (through walls), then ride F1->F0->F1 after the target, so the last waypoint is not in the target space and the waypoint length differs from `length_m`. `space_path`, `element_path` and `length_m` themselves are correct. Fix direction: interleave walk segments and vertical moves in the router's step order instead of matching floors.
+None.

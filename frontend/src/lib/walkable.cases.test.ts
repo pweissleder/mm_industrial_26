@@ -24,7 +24,7 @@ const SEED = 20261025;
 /** Multiplies the generated walk/huge-step/door counts (e.g. 25 for a stress run); default 1. */
 const SCALE = Math.max(1, Number(process.env.ARINAV_WALK_CASES_SCALE ?? 1) || 1);
 const SUB = 0.05;
-const MIN_DOOR_HALF_M = 0.45; // walkable.ts door pass radius (max(width/2, 0.45)), restated here
+const MIN_DOOR_HALF_M = 0.45; // walkable.ts door-gap radius (max(width/2, 0.45)), restated here
 const EPS = 1e-9;
 
 // ------------------------------------------------------------------ seeded PRNG
@@ -351,52 +351,51 @@ describe.skipIf(!available)('walkable cases on real buildings (seed 20261025)', 
   });
 });
 
-// ------------------------------------------------------------------ known walkable.ts defects
-// Minimal reproducers found by the generator in a stress run (ARINAV_WALK_CASES_SCALE=25 plus more
-// buildings). `it.fails`: the suite stays green while the defect exists and turns red once it is
-// fixed (then switch these to `it`).
+// ------------------------------------------------------------------ regressions (fixed defects)
+// Minimal reproducers of walkable.ts defects found by the generator in a stress run
+// (ARINAV_WALK_CASES_SCALE=25 plus more buildings); fixed, kept as regression tests.
 
 const load = (id: string) => JSON.parse(readFileSync(datasetPath(id), 'utf-8')) as BuildingModel;
 
 describe.skipIf(!existsSync(datasetPath('resplan-1465')) || !existsSync(datasetPath('proc-factory-dev-003')))(
-  'known defect: the door pass zone is a circle of radius max(width/2, 0.45 m)',
+  'regression: wide openings do not open parallel walls (pass band, not a circle)',
   () => {
     // A wide opening (resplan-1465 O0008 corridor<->living, 3.9 m; proc-factory-dev-003 O0002
-    // hall<->hall, 14.6 m) gets a pass circle of 1.95 m / 7.3 m round its centre. Inside that
-    // circle walkable.ts waives the wall test, so the walker crosses a PARALLEL wall into a third
-    // space that has no opening to the current one, while space_id stays unchanged.
-    it.fails('resplan-1465: corridor S010 -> bedroom S002 straight through the wall (no door)', () => {
+    // hall<->hall, 14.6 m) used to get a pass circle of 1.95 m / 7.3 m round its centre, inside
+    // which the wall test was waived: the walker crossed a PARALLEL wall into a third space that
+    // has no opening to the current one, while space_id stayed unchanged.
+    it('resplan-1465: corridor S010 -> bedroom S002 straight through the wall (no door)', () => {
       const model = load('resplan-1465');
       const world = buildWorld(model);
       const checker = new Checker(model);
       const start: WalkState = { floor_id: 'resplan-1465-F0', space_id: 'resplan-1465-F0-S010', position: [19.862, 8.5] };
       const trace = incremental(world, start, clean([0, 1.5])); // north, the corridor wall is at y=8.86
-      // actual: ends at about [19.862, 10.0], inside bedroom S002 (y >= 9.18), still "in S010"
+      // before the fix: ended at about [19.862, 10.0], inside bedroom S002 (y >= 9.18), "in S010"
       expect(checker.traceProblems(trace)).toEqual([]);
     });
 
-    it.fails('proc-factory-dev-003: hall F0-S001 -> toilet F0-S022 across the x=0 wall', () => {
+    it('proc-factory-dev-003: hall F0-S001 -> toilet F0-S022 across the x=0 wall', () => {
       const model = load('proc-factory-dev-003');
       const world = buildWorld(model);
       const checker = new Checker(model);
       const start: WalkState = { floor_id: 'proc-factory-dev-003-F0', space_id: 'proc-factory-dev-003-F0-S001', position: [-0.5, 16.6] };
       const trace = incremental(world, start, clean([1, 0])); // east into the wall shared with the toilet
-      // actual: ends at about [0.03, 16.6], inside toilet S022 (x >= 0), still "in hall S001"
+      // before the fix: ended at about [0.03, 16.6], inside toilet S022 (x >= 0), "in hall S001"
       expect(checker.traceProblems(trace)).toEqual([]);
     });
   },
 );
 
-describe.skipIf(!existsSync(datasetPath('osm-way22744230')))('known defect: ride() arrival fallback', () => {
-  // When the XY is not inside the arrival space, ride() lands on the arithmetic mean of the
+describe.skipIf(!existsSync(datasetPath('osm-way22744230')))('regression: ride() arrival fallback', () => {
+  // When the XY is not inside the arrival space, ride() used to land on the arithmetic mean of the
   // polygon's vertices, which lies OUTSIDE a concave arrival space (osm-way22744230 F2-S020).
-  it.fails('osm-way22744230: stairs V05 F1 -> F2 lands outside F2-S020', () => {
+  it('osm-way22744230: stairs V05 F1 -> F2 lands outside F2-S020', () => {
     const model = load('osm-way22744230');
     const world = buildWorld(model);
     const start: WalkState = { floor_id: 'osm-way22744230-F1', space_id: 'osm-way22744230-F1-S039', position: [-33.713, -21.545] };
     const arrived = ride(world, start, 'osm-way22744230-V05', 'osm-way22744230-F2', false);
     expect(arrived).not.toBeNull();
-    // actual: position [-32.907, -19.907], not inside F2-S020 (locate returns another space/null)
+    // before the fix: position [-32.907, -19.907], not inside F2-S020 (nor any other space)
     expect(new Checker(model).stateProblems(arrived!)).toEqual([]);
   });
 });

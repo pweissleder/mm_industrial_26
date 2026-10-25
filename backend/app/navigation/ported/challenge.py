@@ -423,6 +423,7 @@ def _assemble_leg(view, graph, nodes, warnings):
     element_path, steps, segments, transitions = [], [], [], []
     walk = vertical = 0.0
     for u, v in itertools.pairwise(nodes):
+        order = len(steps)  # route order of this step (segments/transitions carry it)
         edge = view.cheapest(graph, u, v)
         weight = edge["weight"]
         if "via" in edge:
@@ -455,6 +456,7 @@ def _assemble_leg(view, graph, nodes, warnings):
                     "to_position": list(view.anchor(v)),
                     "delta_elevation_m": rise,
                     "cost_m": weight,
+                    "order": order,
                 }
             )
             continue
@@ -483,7 +485,9 @@ def _assemble_leg(view, graph, nodes, warnings):
         if segments and segments[-1]["space_id"] == sid and segments[-1]["points"][-1] == points[0]:
             segments[-1]["points"].extend(points[1:])
         else:
-            segments.append({"floor_id": floor_id, "space_id": sid, "points": points})
+            segments.append(
+                {"floor_id": floor_id, "space_id": sid, "points": points, "order": order}
+            )
     return {
         "element_path": element_path,
         "steps": steps,
@@ -717,7 +721,7 @@ def official_route(bmap, request):
         if not flags["no_production_transit"]
         else None
     )
-    legs, all_nodes = [], []
+    legs, all_nodes, steps_before = [], [], 0
     for index, (a, b) in enumerate(itertools.pairwise(endpoints)):
         graph = base if base is not None else _graph(view, flags, (a["space_id"], b["space_id"]))
         found = _leg(graph, a["node"], b["node"])
@@ -731,6 +735,9 @@ def official_route(bmap, request):
             return result
         length, nodes = found
         part = _assemble_leg(view, graph, nodes, warnings)
+        for item in part["segments"] + part["transitions"]:  # route order across legs
+            item["order"] += steps_before
+        steps_before += len(part["steps"])
         legs.append(
             {
                 "index": index,

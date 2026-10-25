@@ -491,7 +491,9 @@ def check_waypoints(
             if bad is not None and len(outside) < 5:
                 outside.append({"from_index": a.get("index"), "point": bad})
             continue
-        connector = model.connectors.get(b.get("element_id") or a.get("element_id") or "")
+        # The departure waypoint carries the connector boarded there (an arrival point that is
+        # also the next departure carries the next connector).
+        connector = model.connectors.get(a.get("element_id") or b.get("element_id") or "")
         if connector is None:
             fail("waypoint_floors", {"floor_change_without_connector": b.get("index")})
             continue

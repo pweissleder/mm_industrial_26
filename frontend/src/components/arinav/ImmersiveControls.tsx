@@ -84,7 +84,7 @@ export function ImmersiveBar(props: {
               key={`${r.id}-${f.id}`}
               className="chip"
               disabled={!r.usable}
-              title={r.reason === 'not step-free' ? 'Stairs are not step-free' : r.reason === 'closed' ? 'Closed' : undefined}
+              title={r.reason === 'not step-free' ? 'Not step-free' : r.reason === 'closed' ? 'Closed' : undefined}
               onClick={() => im.rideTo(r.id, f.id)}
             >
               {r.kind === 'lift' ? 'Lift' : 'Stairs'} to {f.name}

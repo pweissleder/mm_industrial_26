@@ -23,8 +23,8 @@
    "closures": 25,
    "invalid": 22
   },
-  "generated_utc": "2026-10-25T01:43:16Z",
-  "elapsed_s": 90.6
+  "generated_utc": "2026-10-25T01:58:34Z",
+  "elapsed_s": 49.9
  },
  "cases": [
   {
@@ -72,7 +72,7 @@
     "length_delta_m": 0.003,
     "waypoint_xy_m": 35.027
    },
-   "elapsed_ms": 69.5,
+   "elapsed_ms": 68.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -121,7 +121,7 @@
     "length_delta_m": 0.0,
     "waypoint_xy_m": 18.26
    },
-   "elapsed_ms": 27.7,
+   "elapsed_ms": 33.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -186,7 +186,7 @@
     "length_delta_m": -0.0022,
     "waypoint_xy_m": 111.012
    },
-   "elapsed_ms": 43.2,
+   "elapsed_ms": 43.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -241,7 +241,7 @@
     "length_delta_m": -0.0029,
     "waypoint_xy_m": 53.533
    },
-   "elapsed_ms": 25.1,
+   "elapsed_ms": 23.6,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -251,64 +251,7 @@
    "building": "swiss-1785",
    "family": "swiss",
    "category": "reachable",
-   "failed": [
-    {
-     "check": "continuity",
-     "detail": {
-      "path_index": 3,
-      "gap_m": 15.5261
-     }
-    },
-    {
-     "check": "continuity",
-     "detail": {
-      "path_index": 7,
-      "gap_m": 13.0516
-     }
-    },
-    {
-     "check": "waypoint_inside",
-     "detail": [
-      {
-       "from_index": 7,
-       "point": [
-        6.337,
-        -2.035
-       ]
-      },
-      {
-       "from_index": 18,
-       "point": [
-        -2.704,
-        1.62
-       ]
-      }
-     ]
-    },
-    {
-     "check": "waypoint_length",
-     "detail": {
-      "length_m": 31.85,
-      "waypoint_xy_m": 48.425,
-      "vertical_cost_m": 12.0,
-      "delta_m": -28.575
-     }
-    },
-    {
-     "check": "endpoint",
-     "detail": {
-      "target": "first/last waypoint not in the route's end space",
-      "space": "swiss-1785-F1-S007",
-      "waypoint": {
-       "floor_id": "swiss-1785-F1",
-       "position": [
-        0.4426400097823433,
-        10.443999999999999
-       ]
-      }
-     }
-    }
-   ],
+   "failed": [],
    "variant": "same_floor_via_other_floor",
    "request": {
     "mode": "official",
@@ -346,7 +289,7 @@
      "swiss-1785-F1-O0064",
      "swiss-1785-F1-O0063"
     ],
-    "waypoints": 22,
+    "waypoints": 20,
     "warnings": 0,
     "unreachable_reason": null,
     "diagnosis": null
@@ -355,11 +298,11 @@
     "vertical_cost_m": 12.0,
     "drawn_walk_m": 19.848,
     "length_delta_m": 0.0025,
-    "waypoint_xy_m": 48.425
+    "waypoint_xy_m": 19.848
    },
-   "elapsed_ms": 255.7,
+   "elapsed_ms": 239.7,
    "group": "guaranteed_reachable",
-   "passed": false
+   "passed": true
   },
   {
    "index": 5,
@@ -410,7 +353,7 @@
     "length_delta_m": 0.0028,
     "waypoint_xy_m": 15.397
    },
-   "elapsed_ms": 74.1,
+   "elapsed_ms": 55.4,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -461,7 +404,7 @@
     "length_delta_m": -0.0024,
     "waypoint_xy_m": 20.292
    },
-   "elapsed_ms": 62.7,
+   "elapsed_ms": 62.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -512,7 +455,7 @@
     "length_delta_m": -0.0047,
     "waypoint_xy_m": 8.745
    },
-   "elapsed_ms": 30.4,
+   "elapsed_ms": 31.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -549,7 +492,7 @@
     "diagnosis": "unreachable_in_model"
    },
    "diagnosis_expected": "unreachable_in_model",
-   "elapsed_ms": 44201.3,
+   "elapsed_ms": 24338.9,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -606,7 +549,7 @@
     "length_delta_m": -0.0025,
     "waypoint_xy_m": 25.222
    },
-   "elapsed_ms": 29.6,
+   "elapsed_ms": 30.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -655,7 +598,7 @@
     "length_delta_m": 0.0,
     "waypoint_xy_m": 53.0
    },
-   "elapsed_ms": 10.3,
+   "elapsed_ms": 10.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -710,7 +653,7 @@
     "length_delta_m": -0.0034,
     "waypoint_xy_m": 26.143
    },
-   "elapsed_ms": 6.7,
+   "elapsed_ms": 5.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -765,7 +708,7 @@
     "length_delta_m": 0.001,
     "waypoint_xy_m": 43.839
    },
-   "elapsed_ms": 5.1,
+   "elapsed_ms": 7.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -828,7 +771,7 @@
     "length_delta_m": -0.0018,
     "waypoint_xy_m": 68.212
    },
-   "elapsed_ms": 7.2,
+   "elapsed_ms": 8.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -879,7 +822,7 @@
     "length_delta_m": -0.0028,
     "waypoint_xy_m": 9.823
    },
-   "elapsed_ms": 12.1,
+   "elapsed_ms": 11.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -936,7 +879,7 @@
     "length_delta_m": -0.0034,
     "waypoint_xy_m": 10.853
    },
-   "elapsed_ms": 14.1,
+   "elapsed_ms": 10.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -985,7 +928,7 @@
     "length_delta_m": 0.0022,
     "waypoint_xy_m": 10.128
    },
-   "elapsed_ms": 5.2,
+   "elapsed_ms": 6.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1034,7 +977,7 @@
     "length_delta_m": -0.002,
     "waypoint_xy_m": 7.442
    },
-   "elapsed_ms": 4.6,
+   "elapsed_ms": 4.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1071,7 +1014,7 @@
     "diagnosis": "unreachable_in_model"
    },
    "diagnosis_expected": "unreachable_in_model",
-   "elapsed_ms": 1.6,
+   "elapsed_ms": 2.8,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -1128,7 +1071,7 @@
     "length_delta_m": -0.0043,
     "waypoint_xy_m": 32.094
    },
-   "elapsed_ms": 5.8,
+   "elapsed_ms": 5.6,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1181,7 +1124,7 @@
     "length_delta_m": 0.0032,
     "waypoint_xy_m": 26.447
    },
-   "elapsed_ms": 10.2,
+   "elapsed_ms": 6.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1230,7 +1173,7 @@
     "length_delta_m": -0.0,
     "waypoint_xy_m": 31.05
    },
-   "elapsed_ms": 3.7,
+   "elapsed_ms": 3.4,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1295,7 +1238,7 @@
     "length_delta_m": -0.0012,
     "waypoint_xy_m": 91.941
    },
-   "elapsed_ms": 8.5,
+   "elapsed_ms": 9.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1344,7 +1287,7 @@
     "length_delta_m": -0.0,
     "waypoint_xy_m": 31.38
    },
-   "elapsed_ms": 2.8,
+   "elapsed_ms": 2.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1391,7 +1334,7 @@
     "length_delta_m": 0.0006,
     "waypoint_xy_m": 4.959
    },
-   "elapsed_ms": 3.5,
+   "elapsed_ms": 3.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1448,7 +1391,7 @@
     "length_delta_m": 0.0039,
     "waypoint_xy_m": 17.656
    },
-   "elapsed_ms": 13.0,
+   "elapsed_ms": 14.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1499,7 +1442,7 @@
     "length_delta_m": 0.0015,
     "waypoint_xy_m": 17.338
    },
-   "elapsed_ms": 4.8,
+   "elapsed_ms": 5.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1546,7 +1489,7 @@
     "length_delta_m": 0.0029,
     "waypoint_xy_m": 5.227
    },
-   "elapsed_ms": 2.0,
+   "elapsed_ms": 1.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1583,7 +1526,7 @@
     "diagnosis": "unreachable_in_model"
    },
    "diagnosis_expected": "unreachable_in_model",
-   "elapsed_ms": 0.8,
+   "elapsed_ms": 0.4,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -1642,7 +1585,7 @@
     "length_delta_m": -0.0046,
     "waypoint_xy_m": 42.565
    },
-   "elapsed_ms": 8.9,
+   "elapsed_ms": 5.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1699,7 +1642,7 @@
     "length_delta_m": 0.004,
     "waypoint_xy_m": 38.206
    },
-   "elapsed_ms": 10.6,
+   "elapsed_ms": 9.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1754,7 +1697,7 @@
     "length_delta_m": -0.0024,
     "waypoint_xy_m": 26.922
    },
-   "elapsed_ms": 4.9,
+   "elapsed_ms": 7.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1823,7 +1766,7 @@
     "length_delta_m": -0.0045,
     "waypoint_xy_m": 110.434
    },
-   "elapsed_ms": 9.6,
+   "elapsed_ms": 11.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1878,7 +1821,7 @@
     "length_delta_m": 0.0014,
     "waypoint_xy_m": 74.469
    },
-   "elapsed_ms": 6.1,
+   "elapsed_ms": 6.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1925,7 +1868,7 @@
     "length_delta_m": -0.003,
     "waypoint_xy_m": 5.063
    },
-   "elapsed_ms": 17.7,
+   "elapsed_ms": 14.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -1980,7 +1923,7 @@
     "length_delta_m": 0.0027,
     "waypoint_xy_m": 14.757
    },
-   "elapsed_ms": 9.2,
+   "elapsed_ms": 9.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2027,7 +1970,7 @@
     "length_delta_m": -0.0032,
     "waypoint_xy_m": 7.523
    },
-   "elapsed_ms": 3.3,
+   "elapsed_ms": 5.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2074,7 +2017,7 @@
     "length_delta_m": -0.0015,
     "waypoint_xy_m": 2.062
    },
-   "elapsed_ms": 14.6,
+   "elapsed_ms": 8.4,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2123,7 +2066,7 @@
     "length_delta_m": 0.0027,
     "waypoint_xy_m": 2.017
    },
-   "elapsed_ms": 16544.5,
+   "elapsed_ms": 7929.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2180,7 +2123,7 @@
     "length_delta_m": 0.0006,
     "waypoint_xy_m": 39.829
    },
-   "elapsed_ms": 5.1,
+   "elapsed_ms": 4.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2237,7 +2180,7 @@
     "length_delta_m": -0.002,
     "waypoint_xy_m": 38.062
    },
-   "elapsed_ms": 8.3,
+   "elapsed_ms": 13.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2275,7 +2218,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 14.0,
+   "elapsed_ms": 10.4,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -2313,7 +2256,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 4.3,
+   "elapsed_ms": 2.6,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -2367,7 +2310,7 @@
     "length_delta_m": -0.0041,
     "waypoint_xy_m": 56.724
    },
-   "elapsed_ms": 9.1,
+   "elapsed_ms": 5.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2421,7 +2364,7 @@
     "length_delta_m": -0.001,
     "waypoint_xy_m": 45.371
    },
-   "elapsed_ms": 5.4,
+   "elapsed_ms": 4.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2459,7 +2402,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 3.3,
+   "elapsed_ms": 2.8,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -2497,7 +2440,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 1.6,
+   "elapsed_ms": 1.1,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -2547,7 +2490,7 @@
     "length_delta_m": -0.0015,
     "waypoint_xy_m": 12.621
    },
-   "elapsed_ms": 6.7,
+   "elapsed_ms": 4.8,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2597,7 +2540,7 @@
     "length_delta_m": -0.002,
     "waypoint_xy_m": 7.442
    },
-   "elapsed_ms": 9.7,
+   "elapsed_ms": 5.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2649,7 +2592,7 @@
     "length_delta_m": -0.0013,
     "waypoint_xy_m": 32.751
    },
-   "elapsed_ms": 20.6,
+   "elapsed_ms": 19.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2687,7 +2630,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 2.3,
+   "elapsed_ms": 3.4,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -2737,7 +2680,7 @@
     "length_delta_m": -0.0031,
     "waypoint_xy_m": 9.713
    },
-   "elapsed_ms": 3.0,
+   "elapsed_ms": 3.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2793,7 +2736,7 @@
     "length_delta_m": 0.0031,
     "waypoint_xy_m": 34.957
    },
-   "elapsed_ms": 6.0,
+   "elapsed_ms": 4.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2849,7 +2792,7 @@
     "length_delta_m": -0.0005,
     "waypoint_xy_m": 53.051
    },
-   "elapsed_ms": 5.7,
+   "elapsed_ms": 5.8,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2913,7 +2856,7 @@
     "length_delta_m": -0.0031,
     "waypoint_xy_m": 62.663
    },
-   "elapsed_ms": 6.3,
+   "elapsed_ms": 7.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -2951,7 +2894,7 @@
     "diagnosis": "unreachable_in_model"
    },
    "diagnosis_expected": "unreachable_in_model",
-   "elapsed_ms": 1.8,
+   "elapsed_ms": 2.3,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -3001,7 +2944,7 @@
     "length_delta_m": -0.0001,
     "waypoint_xy_m": 6.71
    },
-   "elapsed_ms": 9.2,
+   "elapsed_ms": 9.4,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3051,7 +2994,7 @@
     "length_delta_m": -0.0014,
     "waypoint_xy_m": 8.611
    },
-   "elapsed_ms": 4.6,
+   "elapsed_ms": 4.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3103,7 +3046,7 @@
     "length_delta_m": 0.0003,
     "waypoint_xy_m": 7.37
    },
-   "elapsed_ms": 2.9,
+   "elapsed_ms": 2.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3231,7 +3174,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 10.9,
+   "elapsed_ms": 6.4,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -3269,7 +3212,7 @@
     "diagnosis": "step_free"
    },
    "diagnosis_expected": "step_free",
-   "elapsed_ms": 2.3,
+   "elapsed_ms": 1.2,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -3324,7 +3267,7 @@
     "length_delta_m": 0.0,
     "waypoint_xy_m": 38.63
    },
-   "elapsed_ms": 9.0,
+   "elapsed_ms": 7.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3369,7 +3312,7 @@
     "length_delta_m": 0.0,
     "waypoint_xy_m": 3.0
    },
-   "elapsed_ms": 1.7,
+   "elapsed_ms": 1.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3428,7 +3371,7 @@
     "length_delta_m": -0.0027,
     "waypoint_xy_m": 81.093
    },
-   "elapsed_ms": 12.2,
+   "elapsed_ms": 10.8,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3483,7 +3426,7 @@
     "length_delta_m": -0.004,
     "waypoint_xy_m": 35.324
    },
-   "elapsed_ms": 5.7,
+   "elapsed_ms": 7.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3520,7 +3463,7 @@
     "diagnosis": "unreachable_in_model"
    },
    "diagnosis_expected": "unreachable_in_model",
-   "elapsed_ms": 0.6,
+   "elapsed_ms": 3.1,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -3583,7 +3526,7 @@
     "drawn_walk_m": 18.06,
     "waypoint_xy_m": 18.06
    },
-   "elapsed_ms": 17.5,
+   "elapsed_ms": 17.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3628,7 +3571,7 @@
     "length_delta_m": -0.0019,
     "waypoint_xy_m": 4.802
    },
-   "elapsed_ms": 2.4,
+   "elapsed_ms": 2.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3675,7 +3618,7 @@
     "length_delta_m": -0.0023,
     "waypoint_xy_m": 4.462
    },
-   "elapsed_ms": 1.4,
+   "elapsed_ms": 1.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3728,7 +3671,7 @@
     "drawn_walk_m": 30.147,
     "waypoint_xy_m": 30.147
    },
-   "elapsed_ms": 20.2,
+   "elapsed_ms": 20.1,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3789,7 +3732,7 @@
     "length_delta_m": 0.0039,
     "waypoint_xy_m": 39.136
    },
-   "elapsed_ms": 7.0,
+   "elapsed_ms": 6.6,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3846,7 +3789,7 @@
     "length_delta_m": 0.0008,
     "waypoint_xy_m": 38.309
    },
-   "elapsed_ms": 8.5,
+   "elapsed_ms": 10.8,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3899,7 +3842,7 @@
     "drawn_walk_m": 45.193,
     "waypoint_xy_m": 45.193
    },
-   "elapsed_ms": 10.2,
+   "elapsed_ms": 6.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -3964,7 +3907,7 @@
     "length_delta_m": -0.0027,
     "waypoint_xy_m": 102.333
    },
-   "elapsed_ms": 9.8,
+   "elapsed_ms": 9.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4023,7 +3966,7 @@
     "length_delta_m": -0.0037,
     "waypoint_xy_m": 62.064
    },
-   "elapsed_ms": 5.0,
+   "elapsed_ms": 7.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4060,7 +4003,7 @@
     "diagnosis": "unreachable_in_model"
    },
    "diagnosis_expected": "unreachable_in_model",
-   "elapsed_ms": 1.2,
+   "elapsed_ms": 1.5,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -4114,7 +4057,7 @@
     "length_delta_m": -0.0037,
     "waypoint_xy_m": 8.174
    },
-   "elapsed_ms": 3.8,
+   "elapsed_ms": 5.4,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4161,7 +4104,7 @@
     "length_delta_m": 0.0029,
     "waypoint_xy_m": 7.497
    },
-   "elapsed_ms": 2.1,
+   "elapsed_ms": 2.4,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4208,7 +4151,7 @@
     "length_delta_m": -0.0012,
     "waypoint_xy_m": 6.331
    },
-   "elapsed_ms": 9.4,
+   "elapsed_ms": 11.0,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4263,7 +4206,7 @@
     "length_delta_m": -0.0034,
     "waypoint_xy_m": 101.173
    },
-   "elapsed_ms": 13605.3,
+   "elapsed_ms": 7923.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4316,7 +4259,7 @@
     "length_delta_m": 0.0024,
     "waypoint_xy_m": 7.808
    },
-   "elapsed_ms": 3.1,
+   "elapsed_ms": 4.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4429,7 +4372,7 @@
     "drawn_walk_m": 12.846,
     "waypoint_xy_m": 12.846
    },
-   "elapsed_ms": 4.6,
+   "elapsed_ms": 4.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4485,7 +4428,7 @@
     "length_delta_m": -0.0045,
     "waypoint_xy_m": 82.625
    },
-   "elapsed_ms": 8.8,
+   "elapsed_ms": 6.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4549,7 +4492,7 @@
     "length_delta_m": 0.0001,
     "waypoint_xy_m": 70.5
    },
-   "elapsed_ms": 6.9,
+   "elapsed_ms": 5.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4601,7 +4544,7 @@
     "length_delta_m": -0.0028,
     "waypoint_xy_m": 11.953
    },
-   "elapsed_ms": 19.0,
+   "elapsed_ms": 11.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4657,7 +4600,7 @@
     "length_delta_m": 0.0032,
     "waypoint_xy_m": 9.047
    },
-   "elapsed_ms": 7.4,
+   "elapsed_ms": 8.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4712,7 +4655,7 @@
     "drawn_walk_m": 15.649,
     "waypoint_xy_m": 15.649
    },
-   "elapsed_ms": 13.0,
+   "elapsed_ms": 8.6,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4759,7 +4702,7 @@
     "length_delta_m": 0.0029,
     "waypoint_xy_m": 5.227
    },
-   "elapsed_ms": 3.3,
+   "elapsed_ms": 2.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4808,7 +4751,7 @@
     "length_delta_m": 0.0034,
     "waypoint_xy_m": 105.017
    },
-   "elapsed_ms": 30.2,
+   "elapsed_ms": 22.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4869,7 +4812,7 @@
     "length_delta_m": 0.0013,
     "waypoint_xy_m": 19.739
    },
-   "elapsed_ms": 10.0,
+   "elapsed_ms": 9.7,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -4929,7 +4872,7 @@
     "element_id": "proc-campus-dev-000-F2-O0069",
     "revision": 0
    },
-   "elapsed_ms": 16.0,
+   "elapsed_ms": 9.8,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -4989,7 +4932,7 @@
     "element_id": "proc-campus-dev-013-F1-O0033",
     "revision": 0
    },
-   "elapsed_ms": 9.3,
+   "elapsed_ms": 6.1,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5067,7 +5010,7 @@
     "diagnosis": "closed"
    },
    "diagnosis_expected": "closed",
-   "elapsed_ms": 40.9,
+   "elapsed_ms": 21.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5125,7 +5068,7 @@
     "diagnosis": "closed"
    },
    "diagnosis_expected": "closed",
-   "elapsed_ms": 8.4,
+   "elapsed_ms": 4.8,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5161,7 +5104,7 @@
      "swiss-1785-F2-O0084",
      "swiss-1785-F2-O0082"
     ],
-    "waypoints": 25,
+    "waypoints": 23,
     "warnings": 0,
     "unreachable_reason": null,
     "diagnosis": null
@@ -5197,7 +5140,7 @@
     "element_id": "swiss-1785-F2-S030",
     "revision": 0
    },
-   "elapsed_ms": 82.6,
+   "elapsed_ms": 30.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5289,7 +5232,7 @@
     "element_id": "swiss-2074-F0-O0001",
     "revision": 0
    },
-   "elapsed_ms": 37.4,
+   "elapsed_ms": 21.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -5351,7 +5294,7 @@
     "element_id": "resplan-1465-F0-O0008",
     "revision": 0
    },
-   "elapsed_ms": 27.4,
+   "elapsed_ms": 9.7,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5411,7 +5354,7 @@
     "element_id": "resplan-14509-F0-O0002",
     "revision": 0
    },
-   "elapsed_ms": 7.7,
+   "elapsed_ms": 2.9,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5491,7 +5434,7 @@
     "length_delta_m": -0.0061,
     "waypoint_xy_m": 68.296
    },
-   "elapsed_ms": 13820.7,
+   "elapsed_ms": 7974.8,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -5553,7 +5496,7 @@
     "element_id": "osm-way27326387-F-2-O0018",
     "revision": 0
    },
-   "elapsed_ms": 10.3,
+   "elapsed_ms": 4.7,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5611,7 +5554,7 @@
     "diagnosis": "closed"
    },
    "diagnosis_expected": "closed",
-   "elapsed_ms": 32.7,
+   "elapsed_ms": 15.9,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5671,7 +5614,7 @@
     "element_id": "proc-campus-dev-013-F0-O0008",
     "revision": 2
    },
-   "elapsed_ms": 17.4,
+   "elapsed_ms": 5.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5763,7 +5706,7 @@
     "element_id": "proc-factory-dev-003-V01",
     "revision": 0
    },
-   "elapsed_ms": 45.5,
+   "elapsed_ms": 21.3,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -5829,7 +5772,7 @@
     "element_id": "proc-factory-dev-007-F1-O0039",
     "revision": 0
    },
-   "elapsed_ms": 27.1,
+   "elapsed_ms": 7.7,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5889,7 +5832,7 @@
     "diagnosis": "closed"
    },
    "diagnosis_expected": "closed",
-   "elapsed_ms": 72.3,
+   "elapsed_ms": 18.8,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -5975,7 +5918,7 @@
     "length_delta_m": -0.0001,
     "waypoint_xy_m": 11.49
    },
-   "elapsed_ms": 49.8,
+   "elapsed_ms": 22.6,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -6035,7 +5978,7 @@
     "element_id": "resplan-1465-F0-O0004",
     "revision": 2
    },
-   "elapsed_ms": 11.9,
+   "elapsed_ms": 4.8,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -6109,7 +6052,7 @@
     "length_delta_m": 0.0002,
     "waypoint_xy_m": 11.61
    },
-   "elapsed_ms": 72.3,
+   "elapsed_ms": 19.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -6191,7 +6134,7 @@
     "element_id": "osm-way360544293-F0-O0055",
     "revision": 0
    },
-   "elapsed_ms": 75.0,
+   "elapsed_ms": 26.8,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -6251,7 +6194,7 @@
     "element_id": "osm-way27326387-F-2-O0013",
     "revision": 2
    },
-   "elapsed_ms": 14.5,
+   "elapsed_ms": 6.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -6331,7 +6274,7 @@
     "element_id": "proc-campus-dev-000-F3-O0102",
     "revision": 2
    },
-   "elapsed_ms": 87.4,
+   "elapsed_ms": 25.5,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -6391,7 +6334,7 @@
     "element_id": "proc-campus-dev-013-F1-O0035",
     "revision": 4
    },
-   "elapsed_ms": 22.6,
+   "elapsed_ms": 5.9,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -6475,7 +6418,7 @@
     "element_id": "proc-factory-dev-003-V01",
     "revision": 2
    },
-   "elapsed_ms": 28.6,
+   "elapsed_ms": 9.9,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -6571,7 +6514,7 @@
     "element_id": "proc-factory-dev-007-V01",
     "revision": 2
    },
-   "elapsed_ms": 39.8,
+   "elapsed_ms": 18.2,
    "group": "guaranteed_reachable",
    "passed": true
   },
@@ -6643,7 +6586,7 @@
     "diagnosis": "closed"
    },
    "diagnosis_expected": "closed",
-   "elapsed_ms": 98.8,
+   "elapsed_ms": 22.9,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -6754,7 +6697,7 @@
     "message": "start: position is outside the space polygon"
    },
    "response": null,
-   "elapsed_ms": 0.2,
+   "elapsed_ms": 0.1,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -6861,7 +6804,7 @@
     "unreachable_reason": "The target door swiss-2074-F0-O0049 is closed.",
     "diagnosis": "closed"
    },
-   "elapsed_ms": 0.3,
+   "elapsed_ms": 0.2,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -6895,7 +6838,7 @@
     "message": "start.position must be [x, y] with finite numbers"
    },
    "response": null,
-   "elapsed_ms": 0.1,
+   "elapsed_ms": 0.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7013,7 +6956,7 @@
     "message": "Unknown element id(s) in assume_closed: proc-campus-dev-000-X0"
    },
    "response": null,
-   "elapsed_ms": 0.1,
+   "elapsed_ms": 0.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7044,7 +6987,7 @@
     "message": "start.side_space_id must be one of the opening's spaces"
    },
    "response": null,
-   "elapsed_ms": 0.1,
+   "elapsed_ms": 0.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7128,7 +7071,7 @@
     "message": "Precision routing is not available for this building: Precise navigation currently supports verified procedural factory/campus coordinates only"
    },
    "response": null,
-   "elapsed_ms": 0.1,
+   "elapsed_ms": 0.0,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7205,7 +7148,7 @@
     "unreachable_reason": "The start space resplan-1465-F0-S001 is closed.",
     "diagnosis": "closed"
    },
-   "elapsed_ms": 0.5,
+   "elapsed_ms": 0.2,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7239,7 +7182,7 @@
     "message": "start: position is outside the space polygon"
    },
    "response": null,
-   "elapsed_ms": 0.3,
+   "elapsed_ms": 0.1,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7346,7 +7289,7 @@
     "unreachable_reason": "The target door proc-campus-dev-000-F0-O0029 is closed.",
     "diagnosis": "closed"
    },
-   "elapsed_ms": 1.1,
+   "elapsed_ms": 0.3,
    "group": "blocked_or_unsupported",
    "passed": true
   },
@@ -7380,7 +7323,7 @@
     "message": "start.position must be [x, y] with finite numbers"
    },
    "response": null,
-   "elapsed_ms": 0.1,
+   "elapsed_ms": 0.0,
    "group": "blocked_or_unsupported",
    "passed": true
   }
