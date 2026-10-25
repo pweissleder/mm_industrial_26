@@ -37,6 +37,31 @@
         "8010"
       ],
       "port": 8010
+    },
+    {
+      "name": "backend-memory-sh",
+      "runtimeExecutable": "sh",
+      "runtimeArgs": [
+        "-c",
+        "cd /Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/.claude/worktrees/agent-memory/backend && exec .venv/bin/python -m uvicorn app.main:app --port 8010"
+      ],
+      "port": 8010
+    },
+    {
+      "name": "frontend-memory",
+      "runtimeExecutable": "env",
+      "runtimeArgs": [
+        "BACKEND_URL=http://localhost:8010",
+        "npm",
+        "run",
+        "--prefix",
+        "/Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/.claude/worktrees/agent-memory/frontend",
+        "dev",
+        "--",
+        "--port",
+        "4331"
+      ],
+      "port": 4331
     }
   ]
 }

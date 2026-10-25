@@ -46,6 +46,22 @@ docker compose -f compose.prod.yaml up --build -d
 
 Open http://localhost:8080 (change with `ARINAV_PORT`). Ingested buildings are still in memory, but the app re-ingests the selected dataset on load, so a restart loses nothing visible. Stop with `docker compose -f compose.prod.yaml down` (add `-v` to also delete uploads).
 
+## Deploy on Vercel
+
+`vercel.json` deploys both apps as one Vercel project with [Services](https://vercel.com/docs/services): `backend` (FastAPI, `backend/app/main.py`) and `frontend` (static Astro build). Routing mirrors the nginx setup: `/api/*` goes to the backend with the path unchanged, everything else to the frontend, all on one origin. The frontend only calls the backend from the browser, so no service bindings are needed. The Docker setup above is unaffected.
+
+Set the backend's variables (`ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, …, see `backend/.env.example`) in the Vercel project settings; `.vercelignore` keeps local `.env` files out of uploads. Leave `PUBLIC_API_BASE_URL` unset. Run everything locally the way Vercel does with `vercel dev`.
+
+Limits compared to Docker: the function's filesystem is read-only, so dataset uploads and pipeline runs that write to `data/` fail (browsing the bundled datasets works); request bodies are capped at 4.5 MB; and in-memory state (closures, chat memory, recaps) is per function instance.
+
+## Deploy on Render (free tier)
+
+`render.yaml` is a [Blueprint](https://render.com/docs/blueprint-spec) with the same split as `compose.prod.yaml`: `arinav-backend` builds `backend/Dockerfile` as a free web service, and `arinav` is a free static site of the Astro build whose `/api/*` rewrite forwards to the backend (same origin in the browser, so no CORS). In the Render dashboard choose **New → Blueprint**, pick this repository, and enter the API keys when asked.
+
+The rewrite points at `https://arinav-backend.onrender.com`. If Render gives the backend a different URL (it adds a suffix when the name is taken), update the destination in `render.yaml`.
+
+Free-tier limits: services sleep after 15 idle minutes and take about a minute to wake; there is no persistent disk, so uploads and pipeline output are lost on sleep, restart and redeploy (the bundled datasets are part of the image and always there); the instance is small (512 MB RAM, 0.1 CPU), so pipeline runs are slow.
+
 ## Run natively (each app on its own)
 
 Needs [uv](https://docs.astral.sh/uv/) (installs Python 3.11 from `backend/.python-version`) and Node.js ≥ 22.12. Use two terminals:
