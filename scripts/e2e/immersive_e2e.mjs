@@ -6,6 +6,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { closePage, login, logout } from './login.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium, devices } = require(process.env.PW_MODULE || 'playwright-core');
@@ -45,6 +46,7 @@ async function open(viewport, query = '?profile=immersive', contextOptions = {})
   page.on('pageerror', (e) => page.errors.push(e.message));
   await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
   await page.goto(BASE + query, { waitUntil: 'networkidle' });
+  await login(page);
   // the Astro dev toolbar is a development overlay that can intercept clicks, not part of the app
   await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
   return page;
@@ -231,7 +233,7 @@ await check('G05_off_route_replans_from_the_person_without_teleport', async () =
   const after = await g(p);
   const pose = (await im(p)).pose;
   await p.screenshot({ path: join(OUT, 'G05-off-route-1440.png') });
-  await p.context().close();
+  await closePage(p);
   current = page;
   assert(after.rev > r0 || after.status === 'active', `no replan (rev ${after.rev})`);
   return { route_revision: after.rev, status: after.status, person: pose.position.map((v) => +v.toFixed(2)), message: after.msg };
@@ -263,7 +265,7 @@ await check('M03_orientation_events_turn_the_view_with_wraparound', async () => 
   const pose0 = (await g(p)).pos;
   await p.screenshot({ path: join(OUT, 'M03-orientation-390.png') });
   const pose1 = (await g(p)).pos;
-  await p.context().close();
+  await closePage(p);
   current = page;
   const base = cal.look.yaw;
   const expect = [90, 180, 270, 340, 355].map((d) => ((base + d) % 360 + 360) % 360);
@@ -289,7 +291,7 @@ await check('M04_orientation_unsupported_or_denied_is_truthful', async () => {
   await p.waitForTimeout(300);
   const text = await p.locator('.immersive-bar').innerText();
   const status = (await im(p)).orientation;
-  await p.context().close();
+  await closePage(p);
   current = page;
   assert(status === 'unsupported' && /not available/.test(text), `status ${status}`);
   return { status, label: 'Rotation not available' };
@@ -317,7 +319,7 @@ await check('G09_first_person_stairs_prompt_and_keys', async () => {
   await p.waitForTimeout(600);
   const b = await im(p);
   await p.screenshot({ path: join(OUT, 'G09-after-stairs-1440.png') });
-  await p.context().close();
+  await closePage(p);
   current = page;
   assert(/Stairs here/.test(text) && /Ground floor/.test(text), `prompt "${text}"`);
   assert(a.pose.floor_id !== b.pose.floor_id, `still on ${b.pose.floor_id}`);
@@ -359,7 +361,7 @@ for (const [name, vp] of [
     await p.getByRole('button', { name: 'Overview' }).first().click();
     await p.waitForTimeout(800);
     await p.screenshot({ path: join(OUT, `${name}-overview.png`) });
-    await p.context().close();
+    await closePage(p);
     current = page;
     assert(blocked <= 0.25, `centre of the view covered ${(blocked * 100).toFixed(0)}%`);
     return { centre_covered_pct: Math.round(blocked * 100), mic_buttons: mic };
@@ -377,7 +379,7 @@ await check('A02_core_profile_switches_new_modules_off', async () => {
   const facts = await p.locator('[aria-label="Route result"]').count();
   await p.screenshot({ path: join(OUT, 'A02-core-1440.png') });
   await p.goto(BASE + '?profile=immersive');
-  await p.context().close();
+  await closePage(p);
   current = page;
   assert(bar === 0 && card === 0, `immersive UI visible in core (bar ${bar}, card ${card})`);
   assert(facts === 1, 'manual routing did not work in core');
@@ -388,5 +390,6 @@ results.push({ name: 'no_page_errors_desktop', pass: desktopErrors.length === 0,
 const passed = results.filter((r) => r.pass).length;
 writeFileSync(join(OUT, 'immersive_e2e.json'), JSON.stringify({ generated: new Date().toISOString(), passed, total: results.length, results }, null, 1));
 console.log(`${passed}/${results.length} immersive checks passed -> ${OUT}`);
+await logout(page);
 await browser.close();
 process.exit(passed === results.length ? 0 : 1);

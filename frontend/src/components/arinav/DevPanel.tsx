@@ -45,6 +45,7 @@ const SEARCH_KINDS: { id: SearchKind | ''; label: string }[] = [
   { id: 'asset', label: 'Assets' },
   { id: 'opening', label: 'Doors' },
   { id: 'exit', label: 'Exits' },
+  { id: 'person', label: 'People' },
 ];
 
 const json = (v: unknown) => JSON.stringify(v, null, 2);
@@ -213,7 +214,7 @@ function EndpointsSection({ nav, model, buildingId, selection, picking, onPick }
         <SearchIcon />
         <input
           type="search"
-          placeholder="Search rooms, assets, doors, exits…"
+          placeholder="Search rooms, assets, doors, exits, people…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           aria-label="Search endpoints"

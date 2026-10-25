@@ -232,10 +232,11 @@ export interface NavState {
   support: { official: boolean; precision: boolean; precision_reason?: string | null };
 }
 
-export type SearchKind = 'room' | 'asset' | 'opening' | 'exit' | 'connector';
+export type SearchKind = 'room' | 'asset' | 'opening' | 'exit' | 'connector' | 'person';
 
 export interface NavSearchResult {
-  kind: SearchKind;
+  /** `user`: a person in this building (searched with kind `person`). */
+  kind: Exclude<SearchKind, 'person'> | 'user';
   id: string;
   name: string;
   type: string;

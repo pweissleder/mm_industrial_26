@@ -76,6 +76,7 @@ export function endpointFromSearch(r: NavSearchResult): Endpoint | null {
   if (r.kind === 'room') return { kind: 'space', id: r.id };
   if (r.kind === 'asset') return { kind: 'asset', id: r.id };
   if (r.kind === 'opening' || r.kind === 'exit') return { kind: 'opening', id: r.id };
+  if (r.kind === 'user') return { kind: 'user', id: r.id };
   return null;
 }
 
@@ -107,6 +108,7 @@ export function endpointLabel(e: Endpoint, model: BuildingModel | null): string 
   }
   if (e.kind === 'space') return model?.spaces.find((s) => s.id === e.id)?.name ?? e.id;
   if (e.kind === 'asset') return model?.assets.find((a) => a.id === e.id)?.name ?? e.id;
+  if (e.kind === 'user') return `Person ${e.id}`; // people are not part of the building model
   const o = model?.openings.find((x) => x.id === e.id);
   if (!o) return `Opening ${e.id.split('-').pop()}`;
   const names = o.space_ids

@@ -8,6 +8,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync, renameSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { closePage, login } from './login.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW_MODULE || 'playwright-core');
@@ -36,13 +37,14 @@ async function open(name) {
   page.t0 = Date.now(); // the video starts with the page: marks are seconds from here
   await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
   await page.goto(BASE + '/?profile=immersive', { waitUntil: 'networkidle' });
+  await login(page);
   // the Astro dev toolbar is a development overlay, not part of the app
   await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
   return page;
 }
 async function close(page) {
   const video = page.video();
-  await page.context().close();
+  await closePage(page);
   const path = await video.path();
   const target = join(VIDEO, `${page.sceneName}.webm`);
   renameSync(path, target);

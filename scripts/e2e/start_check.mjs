@@ -1,6 +1,7 @@
 // "Set as start" replaces where the person walked to; the route starts there (also the same start again).
 //   PW_MODULE=<playwright-core> ARINAV_URL=http://localhost:4321 node scripts/e2e/start_check.mjs
 import { createRequire } from 'node:module';
+import { login, logout } from './login.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW_MODULE);
 const BASE = process.env.ARINAV_URL || 'http://localhost:4321';
@@ -8,6 +9,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH 
 const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
 await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
 await page.goto(BASE + '?profile=immersive', { waitUntil: 'networkidle' });
+await login(page);
 await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
 await page.selectOption('#building-select', 'proc-factory-dev-003');
 await page.waitForTimeout(1500);
@@ -49,4 +51,5 @@ out.driver_after_set = await page.evaluate(() => window.__arinavImmersive.driver
 out.after_set_again = await routeStartOf();
 out.location_chip = (await page.locator('text=/Location:/').first().innerText().catch(() => '')).replace(/\s+/g, ' ');
 console.log(JSON.stringify(out, null, 1));
+await logout(page);
 await browser.close();

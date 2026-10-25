@@ -5,6 +5,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { login, logout } from './login.mjs';
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW_MODULE);
 const BASE = process.env.ARINAV_URL || 'http://localhost:4321';
@@ -14,6 +15,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH 
 const page = await (await browser.newContext({ viewport: { width: 1440, height: 900 } })).newPage();
 await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
 await page.goto(BASE + '?profile=immersive', { waitUntil: 'networkidle' });
+await login(page);
 await page.addStyleTag({ content: 'astro-dev-toolbar{display:none!important}' });
 await page.selectOption('#building-select', 'proc-factory-dev-003');
 await page.waitForTimeout(1500);
@@ -45,4 +47,5 @@ for (const at of shots) {
   await page.screenshot({ path: join(OUT, `fly-${String(at).padStart(5, '0')}ms.png`) });
 }
 console.log(JSON.stringify({ route_m: len, states }));
+await logout(page);
 await browser.close();

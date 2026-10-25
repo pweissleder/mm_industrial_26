@@ -7,6 +7,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { closePage, login, logout } from './login.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW_MODULE || 'playwright-core');
@@ -49,6 +50,7 @@ async function newPage(options = {}) {
     await page.route('**/api/assistant/speak', (r) => r.fulfill({ status: 502, body: '{"detail":"TTS down (test)"}' }));
   }
   await page.goto(BASE, { waitUntil: 'networkidle' });
+  await login(page);
   return page;
 }
 
@@ -354,7 +356,7 @@ await check('11_audio_errors_do_not_block_navigation', async () => {
   const s = await snap(vp);
   const hint = await vp.locator('.guidance__hint').innerText().catch(() => '');
   await vp.screenshot({ path: join(OUT, 'e2e-11-voice-error.png') });
-  await vp.context().close();
+  await closePage(vp);
   current = page;
   assert(s.status === 'arrived', `navigation blocked by audio: ${s.status}`);
   assert(/Spoken hints paused/.test(hint), 'the audio failure was not shown');
@@ -374,8 +376,8 @@ await check('14_sessions_do_not_share_positions', async () => {
   await advance(a, 20);
   await advance(b, 3);
   const [sa, sb] = [await snap(a), await snap(b)];
-  await a.context().close();
-  await b.context().close();
+  await closePage(a);
+  await closePage(b);
   assert(Math.abs(sa.d - sb.d) > 10, `positions coupled: ${sa.d} vs ${sb.d}`);
   return { session_a_m: +sa.d.toFixed(1), session_b_m: +sb.d.toFixed(1) };
 });
@@ -384,5 +386,6 @@ results.push({ name: 'no_page_errors', pass: pageErrors.length === 0, detail: pa
 const passed = results.filter((r) => r.pass).length;
 writeFileSync(join(OUT, 'guidance_e2e.json'), JSON.stringify({ generated: new Date().toISOString(), passed, total: results.length, results }, null, 1));
 console.log(`${passed}/${results.length} guidance checks passed -> ${OUT}`);
+await logout(page);
 await browser.close();
 process.exit(passed === results.length ? 0 : 1);

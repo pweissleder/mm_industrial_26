@@ -6,6 +6,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { closePage, login } from './login.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW_MODULE || 'playwright-core');
@@ -50,6 +51,7 @@ async function open(viewport, { blockRuns = true, query = '?profile=showcase', m
     await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
   if (mutate) await page.route(mutate.pattern, mutate.handler);
   await page.goto(BASE + query, { waitUntil: 'networkidle' });
+  await login(page);
   return page;
 }
 const panel = async (p, openIt) => {
@@ -134,7 +136,7 @@ await check('Q06_frame_time_desktop_overview_hq', async () => {
   const ft = await frameTimes(page);
   return { ...ft, context: 'headless Chrome, SwiftShader software GL, 1440x900, this laptop' };
 });
-await page.context().close();
+await closePage(page);
 
 await check('Q06_frame_time_mobile_emulation_overview', async () => {
   const p = await open({ width: 390, height: 844 }, { isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
@@ -148,7 +150,7 @@ await check('Q06_frame_time_mobile_emulation_overview', async () => {
   const ft = await frameTimes(p);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
   await p.screenshot({ path: join(OUT, 'HQ-campus-overview-390.png') });
-  await p.context().close();
+  await closePage(p);
   current = null;
   return { ...ft, context: '390x844 DPR2 emulation, CPU throttled 4x, SwiftShader; not a real phone' };
 });
@@ -182,7 +184,7 @@ await check('Q05_moved_thing_shows_live_view_and_outdated_hq', async () => {
   await p.waitForTimeout(500);
   const note = await p.locator('dialog[open] [role="note"]').innerText().catch(() => '');
   await p.screenshot({ path: join(OUT, 'HQ-Q05-dialog-1440.png') });
-  await p.context().close();
+  await closePage(p);
   current = null;
   assert(/HQ outdated/.test(c), `chip "${c}"`);
   assert(b === 'Low', `badge "${b}" (the baked HQ furniture must not be shown)`);
@@ -206,7 +208,7 @@ await check('Q04_explicit_rebuild_runs_with_unchanged_input', async () => {
   await p.keyboard.press('Escape');
   await p.waitForTimeout(1500);
   await p.screenshot({ path: join(OUT, 'HQ-Q04-after-rebuild-1440.png') });
-  await p.context().close();
+  await closePage(p);
   current = null;
   const stages = Object.fromEntries(Object.entries(run.stages).map(([k, v]) => [k, v.status]));
   assert(run.status === 'completed', `run ${run.status}`);

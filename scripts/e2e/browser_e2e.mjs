@@ -9,6 +9,7 @@
 import { createRequire } from 'node:module';
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { login, logout } from './login.mjs';
 
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW_MODULE || 'playwright-core');
@@ -93,6 +94,7 @@ async function computeRoute() {
 
 await step('app_loads', async () => {
   await page.goto(BASE, { waitUntil: 'networkidle' });
+  await login(page);
   await page.locator('#building-select').waitFor();
   const n = await page.locator('#building-select option').count();
   if (n < 2) throw new Error(`only ${n} buildings listed`);
@@ -274,5 +276,6 @@ const passed = results.filter((r) => r.pass).length;
 const report = { generated: new Date().toISOString(), base: BASE, live: LIVE, passed, total: results.length, results };
 writeFileSync(join(OUT, LIVE ? 'browser_e2e_live.json' : 'browser_e2e.json'), JSON.stringify(report, null, 1));
 console.log(`${passed}/${results.length} browser checks passed -> ${OUT}`);
+await logout(page);
 await browser.close();
 process.exit(passed === results.length ? 0 : 1);
