@@ -33,6 +33,7 @@ async function open(name) {
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, recordVideo: { dir: VIDEO, size: { width: 1280, height: 720 } } });
   const page = await context.newPage();
   page.sceneName = name;
+  page.t0 = Date.now(); // the video starts with the page: marks are seconds from here
   await page.route('**/api/pipeline-runs', (r) => (r.request().method() === 'POST' ? r.fulfill({ status: 503, body: '{}' }) : r.continue()));
   await page.goto(BASE + '/?profile=immersive', { waitUntil: 'networkidle' });
   // the Astro dev toolbar is a development overlay, not part of the app
@@ -89,6 +90,10 @@ async function shot(p, name) {
 }
 
 const videos = {};
+const marks = {};
+const markAt = (p, scene, name) => {
+  marks[scene] = { ...(marks[scene] ?? {}), [name]: +((Date.now() - p.t0) / 1000).toFixed(2) };
+};
 
 // ---------------------------------------------------------------- scene 1
 if (ONLY.includes('1')) {
@@ -102,17 +107,21 @@ if (ONLY.includes('1')) {
   await p.locator('.guidance').waitFor({ timeout: 20000 });
   await p.waitForTimeout(3000);
   await shot(p, 'S1-2-route');
+  markAt(p, 'scene1', 'start');
   await p.getByRole('button', { name: 'Start navigation' }).click();
-  await p.getByRole('button', { name: '2×', exact: true }).click().catch(() => {});
-  await p.waitForTimeout(6000);
+  await p.waitForTimeout(2500);
   await shot(p, 'S1-3-walking-overview');
+  markAt(p, 'scene1', 'walk0');
   await p.getByRole('button', { name: 'First person' }).click();
-  await p.waitForTimeout(9000);
+  await p.waitForTimeout(5000);
   await shot(p, 'S1-4-walking-first-person');
+  await p.waitForTimeout(4000);
+  markAt(p, 'scene1', 'walk1');
   await p.getByRole('button', { name: 'Overview' }).first().click();
-  await p.getByRole('button', { name: '8×', exact: true }).click().catch(() => {});
+  await p.getByRole('button', { name: '4×', exact: true }).click().catch(() => {});
   const t0 = Date.now();
   while (Date.now() - t0 < 90000 && (await g(p))?.status !== 'arrived') await p.waitForTimeout(500);
+  markAt(p, 'scene1', 'arrive0');
   await p.waitForTimeout(2500);
   const s = await g(p);
   note(1, 'final status', { status: s?.status, distance: s?.distance_m, total: s?.total_m });
@@ -157,16 +166,39 @@ if (ONLY.includes('3')) {
   if (await walk.count()) await walk.click();
   await p.waitForTimeout(1500);
   await shot(p, 'S3-1-first-person-start');
+  markAt(p, 'scene3', 'walk0');
   await p.mouse.move(800, 380);
-  for (const [key, ms] of [['ArrowLeft', 900], ['w', 1200], ['ArrowRight', 1800]]) {
+  // turn towards the office door (from the real building data), walk out, turn right, walk on
+  const model = await (await fetch(`${process.env.ARINAV_API || 'http://localhost:8000/api'}/buildings/${FACTORY}/model`)).json();
+  const door = model.openings.find((o) => o.space_ids.includes(`${FACTORY}-F0-S038`) && o.space_ids.includes(`${FACTORY}-F0-S016`));
+  const turnTo = async (bearing) => {
+    const pose = await p.evaluate(() => window.__arinavImmersive.pose());
+    const diff = ((bearing - pose.heading + 540) % 360) - 180; // + = left (counter-clockwise)
+    const key = diff > 0 ? 'ArrowLeft' : 'ArrowRight';
+    await p.keyboard.down(key);
+    await p.waitForTimeout((Math.abs(diff) / 100) * 1000);
+    await p.keyboard.up(key);
+    await p.waitForTimeout(400);
+  };
+  const hold = async (key, ms) => {
     await p.keyboard.down(key);
     await p.waitForTimeout(ms);
     await p.keyboard.up(key);
-    await p.waitForTimeout(500);
+    await p.waitForTimeout(400);
+  };
+  let pose = await p.evaluate(() => window.__arinavImmersive.pose());
+  await turnTo((Math.atan2(door.position[1] - pose.position[1], door.position[0] - pose.position[0]) * 180) / Math.PI);
+  for (let i = 0; i < 12 && pose.space_id !== `${FACTORY}-F0-S016`; i++) {
+    await hold('w', 300);
+    pose = await p.evaluate(() => window.__arinavImmersive.pose());
   }
+  await hold('w', 700);
+  pose = await p.evaluate(() => window.__arinavImmersive.pose());
+  await turnTo(pose.heading - 90);
+  await hold('w', 2000);
   await shot(p, 'S3-2-walked');
-  const pose = await p.evaluate(() => window.__arinavImmersive?.pose());
-  note(3, 'pose before question', { pose });
+  note(3, 'pose before question', { pose: await p.evaluate(() => window.__arinavImmersive?.pose()) });
+  markAt(p, 'scene3', 'ask0');
   await say(p, 3, "What's on my right?");
   await p.waitForTimeout(3500);
   await shot(p, 'S3-3-whats-on-my-right');
@@ -174,5 +206,6 @@ if (ONLY.includes('3')) {
 }
 
 await browser.close();
-writeFileSync(join(OUT, 'scenes_log.json'), JSON.stringify({ when: new Date().toISOString(), videos, log }, null, 2));
+writeFileSync(join(OUT, 'scenes_log.json'), JSON.stringify({ when: new Date().toISOString(), videos, marks, log }, null, 2));
+writeFileSync(join(VIDEO, `marks-${ONLY.join('')}.json`), JSON.stringify(marks, null, 2));
 console.log('videos', videos);

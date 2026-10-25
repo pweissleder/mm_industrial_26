@@ -3,13 +3,15 @@
 # -Live injects the DPAPI-protected Anthropic and ElevenLabs keys (registered once with
 # Register-ApiKey.ps1) into the backend process only; nothing is written to .env or the console.
 # Usage: powershell -File scripts/windows/Start-AriNav.ps1 [-Live] [-DatasetsDir <folder>]
-#        [-BackendPort 8000] [-Uv <path to uv.exe>]
+#        [-BackendPort 8000] [-Uv <path to uv.exe>] [-Profile core|immersive|showcase]
+# -Profile sets the default feature profile (URL ?profile= still overrides it).
 # The backend runs with `uv run` when uv is found, otherwise with backend/.venv (uv sync first).
 [CmdletBinding()]
 param([switch]$Live,
       [string]$DatasetsDir = '',
       [ValidateRange(1024, 65535)][int]$BackendPort = 8000,
-      [string]$Uv = '')
+      [string]$Uv = '',
+      [ValidateSet('', 'core', 'immersive', 'showcase')][string]$Profile = '')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'KeyStore.ps1')
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -44,6 +46,7 @@ $frontend.Arguments = 'run dev'
 $frontend.WorkingDirectory = Join-Path $root 'frontend'
 $frontend.UseShellExecute = $false
 $frontend.Environment['BACKEND_URL'] = "http://localhost:$BackendPort"
+if ($Profile) { $frontend.Environment['PUBLIC_ARINAV_PROFILE'] = $Profile }
 
 $processes = @()
 try {
