@@ -14,8 +14,8 @@
    "pass": true,
    "detail": {
     "stick_px": 84,
-    "auto_from_m": 4.03,
-    "auto_to_m": 6.63
+    "auto_from_m": 4.05,
+    "auto_to_m": 6.65
    }
   },
   {
@@ -37,7 +37,7 @@
      "I'm here",
      "Take me there"
     ],
-    "location": "Location: Meeting room 0.27"
+    "location": "Location: Coffee machine 0.28"
    }
   },
   {
@@ -51,7 +51,7 @@
    "name": "D2_wasd_in_user_profile",
    "pass": true,
    "detail": {
-    "moved_m": 0.45
+    "moved_m": 0.4
    }
   }
  ]
