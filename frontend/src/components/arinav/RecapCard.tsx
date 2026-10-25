@@ -89,7 +89,7 @@ export default function RecapCard({ recap, loading, error, onNewSession, onDelet
         />
         <Stat label="Walked" value={formatWalked(recap)} detail={recap && recap.walked_m > 0 ? 'on foot, rides excluded' : null} />
         <Stat label="Floors" value={floors.length ? String(floors.length) : EMPTY} detail={floors.length ? floors.join(', ') : null} />
-        <Stat label="Simulated time" value={formatMinutes(recap)} detail={recap?.navigations_started ? 'pauses excluded' : null} />
+        <Stat label="Time navigating" value={formatMinutes(recap)} detail={recap?.navigations_started ? 'clock time, pauses excluded' : null} />
         <div className="recap-card__stat recap-card__stat--wide">
           <dt>Favourite destination</dt>
           <dd>

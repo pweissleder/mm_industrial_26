@@ -33,7 +33,7 @@ describe('RecapCard', () => {
     expect(within(stat('Places reached')).getByText('Exit, Lab 2.07')).toBeInTheDocument();
     expect(within(stat('Walked')).getByText('61.1 m')).toBeInTheDocument();
     expect(within(stat('Floors')).getByText('2')).toBeInTheDocument();
-    expect(within(stat('Simulated time')).getByText('2 min 30 s')).toBeInTheDocument();
+    expect(within(stat('Time navigating')).getByText('2 min 30 s')).toBeInTheDocument();
     expect(within(stat('Favourite destination')).getByText('Exit')).toBeInTheDocument();
     expect(screen.getByText('3 of 4 navigations completed · 1 reroute')).toBeInTheDocument();
     expect(screen.queryByText(/Demo/)).not.toBeInTheDocument();
@@ -56,7 +56,7 @@ describe('RecapCard', () => {
     };
     for (const recap of [empty, null]) {
       const { unmount } = render(<RecapCard recap={recap} />);
-      for (const label of ['Places reached', 'Walked', 'Floors', 'Simulated time', 'Favourite destination']) {
+      for (const label of ['Places reached', 'Walked', 'Floors', 'Time navigating', 'Favourite destination']) {
         expect(within(stat(label)).getByText('—')).toBeInTheDocument();
       }
       expect(screen.queryByText(/\d+(\.\d)? m\b/)).not.toBeInTheDocument();
