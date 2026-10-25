@@ -293,6 +293,10 @@ export interface RouteRequest {
   exact_start?: boolean;
   /** Official only, point targets: end at the exact point (on for a person target). */
   exact_target?: boolean;
+  /** Official only, equipment starts: start just outside the item's footprint. */
+  beside_asset?: boolean;
+  /** Official only: avoid doors narrower than this (width-checked routing; doors only). */
+  min_door_width_m?: number;
 }
 
 export interface RouteEnd {
@@ -365,7 +369,21 @@ export interface RouteResponse {
   /** With an exact target, the room-to-room official cost (`length_m` includes the last walk). */
   official_length_m?: number | null;
   /** Constraints this route honours (a reroute must keep them). */
-  constraints?: { step_free: boolean; profile?: ClearanceProfile; width_m?: number; safety_m?: number };
+  constraints?: {
+    step_free: boolean;
+    profile?: ClearanceProfile;
+    width_m?: number;
+    safety_m?: number;
+    min_door_width_m?: number;
+  };
+  /** What a width-checked official route covered (doors only). */
+  width_check?: {
+    required_m: number;
+    narrowest_door_m: number | null;
+    unknown_width_doors: string[];
+    too_narrow_on_only_route?: { id: string; width_m: number }[];
+    scope: string;
+  };
   /** Router directions without element ids; `directions_raw` keeps the router's own lines. */
   directions: string[];
   directions_raw?: string[];

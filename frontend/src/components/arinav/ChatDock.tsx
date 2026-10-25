@@ -86,6 +86,8 @@ interface Props {
   selection?: { name: string; room: boolean } | null;
   simulated?: SimulatedLocation | null;
   onTurn?: (turn: TurnResponse) => void;
+  /** Handled in the app without the assistant (e.g. "I've arrived"): the reply, else null. */
+  onLocalCommand?: (text: string) => string | null;
   onConfirmed?: (result: ConfirmResponse) => void;
   /** Next map click answers `purpose`; `reply` also sends it as the user's answer. */
   onPick?: (purpose: PickPurpose, reply: boolean) => void;
@@ -253,6 +255,7 @@ export default function ChatDock({
   selection = null,
   simulated = null,
   onTurn,
+  onLocalCommand,
   onConfirmed,
   onPick,
   onUseSelectionAsLocation,
@@ -466,6 +469,13 @@ export default function ChatDock({
 
   async function send(text: string, viaVoice = false) {
     if (!text || busyRef.current) return;
+    const local = onLocalCommand?.(text);
+    if (local) {
+      if (!viaVoice) push({ role: 'user', text });
+      setInput('');
+      push({ role: 'assistant', text: local });
+      return;
+    }
     busyRef.current = true;
     if (!viaVoice) push({ role: 'user', text });
     setInput('');

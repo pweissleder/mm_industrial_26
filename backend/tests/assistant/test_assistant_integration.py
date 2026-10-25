@@ -400,3 +400,33 @@ def test_s01_whats_on_my_right_uses_the_pose_and_view_direction(
         assert any(i["kind"] == "door" for i in items)
         out = turn(client, "And now?", pose=None)  # pose cleared: must ask, not guess
         assert out["tools"][0]["status"] == "error"
+
+
+def test_stated_width_binds_official_routes_and_the_ui_gets_the_same_constraint(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    hall, lab = f"{B}-F0-S001", f"{B}-F0-S023"
+    route = {"start": None, "destination": None, "mode": None, "step_free": None}
+    script = [
+        update(start={"kind": "space", "id": hall}, width_m=1.0),
+        ("plan_route", route | {"destination": {"kind": "space", "id": lab}, "assume_closed": []}),
+        "That door is too narrow.",
+        ("plan_route", route | {"destination": {"kind": "space", "id": lab}, "assume_closed": []}),
+        "Still too narrow.",
+    ]
+    with make_client(settings, datasets_dir, script) as client:
+        ingest(client)
+        out = turn(client, "I'm 1 m wide and in the hall, can I get to the lab?")
+        planned = out["tools"][1]["output"]
+        assert planned["reachable"] is False
+        check = planned["door_width_check"]
+        assert check["required_m"] == 1.0 and "corridors" in check["scope"]
+        assert check["too_narrow_doors_on_the_only_route"][0]["width_m"] == 0.9
+        assert out["ui"]["route_request"]["min_door_width_m"] == 1.0
+        assert out["ui"]["settings"]["door_width_m"] == 1.0
+        # The route the UI shows is the assistant's own, with the constraint for reroutes.
+        assert out["ui"]["route"]["constraints"]["min_door_width_m"] == 1.0
+        # Kept for follow-ups without restating it.
+        out = turn(client, "And now?")
+        assert out["tools"][0]["output"]["door_width_check"]["required_m"] == 1.0
+        assert out["state"]["door_width_checked_m"] == 1.0

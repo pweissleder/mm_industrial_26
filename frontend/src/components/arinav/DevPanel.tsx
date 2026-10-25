@@ -309,9 +309,9 @@ function OptionsSection({
                 value={s.profile}
                 onChange={(e) => nav.updateSettings({ profile: e.target.value as ClearanceProfile })}
               >
-                <option value="stationary">Stationary objects</option>
-                <option value="all">All objects</option>
-                <option value="none">No objects</option>
+                <option value="stationary">Machines &amp; fixed equipment</option>
+                <option value="all">All obstacles</option>
+                <option value="none">Walls only</option>
               </select>
             </span>
           </label>

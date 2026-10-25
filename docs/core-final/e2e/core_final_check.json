@@ -1,0 +1,96 @@
+{
+ "base": "https://localhost:4321",
+ "results": [
+  {
+   "name": "P0_equipment_start_route_and_walker",
+   "pass": true,
+   "detail": {
+    "start": {
+     "kind": "asset",
+     "id": "proc-factory-dev-003-A00001"
+    },
+    "standpoint": [
+     -6.162842499436302,
+     6.5648424994363
+    ],
+    "off_centre_m": 2.3,
+    "walker": [
+     -5.836766720824716,
+     6.350891303694571
+    ],
+    "floor": "proc-factory-dev-003-F0"
+   }
+  },
+  {
+   "name": "P0_arrival_check_then_navigation_closes",
+   "pass": true,
+   "detail": {
+    "text": "You've arrived! Kitchen 0.28",
+    "after": "idle",
+    "guidanceCards": 0,
+    "location": "Location: Kitchen 0.28"
+   }
+  },
+  {
+   "name": "P0_new_route_after_arrival_starts_at_target",
+   "pass": true,
+   "detail": {
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S028"
+    }
+   }
+  },
+  {
+   "name": "P2_view_switch_menu_hover_escape",
+   "pass": true,
+   "detail": {
+    "icon_px": 28,
+    "view": "pov",
+    "route_kept": true
+   }
+  },
+  {
+   "name": "P1_desktop_dev_split_and_click_object_in_first_person",
+   "pass": true,
+   "detail": {
+    "split": true,
+    "details": {
+     "clicked": "Meeting table 0.41",
+     "card": "Meeting table 0.41",
+     "dist": 6.8,
+     "tries": 4
+    },
+    "nav_status": "active"
+   }
+  },
+  {
+   "name": "P1_desktop_dev_drag_map_outside_phone_look_inside",
+   "pass": true,
+   "detail": {
+    "map_drag_moves_camera": true,
+    "yaw_after_map_drag_same": true,
+    "yaw_after_phone_drag": 40
+   }
+  },
+  {
+   "name": "P1_phone_dev_single_fullscreen_view",
+   "pass": true,
+   "detail": {
+    "split": false,
+    "mock": 0
+   }
+  },
+  {
+   "name": "P1_phone_rotation_three_axes_synthetic",
+   "pass": true,
+   "detail": {
+    "level": -3.508354649267438e-15,
+    "up": 59.952124640221435,
+    "down": -69.89630825464769,
+    "yaw": 332.946,
+    "moved_m": 2.6
+   }
+  }
+ ]
+}

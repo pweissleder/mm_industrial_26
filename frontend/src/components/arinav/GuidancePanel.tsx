@@ -1,12 +1,13 @@
 // Live guidance card (Phase B): Find destination -> Show route -> Start -> Arrive.
 // User view: next instruction, distance, destination and few controls, no ids.
 // Developer view: the same simulation plus floor, heading, progress, revisions and routing facts.
+import { useState } from 'react';
 import type { GuidanceVoiceState } from '../../lib/guidanceVoice';
 import { GUIDANCE_SPEED } from '../../lib/guidanceVoice';
 import { formatMetres } from '../../lib/nav';
 import { SPEEDS, type InstructionKind } from '../../lib/simulation';
 import { RouteBadge } from './ChatReply';
-import { CloseIcon, ReplayIcon, RouteIcon } from './Icons';
+import { ChevronIcon, CloseIcon, ReplayIcon, RouteIcon } from './Icons';
 import type { Guidance } from './useGuidance';
 import VoiceToggle from './VoiceToggle';
 
@@ -55,6 +56,11 @@ interface Props {
 
 export default function GuidancePanel(props: Props) {
   const { guidance: g, developer, voice } = props;
+  // While navigating, the card can fold to its next step (phones start folded) so the view
+  // stays visible; before and after, it shows its buttons.
+  const [folded, setFolded] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches,
+  );
   const snap = g.snapshot;
   const route = snap.route;
   if (!route || route.status !== 'ok') {
@@ -73,7 +79,7 @@ export default function GuidancePanel(props: Props) {
 
   return (
     <section
-      className={`guidance card${developer ? ' guidance--dev' : ''}${props.compact ? ' guidance--compact' : ''}${props.pov ? ' guidance--pov' : ''}`}
+      className={`guidance card${developer ? ' guidance--dev' : ''}${props.compact ? ' guidance--compact' : ''}${props.pov ? ' guidance--pov' : ''}${folded && g.navigating ? ' guidance--min' : ''}`}
       aria-label="Navigation"
     >
       <header className="guidance__head">
@@ -82,6 +88,17 @@ export default function GuidancePanel(props: Props) {
         <span className={`guidance__status guidance__status--${status}`} role="status">
           {STATUS_TEXT[status] ?? status}
         </span>
+        {g.navigating && (
+        <button
+          className="icon-btn icon-btn--sm guidance__fold"
+          onClick={() => setFolded((f) => !f)}
+          aria-expanded={!folded}
+          aria-label={folded ? 'Show navigation details' : 'Minimise navigation'}
+          title={folded ? 'Show navigation details' : 'Minimise navigation'}
+        >
+          <ChevronIcon width={14} height={14} />
+        </button>
+        )}
         {!g.navigating && (
           <button className="icon-btn icon-btn--sm" onClick={props.onClose} aria-label="Close navigation">
             <CloseIcon width={14} height={14} />
@@ -177,6 +194,12 @@ export default function GuidancePanel(props: Props) {
           )}
         </div>
       </div>
+      {!developer && g.navigating && (
+        // No indoor positioning: the walk along the route is simulated, never the person's position.
+        <p className="guidance__meta guidance__sim">
+          Simulated walk · your real position is not tracked. Say “I've arrived” when you are there.
+        </p>
+      )}
       {voice?.error && props.voiceAvailable && !voice.muted && (
         <p className="guidance__hint">Spoken hints paused: {voice.error}</p>
       )}

@@ -16,7 +16,7 @@ const ORIENTATION_TEXT: Record<string, string> = {
   active: 'Rotation on',
 };
 
-/** How long the phone's opened view switch waits for a choice before folding again. */
+/** How long the opened view switch waits for a choice before folding again. */
 const SWITCH_OPEN_MS = 4000;
 
 function useMedia(query: string): boolean {
@@ -41,18 +41,40 @@ export function ImmersiveBar(props: {
   const { immersive: im, features } = props;
   const pov = im.view === 'pov';
   const manual = im.driver === 'manual';
-  // Phones fold the view switch to the current view's icon; a tap unfolds it to choose.
-  const phone = useMedia('(max-width: 640px)');
+  // The view switch is folded to the current view's icon; hover (mouse), a click or a tap unfolds
+  // it to choose; a choice, Escape or a click elsewhere folds it again.
   const touch = useMedia('(pointer: coarse)');
+  const hover = useMedia('(hover: hover)');
   const [open, setOpen] = useState(false);
-  const folded = phone && !open;
+  const switchRef = useRef<HTMLDivElement>(null);
+  // Leaving with the mouse folds after a moment, so the unfolding never snaps away under it.
+  const leaveTimer = useRef<number | undefined>(undefined);
+  const hoverOpen = () => {
+    window.clearTimeout(leaveTimer.current);
+    setOpen(true);
+  };
+  const hoverLeave = () => {
+    window.clearTimeout(leaveTimer.current);
+    leaveTimer.current = window.setTimeout(() => setOpen(false), 450);
+  };
   useEffect(() => {
     if (!open) return;
     const timer = window.setTimeout(() => setOpen(false), SWITCH_OPEN_MS);
-    return () => window.clearTimeout(timer);
+    const outside = (e: PointerEvent) => {
+      if (!switchRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('pointerdown', outside);
+    window.addEventListener('keydown', escape);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('pointerdown', outside);
+      window.removeEventListener('keydown', escape);
+    };
   }, [open]);
   const choose = (view: 'overview' | 'pov') => {
-    if (folded) return setOpen(true);
     setOpen(false);
     if (view === 'overview') {
       // user view: the still first-person pose ends with first person
@@ -70,33 +92,38 @@ export function ImmersiveBar(props: {
   return (
     <div className="immersive-bar card" role="toolbar" aria-label="Navigation view">
       {features.pov && (
+        // Folded to the current view's icon; the choice opens as a small menu below it, so
+        // nothing moves under the pointer.
         <div
-          className={`segmented segmented--small view-switch${folded ? ' view-switch--folded' : ''}`}
+          ref={switchRef}
+          className={`view-switch${open ? ' view-switch--open' : ''}`}
           role="group"
           aria-label="Camera"
+          onMouseEnter={hover ? hoverOpen : undefined}
+          onMouseLeave={hover ? hoverLeave : undefined}
         >
           <button
-            className="segmented__item view-switch__item"
-            aria-pressed={!pov}
-            aria-label="Overview"
-            title={folded ? 'Change view' : 'Overview'}
-            tabIndex={folded && pov ? -1 : undefined}
-            onClick={() => choose('overview')}
+            className="icon-btn icon-btn--sm view-switch__anchor"
+            aria-label="Change view"
+            aria-haspopup="true"
+            aria-expanded={open}
+            title={`View: ${pov ? 'First person' : 'Overview'}`}
+            onClick={() => setOpen((o) => (hover ? true : !o))}
           >
-            <CubeIcon width={16} height={16} />
-            <span className="view-switch__label">Overview</span>
+            {pov ? <EyeIcon width={16} height={16} /> : <CubeIcon width={16} height={16} />}
           </button>
-          <button
-            className="segmented__item view-switch__item"
-            aria-pressed={pov}
-            aria-label="First person"
-            title={folded ? 'Change view' : 'First person'}
-            tabIndex={folded && !pov ? -1 : undefined}
-            onClick={() => choose('pov')}
-          >
-            <EyeIcon width={16} height={16} />
-            <span className="view-switch__label">First person</span>
-          </button>
+          {open && (
+            <div className="view-switch__menu card">
+              <button className="view-switch__item" aria-pressed={!pov} aria-label="Overview" onClick={() => choose('overview')}>
+                <CubeIcon width={16} height={16} />
+                <span>Overview</span>
+              </button>
+              <button className="view-switch__item" aria-pressed={pov} aria-label="First person" onClick={() => choose('pov')}>
+                <EyeIcon width={16} height={16} />
+                <span>First person</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
       {features.game && (
@@ -111,6 +138,24 @@ export function ImmersiveBar(props: {
           title="Walk yourself with WASD / arrow keys or the joystick"
         >
           {manual ? 'Walking yourself' : 'Walk myself'}
+        </button>
+      )}
+      {/* In the overview "Start navigation" does the same; here only while walking or in first person. */}
+      {props.guidance.canStart &&
+        (manual || pov) &&
+        (manual || !['active', 'recomputing'].includes(props.guidance.snapshot.status)) && (
+        <button
+          className="chip"
+          onClick={() => {
+            // Hand the person back to the route walker, from where they stand.
+            if (manual) im.stopManual();
+            const status = props.guidance.snapshot.status;
+            if (status === 'paused') props.guidance.resume();
+            else if (status !== 'active') props.guidance.start();
+          }}
+          title="Walk the route automatically (Pause and Stop in the navigation card)"
+        >
+          Auto-walk
         </button>
       )}
       {features.game && manual && (
@@ -224,10 +269,11 @@ function RidePrompt(props: { immersive: Immersive }) {
 }
 
 /** Captures drags over the 3D view in POV to look around; optional pointer lock on request. */
-export function LookLayer(props: { immersive: Immersive }) {
+export function LookLayer(props: { immersive: Immersive; split?: boolean }) {
   const { immersive: im } = props;
   const ref = useRef<HTMLDivElement>(null);
   const last = useRef<[number, number] | null>(null);
+  const start = useRef<[number, number] | null>(null);
   const [locked, setLocked] = useState(false);
   useEffect(() => {
     // Only while this layer really holds the pointer lock (null === null must not count).
@@ -245,7 +291,23 @@ export function LookLayer(props: { immersive: Immersive }) {
   if (im.view !== 'pov') return null;
   const down = (e: ReactPointerEvent) => {
     last.current = [e.clientX, e.clientY];
+    start.current = [e.clientX, e.clientY];
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  // A click or tap (no drag) goes through to the 3D view: things in sight open their details.
+  const up = (e: ReactPointerEvent) => {
+    last.current = null;
+    const s = start.current;
+    start.current = null;
+    const el = ref.current;
+    if (!s || !el || locked || Math.hypot(e.clientX - s[0], e.clientY - s[1]) > 6) return;
+    el.style.pointerEvents = 'none';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    el.style.pointerEvents = '';
+    if (!(under instanceof HTMLCanvasElement)) return;
+    const init = { clientX: e.clientX, clientY: e.clientY, bubbles: true, pointerType: e.pointerType, pointerId: e.pointerId };
+    under.dispatchEvent(new PointerEvent('pointerdown', init));
+    under.dispatchEvent(new PointerEvent('pointerup', init));
   };
   const moveLook = (e: ReactPointerEvent) => {
     if (!last.current || locked) return;
@@ -255,10 +317,10 @@ export function LookLayer(props: { immersive: Immersive }) {
   return (
     <div
       ref={ref}
-      className="look-layer"
+      className={`look-layer${props.split ? ' look-layer--split' : ''}`}
       onPointerDown={down}
       onPointerMove={moveLook}
-      onPointerUp={() => (last.current = null)}
+      onPointerUp={up}
       onPointerCancel={() => (last.current = null)}
       onDoubleClick={() => void ref.current?.requestPointerLock?.()}
       title="Drag to look around · double-click to lock the mouse (Esc to release)"
@@ -306,7 +368,7 @@ export function TouchJoystick(props: { immersive: Immersive }) {
       onPointerCancel={release}
       aria-label="Walk joystick"
     >
-      <span className="joystick__knob" style={{ transform: `translate(${knob[0] * 32}px, ${knob[1] * 32}px)` }} />
+      <span className="joystick__knob" style={{ transform: `translate(${knob[0] * 22}px, ${knob[1] * 22}px)` }} />
     </div>
   );
 }

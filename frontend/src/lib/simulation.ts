@@ -247,6 +247,11 @@ export class GuidanceSim {
 
   stop(): SimEvent[] {
     if (this.status === 'idle' || this.status === 'stopped') return [];
+    if (this.status === 'arrived') {
+      // Finishing after arrival: the navigation already ended at the target; nothing to stop.
+      this.status = 'idle';
+      return [];
+    }
     this.status = 'stopped';
     return [{ type: 'stop' }];
   }

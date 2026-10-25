@@ -21,12 +21,63 @@ DOOR_WORDS = frozenset(
     {"door", "doors", "opening", "openings", "entrance", "entrances", "exit", "exits", "emergency"}
 )
 CONNECTOR_SYNONYMS = {"lift": "lift elevator", "stairs": "stairs staircase stairway"}
+# Filler words of position/goal phrases ("I'm at Entrance 15", "start next to the TV stand"),
+# dropped from queries that still have other words.
+FILLER = frozenset(
+    {
+        "i",
+        "im",
+        "i'm",
+        "m",
+        "am",
+        "at",
+        "the",
+        "a",
+        "an",
+        "to",
+        "from",
+        "next",
+        "near",
+        "by",
+        "this",
+        "that",
+        "in",
+        "on",
+        "standing",
+        "start",
+        "starting",
+        "navigate",
+        "go",
+        "take",
+        "me",
+        "my",
+        "of",
+        "is",
+        "please",
+        "here",
+    }
+)
 MIN_SCORE = 0.5
 SHOW_WINDOW = 0.3
 
 
 def words(text: object) -> list[str]:
     return re.findall(r"[a-z0-9]+(?:\.[0-9]+)*", str(text or "").lower().replace("_", " "))
+
+
+def query_words(text: object) -> list[str]:
+    """Search words of a user query: "entrance15" -> entrance, 15; "015" -> 15 (numbers of doors
+    and entrances are written without leading zeros: "Entrance 15" for opening O0015)."""
+    spaced = re.sub(r"(?<=[a-z]{2})(?=[0-9])", " ", str(text or "").lower())
+    tokens = [re.sub(r"^0+(?=[0-9])", "", w) if w.isdigit() else w for w in words(spaced)]
+    kept = [t for t in tokens if t not in FILLER]
+    return kept or tokens
+
+
+def opening_number(opening: JSON) -> str | None:
+    """The number in an opening's ID ('...-F0-O0015' -> '15'), shown as "Entrance O0015"."""
+    match = re.search(r"O0*([0-9]+)$", str(opening.get("id") or ""))
+    return match.group(1) if match else None
 
 
 def match_score(query_tokens: list[str], haystack: str) -> float:
@@ -76,7 +127,7 @@ def search(
 ) -> list[JSON]:
     """`people`: the building's positioned people (`{id, name, floor_id, space_id, ...}`), found
     by name like any place; their rows have kind "user" (a route endpoint kind)."""
-    tokens = words(query)
+    tokens = query_words(query)
     if not tokens:
         raise NavigationError("invalid_input", "Give at least one search word")
     if kind is not None and kind not in SEARCH_KINDS:
@@ -137,13 +188,21 @@ def search(
                 continue
             rooms = [str(spaces[i].get("name") or "") for i in o["space_ids"] if i in spaces]
             extra = ["exit", "entrance", "outside", "way", "out"] if exit_door else []
-            text = " ".join([o.get("kind") or "", o["id"], "door", *rooms, *extra])
+            # The ID tail ("o0015") and its number ("15"): the details card titles an opening
+            # "Entrance O0015", so people ask for "Entrance 15" or "door 15".
+            number = opening_number(o)
+            tail = str(o["id"]).rsplit("-", 1)[-1]
+            text = " ".join(
+                [o.get("kind") or "", o["id"], tail, number or "", "door", *rooms, *extra]
+            )
             inside = inside_space(o, spaces)
             add(
                 {
                     "kind": "opening",
                     "id": o["id"],
                     "name": opening_name(o, spaces),
+                    # As the details card titles it ("Entrance O0015").
+                    "label": f"{str(o.get('kind') or 'door').capitalize()} {tail}",
                     "type": o.get("kind"),
                     **floor_fields(o.get("floor_id")),
                     "space_id": inside,

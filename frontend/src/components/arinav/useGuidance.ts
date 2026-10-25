@@ -43,6 +43,8 @@ export interface Guidance {
   pause: () => void;
   resume: () => void;
   stop: () => void;
+  /** The person says they are at the destination (no indoor positioning): arrive now. */
+  arrive: () => void;
   setSpeed: (factor: number) => void;
   preview: () => void;
   skipPreview: () => void;
@@ -262,6 +264,7 @@ export function useGuidance(args: {
         step_free: s.step_free,
         // Keep the person where they are: only the first leg is re-walked from this exact point.
         exact_start: true,
+        ...(route.mode === 'official' && c?.min_door_width_m && { min_door_width_m: c.min_door_width_m }),
         ...(route.mode === 'precision' && {
           profile: s.profile,
           width_m: s.width_m,
@@ -370,6 +373,7 @@ export function useGuidance(args: {
     command('follow');
   }, [previewing, command, handle]);
   const pause = useCallback(() => handle(sim.current.pause()), [handle]);
+  const arrive = useCallback(() => handle(sim.current.track(sim.current.snapshot().total_m)), [handle]);
   const resume = useCallback(() => handle(sim.current.resume()), [handle]);
   const stop = useCallback(() => {
     latest.current.voice?.cancel();
@@ -429,6 +433,7 @@ export function useGuidance(args: {
     pause,
     resume,
     stop,
+    arrive,
     setSpeed,
     preview,
     skipPreview,

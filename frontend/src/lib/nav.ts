@@ -21,6 +21,8 @@ export interface NavSettings {
   snap_m: number;
   step_free: boolean;
   allow_schematic_vertical: boolean;
+  /** Width-checked official routes: doors narrower than this are avoided (null = not checked). */
+  door_width_m: number | null;
 }
 
 export const DEFAULT_NAV: NavSettings = {
@@ -31,6 +33,7 @@ export const DEFAULT_NAV: NavSettings = {
   snap_m: 0,
   step_free: false,
   allow_schematic_vertical: true,
+  door_width_m: null,
 };
 
 /** Who chose an endpoint: only the user's own choices go back to the assistant as `ui`. */
@@ -133,7 +136,11 @@ export function elementLabel(id: string, model: BuildingModel | null): string {
 
 /** What kind of guarantee a route carries, as a short badge. */
 export function routeBadge(route: RouteResponse): { label: string; tone: 'official' | 'checked' | 'schematic' } {
-  if (route.mode === 'official') return { label: 'Official route · furniture ignored', tone: 'official' };
+  if (route.mode === 'official') {
+    const doors = route.width_check?.required_m;
+    if (doors) return { label: `Doors ≥ ${doors.toFixed(2)} m · corridors & furniture not checked`, tone: 'official' };
+    return { label: 'Official route · furniture ignored', tone: 'official' };
+  }
   if (route.checked === 'schematic_vertical') return { label: 'Schematic floor change', tone: 'schematic' };
   return { label: 'Checked precision route', tone: 'checked' };
 }

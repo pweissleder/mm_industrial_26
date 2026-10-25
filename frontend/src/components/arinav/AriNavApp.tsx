@@ -82,6 +82,9 @@ const AUTO_HQ = 'arinav:auto-hq';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
 const WIDE = '(min-width: 1024px)';
 // Navigation-panel parts dropped when it has to make room, and a folded details card's height.
+// How long the arrival check shows before the navigation is closed.
+const ARRIVAL_MS = 2600;
+const ARRIVED_SAID = /^(i('ve| have) arrived|i('m| am) (here|there)|(we|i) made it|arrived)[.!]*$/i;
 const GUIDANCE_EXTRAS = '.guidance__settings, .guidance__debug-wrap, .guidance__hint';
 const FOLDED_CARD_PX = 86;
 // Below this an open details card folds instead of scrolling.
@@ -514,8 +517,18 @@ export default function AriNavApp() {
     if (simLoc.kind === 'point') return { space_id: simLoc.space_id, position: simLoc.position };
     if (simLoc.kind === 'space') return { space_id: simLoc.id, position: null };
     if (simLoc.kind === 'asset') {
+      // Beside the item, never in its body: just outside its footprint, towards the room centre
+      // (useImmersive falls back to the room centre when that point is not in the room).
       const a = viewModel.assets.find((x) => x.id === simLoc.id);
-      return a ? { space_id: a.space_id, position: null } : null;
+      if (!a) return null;
+      const room = viewModel.spaces.find((s) => s.id === a.space_id);
+      const [cx, cy] = [a.position[0], a.position[1]];
+      const [mx, my] = room
+        ? [room.polygon.reduce((t, q) => t + q[0], 0) / room.polygon.length, room.polygon.reduce((t, q) => t + q[1], 0) / room.polygon.length]
+        : [cx + 1, cy];
+      const len = Math.hypot(mx - cx, my - cy) || 1;
+      const r = Math.hypot(a.footprint?.width_m ?? 0.6, a.footprint?.depth_m ?? 0.6) / 2 + 0.35;
+      return { space_id: a.space_id, position: [cx + ((mx - cx) / len) * r, cy + ((my - cy) / len) * r] as [number, number] };
     }
     const o = viewModel.openings.find((x) => x.id === simLoc.id);
     const sid = o?.space_ids.find((x) => x !== 'outside');
@@ -523,7 +536,8 @@ export default function AriNavApp() {
   }, [simLoc, viewModel]);
   // Walking yourself (WASD / joystick) simulates a person with a phone: a developer tool. In the
   // user view the phone itself is the first-person screen (route walker + phone rotation).
-  const immersiveFeatures = useMemo(() => ({ ...features, game: features.game && developer }), [features, developer]);
+  // Walking yourself (WASD, or the small stick on touch screens) in every profile.
+  const immersiveFeatures = features;
   const immersive = useImmersive({
     features: immersiveFeatures,
     model: viewModel,
@@ -639,6 +653,34 @@ export default function AriNavApp() {
     const label = atTarget ? (names.target ?? room) : `a point in ${room}`;
     setSimulatedRef.current({ endpoint, label, source: 'simulation' });
   }, [navStatus, guidance.snapshot, names]);
+  // Arrival ends the navigation once: a green check, then the route and its directions are
+  // cleared. The person stays at the target (the simulated location set above), ready for a new
+  // destination or free exploring.
+  const [arrived, setArrived] = useState<string | null>(null);
+  const clearRouteRef = useRef(nav.clearRoute);
+  clearRouteRef.current = nav.clearRoute;
+  const immersiveRef = useRef(immersive);
+  immersiveRef.current = immersive;
+  const freeCameraRef = useRef(guidance.stop);
+  freeCameraRef.current = guidance.stop;
+  useEffect(() => {
+    if (navStatus !== 'arrived') return;
+    setArrived(names.target ?? '');
+    const finish = window.setTimeout(() => {
+      // In first person the person stays there and can look and walk on (no switch to overview).
+      const im = immersiveRef.current;
+      if (im.view === 'pov' && im.driver !== 'manual') im.startManual();
+      freeCameraRef.current();
+      clearRouteRef.current();
+    }, ARRIVAL_MS);
+    return () => window.clearTimeout(finish);
+    // Once per arrival: only the status change starts it.
+  }, [navStatus]);
+  useEffect(() => {
+    if (arrived === null) return;
+    const hide = window.setTimeout(() => setArrived(null), ARRIVAL_MS + 900);
+    return () => window.clearTimeout(hide);
+  }, [arrived]);
   const wasNavigating = useRef(false);
   useEffect(() => {
     if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));
@@ -714,7 +756,7 @@ export default function AriNavApp() {
     !guidanceHidden &&
     (guidance.snapshot.route?.status === 'ok' || guidance.snapshot.status === 'blocked');
   useEffect(() => {
-    setCardCollapsed(guidance.navigating);
+    setCardCollapsed(false);
     setCardHeld(false);
     // Only a new selection resets the fold; the navigation state is read, not tracked.
   }, [selection]);
@@ -848,7 +890,9 @@ export default function AriNavApp() {
           ? sel.id
           : sel.kind === 'asset'
             ? viewModel?.assets.find((a) => a.id === sel.id)?.space_id
-            : undefined;
+            : sel.kind === 'opening'
+              ? viewModel?.openings.find((o) => o.id === sel.id)?.space_ids.find((x) => x !== 'outside')
+              : undefined;
       if (!spaceId || !buildingId) {
         notify('Pick a room to set the simulated location.');
         return;
@@ -871,8 +915,17 @@ export default function AriNavApp() {
       } catch {
         // The room itself is a valid start; resolving only refines it.
       }
+      // Equipment and doors are where the person stands (beside them), not just their room.
+      if (sel.kind === 'asset' || sel.kind === 'opening') {
+        location = { endpoint: { kind: sel.kind, id: sel.id }, label: elementLabel(sel.id, viewModel), source: 'manual' };
+      }
+      // "I'm here" replaces where the person walked; in first person they now stand there.
+      const im = immersiveRef.current;
+      const inPov = im.view === 'pov';
+      if (im.driver === 'manual') im.stopManual();
       nav.setSimulated(location);
-      if (reply) setDraft({ text: `I'm in ${label}.`, nonce: Date.now(), send: true });
+      if (inPov) window.setTimeout(() => immersiveRef.current.startManual(), 60);
+      if (reply) setDraft({ text: `I'm at ${location.label}.`, nonce: Date.now(), send: true });
     },
     [buildingId, viewModel, nav, notify],
   );
@@ -1107,11 +1160,10 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
-  // While navigating, the route has the room: no object details.
-  const showCard =
-    !!selection && !navigationMode && !(navigatorMode && selection.kind === 'space');
+  // Anything clicked opens its card, also while navigating ("I'm here" / "Take me there").
+  const showCard = !!selection;
   const routeHandlers =
-    selection && selection.kind !== 'object' && !navigatorMode
+    selection && selection.kind !== 'object'
       ? developer
         ? {
             onFromHere: selectedEndpoint
@@ -1133,6 +1185,8 @@ export default function AriNavApp() {
               }),
             startSet: !!nav.simulated,
             targetSet: !!nav.route?.target,
+            fromLabel: "I'm here",
+            toLabel: 'Take me there',
           }
       : {};
 
@@ -1304,6 +1358,12 @@ export default function AriNavApp() {
       <div className="right-rail" ref={railRef}>
         {(features.pov || features.game) && model && (
           <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
+            {guidanceHidden && guidance.canStart && (
+              // The closed navigation card comes back here (route, Start navigation).
+              <button className="chip chip--accent" onClick={() => setGuidanceHidden(false)} title="Show the route and start navigation">
+                Route
+              </button>
+            )}
             {features.memory &&
               (memorySession ? (
                 <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
@@ -1376,7 +1436,8 @@ export default function AriNavApp() {
         </nav>
 
         {/* Quick floor switching at every width (the sidebar no longer has a floor picker). */}
-        {!glbUrl && floorChoices.length > 0 && (
+        {/* Phones hide it while navigating: the floor follows the person then. */}
+        {!glbUrl && floorChoices.length > 0 && !(isPhone && guidance.navigating) && (
           <div className="floor-rail card" role="radiogroup" aria-label="Floor">
             {floorChoices.map((f) => (
               <button
@@ -1476,9 +1537,9 @@ export default function AriNavApp() {
         </section>
       )}
 
-      {features.pov && <LookLayer immersive={immersive} />}
-      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
+      {features.pov && <LookLayer immersive={immersive} split={developer && isWide && immersive.view === 'pov'} />}
       {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
+      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
 
       {features.memory && recapOpen && (
         <div className="recap-overlay">
@@ -1512,6 +1573,12 @@ export default function AriNavApp() {
         simulated={nav.simulated}
         personId={personId}
         onTurn={(turn) => void applyTurn(turn)}
+        onLocalCommand={(text) => {
+          // Without indoor positioning only the person knows they are there: "I've arrived".
+          if (!guidance.navigating || !ARRIVED_SAID.test(text.trim())) return null;
+          guidance.arrive();
+          return `Great, you've arrived${names.target ? ` at ${names.target}` : ''}. Navigation ended.`;
+        }}
         onConfirmed={handleConfirmed}
         onPick={(purpose, reply) => setPick({ kind: purpose, reply })}
         onUseSelectionAsLocation={() => selection && void setLocationFrom(selection, true)}
@@ -1544,6 +1611,19 @@ export default function AriNavApp() {
       {toast && (
         <div className="toast" role="status">
           {toast}
+        </div>
+      )}
+      {arrived !== null && (
+        <div className="arrival" role="status" aria-live="assertive">
+          <span className="arrival__check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="30" height="30">
+              <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="arrival__text">
+            <strong>You've arrived!</strong>
+            {arrived && <span>{arrived}</span>}
+          </span>
         </div>
       )}
     </div>
