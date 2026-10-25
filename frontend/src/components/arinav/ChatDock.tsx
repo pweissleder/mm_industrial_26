@@ -23,6 +23,7 @@ import {
 import type { BuildingModel, Selection } from '../../lib/building';
 import { LOCATION_SOURCE_LABEL, replyAsks, type AppMode, type SimulatedLocation } from '../../lib/nav';
 import { voiceSupported } from '../../lib/voice';
+import { setVoicePrefs, useVoicePrefs, voiceWanted } from '../../lib/voicePrefs';
 import { AssistantReply, ProposalCard, type ProposalState } from './ChatReply';
 import { LogoMark } from './Logo';
 import {
@@ -33,10 +34,9 @@ import {
   ReplayIcon,
   SendIcon,
   SparkleIcon,
-  SpeakerIcon,
-  SpeakerOffIcon,
 } from './Icons';
 import { useVoice } from './useVoice';
+import VoiceToggle from './VoiceToggle';
 
 type Entry =
   | { id: number; role: 'user'; text: string; voice?: boolean }
@@ -141,8 +141,6 @@ const WAITING = [
 const SESSION_KEY = 'arinav:assistant-session';
 /** Idle time before the open conversation folds down to the input bar. */
 const CHAT_IDLE_MS = 15_000;
-const SPEAK_KEY = 'arinav:speak-replies';
-const SPEED_KEY = 'arinav:speech-speed';
 const NO_UI: UiState = { building_id: null };
 const PaperclipIcon = (p: { width?: number; height?: number; className?: string }) => (
   <svg
@@ -233,7 +231,6 @@ function write(storage: () => Storage, key: string, value: string | null) {
 }
 
 const session = () => sessionStorage;
-const local = () => localStorage;
 
 const isEditable = (el: Element | null) =>
   !!el &&
@@ -281,11 +278,10 @@ export default function ChatDock({
   useEffect(() => {
     if (compact) setOpen(false);
   }, [compact]);
-  const [speak, setSpeak] = useState(() => read(local, SPEAK_KEY) === 'true');
-  const [speed, setSpeed] = useState<number | null>(() => {
-    const v = Number(read(local, SPEED_KEY));
-    return read(local, SPEED_KEY) !== null && Number.isFinite(v) && v > 0 ? v : null;
-  });
+  // Shared with the navigation hints: one voice on/off and one speed for both.
+  const voicePrefs = useVoicePrefs();
+  const speak = voiceWanted(voicePrefs, isNavigator);
+  const speed = voicePrefs.speed;
   const inputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLOListElement>(null);
   const talkRef = useRef<HTMLButtonElement>(null);
@@ -431,7 +427,7 @@ export default function ChatDock({
 
   async function sendTurn(text: string, viaVoice: boolean) {
     const sessionId = read(session, SESSION_KEY) ?? undefined;
-    const wantSpeech = canSpeak && (viaVoice || isNavigator || speak);
+    const wantSpeech = canSpeak && (viaVoice || speak);
     const sendUi = selection && detachedKey === selKey ? { ...ui, inspected: null } : ui;
     const started = epoch.current;
     try {
@@ -605,14 +601,12 @@ export default function ChatDock({
 
   const toggleSpeak = () => {
     const next = !speak;
-    setSpeak(next);
-    write(local, SPEAK_KEY, String(next));
+    setVoicePrefs({ speak: next });
     if (!next) voice.stopPlayback();
   };
 
   const changeSpeed = (v: number) => {
-    setSpeed(v);
-    write(local, SPEED_KEY, String(v));
+    setVoicePrefs({ speed: v });
   };
 
   const status = backendDown
@@ -660,25 +654,7 @@ export default function ChatDock({
                 {status}
               </span>
             )}
-            {canSpeak && (
-              <button
-                className="icon-btn chat__speak-toggle"
-                aria-pressed={speak}
-                onClick={toggleSpeak}
-                aria-label={speak ? 'Stop reading replies aloud' : 'Read replies aloud'}
-                title={
-                  speak
-                    ? 'Reading replies aloud (click to mute)'
-                    : 'Replies muted (click to read them aloud)'
-                }
-              >
-                {speak ? (
-                  <SpeakerIcon width={20} height={20} />
-                ) : (
-                  <SpeakerOffIcon width={20} height={20} />
-                )}
-              </button>
-            )}
+            {canSpeak && <VoiceToggle on={speak} onToggle={toggleSpeak} className="chat__speak-toggle" />}
             <button
               className="btn btn--ghost btn--sm chat__new"
               onClick={newConversation}

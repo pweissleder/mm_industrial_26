@@ -3,6 +3,7 @@
 // (next step + relative arrow, "simulated" badge), a drag-to-look layer and a touch joystick.
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react';
 import type { Features } from '../../lib/features';
+import { CubeIcon, EyeIcon, PhoneRotateIcon } from './Icons';
 import type { Guidance } from './useGuidance';
 import type { Immersive } from './useImmersive';
 
@@ -15,6 +16,20 @@ const ORIENTATION_TEXT: Record<string, string> = {
   active: 'Rotation on',
 };
 
+/** How long the phone's opened view switch waits for a choice before folding again. */
+const SWITCH_OPEN_MS = 4000;
+
+function useMedia(query: string): boolean {
+  const [value, setValue] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setValue(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [query]);
+  return value;
+}
+
 export function ImmersiveBar(props: {
   immersive: Immersive;
   guidance: Guidance;
@@ -26,33 +41,61 @@ export function ImmersiveBar(props: {
   const { immersive: im, features } = props;
   const pov = im.view === 'pov';
   const manual = im.driver === 'manual';
+  // Phones fold the view switch to the current view's icon; a tap unfolds it to choose.
+  const phone = useMedia('(max-width: 640px)');
+  const touch = useMedia('(pointer: coarse)');
+  const [open, setOpen] = useState(false);
+  const folded = phone && !open;
+  useEffect(() => {
+    if (!open) return;
+    const timer = window.setTimeout(() => setOpen(false), SWITCH_OPEN_MS);
+    return () => window.clearTimeout(timer);
+  }, [open]);
+  const choose = (view: 'overview' | 'pov') => {
+    if (folded) return setOpen(true);
+    setOpen(false);
+    if (view === 'overview') {
+      // user view: the still first-person pose ends with first person
+      if (!features.game && manual) im.stopManual();
+      im.setView('overview');
+      return;
+    }
+    if (!props.guidance.pose.get() && !manual) {
+      const why = im.startManual();
+      if (why) return props.onNotice(why);
+    }
+    im.setView('pov');
+  };
+  const rotating = im.orientation === 'active' || im.orientation === 'waiting';
   return (
     <div className="immersive-bar card" role="toolbar" aria-label="Navigation view">
       {features.pov && (
-        <div className="segmented segmented--small" role="group" aria-label="Camera">
+        <div
+          className={`segmented segmented--small view-switch${folded ? ' view-switch--folded' : ''}`}
+          role="group"
+          aria-label="Camera"
+        >
           <button
-            className="segmented__item"
+            className="segmented__item view-switch__item"
             aria-pressed={!pov}
-            onClick={() => {
-              // user view: the still first-person pose ends with first person
-              if (!features.game && manual) im.stopManual();
-              im.setView('overview');
-            }}
+            aria-label="Overview"
+            title={folded ? 'Change view' : 'Overview'}
+            tabIndex={folded && pov ? -1 : undefined}
+            onClick={() => choose('overview')}
           >
-            Overview
+            <CubeIcon width={16} height={16} />
+            <span className="view-switch__label">Overview</span>
           </button>
           <button
-            className="segmented__item"
+            className="segmented__item view-switch__item"
             aria-pressed={pov}
-            onClick={() => {
-              if (!props.guidance.pose.get() && !manual) {
-                const why = im.startManual();
-                if (why) return props.onNotice(why);
-              }
-              im.setView('pov');
-            }}
+            aria-label="First person"
+            title={folded ? 'Change view' : 'First person'}
+            tabIndex={folded && !pov ? -1 : undefined}
+            onClick={() => choose('pov')}
           >
-            First person
+            <EyeIcon width={16} height={16} />
+            <span className="view-switch__label">First person</span>
           </button>
         </div>
       )}
@@ -85,14 +128,16 @@ export function ImmersiveBar(props: {
           <span>{im.walkSpeed.toFixed(1)} m/s</span>
         </label>
       )}
-      {features.orientation && pov && (
+      {features.orientation && pov && touch && im.orientation !== 'unsupported' && (
         <>
           <button
-            className={`chip${im.orientation === 'active' ? ' chip--on' : ''}`}
-            onClick={() => (im.orientation === 'active' || im.orientation === 'waiting' ? im.disableOrientation() : void im.enableOrientation())}
-            title="Turn your phone to look around (rotation only, not position)"
+            className="icon-btn icon-btn--sm immersive-bar__rotate"
+            aria-pressed={rotating}
+            aria-label={ORIENTATION_TEXT[im.orientation]}
+            onClick={() => (rotating ? im.disableOrientation() : void im.enableOrientation())}
+            title={`${ORIENTATION_TEXT[im.orientation]}: turn your phone to look around (rotation only, not position)`}
           >
-            {ORIENTATION_TEXT[im.orientation]}
+            <PhoneRotateIcon width={18} height={18} />
           </button>
           {im.orientation === 'active' && (
             <button className="chip" onClick={im.calibrate} title="Hold the phone in the walking direction, then tap">
@@ -131,7 +176,6 @@ export function PovHud(props: { immersive: Immersive; guidance: Guidance; manual
   const moving = g.snapshot.route && g.snapshot.route.status === 'ok';
   return (
     <div className={`pov-hud${props.split ? ' pov-hud--split' : ''}`} aria-live="polite">
-      <span className="pov-hud__badge">Simulated walkthrough</span>
       {moving && (
         <div className="pov-hud__step">
           {im.arrowDeg !== null && (

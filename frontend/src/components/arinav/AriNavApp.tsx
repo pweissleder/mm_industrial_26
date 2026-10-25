@@ -21,6 +21,7 @@ import {
 import { GuidanceVoice, type GuidanceVoiceState } from '../../lib/guidanceVoice';
 import type { Names } from '../../lib/simulation';
 import { createSpeechPort } from '../../lib/voice';
+import { setVoicePrefs, useVoicePrefs, voiceWanted } from '../../lib/voicePrefs';
 import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
@@ -422,10 +423,15 @@ export default function AriNavApp() {
     [guideVoice, speechPort],
   );
   const voiceAvailable = !!assistant?.voice;
+  // Hints follow the chat's voice setting (on/off and speed); without voice on the server they
+  // stay silent instead of failing each time.
+  const voicePrefs = useVoicePrefs();
+  const hintsSpoken = voiceAvailable && voiceWanted(voicePrefs, mode === 'navigator');
+  useEffect(() => guideVoice.setMuted(!hintsSpoken), [guideVoice, hintsSpoken]);
+  const voiceSpeed = voicePrefs.speed ?? assistant?.tts_speed?.default;
   useEffect(() => {
-    // Without voice on the server, hints stay silent instead of failing each time.
-    if (assistant && !assistant.voice) guideVoice.setMuted(true);
-  }, [assistant, guideVoice]);
+    if (voiceSpeed !== undefined) guideVoice.setSpeed(voiceSpeed);
+  }, [guideVoice, voiceSpeed]);
   const names = useMemo<Names>(() => {
     const spaces = new Map(viewModel?.spaces.map((x) => [x.id, x.name]) ?? []);
     const floors = new Map(viewModel?.floors.map((f) => [f.id, f.name]) ?? []);
@@ -500,12 +506,6 @@ export default function AriNavApp() {
     nav.setSimulated({ endpoint: userStart, label: userStart.kind === 'point' ? `a point in ${name}` : name, source: 'manual' });
     if (immersive.driver === 'manual') immersive.stopManual();
   }, [userChoice]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // The route fly-through uses the overview camera.
-  const setView = immersive.setView;
-  useEffect(() => {
-    if (guidance.previewing && immersive.view === 'pov') setView('overview');
-  }, [guidance.previewing, immersive.view, setView]);
 
   // User view: a started navigation takes over from the still first-person pose (no manual walking).
   const stopStill = immersive.stopManual;
@@ -602,6 +602,23 @@ export default function AriNavApp() {
     if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));
     wasNavigating.current = navigationMode;
   }, [navigationMode]);
+  // Starting navigation from the user profile switches to the navigator; finishing (arrived or
+  // stopped) switches back. Not remembered, and a profile picked meanwhile is left alone.
+  const autoNavigator = useRef(false);
+  const sidebarBeforeNav = useRef(false);
+  useEffect(() => {
+    if (guidance.navigating && mode === 'user') {
+      autoNavigator.current = true;
+      sidebarBeforeNav.current = sidebarOpen;
+      setMode('navigator');
+      setSidebarOpen(false);
+    } else if (!guidance.navigating && autoNavigator.current) {
+      autoNavigator.current = false;
+      setMode('user');
+      setSidebarOpen(sidebarBeforeNav.current);
+    }
+    // Only the start and end of navigation switch; the current profile is read, not tracked.
+  }, [guidance.navigating]);
 
   // Manual walking is real (simulated) movement: once the person stands still, that point is the
   // location for the next question (not where the camera or a search pointed).
@@ -756,8 +773,24 @@ export default function AriNavApp() {
     observer.observe(chat);
     return () => observer.disconnect();
   }, []);
+  // Phones: the right rail sits above the details sheet when one is open (--details-h, gap included).
+  useEffect(() => {
+    const app = appRef.current;
+    const card = app?.querySelector<HTMLElement>('.top-stack > .details');
+    if (!app) return;
+    if (!card) {
+      app.style.setProperty('--details-h', '0px');
+      return;
+    }
+    const observer = new ResizeObserver(() =>
+      app.style.setProperty('--details-h', `${card.offsetHeight + 8}px`),
+    );
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [selection, navigationMode, navigatorMode]);
 
   const changeMode = (next: AppMode) => {
+    autoNavigator.current = false;
     setMode(next);
     remember(LAST_MODE, next);
     setPick(null);
@@ -993,8 +1026,9 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
+  // While navigating, the route has the room: no object details.
   const showCard =
-    !!selection && !(navigatorMode && selection.kind === 'space');
+    !!selection && !navigationMode && !(navigatorMode && selection.kind === 'space');
   const routeHandlers =
     selection && selection.kind !== 'object' && !navigatorMode
       ? developer
@@ -1157,8 +1191,23 @@ export default function AriNavApp() {
         />
       </div>
 
-      {/* Right edge: camera bar above the floor rail, pinned to the bottom (not pushed by the chat). */}
+      {/* Right edge, pinned to the bottom (phones: above the chat or the details sheet): the
+          Overview / First person switch, the camera bar and the floor rail. */}
       <div className="right-rail" ref={railRef}>
+        {(features.pov || features.game) && model && (
+          <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
+            {features.memory &&
+              (memorySession ? (
+                <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
+                  Session recap
+                </button>
+              ) : (
+                <button className="chip" onClick={() => void startMemory()} title="Remember this session locally (opt-in)">
+                  Remember session
+                </button>
+              ))}
+          </ImmersiveBar>
+        )}
         <nav className={`hud card${hudCompact ? ' hud--compact' : ''}`} aria-label="Camera">
           {!hudCompact && (
             <>
@@ -1277,10 +1326,10 @@ export default function AriNavApp() {
             voiceAvailable={voiceAvailable}
             onMute={() => {
               speechPort.unlock();
-              guideVoice.setMuted(!guideVoice.state.muted);
+              setVoicePrefs({ speak: !hintsSpoken });
             }}
             onRepeat={() => guideVoice.repeat()}
-            onVoiceSpeed={(v) => guideVoice.setSpeed(v)}
+            onVoiceSpeed={(v) => setVoicePrefs({ speed: v })}
             onUnlockAudio={() => speechPort.unlock()}
             onClose={() => setGuidanceHidden(true)}
             pov={immersive.view === 'pov'}
@@ -1320,20 +1369,6 @@ export default function AriNavApp() {
       )}
 
       {features.pov && <LookLayer immersive={immersive} />}
-      {(features.pov || features.game) && model && (
-        <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
-          {features.memory &&
-            (memorySession ? (
-              <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
-                Session recap
-              </button>
-            ) : (
-              <button className="chip" onClick={() => void startMemory()} title="Remember this session locally (opt-in)">
-                Remember session
-              </button>
-            ))}
-        </ImmersiveBar>
-      )}
       {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
       {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
 

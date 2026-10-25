@@ -4,15 +4,8 @@
  * Pure (no three.js) so it is unit-testable.
  */
 
-/** ~300 boxes draw comfortably on integrated GPUs (one draw call each) and stay legible. */
-export const MAX_VISIBLE_ASSETS = 300;
-/** Desktop-sized views have room (and usually the GPU) for more before it gets cluttered. */
-export const LARGE_SCREEN_ASSETS = 600;
-
-/** The cap for a viewer of this size in CSS px. */
-export function assetCapFor(width: number): number {
-  return width >= 1400 ? LARGE_SCREEN_ASSETS : MAX_VISIBLE_ASSETS;
-}
+/** The same cap at every screen size: a typical building (a few hundred assets) shows whole. */
+export const MAX_VISIBLE_ASSETS = 600;
 
 export interface AssetIndex {
   total: number;

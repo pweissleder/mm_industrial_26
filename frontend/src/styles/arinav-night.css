@@ -213,9 +213,70 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   max-width: min(560px, calc(100% - var(--inset-left) - var(--gutter) - 420px));
+  padding: 4px;
+  /* Concentric with the pills inside: their radius plus the 4px padding. */
+  border-radius: 20px;
+}
+
+/* Overview / First person: icon and label; phones fold it to the current view's icon. */
+.view-switch__item {
+  flex: none;
+  gap: 0;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  transition:
+    max-width 0.25s ease,
+    padding 0.25s ease,
+    opacity 0.2s ease,
+    background 0.15s;
+}
+
+.view-switch__label {
+  display: inline-block;
+  max-width: 110px;
+  margin-left: 6px;
+  overflow: hidden;
+  transition:
+    max-width 0.25s ease,
+    margin 0.25s ease,
+    opacity 0.2s ease;
+}
+
+.view-switch--folded .view-switch__item {
   padding: 6px 8px;
+}
+
+.view-switch--folded .view-switch__item[aria-pressed='false'] {
+  max-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.view-switch--folded .view-switch__label {
+  max-width: 0;
+  margin-left: 0;
+  opacity: 0;
+}
+
+.view-switch--folded {
+  gap: 0;
+}
+
+.immersive-bar__rotate {
+  width: 30px;
+  height: 30px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view-switch__item,
+  .view-switch__label {
+    transition: none;
+  }
 }
 
 .chip--on {
@@ -246,16 +307,6 @@
   align-items: center;
   gap: 8px;
   pointer-events: none;
-}
-
-.pov-hud__badge {
-  padding: 3px 10px;
-  border-radius: var(--pill);
-  background: rgba(0, 36, 120, 0.82);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
 }
 
 .pov-hud__step {
@@ -354,8 +405,7 @@
   .immersive-bar {
     top: auto;
     left: var(--gutter);
-    right: var(--gutter);
-    max-width: none;
+    max-width: calc(100% - 2 * var(--gutter));
     bottom: calc(var(--gutter) + 118px + var(--safe-b));
   }
   .pov-hud {
@@ -416,7 +466,6 @@
   .pov-hud {
     bottom: calc(var(--gutter) + 64px + var(--safe-b));
   }
-  .pov-hud__badge,
   .pov-hud__help {
     display: none;
   }
@@ -495,4 +544,12 @@
 }
 .immersive-bar__speed input {
   width: 90px;
+}
+
+/* In the right rail, above the camera bar: part of the column, right-aligned at every width. */
+.right-rail .immersive-bar {
+  position: static;
+  flex: none;
+  justify-content: flex-end;
+  max-width: min(560px, calc(100vw - 2 * var(--gutter)));
 }

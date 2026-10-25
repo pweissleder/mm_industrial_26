@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  assetCapFor,
   buildAssetIndex,
-  LARGE_SCREEN_ASSETS,
-  MAX_VISIBLE_ASSETS,
   visibleAssetIds,
 } from './assetCulling';
 
@@ -44,12 +41,5 @@ describe('visibleAssetIds', () => {
   it('includes route highlight assets only', () => {
     const s = visibleAssetIds(index, { ...none, highlightIds: ['a7', 'R1'], cap: 5 });
     expect(sorted(s)).toEqual(['a7']);
-  });
-});
-
-describe('assetCapFor', () => {
-  it('allows more assets on desktop-sized views', () => {
-    expect(assetCapFor(1440)).toBe(LARGE_SCREEN_ASSETS);
-    expect(assetCapFor(1100)).toBe(MAX_VISIBLE_ASSETS);
   });
 });

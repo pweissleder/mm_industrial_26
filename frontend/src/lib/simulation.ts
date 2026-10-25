@@ -6,7 +6,8 @@ import { progressAt, type RouteProgress } from './guidance';
 
 /** Walking speed at 1x (m/s). Vertical moves advance by their official equivalent cost. */
 export const WALK_SPEED = 1.3;
-export const SPEEDS = [0.5, 1, 2, 4, 8] as const;
+/** Walking speeds the navigation card cycles through (one button: 1x -> 2x -> 6x -> 1x). */
+export const SPEEDS = [1, 2, 6] as const;
 /** Announce an instruction this far (m) before its point. */
 export const ANNOUNCE_M = 6;
 const TURN_DEG = 50;

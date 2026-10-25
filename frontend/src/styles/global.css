@@ -2012,10 +2012,9 @@ code {
     overflow-y: auto;
   }
 
-  /* Phones: the bottom belongs to the sheets, so the right rail hangs from the top. */
+  /* Phones: the right rail stands at the bottom, above the chat and any details sheet. */
   .right-rail {
-    bottom: auto;
-    justify-content: flex-start;
+    bottom: calc(var(--gutter) + var(--safe-b) + var(--chat-h, 56px) + 8px + var(--details-h, 0px));
   }
 
   /* The details sheet and the open panel cover the bottom; the rail steps aside. */

@@ -215,3 +215,19 @@ export const PlayIcon = (p: P) => (
     <path d="M8 5.5v13l10.5-6.5z" />
   </Icon>
 );
+
+export const EyeIcon = (p: P) => (
+  <Icon {...p}>
+    <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+    <circle cx="12" cy="12" r="3" />
+  </Icon>
+);
+
+export const PhoneRotateIcon = (p: P) => (
+  <Icon {...p}>
+    <rect x="8" y="5" width="8" height="14" rx="1.6" />
+    <path d="M11 16.5h2" />
+    <path d="M4.5 9.5A8 8 0 0 1 7 5.2M19.5 14.5a8 8 0 0 1-2.5 4.3" />
+    <path d="M4.2 6.5l.3 3 3-.6M19.8 17.5l-.3-3-3 .6" />
+  </Icon>
+);

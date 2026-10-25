@@ -29,9 +29,13 @@ import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import { routeDrawing } from './routeGeometry';
 import { EYE_HEIGHT_M, angleDiff, wrap360 } from '../../lib/spatial';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
-import { assetCapFor, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
+import { MAX_VISIBLE_ASSETS, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
 
 const SLAB = 0.15;
+/** Minimap: hidden at phone widths (CSS px), else a rounded card with a thin gray border. */
+const MINIMAP_MIN_WIDTH = 640;
+const MINIMAP_RADIUS = 14;
+const MINIMAP_BORDER = 0xdddddd;
 const WALL_T = 0.1;
 const WALL_INSET = 0.06;
 const EXPLODE_GAP = 12;
@@ -187,6 +191,41 @@ export class BuildingScene {
   // only the overview cameras see, so it never blocks the lens.
   private readonly povCamera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);
   private readonly miniCamera = new THREE.OrthographicCamera(-15, 15, 12, -12, 0.1, 400);
+  // The minimap is rendered to a texture and drawn as a rounded card with a thin gray border.
+  private readonly miniTarget = new THREE.WebGLRenderTarget(1, 1, { samples: 4 });
+  private readonly miniFrame = new THREE.ShaderMaterial({
+    uniforms: {
+      map: { value: this.miniTarget.texture },
+      size: { value: new THREE.Vector2(1, 1) },
+      radius: { value: MINIMAP_RADIUS },
+      border: { value: 1 },
+      borderColor: { value: new THREE.Color(MINIMAP_BORDER) },
+    },
+    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: `
+      uniform sampler2D map;
+      uniform vec2 size;
+      uniform float radius;
+      uniform float border;
+      uniform vec3 borderColor;
+      varying vec2 vUv;
+      void main() {
+        // Signed distance (CSS px) to the rounded rectangle: negative inside.
+        vec2 q = abs((vUv - 0.5) * size) - size * 0.5 + radius;
+        float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
+        float alpha = 1.0 - smoothstep(-0.75, 0.25, d);
+        if (alpha <= 0.0) discard;
+        float edge = smoothstep(-border - 0.75, -border + 0.25, d);
+        gl_FragColor = vec4(mix(texture2D(map, vUv).rgb, borderColor, edge), alpha);
+        #include <colorspace_fragment>
+      }`,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+  });
+  private readonly miniFrameScene = new THREE.Scene().add(
+    new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.miniFrame),
+  );
   private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number } = {
     view: 'overview',
     yaw: null,
@@ -212,7 +251,6 @@ export class BuildingScene {
   /** Asset culling for huge buildings: null = off, else the ids currently shown. */
   private assetIndex: AssetIndex | null = null;
   private shownAssets: Set<string> | null = null;
-  private assetCap = assetCapFor(0);
   // A selected room's equipment, in the selection orange like a selected asset.
   private readonly roomAssetMat = new THREE.MeshStandardMaterial({
     color: SELECT,
@@ -410,6 +448,8 @@ export class BuildingScene {
     this.clearDone();
     this.doneMat.dispose();
     for (const m of [this.closedMat, this.diagnosisMat, this.highlightMat]) m.dispose();
+    this.miniTarget.dispose();
+    this.miniFrame.dispose();
     this.markerGeo.dispose();
     this.doorGeo.dispose();
     this.renderer.dispose();
@@ -966,10 +1006,9 @@ export class BuildingScene {
     this.assetIndex = null;
     this.shownAssets = null;
     if (!this.model) return;
-    this.assetCap = assetCapFor(this.container.clientWidth);
     const index = buildAssetIndex(this.model.assets);
-    if (visibleAssetIds(index, { selection: null, focusFloorId: null, cap: this.assetCap }) === null) {
-      // Under the cap (e.g. after growing the window): everything shows.
+    if (visibleAssetIds(index, { selection: null, focusFloorId: null, cap: MAX_VISIBLE_ASSETS }) === null) {
+      // Under the cap: everything shows.
       for (const a of this.model.assets) {
         const obj = this.objects.get(`asset:${a.id}`);
         if (obj) obj.visible = true;
@@ -995,7 +1034,7 @@ export class BuildingScene {
       selection: this.selection,
       focusFloorId: floorId,
       highlightIds: this.highlightIds,
-      cap: this.assetCap,
+      cap: MAX_VISIBLE_ASSETS,
     });
     if (!next) return;
     const set = (id: string, visible: boolean) => {
@@ -1742,10 +1781,6 @@ export class BuildingScene {
     this.labelRenderer.setSize(w, h);
     for (const m of Object.values(this.routeMats)) m.resolution.set(w, h);
     this.doneMat.resolution.set(w, h);
-    if (assetCapFor(w) !== this.assetCap) {
-      this.initAssetCulling();
-      this.updateAssetCulling();
-    }
     this.needsRender = true;
   }
 
@@ -1805,8 +1840,9 @@ export class BuildingScene {
       r.render(this.scene, this.camera);
       this.camera.aspect = aspect;
       this.resizeCameraOnly();
-    } else {
-      // Minimap (top-down, north up, centred on the person) in the free area's top-left corner.
+    } else if (w > MINIMAP_MIN_WIDTH) {
+      // Minimap (top-down, north up, centred on the person) in the free area's top-left corner;
+      // phones skip it, the first-person view needs the whole screen there.
       const size = Math.round(Math.min(w, h) * (w < 600 ? 0.34 : 0.26));
       const mh = Math.round(size * 0.8);
       const x = Math.min(this.insetLeft, w / 2) + 16;
@@ -1819,12 +1855,18 @@ export class BuildingScene {
       this.miniCamera.up.set(0, 0, -1);
       this.miniCamera.lookAt(base.x, base.y, base.z);
       this.miniCamera.updateProjectionMatrix();
-      r.setViewport(x, y, size, mh);
-      r.setScissor(x, y, size, mh);
+      const dpr = r.getPixelRatio();
+      this.miniTarget.setSize(Math.round(size * dpr), Math.round(mh * dpr));
+      r.setRenderTarget(this.miniTarget);
       r.setClearColor(0xf4f6fb, 1);
       r.clear();
       r.render(this.scene, this.miniCamera);
+      r.setRenderTarget(null);
       r.setClearColor(0x000000, 0);
+      this.miniFrame.uniforms.size.value.set(size, mh);
+      r.setViewport(x, y, size, mh);
+      r.setScissor(x, y, size, mh);
+      r.render(this.miniFrameScene, this.camera);
     }
     r.setScissorTest(false);
     r.setViewport(0, 0, w, h);
