@@ -16,6 +16,7 @@ import {
   type GuardrailInfo,
   type HealthResponse,
   type Proposal,
+  type RecapStub,
   type TurnResponse,
   type UiState,
 } from '../../lib/api';
@@ -49,7 +50,7 @@ type Entry =
       audio?: { pcm: string; rate: number };
     }
   | { id: number; role: 'proposal'; proposal: Proposal; state: ProposalState }
-  | { id: number; role: 'notice'; text: string; offerReset?: boolean };
+  | { id: number; role: 'notice'; text: string; offerReset?: boolean; recap?: RecapStub };
 
 type NewEntry = Entry extends infer E ? (E extends Entry ? Omit<E, 'id'> : never) : never;
 
@@ -95,6 +96,8 @@ interface Props {
   onSelect?: (sel: Selection) => void;
   /** The agent changed the building; reload it so the 3D view shows the edit. */
   onBuildingChanged?: () => void;
+  /** Show a Call Wrapped recap (the backend starts one after every N ended conversations). */
+  onOpenRecap?: (id: string) => void;
 }
 
 /** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
@@ -256,6 +259,7 @@ export default function ChatDock({
   model = null,
   onSelect,
   onBuildingChanged,
+  onOpenRecap,
 }: Props) {
   const developer = profile === 'developer';
   const isNavigator = profile === 'navigator';
@@ -428,6 +432,8 @@ export default function ChatDock({
         push({ role: 'notice', text: 'The spoken reply failed; the text answer is complete.' });
       }
       onTurn?.(turn);
+      // Starting this conversation completed a recap batch: offer it without interrupting.
+      if (turn.recap) push({ role: 'notice', text: 'Your Call Wrapped is ready.', recap: turn.recap });
       if (audio) void voice.play(audio.pcm, audio.rate);
     } catch {
       if (started !== epoch.current) return;
@@ -558,7 +564,12 @@ export default function ChatDock({
     setPending(false);
     voice.stopPlayback();
     // Fire and forget: a backend that is down must not block starting over.
-    if (sessionId) void api.assistantReset(sessionId).catch(() => undefined);
+    if (sessionId) {
+      void api
+        .assistantReset(sessionId)
+        .then((r) => r.recap && onOpenRecap?.(r.recap.id))
+        .catch(() => undefined);
+    }
     write(session, SESSION_KEY, null);
     setThreadId(undefined);
     setEntries([]);
@@ -674,6 +685,14 @@ export default function ChatDock({
                     {m.offerReset && (
                       <button className="chip chat__reset-chip" onClick={newConversation}>
                         Start new conversation
+                      </button>
+                    )}
+                    {m.recap && onOpenRecap && (
+                      <button
+                        className="chip chat__reset-chip"
+                        onClick={() => m.recap && onOpenRecap(m.recap.id)}
+                      >
+                        Watch your Call Wrapped
                       </button>
                     )}
                   </li>

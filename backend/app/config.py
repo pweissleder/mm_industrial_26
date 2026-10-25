@@ -26,6 +26,9 @@ class Settings(BaseSettings):
     # ElevenLabs voice. Without the keys the assistant/voice endpoints report "offline".
     assistant_model: str = "claude-sonnet-5-5"
     assistant_effort: str = "medium"
+    # Call Wrapped: a recap after every N ended conversations (0 = off), written by this model.
+    recap_every_sessions: int = Field(default=5, ge=0)
+    recap_model: str = "claude-sonnet-5-5"
     elevenlabs_api_key: str | None = None
     elevenlabs_voice_id: str = "JBFqnCBsd6RMkjVDRZzb"
     # Input guardrail: rules always run; with an API key this model also classifies

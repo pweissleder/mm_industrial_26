@@ -244,6 +244,7 @@ class Assistant:
     def reset(self, session_id: str) -> None:
         with self.sessions_lock:
             self.sessions.pop(session_id, None)
+        self.memory.end_session(session_id)
 
     # ---------- helpers ----------
     def _data(self, session: Session) -> JSON:
@@ -851,7 +852,9 @@ class Assistant:
         began = perf_counter()
         ui: JSON = {}
         self.sync_ui(session, ui_state)
-        self.memory.add_message(session.id, session.state["building_id"], "user", text)
+        self.memory.add_message(
+            session.id, session.state["building_id"], "user", text, voice=spoken
+        )
         messages: list[JSON] = []
         for item in session.history[-2 * HISTORY_TURNS :]:
             if messages and messages[-1]["role"] == item["role"]:

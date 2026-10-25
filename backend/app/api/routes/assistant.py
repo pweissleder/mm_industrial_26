@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
 from app.assistant.port import NavigationError
+from app.assistant.recap import RecapService
 from app.assistant.service import Assistant, AssistantError
 from app.assistant.voice import SAMPLE_RATE, TTS_SPEED, ElevenLabsVoice, VoiceError, spoken
 
@@ -105,6 +106,12 @@ def _voice(request: Request) -> ElevenLabsVoice | None:
     return voice
 
 
+def _due_recap(request: Request) -> dict[str, Any] | None:
+    """A Call Wrapped recap started now that enough conversations have ended, if any."""
+    recaps: RecapService | None = getattr(request.app.state, "recaps", None)
+    return recaps.after_end() if recaps is not None else None
+
+
 def _nav_error(error: NavigationError) -> HTTPException:
     code = status.HTTP_409_CONFLICT if error.code in STALE else 422
     return HTTPException(code, {"code": error.code, "message": error.message})
@@ -135,6 +142,7 @@ def turn(body: TurnRequest, request: Request) -> dict[str, Any]:
     except NavigationError as error:
         raise _nav_error(error) from None
     value["session_id"] = session_id
+    value["recap"] = _due_recap(request)  # a new conversation ends the earlier ones
     value["audio_pcm16"], value["sample_rate"] = None, SAMPLE_RATE
     voice = _voice(request)
     if body.speak and voice is not None and value["reply"]:
@@ -157,9 +165,9 @@ def confirm(body: ConfirmRequest, request: Request) -> dict[str, Any]:
 
 
 @router.post("/reset")
-def reset(body: ResetRequest, request: Request) -> dict[str, str]:
+def reset(body: ResetRequest, request: Request) -> dict[str, Any]:
     _assistant(request).reset(body.session_id)
-    return {"status": "reset"}
+    return {"status": "reset", "recap": _due_recap(request)}
 
 
 @router.post("/speak")

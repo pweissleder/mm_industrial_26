@@ -438,6 +438,67 @@ export interface TurnResponse {
   audio_pcm16?: string | null;
   sample_rate?: number;
   voice_error?: string | null;
+  /** A Call Wrapped recap the backend just started (enough conversations have ended). */
+  recap?: RecapStub | null;
+}
+
+/** Call Wrapped: `/api/recaps`. Every number is in `facts`; Claude only writes `content`. */
+export interface RecapStub {
+  id: string;
+  status: 'pending' | 'ready' | 'failed';
+}
+
+export interface RecapCount {
+  category: string;
+  label: string;
+  count: number;
+}
+
+export type ByConnector = { stairs: number; lift: number };
+
+export interface RecapFacts {
+  conversations: number;
+  from: string | null;
+  to: string | null;
+  buildings: string[];
+  talk: { minutes: number; questions: number; voice_questions: number };
+  searches: RecapCount[];
+  routes: {
+    count: number;
+    distance_m: number;
+    longest: { from: string | null; to: string | null; distance_m: number } | null;
+    comparison: { unit: string; value: number };
+  };
+  vertical: {
+    floor_changes: ByConnector;
+    climbed_m: ByConnector;
+    descended_m: ByConnector;
+    steps: number;
+  };
+  alltime: {
+    conversations: number;
+    questions: number;
+    distance_m: number;
+    floor_changes: number;
+    top_searches: RecapCount[];
+  };
+}
+
+export interface RecapContent {
+  topTopics: string[];
+  mood: string;
+  moodEmoji: string;
+  bestQuote: string | null;
+  summary: string;
+  nextSteps: string[];
+}
+
+export interface Recap extends RecapStub {
+  created_at: string;
+  session_ids: string[];
+  source?: 'claude' | 'fallback';
+  facts?: RecapFacts;
+  content?: RecapContent;
 }
 
 export interface ConfirmResponse {
@@ -659,9 +720,15 @@ export const api = {
       post({ session_id: sessionId, proposal_id: proposalId, approved }),
     ),
   assistantReset: (sessionId: string) =>
-    request<{ status: string }>('/assistant/reset', post({ session_id: sessionId })),
+    request<{ status: string; recap?: RecapStub | null }>(
+      '/assistant/reset',
+      post({ session_id: sessionId }),
+    ),
   assistantTranscribe: (audio: string) =>
     request<TranscribeResponse>('/assistant/transcribe', post({ audio })),
+  recap: (id: string) => request<Recap>(`/recaps/${encodeURIComponent(id)}`),
+  /** Recaps the latest conversations now (developer mode; 409 when there are none). */
+  createRecap: () => request<RecapStub>('/recaps', post({})),
   /** Short spoken navigation hint (<= 240 chars); 503 when voice is off, 502 on TTS failure. */
   speak: (text: string, speed: number, signal?: AbortSignal) =>
     request<SpeakResponse>('/assistant/speak', { ...post({ text, speed }), signal }),
