@@ -1,0 +1,58 @@
+{
+ "base": "https://localhost:4321",
+ "results": [
+  {
+   "name": "M1_navigation_card_folds_on_the_phone",
+   "pass": true,
+   "detail": {
+    "folded_px": 110,
+    "open_px": 269
+   }
+  },
+  {
+   "name": "M2_walk_yourself_and_auto_walk_in_user_profile_phone",
+   "pass": true,
+   "detail": {
+    "stick_px": 84,
+    "auto_from_m": 4.05,
+    "auto_to_m": 6.65
+   }
+  },
+  {
+   "name": "M3_arrival_keeps_first_person",
+   "pass": true,
+   "detail": {
+    "view": "pov",
+    "standing_at": [
+     2.5,
+     44.1
+    ]
+   }
+  },
+  {
+   "name": "M4_selected_thing_offers_im_here",
+   "pass": true,
+   "detail": {
+    "buttons": [
+     "I'm here",
+     "Take me there"
+    ],
+    "location": "Location: Coffee machine 0.28"
+   }
+  },
+  {
+   "name": "D1_tool_names_on_hover",
+   "pass": true,
+   "detail": {
+    "tip": "\"Zoom in\""
+   }
+  },
+  {
+   "name": "D2_wasd_in_user_profile",
+   "pass": true,
+   "detail": {
+    "moved_m": 0.4
+   }
+  }
+ ]
+}

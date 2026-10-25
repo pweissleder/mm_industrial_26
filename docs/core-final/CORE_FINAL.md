@@ -13,12 +13,27 @@ branch up to `3694522`). No change to `main`, no merge.
 | Arrival | "You have arrived" but the route, card and directions stayed | green check "You've arrived!", then the navigation closes once (route and directions cleared); the person stays at the target, which is the start of the next route. Users without positioning can say "I've arrived" in the chat; the user/navigator card says the walk is simulated |
 | Phone rotation | only the compass angle (yaw) was used; 72° vertical view looked zoomed on a portrait phone | yaw, pitch and roll from alpha/beta/gamma (`deviceLook`): ceiling and floor, no flip near straight up/down, no jump at 0/360°, landscape aware; about 70° across on portrait phones. Rotation changes only the view, never the position |
 | Desktop developer view | first person as a 50/50 split | the overview fills the screen; first person is an embedded phone (same pose, route and heading); WASD and speed kept |
-| Phone developer view | — | one full-screen view (no split, no phone mock-up), verified at 390 × 844; no touch joystick |
+| Phone developer view | — | one full-screen view (no split, no phone mock-up), verified at 390 × 844 |
 | Objects in first person | clicks went to the drag-to-look layer and the orbit camera; cards were hidden while navigating | a click/tap without dragging picks through the eye camera; walls stop the pick; equipment, doors, lifts and stairs open their card in first person |
 | View switch | full segmented control on desktop, folded only on phones | folded to the current view's icon everywhere; hover/click/tap unfolds, a choice, Escape or a click outside folds it; same state as before (no second view state) |
 | Fly-through | — | already removed from the navigation card by Pascal; no entry point left |
 | Simulated person | orange cylinder + ball scaled ×1.6 (about 2.8 m), unlit, drawn over every wall | a worker at real scale (about 1.75 m): white hard hat, orange high-visibility vest with reflective bands, dark trousers, lit like the building; legs and arms swing with the distance walked; a blue position disc and view beam on the floor stay visible and grow with camera distance; parts hidden by walls show as a soft navy silhouette (`walker-*-1440.png`, `scripts/e2e/walker_shots.mjs`) |
 | Precision router | — | works on the factory with all three profiles (9/9 routes obstacle-checked); developer labels now "Machines & fixed equipment / All obstacles / Walls only". A failed precision route is reported, never replaced silently by the official one |
+
+## Follow-up from the phone test (11:30)
+
+| Reported | Now |
+|---|---|
+| A clicked thing offered no "I'm here" (navigator profile; cards hidden while navigating) | every profile: the card opens (also while navigating) with "I'm here" / "Take me there" (developer: From/To here). "I'm here" works for rooms, equipment and doors and replaces where the person walked; in first person they stand there |
+| Navigation card covers the phone screen, cannot be made smaller | chevron folds it to the next step while navigating (phones start folded: 120 px instead of 269 px; in first person only the title row, 52 px) |
+| No WASD in the user profile; stuck on the phone | walking yourself in every profile: WASD on desktop, a small 84 px stick on touch screens |
+| No button to walk the route automatically | "Auto-walk" in the mode bar hands the person back to the route walker from where they stand |
+| Arrival left first person | after the check the person stays in first person at the target and can walk on |
+| Tools on the right without names | name next to each camera tool on hover |
+| View switch moved under the pointer | a small menu under the view icon; nothing shifts; hover/click/tap opens, a choice, Escape or a click outside closes |
+
+Browser: `scripts/e2e/user_fix_check.mjs` 6/6 (phone 390 × 844 and desktop, no assistant calls),
+`core_final_check.mjs` 7/7.
 
 ## Evidence
 

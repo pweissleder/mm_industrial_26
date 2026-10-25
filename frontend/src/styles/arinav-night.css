@@ -656,3 +656,185 @@
   margin: 6px 0 0;
   font-size: 0.78rem;
 }
+
+/* Navigation card folded to its next step (chevron; phones start folded). */
+.guidance__fold svg {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
+}
+.guidance--min .guidance__fold svg {
+  transform: none;
+}
+.guidance--min .guidance__meta,
+.guidance--min .guidance__progress,
+.guidance--min .guidance__actions,
+.guidance--min .guidance__message,
+.guidance--min .guidance__debug-wrap,
+.guidance--min .guidance__hint {
+  display: none;
+}
+.guidance--min .guidance__next {
+  margin-top: 6px;
+}
+.guidance--min .guidance__text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.92rem;
+}
+
+/* A small walking stick on touch screens (walking yourself). */
+.joystick {
+  width: 84px;
+  height: 84px;
+}
+
+/* Camera bar: the function's name next to each tool on hover. */
+@media (hover: hover) {
+  .hud .icon-btn[aria-label] {
+    position: relative;
+  }
+  .hud .icon-btn[aria-label]:hover::after,
+  .hud .icon-btn[aria-label]:focus-visible::after {
+    content: attr(aria-label);
+    position: absolute;
+    z-index: 40;
+    top: 50%;
+    right: calc(100% + 10px);
+    transform: translateY(-50%);
+    padding: 4px 10px;
+    border-radius: var(--pill);
+    background: var(--navy);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+  }
+}
+
+/* Phones: the mode bar wraps instead of scrolling sideways (nothing is cut off); touch screens
+   walk with the small stick, so the keyboard help and a long speed slider are left out. */
+@media (max-width: 720px) {
+  .right-rail .immersive-bar {
+    flex-wrap: wrap;
+    overflow: visible;
+  }
+  .immersive-bar__speed input {
+    width: 64px;
+  }
+}
+@media (pointer: coarse) {
+  .pov-hud__help {
+    display: none;
+  }
+}
+
+/* View switch as a small menu under its icon (replaces the unfolding segmented control). */
+.view-switch {
+  position: relative;
+  flex: none;
+}
+.view-switch__anchor[aria-expanded='true'] {
+  background: var(--surface-2, rgba(0, 36, 120, 0.08));
+}
+.view-switch .view-switch__menu {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 156px;
+  padding: 4px;
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  animation: view-menu-in 0.16s ease-out;
+}
+.right-rail .view-switch__menu {
+  left: auto;
+  right: 0;
+}
+.view-switch__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink, #0b1736);
+  font: inherit;
+  font-size: 0.86rem;
+  text-align: left;
+  cursor: pointer;
+}
+.view-switch__item:hover,
+.view-switch__item:focus-visible {
+  background: rgba(0, 36, 120, 0.06);
+}
+.view-switch__item[aria-pressed='true'] {
+  background: var(--navy);
+  color: #fff;
+}
+@media (max-width: 720px) {
+  /* The mode bar sits low on phones: open upwards. */
+  .view-switch__menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+  }
+}
+@keyframes view-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .view-switch__menu {
+    animation: none;
+  }
+}
+@media (max-height: 500px) {
+  .right-rail .immersive-bar {
+    overflow: visible;
+    flex-wrap: wrap;
+  }
+}
+/* Folded in first person (the HUD shows the step): only the title row. */
+.guidance--min {
+  height: auto;
+  min-height: 0;
+}
+.guidance--pov.guidance--min > :not(.guidance__head) {
+  display: none;
+}
+.top-stack > .guidance.guidance--min {
+  min-height: 0;
+}
+
+/* Developer split: dragging to look only over the embedded phone; the map around it orbits. */
+.look-layer--split {
+  inset: auto;
+  left: var(--phone-left, 0);
+  top: var(--phone-top, 0);
+  width: var(--phone-w, 300px);
+  height: var(--phone-h, 600px);
+  border-radius: 26px;
+}
+
+.chip--accent {
+  background: var(--navy);
+  color: #fff;
+}
+
+/* Touch phones zoom with two fingers: the zoom buttons are left out to keep the screen calm. */
+@media (pointer: coarse) and (max-width: 720px) {
+  .hud .icon-btn[aria-label='Zoom in'],
+  .hud .icon-btn[aria-label='Zoom out'] {
+    display: none;
+  }
+}

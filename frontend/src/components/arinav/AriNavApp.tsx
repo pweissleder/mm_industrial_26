@@ -47,7 +47,7 @@ import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import GuidancePanel from './GuidancePanel';
-import { ImmersiveBar, LookLayer, PovHud } from './ImmersiveControls';
+import { ImmersiveBar, LookLayer, PovHud, TouchJoystick } from './ImmersiveControls';
 import { useImmersive } from './useImmersive';
 import { currentFeatures } from '../../lib/features';
 import {
@@ -547,7 +547,8 @@ export default function AriNavApp() {
   }, [simLoc, viewModel]);
   // Walking yourself (WASD / joystick) simulates a person with a phone: a developer tool. In the
   // user view the phone itself is the first-person screen (route walker + phone rotation).
-  const immersiveFeatures = useMemo(() => ({ ...features, game: features.game && developer }), [features, developer]);
+  // Walking yourself (WASD, or the small stick on touch screens) in every profile.
+  const immersiveFeatures = features;
   const immersive = useImmersive({
     features: immersiveFeatures,
     model: viewModel,
@@ -669,12 +670,17 @@ export default function AriNavApp() {
   const [arrived, setArrived] = useState<string | null>(null);
   const clearRouteRef = useRef(nav.clearRoute);
   clearRouteRef.current = nav.clearRoute;
+  const immersiveRef = useRef(immersive);
+  immersiveRef.current = immersive;
   const freeCameraRef = useRef(guidance.stop);
   freeCameraRef.current = guidance.stop;
   useEffect(() => {
     if (navStatus !== 'arrived') return;
     setArrived(names.target ?? '');
     const finish = window.setTimeout(() => {
+      // In first person the person stays there and can look and walk on (no switch to overview).
+      const im = immersiveRef.current;
+      if (im.view === 'pov' && im.driver !== 'manual') im.startManual();
       freeCameraRef.current();
       clearRouteRef.current();
     }, ARRIVAL_MS);
@@ -761,7 +767,7 @@ export default function AriNavApp() {
     !guidanceHidden &&
     (guidance.snapshot.route?.status === 'ok' || guidance.snapshot.status === 'blocked');
   useEffect(() => {
-    setCardCollapsed(guidance.navigating);
+    setCardCollapsed(false);
     setCardHeld(false);
     // Only a new selection resets the fold; the navigation state is read, not tracked.
   }, [selection]);
@@ -898,7 +904,9 @@ export default function AriNavApp() {
           ? sel.id
           : sel.kind === 'asset'
             ? viewModel?.assets.find((a) => a.id === sel.id)?.space_id
-            : undefined;
+            : sel.kind === 'opening'
+              ? viewModel?.openings.find((o) => o.id === sel.id)?.space_ids.find((x) => x !== 'outside')
+              : undefined;
       if (!spaceId || !buildingId) {
         notify('Pick a room to set the simulated location.');
         return;
@@ -921,8 +929,17 @@ export default function AriNavApp() {
       } catch {
         // The room itself is a valid start; resolving only refines it.
       }
+      // Equipment and doors are where the person stands (beside them), not just their room.
+      if (sel.kind === 'asset' || sel.kind === 'opening') {
+        location = { endpoint: { kind: sel.kind, id: sel.id }, label: elementLabel(sel.id, viewModel), source: 'manual' };
+      }
+      // "I'm here" replaces where the person walked; in first person they now stand there.
+      const im = immersiveRef.current;
+      const inPov = im.view === 'pov';
+      if (im.driver === 'manual') im.stopManual();
       nav.setSimulated(location);
-      if (reply) setDraft({ text: `I'm in ${label}.`, nonce: Date.now(), send: true });
+      if (inPov) window.setTimeout(() => immersiveRef.current.startManual(), 60);
+      if (reply) setDraft({ text: `I'm at ${location.label}.`, nonce: Date.now(), send: true });
     },
     [buildingId, viewModel, nav, notify],
   );
@@ -1327,11 +1344,8 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
-  // While navigating, the route has the room: no object details. In first person a click on a
-  // thing in sight (equipment, door, lift, stairs) still opens its card.
-  const povThing = immersive.view === 'pov' && !!selection && selection.kind !== 'space';
-  const showCard =
-    !!selection && (!navigationMode || povThing) && !(navigatorMode && selection.kind === 'space');
+  // Anything clicked opens its card, also while navigating ("I'm here" / "Take me there").
+  const showCard = !!selection;
   /** Developer "From here" / "To here": set that end, and route once both ends are known. */
   const chooseEndpoint = (which: Which, endpoint: Endpoint, id: string) => {
     nav.setEndpoint(which, endpoint);
@@ -1353,7 +1367,7 @@ export default function AriNavApp() {
   };
 
   const routeHandlers =
-    selection && selection.kind !== 'object' && !navigatorMode
+    selection && selection.kind !== 'object'
       ? developer
         ? {
             // Choosing the second end computes the route at once, so the buttons visibly do something.
@@ -1369,7 +1383,7 @@ export default function AriNavApp() {
         : {
             onFromHere: () => {
               void setLocationFrom(selection, false);
-              notify(`You are now in ${elementLabel(selection.id, viewModel)} (simulated). Pick a place and press To here.`);
+              notify(`You are now in ${elementLabel(selection.id, viewModel)} (simulated). Pick a place and press Take me there.`);
             },
             onToHere: () =>
               setDraft({
@@ -1379,6 +1393,8 @@ export default function AriNavApp() {
               }),
             startSet: !!nav.simulated,
             targetSet: !!nav.route?.target,
+            fromLabel: "I'm here",
+            toLabel: 'Take me there',
           }
       : {};
 
@@ -1557,6 +1573,12 @@ export default function AriNavApp() {
       <div className="right-rail" ref={railRef}>
         {(features.pov || features.game) && model && (
           <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
+            {guidanceHidden && guidance.canStart && (
+              // The closed navigation card comes back here (route, Start navigation).
+              <button className="chip chip--accent" onClick={() => setGuidanceHidden(false)} title="Show the route and start navigation">
+                Route
+              </button>
+            )}
             {features.memory &&
               (memorySession ? (
                 <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
@@ -1629,7 +1651,8 @@ export default function AriNavApp() {
         </nav>
 
         {/* Quick floor switching at every width (the sidebar no longer has a floor picker). */}
-        {!glbUrl && floorChoices.length > 0 && (
+        {/* Phones hide it while navigating: the floor follows the person then. */}
+        {!glbUrl && floorChoices.length > 0 && !(isPhone && guidance.navigating) && (
           <div className="floor-rail card" role="radiogroup" aria-label="Floor">
             {floorChoices.map((f) => (
               <button
@@ -1754,7 +1777,8 @@ export default function AriNavApp() {
         </section>
       )}
 
-      {features.pov && <LookLayer immersive={immersive} />}
+      {features.pov && <LookLayer immersive={immersive} split={developer && isWide && immersive.view === 'pov'} />}
+      {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
       {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
 
       {features.memory && recapOpen && (

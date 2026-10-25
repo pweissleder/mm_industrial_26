@@ -1,5 +1,5 @@
 {
- "base": "http://127.0.0.1:4322",
+ "base": "https://localhost:4321",
  "results": [
   {
    "name": "P0_equipment_start_route_and_walker",
@@ -42,11 +42,10 @@
    }
   },
   {
-   "name": "P2_view_switch_folded_hover_escape",
+   "name": "P2_view_switch_menu_hover_escape",
    "pass": true,
    "detail": {
-    "folded_px": 38,
-    "open_px": 222,
+    "icon_px": 28,
     "view": "pov",
     "route_kept": true
    }
@@ -63,6 +62,15 @@
      "tries": 4
     },
     "nav_status": "active"
+   }
+  },
+  {
+   "name": "P1_desktop_dev_drag_map_outside_phone_look_inside",
+   "pass": true,
+   "detail": {
+    "map_drag_moves_camera": true,
+    "yaw_after_map_drag_same": true,
+    "yaw_after_phone_drag": 40
    }
   },
   {

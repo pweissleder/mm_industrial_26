@@ -31,7 +31,7 @@ async function check(name, fn) {
   }
 }
 async function open(viewport, contextOptions = {}) {
-  const context = await browser.newContext({ viewport, ...contextOptions });
+  const context = await browser.newContext({ viewport, ignoreHTTPSErrors: true, ...contextOptions });
   const page = await context.newPage();
   page.errors = [];
   page.on('pageerror', (e) => page.errors.push(e.message));
@@ -178,26 +178,28 @@ await check('P0_new_route_after_arrival_starts_at_target', async () => {
   return { start: body.start };
 });
 
-await check('P2_view_switch_folded_hover_escape', async () => {
-  const sw = page.getByRole('group', { name: 'Camera' });
-  const folded = await sw.evaluate((el) => el.classList.contains('view-switch--folded'));
-  const w0 = (await sw.boundingBox()).width;
-  await sw.hover();
-  await page.waitForTimeout(400);
-  const w1 = (await sw.boundingBox()).width;
+await check('P2_view_switch_menu_hover_escape', async () => {
+  const anchor = page.getByRole('button', { name: 'Change view' });
+  const closed = await page.locator('.view-switch__menu').count();
+  await anchor.hover();
+  await page.waitForTimeout(300);
+  const opened = await page.locator('.view-switch__menu').count();
+  const after = await anchor.boundingBox();
   await page.screenshot({ path: join(OUT, 'P2-view-switch-open-1440.png') });
   await page.keyboard.press('Escape');
-  await page.mouse.move(700, 300);
-  await page.waitForTimeout(400);
-  const w2 = (await sw.boundingBox()).width;
-  assert(folded && w1 > w0 + 20 && w2 < w1 - 20, `widths ${w0} ${w1} ${w2}`);
-  await sw.hover();
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(200);
+  const escaped = await page.locator('.view-switch__menu').count();
+  const before = await anchor.boundingBox(); // the menu takes no room: same place open and closed
+  assert(!closed && opened && !escaped && Math.abs(before.x - after.x) < 1, `menu ${closed}/${opened}/${escaped}, icon moved ${before.x}->${after.x}`);
+  await anchor.click(); // a click (hover opens it already) keeps it open
+  await page.waitForTimeout(200);
   await page.getByRole('button', { name: 'First person' }).click();
   await page.waitForTimeout(800);
   const view = await page.evaluate(() => window.__arinavImmersive.look().view);
+  const menuAfter = await page.locator('.view-switch__menu').count();
   const stillRoute = await g(page);
-  return { folded_px: Math.round(w0), open_px: Math.round(w1), view, route_kept: stillRoute.route };
+  assert(view === 'pov' && !menuAfter, `view ${view}, menu ${menuAfter}`);
+  return { icon_px: Math.round(before.width), view, route_kept: stillRoute.route };
 });
 
 await check('P1_desktop_dev_split_and_click_object_in_first_person', async () => {
@@ -222,6 +224,38 @@ await check('P1_desktop_dev_split_and_click_object_in_first_person', async () =>
   return { split, details, nav_status: moving.status };
 });
 
+await check('P1_desktop_dev_drag_map_outside_phone_look_inside', async () => {
+  const rect = await page.evaluate(() => window.__arinavScene.povRect);
+  const box = await page.locator('canvas').first().boundingBox();
+  const state = () =>
+    page.evaluate(() => ({ cam: window.__arinavScene.camera.position.toArray().map((v) => +v.toFixed(2)), yaw: window.__arinavImmersive.look().yaw }));
+  const drag = async (x, y) => {
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x - 160, y + 40, { steps: 8 });
+    await page.mouse.up();
+    await page.waitForTimeout(500);
+  };
+  // a free spot on the map right of the phone (not under a card or chip)
+  const [mx, my] = await page.evaluate(([bx, by, w, h]) => {
+    for (const fy of [0.6, 0.7, 0.5, 0.8, 0.4])
+      for (const fx of [0.6, 0.55, 0.65, 0.5, 0.7]) {
+        const [x, y] = [bx + w * fx, by + h * fy];
+        if (document.elementFromPoint(x, y) instanceof HTMLCanvasElement) return [x, y];
+      }
+    return [bx + w * 0.6, by + h * 0.6];
+  }, [box.x, box.y, box.width, box.height]);
+  const a = await state();
+  await drag(mx, my); // the map, right of the phone
+  const b = await state();
+  await drag(box.x + rect.x + rect.w / 2, box.y + rect.y + rect.h / 3); // inside the phone
+  const c = await state();
+  const camMoved = a.cam.some((v, i) => Math.abs(v - b.cam[i]) > 0.05);
+  assert(camMoved && a.yaw === b.yaw, `map drag: camera ${JSON.stringify(a.cam)} -> ${JSON.stringify(b.cam)}, yaw ${a.yaw} -> ${b.yaw}`);
+  assert(c.yaw !== b.yaw, `phone drag did not turn the view (${b.yaw} -> ${c.yaw})`);
+  return { map_drag_moves_camera: camMoved, yaw_after_map_drag_same: a.yaw === b.yaw, yaw_after_phone_drag: c.yaw };
+});
+
 // ------------------------------------------------------------------ phone 390 x 844
 const phone = await open({ width: 390, height: 844 }, { isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 current = phone;
@@ -232,7 +266,7 @@ await check('P1_phone_dev_single_fullscreen_view', async () => {
   await phone.evaluate(() => window.__arinavGuidance.manualClock(true));
   await phone.evaluate(() => window.__arinavGuidance.advance(3));
   // tap the folded switch (the current view's icon) to unfold it, then choose
-  await phone.getByRole('button', { name: 'Overview' }).tap();
+  await phone.getByRole('button', { name: 'Change view' }).tap();
   await phone.waitForTimeout(400);
   await phone.getByRole('button', { name: 'First person' }).click();
   await phone.waitForTimeout(1200);

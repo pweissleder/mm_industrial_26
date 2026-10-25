@@ -596,7 +596,8 @@ export class BuildingScene {
     const entering = look.view === 'pov' && this.look.view !== 'pov';
     this.look = look;
     if (entering) this.povYaw = null;
-    this.controls.enabled = look.view !== 'pov';
+    // Developer split: the map around the embedded phone stays orbitable.
+    this.controls.enabled = look.view !== 'pov' || this.split;
     this.labelRenderer.domElement.style.display = look.view === 'pov' ? 'none' : '';
     this.needsRender = true;
   }
@@ -605,6 +606,7 @@ export class BuildingScene {
   setSplit(on: boolean) {
     this.split = on;
     this.phoneFrame.hidden = !on;
+    if (!this.preview) this.controls.enabled = this.look.view !== 'pov' || on;
     this.needsRender = true;
   }
 
@@ -761,7 +763,7 @@ export class BuildingScene {
   cancelPreview() {
     const done = this.preview?.onDone;
     if (this.preview) {
-      this.controls.enabled = this.look.view !== 'pov';
+      this.controls.enabled = this.look.view !== 'pov' || this.split;
       this.labelRenderer.domElement.style.display = this.look.view === 'pov' ? 'none' : '';
       this.capFloors(null);
     }
@@ -2025,6 +2027,9 @@ export class BuildingScene {
       app.style.setProperty('--phone-cx', `${rect.x + rect.w / 2}px`);
       app.style.setProperty('--phone-bottom', `${h - rect.y - rect.h}px`);
       app.style.setProperty('--phone-w', `${rect.w}px`);
+      app.style.setProperty('--phone-left', `${rect.x}px`);
+      app.style.setProperty('--phone-top', `${rect.y}px`);
+      app.style.setProperty('--phone-h', `${rect.h}px`);
     }
     return rect;
   }

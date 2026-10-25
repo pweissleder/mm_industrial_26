@@ -124,6 +124,9 @@ interface Props {
   /** Route section: "From here" / "To here" (user and developer profiles). */
   onFromHere?: () => void;
   onToHere?: () => void;
+  /** Button texts (user profiles: "I'm here" / "Take me there"). */
+  fromLabel?: string;
+  toLabel?: string;
   /** A start / destination is already chosen: that button turns white, the open one stays blue. */
   startSet?: boolean;
   targetSet?: boolean;
@@ -148,6 +151,8 @@ export default function DetailsCard({
   canToggle = false,
   onFromHere,
   onToHere,
+  fromLabel = 'From here',
+  toLabel = 'To here',
   startSet = false,
   targetSet = false,
   onHold,
@@ -217,7 +222,7 @@ export default function DetailsCard({
                     className={`btn btn--sm ${startSet ? 'btn--ghost' : 'btn--primary'}`}
                     onClick={onFromHere}
                   >
-                    <PinIcon width={16} height={16} /> From here
+                    <PinIcon width={16} height={16} /> {fromLabel}
                   </button>
                 )}
                 {onToHere && (
@@ -225,7 +230,7 @@ export default function DetailsCard({
                     className={`btn btn--sm ${targetSet ? 'btn--ghost' : 'btn--primary'}`}
                     onClick={onToHere}
                   >
-                    <RouteIcon width={16} height={16} /> To here
+                    <RouteIcon width={16} height={16} /> {toLabel}
                   </button>
                 )}
               </div>

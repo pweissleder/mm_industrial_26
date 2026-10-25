@@ -46,8 +46,17 @@ export function ImmersiveBar(props: {
   const touch = useMedia('(pointer: coarse)');
   const hover = useMedia('(hover: hover)');
   const [open, setOpen] = useState(false);
-  const folded = !open;
   const switchRef = useRef<HTMLDivElement>(null);
+  // Leaving with the mouse folds after a moment, so the unfolding never snaps away under it.
+  const leaveTimer = useRef<number | undefined>(undefined);
+  const hoverOpen = () => {
+    window.clearTimeout(leaveTimer.current);
+    setOpen(true);
+  };
+  const hoverLeave = () => {
+    window.clearTimeout(leaveTimer.current);
+    leaveTimer.current = window.setTimeout(() => setOpen(false), 450);
+  };
   useEffect(() => {
     if (!open) return;
     const timer = window.setTimeout(() => setOpen(false), SWITCH_OPEN_MS);
@@ -66,7 +75,6 @@ export function ImmersiveBar(props: {
     };
   }, [open]);
   const choose = (view: 'overview' | 'pov') => {
-    if (folded) return setOpen(true);
     setOpen(false);
     if (view === 'overview') {
       // user view: the still first-person pose ends with first person
@@ -84,38 +92,38 @@ export function ImmersiveBar(props: {
   return (
     <div className="immersive-bar card" role="toolbar" aria-label="Navigation view">
       {features.pov && (
+        // Folded to the current view's icon; the choice opens as a small menu below it, so
+        // nothing moves under the pointer.
         <div
           ref={switchRef}
-          className={`segmented segmented--small view-switch${folded ? ' view-switch--folded' : ''}`}
+          className={`view-switch${open ? ' view-switch--open' : ''}`}
           role="group"
           aria-label="Camera"
-          onMouseEnter={hover ? () => setOpen(true) : undefined}
-          onMouseLeave={hover ? () => setOpen(false) : undefined}
+          onMouseEnter={hover ? hoverOpen : undefined}
+          onMouseLeave={hover ? hoverLeave : undefined}
         >
           <button
-            className="segmented__item view-switch__item"
-            aria-pressed={!pov}
-            aria-label="Overview"
-            title={folded ? 'View: Overview (click to change)' : 'Overview'}
-            aria-expanded={!pov ? open : undefined}
-            tabIndex={folded && pov ? -1 : undefined}
-            onClick={() => choose('overview')}
+            className="icon-btn icon-btn--sm view-switch__anchor"
+            aria-label="Change view"
+            aria-haspopup="true"
+            aria-expanded={open}
+            title={`View: ${pov ? 'First person' : 'Overview'}`}
+            onClick={() => setOpen((o) => (hover ? true : !o))}
           >
-            <CubeIcon width={16} height={16} />
-            <span className="view-switch__label">Overview</span>
+            {pov ? <EyeIcon width={16} height={16} /> : <CubeIcon width={16} height={16} />}
           </button>
-          <button
-            className="segmented__item view-switch__item"
-            aria-pressed={pov}
-            aria-label="First person"
-            title={folded ? 'View: First person (click to change)' : 'First person'}
-            aria-expanded={pov ? open : undefined}
-            tabIndex={folded && !pov ? -1 : undefined}
-            onClick={() => choose('pov')}
-          >
-            <EyeIcon width={16} height={16} />
-            <span className="view-switch__label">First person</span>
-          </button>
+          {open && (
+            <div className="view-switch__menu card">
+              <button className="view-switch__item" aria-pressed={!pov} aria-label="Overview" onClick={() => choose('overview')}>
+                <CubeIcon width={16} height={16} />
+                <span>Overview</span>
+              </button>
+              <button className="view-switch__item" aria-pressed={pov} aria-label="First person" onClick={() => choose('pov')}>
+                <EyeIcon width={16} height={16} />
+                <span>First person</span>
+              </button>
+            </div>
+          )}
         </div>
       )}
       {features.game && (
@@ -130,6 +138,24 @@ export function ImmersiveBar(props: {
           title="Walk yourself with WASD / arrow keys or the joystick"
         >
           {manual ? 'Walking yourself' : 'Walk myself'}
+        </button>
+      )}
+      {/* In the overview "Start navigation" does the same; here only while walking or in first person. */}
+      {props.guidance.canStart &&
+        (manual || pov) &&
+        (manual || !['active', 'recomputing'].includes(props.guidance.snapshot.status)) && (
+        <button
+          className="chip"
+          onClick={() => {
+            // Hand the person back to the route walker, from where they stand.
+            if (manual) im.stopManual();
+            const status = props.guidance.snapshot.status;
+            if (status === 'paused') props.guidance.resume();
+            else if (status !== 'active') props.guidance.start();
+          }}
+          title="Walk the route automatically (Pause and Stop in the navigation card)"
+        >
+          Auto-walk
         </button>
       )}
       {features.game && manual && (
@@ -243,7 +269,7 @@ function RidePrompt(props: { immersive: Immersive }) {
 }
 
 /** Captures drags over the 3D view in POV to look around; optional pointer lock on request. */
-export function LookLayer(props: { immersive: Immersive }) {
+export function LookLayer(props: { immersive: Immersive; split?: boolean }) {
   const { immersive: im } = props;
   const ref = useRef<HTMLDivElement>(null);
   const last = useRef<[number, number] | null>(null);
@@ -291,7 +317,7 @@ export function LookLayer(props: { immersive: Immersive }) {
   return (
     <div
       ref={ref}
-      className="look-layer"
+      className={`look-layer${props.split ? ' look-layer--split' : ''}`}
       onPointerDown={down}
       onPointerMove={moveLook}
       onPointerUp={up}
@@ -342,7 +368,7 @@ export function TouchJoystick(props: { immersive: Immersive }) {
       onPointerCancel={release}
       aria-label="Walk joystick"
     >
-      <span className="joystick__knob" style={{ transform: `translate(${knob[0] * 32}px, ${knob[1] * 32}px)` }} />
+      <span className="joystick__knob" style={{ transform: `translate(${knob[0] * 22}px, ${knob[1] * 22}px)` }} />
     </div>
   );
 }
