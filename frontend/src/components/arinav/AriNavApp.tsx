@@ -1332,21 +1332,45 @@ export default function AriNavApp() {
   const povThing = immersive.view === 'pov' && !!selection && selection.kind !== 'space';
   const showCard =
     !!selection && (!navigationMode || povThing) && !(navigatorMode && selection.kind === 'space');
+  /** Developer "From here" / "To here": set that end, and route once both ends are known. */
+  const chooseEndpoint = (which: Which, endpoint: Endpoint, id: string) => {
+    nav.setEndpoint(which, endpoint);
+    const label = elementLabel(id, viewModel);
+    const other = which === 'start' ? nav.target?.endpoint : (nav.start?.endpoint ?? nav.simulated?.endpoint);
+    if (!other) {
+      notify(
+        which === 'start'
+          ? `Start: ${label}. Now select the destination and press To here.`
+          : `Destination: ${label}. Now select the start and press From here.`,
+      );
+      return;
+    }
+    if (JSON.stringify(other) === JSON.stringify(endpoint)) {
+      notify(`${label} is already the ${which === 'start' ? 'destination' : 'start'}; pick another place.`);
+      return;
+    }
+    void nav.computeRoute(which === 'start' ? { start: endpoint } : { target: endpoint });
+  };
+
   const routeHandlers =
     selection && selection.kind !== 'object' && !navigatorMode
       ? developer
         ? {
+            // Choosing the second end computes the route at once, so the buttons visibly do something.
             onFromHere: selectedEndpoint
-              ? () => nav.setEndpoint('start', selectedEndpoint)
+              ? () => chooseEndpoint('start', selectedEndpoint, selection.id)
               : undefined,
             onToHere: selectedEndpoint
-              ? () => nav.setEndpoint('target', selectedEndpoint)
+              ? () => chooseEndpoint('target', selectedEndpoint, selection.id)
               : undefined,
             startSet: !!nav.start,
             targetSet: !!nav.target,
           }
         : {
-            onFromHere: () => void setLocationFrom(selection, false),
+            onFromHere: () => {
+              void setLocationFrom(selection, false);
+              notify(`You are now in ${elementLabel(selection.id, viewModel)} (simulated). Pick a place and press To here.`);
+            },
             onToHere: () =>
               setDraft({
                 text: `How do I get to ${elementLabel(selection.id, viewModel)}?`,
