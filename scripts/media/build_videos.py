@@ -18,6 +18,8 @@ import hashlib
 import json
 import re
 import subprocess
+import time
+import urllib.error
 import urllib.request
 import wave
 from pathlib import Path
@@ -38,31 +40,32 @@ NAVY, ORANGE, INK, MUTED = (0, 36, 120), (255, 122, 26), (20, 28, 48), (92, 102,
 DEMO = [
     {"card": ("AriNav", ["Talk to any building.", "Indoor navigation grounded in the building data."]),
      "say": "AriNav turns a building file into an indoor navigator you can talk to."},
-    {"clip": ("scene1", 5.0, 16.0),
+    {"clip": ("scene1", 7.0, 17.0),
      "say": "I say where I am and ask for a coffee. It finds the nearest machine, about twenty "
             "metres away."},
-    {"clip": ("scene1", 16.0, 27.0),
+    {"clip": ("scene1", 17.0, 26.3),
      "say": "One more question, and the official route appears, with step by step directions."},
     {"clip": ("scene1", "walk0", "walk1"),
      "say": "I start the walkthrough: a guidance card, short spoken hints, and a first person "
             "view at eye height. It is a labelled simulation, not live positioning."},
     {"clip": ("scene1", "arrive0", "end"), "say": "And I have arrived."},
-    {"clip": ("scene2", 4.0, 30.0),
+    {"clip": ("scene2", 5.0, 29.5),
      "say": "Now the only lift is closed. For a wheelchair user, AriNav says honestly that there "
             "is no step free way upstairs. It never falls back to the stairs."},
-    {"clip": ("scene2", 30.0, "end"),
+    {"clip": ("scene2", 29.5, "end"),
      "say": "Instead it offers a step free destination on the same floor."},
     {"clip": ("scene3", "walk0", "ask0"),
      "say": "I can also walk myself, with the keyboard or a touch joystick. Walls stop me."},
     {"clip": ("scene3", "ask0", "end"),
-     "say": "Asked what is on my right, it answers from the geometry around my position and view "
-            "direction, and never claims to see through walls."},
+     "say": "Asked 'What's on my right?', AriNav answers from the geometry around the person's "
+            "position and view direction, and never claims to see through walls.",
+     "silent": 7.0},
     {"card": ("Grounded. Accessible. Honest.",
               ["Official kit router · Claude tool loop with hard guards",
                "Step-free and width constraints bind every answer",
                "Simulation, sensors and estimates are always labelled"]),
-     "say": "Grounded in the building data, accessible by default, and honest about what it "
-            "knows."},
+     "say": "Grounded in the data. Accessible by default. Honest about what it knows.",
+     "silent": 4.5},
 ]
 
 TECH = [
@@ -134,8 +137,15 @@ def tts(text: str, cache: Path) -> tuple[Path, float]:
         for sentence in re.split(r"(?<=[.!?])\s+", text.strip()):
             body = json.dumps({"text": sentence, "speed": SPEED}).encode()
             req = urllib.request.Request(API, body, {"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=60) as res:
-                data = json.loads(res.read())
+            for attempt in range(3):  # ElevenLabs answers 502 now and then
+                try:
+                    with urllib.request.urlopen(req, timeout=60) as res:
+                        data = json.loads(res.read())
+                    break
+                except urllib.error.HTTPError as error:
+                    if attempt == 2 or error.code != 502:
+                        raise SystemExit(f"TTS failed ({error.code}) for: {sentence}") from None
+                    time.sleep(2)
             rate = int(data["sample_rate"])
             pcm += base64.b64decode(data["audio_pcm16"]) + bytes(2) * int(rate * 0.18)
         with wave.open(str(path), "wb") as w:
@@ -194,6 +204,29 @@ def card(title: str, lines: list[str], image: Path | None, out: Path) -> None:
     img.save(out)
 
 
+def badge(text: str, out: Path) -> None:
+    """Small corner label for time-compressed clips (honest about speed-ups)."""
+    font = ImageFont.truetype(FONT_B, 20)
+    w = int(font.getlength(text)) + 28
+    img = Image.new("RGBA", (w, 38), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([0, 0, w - 1, 37], radius=18, fill=(0, 36, 120, 215))
+    d.text((14, 6), text, font=font, fill=(255, 255, 255, 255))
+    img.save(out)
+
+
+def caption(text: str, out: Path) -> None:
+    font = ImageFont.truetype(FONT_B, 26)
+    rows = wrap(text, font, 680)
+    h = 24 + len(rows) * 36
+    img = Image.new("RGBA", (740, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([0, 0, 739, h - 1], radius=16, fill=(0, 36, 120, 225))
+    for k, row in enumerate(rows):
+        d.text((30, 12 + k * 36), row, font=font, fill=(255, 255, 255, 255))
+    img.save(out)
+
+
 def mark(src: str, value: float | str, raw: dict[str, Path]) -> float:
     if isinstance(value, (int, float)):
         return float(value)
@@ -214,8 +247,18 @@ def build(name: str, plan: list[dict], raw: dict[str, Path], shots: Path, out: P
     subs: list[str] = []
     clock = 0.0
     for i, seg in enumerate(plan):
-        wav, speech = tts(seg["say"], out / "work" / "tts")
-        target = max(2.5, speech + 0.45)
+        if seg.get("silent"):
+            # no voice-over (TTS quota): the text is shown on screen and in the subtitles
+            target = speech = float(seg["silent"])
+            wav = work / f"{i:02}-silence.wav"
+            with wave.open(str(wav), "wb") as w:
+                w.setnchannels(1)
+                w.setsampwidth(2)
+                w.setframerate(16000)
+                w.writeframes(bytes(2 * int(16000 * target)))
+        else:
+            wav, speech = tts(seg["say"], out / "work" / "tts")
+            target = max(2.5, speech + 0.45)
         part = work / f"{i:02}.mp4"
         audio = ["-i", str(wav), "-filter_complex", f"[1:a]apad,atrim=0:{target:.3f}[a]"]
         if "card" in seg:
@@ -231,9 +274,22 @@ def build(name: str, plan: list[dict], raw: dict[str, Path], shots: Path, out: P
             factor = max(1.0, (t1 - t0) / target)
             hold = max(0.0, target - (t1 - t0) / factor)
             vf = (f"setpts=(PTS-STARTPTS)/{factor:.4f},tpad=stop_mode=clone:stop_duration="
-                  f"{hold + 0.1:.3f},fps={FPS},scale={W}:{H},format=yuv420p[v]")
-            run(["-ss", f"{t0:.3f}", "-to", f"{t1:.3f}", "-i", str(raw[src]), *audio[:2],
-                 "-filter_complex", f"[0:v]{vf};[1:a]apad,atrim=0:{target:.3f}[a]",
+                  f"{hold + 0.1:.3f},fps={FPS},scale={W}:{H}")
+            extra: list[str] = []
+            if seg.get("silent"):
+                png = work / f"{i:02}-caption.png"
+                caption(seg["say"], png)
+                extra = ["-i", str(png)]
+                graph = f"[0:v]{vf}[c];[c][2:v]overlay=(W-w)/2:150,format=yuv420p[v]"
+            elif factor > 1.15:  # label time-compressed footage
+                png = work / f"{i:02}-badge.png"
+                badge(f"{factor:.1f}x speed", png)
+                extra = ["-i", str(png)]
+                graph = f"[0:v]{vf}[c];[c][2:v]overlay=24:{H - 62},format=yuv420p[v]"
+            else:
+                graph = f"[0:v]{vf},format=yuv420p[v]"
+            run(["-ss", f"{t0:.3f}", "-to", f"{t1:.3f}", "-i", str(raw[src]), *audio[:2], *extra,
+                 "-filter_complex", f"{graph};[1:a]apad,atrim=0:{target:.3f}[a]",
                  "-map", "[v]", "-map", "[a]", "-c:v", "libx264", "-c:a", "aac", "-ar", "44100",
                  "-t", f"{target:.3f}", str(part)])
         subs.append(f"{i + 1}\n{srt_time(clock + 0.1)} --> {srt_time(clock + speech + 0.1)}\n"

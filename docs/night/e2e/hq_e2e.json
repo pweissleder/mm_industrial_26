@@ -1,12 +1,12 @@
 {
-  "when": "2026-10-25T01:18:38.522Z",
+  "when": "2026-10-25T02:36:29.502Z",
   "passed": 8,
   "total": 8,
   "results": [
     {
       "name": "Q03_proc-factory-dev-003_opens_saved_hq_without_a_run",
       "pass": true,
-      "ms": 4275,
+      "ms": 4099,
       "detail": {
         "chip": "HQ ready. Show processing details",
         "badge": "HQ",
@@ -16,7 +16,7 @@
     {
       "name": "Q03_proc-campus-dev-001_opens_saved_hq_without_a_run",
       "pass": true,
-      "ms": 3977,
+      "ms": 4051,
       "detail": {
         "chip": "HQ ready. Show processing details",
         "badge": "HQ",
@@ -26,7 +26,7 @@
     {
       "name": "Q03_swiss-1689_opens_saved_hq_without_a_run",
       "pass": true,
-      "ms": 4676,
+      "ms": 4728,
       "detail": {
         "chip": "HQ ready. Show processing details",
         "badge": "HQ",
@@ -36,14 +36,14 @@
     {
       "name": "Q03_second_open_reuses_the_file_no_generation",
       "pass": true,
-      "ms": 3147,
+      "ms": 3212,
       "detail": {
         "pipeline_posts": 0,
         "glb_fetches_total": 4,
         "glb_fetches_second_open": 1,
         "runs": {
           "proc-factory-dev-003": 1,
-          "proc-campus-dev-001": 4,
+          "proc-campus-dev-001": 5,
           "swiss-1689": 1
         }
       }
@@ -51,12 +51,12 @@
     {
       "name": "Q06_frame_time_desktop_overview_hq",
       "pass": true,
-      "ms": 3684,
+      "ms": 3862,
       "detail": {
         "frames": 40,
         "camera": "overview",
         "median_ms": 43.6,
-        "p95_ms": 49,
+        "p95_ms": 48.4,
         "est_fps": 23,
         "draw_calls": 753,
         "triangles": 13804,
@@ -66,12 +66,12 @@
     {
       "name": "Q06_frame_time_mobile_emulation_overview",
       "pass": true,
-      "ms": 14737,
+      "ms": 15684,
       "detail": {
         "frames": 40,
         "camera": "overview",
-        "median_ms": 242.1,
-        "p95_ms": 275.3,
+        "median_ms": 256,
+        "p95_ms": 268.3,
         "est_fps": 4,
         "draw_calls": 1779,
         "triangles": 144620,
@@ -81,7 +81,7 @@
     {
       "name": "Q05_moved_thing_shows_live_view_and_outdated_hq",
       "pass": true,
-      "ms": 6712,
+      "ms": 6138,
       "detail": {
         "moved": "Chair 0.20-A",
         "chip": "HQ outdated · showing LQ. Show processing details",
@@ -92,9 +92,9 @@
     {
       "name": "Q04_explicit_rebuild_runs_with_unchanged_input",
       "pass": true,
-      "ms": 9437,
+      "ms": 9965,
       "detail": {
-        "run": "2f082e3c538f",
+        "run": "770e6e635cd1",
         "offline": true,
         "stages": {
           "raw_validation": "passed",
@@ -106,8 +106,8 @@
           "model_validate": "passed",
           "summarize": "passed"
         },
-        "updated_before": "2026-10-25T01:17:10.955919Z",
-        "updated_after": "2026-10-25T01:18:35.084238Z"
+        "updated_before": "2026-10-25T01:18:35.084238Z",
+        "updated_after": "2026-10-25T02:36:26.043101Z"
       }
     }
   ]

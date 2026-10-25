@@ -1,41 +1,41 @@
 {
-  "when": "2026-10-25T02:29:55.699Z",
+  "when": "2026-10-25T02:31:57.438Z",
   "videos": {
     "scene3": "C:\\Users\\noah3\\AppData\\Local\\Temp\\arinav-scenes-video\\scene3_walk_whats_on_my_right.webm"
   },
   "marks": {
     "scene3": {
-      "walk0": 17.05,
-      "ask0": 35.05
+      "walk0": 16.78,
+      "ask0": 35.32
     }
   },
   "log": [
     {
-      "t": "2026-10-25T02:29:22.796Z",
+      "t": "2026-10-25T02:31:24.189Z",
       "scene": 3,
       "what": "said: I'm in Office 0.38.",
       "reply": "You're in Office 0.38 on the ground floor. Where would you like to go?\nFinding places\nNoting your position and needs",
       "replies_before": 0
     },
     {
-      "t": "2026-10-25T02:29:45.513Z",
+      "t": "2026-10-25T02:31:47.523Z",
       "scene": 3,
       "what": "pose before question",
       "pose": {
         "floor_id": "proc-factory-dev-003-F0",
         "space_id": "proc-factory-dev-003-F0-S016",
         "position": [
-          6.0125818063929275,
-          29.89660393963877
+          6.4199999999999875,
+          30.06000000000001
         ],
-        "heading": 100
+        "heading": 90
       }
     },
     {
-      "t": "2026-10-25T02:29:50.659Z",
+      "t": "2026-10-25T02:31:52.641Z",
       "scene": 3,
       "what": "said: What's on my right?",
-      "reply": "On your right, the nearest door is to Locker room 0.39, about 3 m ahead. Further along are doors to Meeting room 0.40 (about 8.5 m) and Meeting room 0.27 (about 10 m), then Kitchen 0.28 at about 14 m.",
+      "reply": "On your right, about 3 m ahead, is the door to Locker room 0.39. The lockers inside are behind the wall, so you can't see them from the corridor.",
       "replies_before": 1
     }
   ]
