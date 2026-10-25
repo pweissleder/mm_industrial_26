@@ -506,7 +506,7 @@
     {
       "kind": "opening",
       "element": "verify-plan-upload-F0-O0006",
-      "width_m": 6.264,
+      "width_m": 0.9,
       "step_free": true,
       "floor_id": "verify-plan-upload-F0",
       "position": [

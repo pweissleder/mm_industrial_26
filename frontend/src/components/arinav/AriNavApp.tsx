@@ -337,8 +337,13 @@ export default function AriNavApp() {
   }, [run.phase, hq, source, notify]);
 
   // Reconstruction done: building.json exists now, so load the Low model (once).
+  // Only this dataset's run counts: right after opening it, `run` can still hold the previous
+  // dataset's finished run, whose reconstruct stage may have passed too.
   const reconstructed =
-    lowUnavailable && 'run' in run && run.run?.stages.reconstruct?.status === 'passed';
+    lowUnavailable &&
+    'run' in run &&
+    run.run?.dataset === dataset &&
+    run.run.stages.reconstruct?.status === 'passed';
   useEffect(() => {
     if (!reconstructed || !dataset || reconstructOpened.current) return;
     reconstructOpened.current = true;

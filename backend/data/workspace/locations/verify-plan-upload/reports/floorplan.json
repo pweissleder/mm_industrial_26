@@ -10,7 +10,7 @@
       "capped_walls": 0,
       "walls": 6,
       "openings": 7,
-      "build_s": 0.01
+      "build_s": 0.008
     },
     "max_error": {
       "space_xy_m": 5.208144582558317e-07,
@@ -20,20 +20,18 @@
       "opening_width_m": 0.0
     }
   },
-  "open_issues": [
-    "floorplan review: Room 0.06: the opening on its top wall is drawn as a grey bar about 360 px wide (roughly 7–8 m). It starts left of room 0.06 and runs across room 0.01, past its wall segment and through neighbouring walls. The dataset shows it as a narrow point marker at about x≈213, so the opening width must be limited to that wall segment."
-  ],
+  "open_issues": [],
   "deviations": [],
   "artifacts": [
     "3d/floorplan.glb"
   ],
   "usage": {
     "model": "claude-sonnet-5-5",
-    "input_tokens": 4687,
-    "output_tokens": 207,
+    "input_tokens": 3937,
+    "output_tokens": 89,
     "cache_read_input_tokens": 0,
     "calls": 2
   },
-  "attempt": 2,
-  "finished_at": "2026-10-25T05:56:30.981714Z"
+  "attempt": 1,
+  "finished_at": "2026-10-25T06:56:23.631936Z"
 }

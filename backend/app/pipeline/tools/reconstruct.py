@@ -16,7 +16,7 @@ from typing import Any
 
 import numpy as np
 import shapely
-from shapely.geometry import Point, Polygon
+from shapely.geometry import LineString, Point, Polygon
 
 from app.domain.building import BuildingFile
 from app.pipeline.tools.svgplan import PlanFloor, Transform
@@ -336,10 +336,10 @@ def assemble(
             if width is None:
                 width = DEFAULT_DOOR_WIDTH_M
                 if opening.kind == "opening" and pair[1] != "outside":
-                    shared = (
-                        shapes[order[0]].exterior.intersection(shapes[order[1]].buffer(0.05)).length
-                    )
+                    shared = _centred_span(shapes[order[0]], shapes[order[1]], position)
                     width = min(max(shared, DEFAULT_DOOR_WIDTH_M), MAX_OPENING_WIDTH_M)
+                    if shared < DEFAULT_DOOR_WIDTH_M:  # e.g. at a corner: no wall to measure
+                        defaulted_widths += 1
                 else:
                     defaulted_widths += 1
             out_openings.append(
@@ -368,7 +368,7 @@ def assemble(
             {
                 "kind": "opening_widths",
                 "target": defaulted_widths,
-                "detail": f"door widths not drawn; {defaulted_widths} defaulted to "
+                "detail": f"widths not drawn; {defaulted_widths} doors/openings defaulted to "
                 f"{DEFAULT_DOOR_WIDTH_M} m",
             }
         )
@@ -412,6 +412,28 @@ def assemble(
         "scale_m_per_px": {lv: round(1 / t.k, 6) for lv, t in transforms.items()},
     }
     return Reconstruction(BuildingFile.model_validate(data), gaps, stats)
+
+
+def _centred_span(a: Polygon, b: Polygon, position: tuple[float, float]) -> float:
+    """Widest gap centred on `position` that stays on one straight wall `a` and `b` share.
+
+    The 3D model cuts the opening symmetrically along a straight wall, so a width beyond
+    twice the distance to the nearer end of that wall segment would cut into other walls.
+    """
+    shared = a.exterior.intersection(b.exterior.buffer(0.01))
+    lines = [g for g in getattr(shared, "geoms", [shared]) if g.geom_type == "LineString"]
+    segments = [
+        LineString([p, q])
+        for line in lines
+        for p, q in zip(line.coords, line.coords[1:], strict=False)
+    ]
+    probe = Point(position)
+    spans = [
+        2 * min(along := seg.project(probe), seg.length - along)
+        for seg in segments
+        if seg.length > 0 and seg.distance(probe) < 0.1
+    ]
+    return max(spans, default=0.0)
 
 
 def _containing(

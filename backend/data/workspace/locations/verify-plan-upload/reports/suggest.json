@@ -1,0 +1,22 @@
+{
+  "stage": "suggest",
+  "status": "passed",
+  "summary": "3 chat suggestions written.",
+  "metrics": {
+    "suggestions": 3
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "location.json"
+  ],
+  "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 964,
+    "output_tokens": 80,
+    "cache_read_input_tokens": 0,
+    "calls": 1
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-25T06:56:49.819091Z"
+}
