@@ -21,8 +21,9 @@ import {
   type UiState,
 } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
-import { replyAsks, type AppMode, type SimulatedLocation } from '../../lib/nav';
+import { LOCATION_SOURCE_LABEL, replyAsks, type AppMode, type SimulatedLocation } from '../../lib/nav';
 import { voiceSupported } from '../../lib/voice';
+import { setVoicePrefs, useVoicePrefs, voiceWanted } from '../../lib/voicePrefs';
 import { AssistantReply, ProposalCard, type ProposalState } from './ChatReply';
 import { LogoMark } from './Logo';
 import {
@@ -33,10 +34,9 @@ import {
   ReplayIcon,
   SendIcon,
   SparkleIcon,
-  SpeakerIcon,
-  SpeakerOffIcon,
 } from './Icons';
 import { useVoice } from './useVoice';
+import VoiceToggle from './VoiceToggle';
 
 type Entry =
   | { id: number; role: 'user'; text: string; voice?: boolean }
@@ -96,6 +96,8 @@ interface Props {
   onSelect?: (sel: Selection) => void;
   /** The agent changed the building; reload it so the 3D view shows the edit. */
   onBuildingChanged?: () => void;
+  /** Navigation/POV: keep the conversation folded; show only the last exchange in one line. */
+  compact?: boolean;
   /** Show a Call Wrapped recap (the backend starts one after every N ended conversations). */
   onOpenRecap?: (id: string) => void;
 }
@@ -139,8 +141,6 @@ const WAITING = [
 const SESSION_KEY = 'arinav:assistant-session';
 /** Idle time before the open conversation folds down to the input bar. */
 const CHAT_IDLE_MS = 15_000;
-const SPEAK_KEY = 'arinav:speak-replies';
-const SPEED_KEY = 'arinav:speech-speed';
 const NO_UI: UiState = { building_id: null };
 const PaperclipIcon = (p: { width?: number; height?: number; className?: string }) => (
   <svg
@@ -231,7 +231,6 @@ function write(storage: () => Storage, key: string, value: string | null) {
 }
 
 const session = () => sessionStorage;
-const local = () => localStorage;
 
 const isEditable = (el: Element | null) =>
   !!el &&
@@ -259,6 +258,7 @@ export default function ChatDock({
   model = null,
   onSelect,
   onBuildingChanged,
+  compact = false,
   onOpenRecap,
 }: Props) {
   const developer = profile === 'developer';
@@ -272,11 +272,16 @@ export default function ChatDock({
   const [waitStep, setWaitStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(true);
-  const [speak, setSpeak] = useState(() => read(local, SPEAK_KEY) === 'true');
-  const [speed, setSpeed] = useState<number | null>(() => {
-    const v = Number(read(local, SPEED_KEY));
-    return read(local, SPEED_KEY) !== null && Number.isFinite(v) && v > 0 ? v : null;
-  });
+  const compactRef = useRef(compact);
+  compactRef.current = compact;
+  // Entering navigation folds the conversation so the map stays visible.
+  useEffect(() => {
+    if (compact) setOpen(false);
+  }, [compact]);
+  // Shared with the navigation hints: one voice on/off and one speed for both.
+  const voicePrefs = useVoicePrefs();
+  const speak = voiceWanted(voicePrefs, isNavigator);
+  const speed = voicePrefs.speed;
   const inputRef = useRef<HTMLInputElement>(null);
   const logRef = useRef<HTMLOListElement>(null);
   const talkRef = useRef<HTMLButtonElement>(null);
@@ -287,6 +292,19 @@ export default function ChatDock({
   // Bumped by a reset, so replies still in flight from the old conversation are dropped.
   const epoch = useRef(0);
   const targets = useMemo(() => (model ? linkTargets(model) : new Map<string, Selection>()), [model]);
+  const names = useMemo(() => {
+    const m = new Map<string, string>();
+    if (model)
+      for (const e of [
+        ...(model.spaces ?? []),
+        ...(model.assets ?? []),
+        ...(model.openings ?? []),
+        ...(model.vertical_connectors ?? []),
+      ])
+        if ('name' in e && e.name) m.set(e.id, e.name);
+    return m;
+  }, [model]);
+  const nameOf = useCallback((id: string) => names.get(id) ?? null, [names]);
 
   const renderReply = (text: string): ReactNode =>
     linkify(text, targets).map((part, i) =>
@@ -409,7 +427,7 @@ export default function ChatDock({
 
   async function sendTurn(text: string, viaVoice: boolean) {
     const sessionId = read(session, SESSION_KEY) ?? undefined;
-    const wantSpeech = canSpeak && (viaVoice || isNavigator || speak);
+    const wantSpeech = canSpeak && (viaVoice || speak);
     const sendUi = selection && detachedKey === selKey ? { ...ui, inspected: null } : ui;
     const started = epoch.current;
     try {
@@ -446,7 +464,7 @@ export default function ChatDock({
     busyRef.current = true;
     if (!viaVoice) push({ role: 'user', text });
     setInput('');
-    setOpen(true);
+    if (!compactRef.current) setOpen(true);
     setPending('thinking');
     setError(null);
     voice.stopPlayback();
@@ -465,7 +483,7 @@ export default function ChatDock({
   async function transcribe(wav: string) {
     if (busyRef.current) return;
     busyRef.current = true;
-    setOpen(true);
+    if (!compactRef.current) setOpen(true);
     setPending('transcribing');
     setError(null);
     let text = '';
@@ -583,14 +601,12 @@ export default function ChatDock({
 
   const toggleSpeak = () => {
     const next = !speak;
-    setSpeak(next);
-    write(local, SPEAK_KEY, String(next));
+    setVoicePrefs({ speak: next });
     if (!next) voice.stopPlayback();
   };
 
   const changeSpeed = (v: number) => {
-    setSpeed(v);
-    write(local, SPEED_KEY, String(v));
+    setVoicePrefs({ speed: v });
   };
 
   const status = backendDown
@@ -616,7 +632,7 @@ export default function ChatDock({
 
   return (
     <section
-      className="chat"
+      className={`chat${compact ? ' chat--compact' : ''}`}
       aria-label="Chat with AriNav"
       onPointerDown={touch}
       onKeyDown={touch}
@@ -624,6 +640,10 @@ export default function ChatDock({
       onPointerEnter={() => setHovering(true)}
       onPointerLeave={() => setHovering(false)}
     >
+      {compact && !open && hasLog && !isNavigator && (
+        <ChatMini entries={entries} pending={pending} onOpen={() => setOpen(true)} />
+      )}
+
       {hasLog && open && !isNavigator && (
         <div className="chat__panel card">
           <header className="chat__head">
@@ -634,25 +654,7 @@ export default function ChatDock({
                 {status}
               </span>
             )}
-            {canSpeak && (
-              <button
-                className="icon-btn chat__speak-toggle"
-                aria-pressed={speak}
-                onClick={toggleSpeak}
-                aria-label={speak ? 'Stop reading replies aloud' : 'Read replies aloud'}
-                title={
-                  speak
-                    ? 'Reading replies aloud (click to mute)'
-                    : 'Replies muted (click to read them aloud)'
-                }
-              >
-                {speak ? (
-                  <SpeakerIcon width={20} height={20} />
-                ) : (
-                  <SpeakerOffIcon width={20} height={20} />
-                )}
-              </button>
-            )}
+            {canSpeak && <VoiceToggle on={speak} onToggle={toggleSpeak} className="chat__speak-toggle" />}
             <button
               className="btn btn--ghost btn--sm chat__new"
               onClick={newConversation}
@@ -727,6 +729,7 @@ export default function ChatDock({
                     renderText={onSelect ? renderReply : undefined}
                     turn={m.turn}
                     developer={developer}
+                    nameOf={nameOf}
                     canReplay={!!audio}
                     onReplay={() => audio && void voice.play(audio.pcm, audio.rate)}
                   />
@@ -780,7 +783,7 @@ export default function ChatDock({
         </div>
       )}
 
-      {!hasLog && !isNavigator && (
+      {!hasLog && !compact && !isNavigator && (
         <div className="chat__suggestions" aria-label="Suggestions">
           {(suggestions?.length ? suggestions : SUGGESTIONS).map((s) => (
             <button key={s} className="chip chip--soft" onClick={() => void send(s)}>
@@ -863,7 +866,9 @@ export default function ChatDock({
           <ContextPill
             Icon={PinIcon}
             text={`Location: ${simulated.label}`}
-            title={`Location: ${simulated.label} · sent as your start`}
+            title={`Location: ${simulated.label}${
+              simulated.source ? ` (${LOCATION_SOURCE_LABEL[simulated.source]})` : ''
+            } · sent as your start`}
             compact={folded >= 1}
             removeLabel="Clear location"
             onRemove={() => onClearSimulated?.()}
@@ -905,5 +910,32 @@ export default function ChatDock({
         </button>
       </form>
     </section>
+  );
+}
+
+/** The last exchange in a small card (compact mode): the visible transcript and a short reply. */
+function ChatMini(props: {
+  entries: { role: string; text?: string; voice?: boolean }[];
+  pending: false | 'thinking' | 'transcribing';
+  onOpen: () => void;
+}) {
+  const lastUser = [...props.entries].reverse().find((e) => e.role === 'user');
+  const lastReply = [...props.entries].reverse().find((e) => e.role === 'assistant' || e.role === 'notice');
+  return (
+    <button type="button" className="chat__mini card" onClick={props.onOpen} aria-label="Show conversation">
+      {lastUser?.text && (
+        <span className="chat__mini-user">
+          {lastUser.voice ? '🎙 ' : ''}
+          {lastUser.text}
+        </span>
+      )}
+      <span className="chat__mini-reply">
+        {props.pending === 'transcribing'
+          ? 'Transcribing speech…'
+          : props.pending
+            ? 'Thinking…'
+            : (lastReply?.text ?? '')}
+      </span>
+    </button>
   );
 }

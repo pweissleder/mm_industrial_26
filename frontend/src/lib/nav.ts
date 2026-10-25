@@ -39,10 +39,22 @@ export interface EndpointChoice {
   source: 'user' | 'assistant';
 }
 
+/** Where a location came from: a person's choice, the walk simulation, a QR/door anchor, or a
+ * guess from landmarks (never a measurement). */
+export type LocationSource = 'manual' | 'simulation' | 'qr' | 'hypothesis';
+
 export interface SimulatedLocation {
   endpoint: Endpoint;
   label: string;
+  source?: LocationSource;
 }
+
+export const LOCATION_SOURCE_LABEL: Record<LocationSource, string> = {
+  manual: 'set by you',
+  simulation: 'from navigation',
+  qr: 'from a door code',
+  hypothesis: 'assumed',
+};
 
 /** A selection in the 3D view as a route endpoint; stairs/lifts and GLB nodes can't be one. */
 export function endpointFromSelection(
@@ -139,6 +151,14 @@ export function readRouteError(e: RouteError | null | undefined): {
 export const diagnosisIds = (d: Diagnosis | null | undefined): string[] =>
   (d?.elements ?? []).map((x) => String(x.id)).filter(Boolean);
 
+/** Where a locally computed route starts: where the person actually walked to (simulation) is newer
+ * than an earlier start (setting a start again replaces the walked location), as in `buildUiState`;
+ * otherwise the chosen start, then any other known location. */
+export function routeStart(start: EndpointChoice | null, simulated: SimulatedLocation | null): Endpoint | undefined {
+  if (simulated?.source === 'simulation') return simulated.endpoint;
+  return start?.endpoint ?? simulated?.endpoint;
+}
+
 /** The `ui` sent with a turn: explicit user choices only. */
 export function buildUiState(args: {
   buildingId: string | null;
@@ -151,9 +171,18 @@ export function buildUiState(args: {
   cleared?: ReadonlySet<'start' | 'target'>;
 }): UiState {
   const ui: UiState = { building_id: args.buildingId };
-  const start = args.start?.source === 'user' ? args.start.endpoint : args.simulated?.endpoint;
-  if (start) ui.start = start;
-  else if (args.cleared?.has('start')) ui.start = null;
+  // Where the person actually walked to (simulation) is newer than an earlier manual start.
+  const walked = args.simulated?.source === 'simulation' ? args.simulated : null;
+  const start = walked
+    ? walked.endpoint
+    : args.start?.source === 'user'
+      ? args.start.endpoint
+      : args.simulated?.endpoint;
+  if (start) {
+    ui.start = start;
+    const fromSim = walked || args.start?.source !== 'user';
+    if (fromSim && args.simulated?.source) ui.start_source = args.simulated.source;
+  } else if (args.cleared?.has('start')) ui.start = null;
   if (args.target?.source === 'user') ui.destination = args.target.endpoint;
   else if (args.cleared?.has('target')) ui.destination = null;
   const s = args.settings;

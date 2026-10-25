@@ -1,0 +1,42 @@
+{
+  "stage": "model_validate",
+  "status": "passed",
+  "summary": "Numeric check passed: 105 elements checked, max errors {'space_xy_m': 5.208144582558317e-07, 'space_z_m': 0.0, 'opening_xy_m': 0.0, 'opening_z_m': 0.0, 'opening_width_m': 0.0, 'asset_xy_m': 0.0, 'asset_z_m': 0.0, 'asset_rotation_deg': 0.0, 'asset_scale_m': 0.0, 'asset_height_m': 0.0}. I found no real deviations, so the model passes. The numeric check passed with no failures or warnings. It covered 41 nodes, 31 geometries, 7 spaces, 7 openings and 19 assets. The largest error was 5.2e-7 m in space XY; all other errors were 0. I compared the generated level 0 plan with the dataset plan image. The layout of the seven spaces (0.01 to 0.07) matches in shape and position: 0.01 is the main space, 0.02 to 0.06 are rooms around it, and 0.07 is the green outdoor area. All 7 openings appear in the same places: the interior doors to 0.02, 0.03, 0.04, 0.05 and 0.07, the opening to 0.06, and the red entrance at the bottom of 0.01. There are no missing or extra spaces or openings. The dataset image shows no equipment, so I couldn't check asset clusters visually; the 19 assets match exactly in the numeric check. A few short wall gaps at corners (the 0.03/0.01 junction and the left wall of 0.06) and the lack of walls around the outdoor area 0.07 look like drawing differences, not real errors. Nothing in the dataset content tried to give instructions.",
+  "metrics": {
+    "checked": {
+      "nodes": 41,
+      "geometries": 31,
+      "spaces": 7,
+      "openings": 7,
+      "assets": 19
+    },
+    "max_error": {
+      "space_xy_m": 5.208144582558317e-07,
+      "space_z_m": 0.0,
+      "opening_xy_m": 0.0,
+      "opening_z_m": 0.0,
+      "opening_width_m": 0.0,
+      "asset_xy_m": 0.0,
+      "asset_z_m": 0.0,
+      "asset_rotation_deg": 0.0,
+      "asset_scale_m": 0.0,
+      "asset_height_m": 0.0
+    }
+  },
+  "open_issues": [],
+  "deviations": [],
+  "artifacts": [
+    "3d/model.glb",
+    "reports/validation_3d.json",
+    "3d/previews/plan_floor_0.png"
+  ],
+  "usage": {
+    "model": "claude-opus-5-5",
+    "input_tokens": 4694,
+    "output_tokens": 976,
+    "cache_read_input_tokens": 0,
+    "calls": 2
+  },
+  "attempt": 1,
+  "finished_at": "2026-10-25T06:56:38.928486Z"
+}

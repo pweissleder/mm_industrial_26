@@ -287,15 +287,18 @@
   padding: 2px;
 }
 
-.chat__speak-toggle {
-  margin-left: auto;
+.voice-toggle {
   width: 36px;
   height: 36px;
   color: var(--muted);
 }
 
-.chat__speak-toggle[aria-pressed='true'] {
+.voice-toggle[aria-pressed='true'] {
   color: var(--blue);
+}
+
+.chat__speak-toggle {
+  margin-left: auto;
 }
 
 .chat__speak-toggle + .chat__new {
@@ -645,6 +648,8 @@
   transition: width 0.12s linear;
 }
 
+/* Navigation buttons and the speed/voice controls share one row; they wrap when narrow. */
+.guidance__actions,
 .guidance__controls,
 .guidance__settings {
   display: flex;
@@ -792,4 +797,13 @@
 
 .chat__latest--error {
   color: #b3261e;
+}
+
+.guidance__actions {
+  gap: 6px 10px;
+}
+
+/* In the shared row the folded settings take no width (the column fold would leave a gap). */
+.guidance--compact .guidance__actions .guidance__settings {
+  display: none;
 }

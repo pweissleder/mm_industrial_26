@@ -3,13 +3,19 @@
 # -Live injects the DPAPI-protected Anthropic and ElevenLabs keys (registered once with
 # Register-ApiKey.ps1) into the backend process only; nothing is written to .env or the console.
 # Usage: powershell -File scripts/windows/Start-AriNav.ps1 [-Live] [-DatasetsDir <folder>]
-#        [-BackendPort 8000] [-Uv <path to uv.exe>]
+#        [-BackendPort 8000] [-Uv <path to uv.exe>] [-Profile core|immersive|showcase]
+# -Profile sets the default feature profile (URL ?profile= still overrides it).
+# -Phone serves the frontend over HTTPS on the local network (self-signed dev certificate, nothing
+#  installed) so a phone can use rotation; open https://<this PC's IP>:4321 and accept the warning.
+#  Windows may ask once whether Node may accept connections on private networks.
 # The backend runs with `uv run` when uv is found, otherwise with backend/.venv (uv sync first).
 [CmdletBinding()]
 param([switch]$Live,
       [string]$DatasetsDir = '',
       [ValidateRange(1024, 65535)][int]$BackendPort = 8000,
-      [string]$Uv = '')
+      [string]$Uv = '',
+      [ValidateSet('', 'core', 'immersive', 'showcase')][string]$Profile = '',
+      [switch]$Phone)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'KeyStore.ps1')
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -44,6 +50,8 @@ $frontend.Arguments = 'run dev'
 $frontend.WorkingDirectory = Join-Path $root 'frontend'
 $frontend.UseShellExecute = $false
 $frontend.Environment['BACKEND_URL'] = "http://localhost:$BackendPort"
+if ($Profile) { $frontend.Environment['PUBLIC_ARINAV_PROFILE'] = $Profile }
+if ($Phone) { $frontend.Environment['ARINAV_PHONE'] = '1' }
 
 $processes = @()
 try {
@@ -71,6 +79,17 @@ try {
 }
 $processes += [Diagnostics.Process]::Start($frontend)
 $mode = if ($Live) { 'live' } else { 'offline' }
+if ($Phone) {
+    # Connected adapters only (Wi-Fi, LAN, this PC's mobile hotspot), no Hyper-V/WSL switches.
+    $up = @(Get-NetAdapter -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq 'Up' -and $_.InterfaceAlias -notmatch '^vEthernet' }).InterfaceIndex
+    $addresses = Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
+        Where-Object { $_.IPAddress -notmatch '^(127|169\.254)\.' -and ($up -contains $_.InterfaceIndex) }
+    foreach ($a in $addresses) {
+        # Windows' mobile hotspot always hands out 192.168.137.x and is reached at .1
+        $where = if ($a.IPAddress -like '192.168.137.*') { 'phone on this PC''s hotspot' } else { "phone in the same network as '$($a.InterfaceAlias)'" }
+        Write-Host "Phone: https://$($a.IPAddress):4321  ($where; accept the certificate warning once)"
+    }
+}
 Write-Host "AriNav: http://localhost:4321  (backend http://localhost:$BackendPort, mode: $mode). Ctrl+C stops both."
 try { foreach ($p in $processes) { $p.WaitForExit() } }
 finally {

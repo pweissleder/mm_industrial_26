@@ -16,7 +16,7 @@ from anthropic import Anthropic
 from langgraph.types import Command
 
 from app.config import Settings
-from app.ingestion.service import DATASET_NAME, DatasetNotFoundError
+from app.ingestion.service import DATASET_NAME, DatasetNotFoundError, dataset_inputs
 from app.pipeline.agents.base import AgentModels
 from app.pipeline.graph import PipelineGraph, build_pipeline_graph
 from app.pipeline.state import (
@@ -142,7 +142,10 @@ class PipelineRunner:
 
     def dataset_dir(self, dataset: str, datasets_dir: Path | None = None) -> Path:
         root = datasets_dir or self.settings.datasets_dir
-        if not DATASET_NAME.match(dataset) or not (root / dataset / "building.json").is_file():
+        if not DATASET_NAME.match(dataset):
+            raise DatasetNotFoundError(dataset)
+        inputs = dataset_inputs(root / dataset)
+        if not (inputs.has_building or inputs.reconstructable):  # else "reconstruct" builds it
             raise DatasetNotFoundError(dataset)
         return root / dataset
 

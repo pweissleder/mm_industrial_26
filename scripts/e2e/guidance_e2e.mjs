@@ -143,11 +143,11 @@ await manual(page);
 
 await check('01_preview_keeps_user_position', async () => {
   const before = await snap(page);
-  await page.getByRole('button', { name: 'Preview route' }).click();
+  await page.getByRole('button', { name: 'Fly-through' }).click();
   await page.waitForTimeout(2500);
   const during = await snap(page);
   await page.screenshot({ path: join(OUT, 'e2e-01-preview.png') });
-  await page.getByRole('button', { name: /Skip preview|Preview route/ }).first().click();
+  await page.getByRole('button', { name: /Skip preview|Fly-through/ }).first().click();
   const pose = await page.evaluate(() => window.__arinavGuidance.pose());
   assert(during.d === before.d && during.status === 'idle', `walker moved during preview: ${JSON.stringify(during)}`);
   assert(pose === null, 'a walker was shown before Start navigation');
@@ -321,8 +321,14 @@ await check('04_09_precision_walker_stays_on_checked_route_and_modes_differ', as
 });
 
 await check('12_missing_hq_does_not_block_map_use', async () => {
+  // The campus has a saved HQ model since the night build: hide it for this check (no model, no run).
+  const noHq = (r) => (r.request().method() === 'GET' ? r.fulfill({ json: [] }) : r.continue());
+  await page.route('**/api/locations', noHq);
+  await page.route('**/api/pipeline-runs?*', noHq);
   await openBuilding(page, CAMPUS);
   await page.getByRole('button', { name: /LQ only/ }).waitFor({ timeout: 20000 });
+  await page.unroute('**/api/locations', noHq);
+  await page.unroute('**/api/pipeline-runs?*', noHq);
   await developer(page);
   await route(page, '3.01', 'Rooms', 'exit', 'Exits');
   const s = await snap(page);

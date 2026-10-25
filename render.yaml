@@ -1,0 +1,62 @@
+# Render Blueprint (https://render.com/docs/blueprint-spec): the same split as
+# compose.prod.yaml. The backend runs its Dockerfile as a free web service; the
+# frontend is a free static site whose /api/* rewrite stands in for nginx's proxy.
+# Free instances sleep after 15 idle minutes and have no persistent disk, so
+# uploads and pipeline output are lost on sleep, restart and redeploy.
+
+services:
+  - type: web
+    name: arinav-backend
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    healthCheckPath: /api/health
+    buildFilter:
+      paths:
+        - backend/**
+    envVars:
+      # The Dockerfile's uvicorn listens on 8000; tell Render to route there.
+      - key: PORT
+        value: "8000"
+      - key: ENVIRONMENT
+        value: production
+      # Secrets: Render asks for these when the Blueprint is first created.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: MANAGED_AGENT_ID
+        sync: false
+      - key: MANAGED_AGENT_ENVIRONMENT_ID
+        sync: false
+      - key: LANGSMITH_API_KEY
+        sync: false
+
+  - type: web
+    name: arinav
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: ./frontend/dist
+    buildFilter:
+      paths:
+        - frontend/**
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      # Empty: the browser calls /api on the same origin, which the rewrite below proxies.
+      - key: PUBLIC_API_BASE_URL
+        value: ""
+    headers:
+      - path: /_astro/*
+        name: Cache-Control
+        value: public, max-age=31536000, immutable
+    routes:
+      # Must match the backend's public URL; Render adds a suffix if the name is taken.
+      - type: rewrite
+        source: /api/*
+        destination: https://arinav-backend.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html

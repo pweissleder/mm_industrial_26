@@ -1,0 +1,17 @@
+# Not needed by either Vercel service; keeps CLI uploads small. Secrets go in the
+# Vercel project's environment variables, never in an uploaded .env.
+.env
+.venv
+__pycache__
+.mypy_cache
+.pytest_cache
+.ruff_cache
+node_modules
+/frontend/dist
+/frontend/.astro
+/backend/tests
+/problem_statement
+/benchmark_results
+/docs
+/.claude
+/.playwright-mcp

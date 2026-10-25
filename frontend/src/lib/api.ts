@@ -61,6 +61,8 @@ export interface UploadResponse {
   dataset: string;
   files: DatasetFile[];
   ingestible: boolean;
+  /** No building.json, but floor plans: the pipeline's reconstruct stage can rebuild it. */
+  reconstructable: boolean;
 }
 
 // --- ingestion pipeline (backend/app/pipeline) ---------------------------------------
@@ -274,6 +276,8 @@ export interface RouteResponse {
   path: RoutePathSegment[];
   transitions: RouteTransition[];
   waypoints?: RouteWaypoint[];
+  /** Constraints this route honours (a reroute must keep them). */
+  constraints?: { step_free: boolean; profile?: ClearanceProfile; width_m?: number; safety_m?: number };
   /** Router directions without element ids; `directions_raw` keeps the router's own lines. */
   directions: string[];
   directions_raw?: string[];
@@ -356,9 +360,19 @@ export interface UiState {
   building_id: string | null;
   /** null = the user cleared it (the assistant forgets it too); absent = no explicit choice. */
   start?: Endpoint | null;
+  /** How the start is known (manual, simulation, qr, hypothesis); never a measurement claim. */
+  start_source?: string;
   destination?: Endpoint | null;
   /** What the user is looking at on the map (context for "this"), not a start/destination. */
   inspected?: { kind: string; id: string } | null;
+  /** The person's simulated pose and view heading (deg CCW from +X), for spatial questions. */
+  pose?: {
+    floor_id: string;
+    space_id: string;
+    position: Point;
+    heading_deg: number | null;
+    source: string;
+  } | null;
   mode?: NavMode;
   step_free?: boolean;
   profile?: ClearanceProfile;
@@ -647,6 +661,12 @@ export const api = {
       // building_id gives the agent that building's navgraph tools; without it the agent is blind.
       body: JSON.stringify({ message, thread_id: threadId, building_id: buildingId ?? undefined }),
     }),
+  /** `needs_reconstruction`: uploaded plan-only datasets that have no building.json yet. */
+  datasetIndex: () =>
+    request<{ datasets: string[]; needs_reconstruction: string[] }>('/datasets').then((r) => ({
+      datasets: r.datasets,
+      needs_reconstruction: r.needs_reconstruction ?? [],
+    })),
   datasets: () => request<{ datasets: string[] }>('/datasets').then((r) => r.datasets),
   ingest: (dataset: string) =>
     request<IngestionResponse>('/ingestions', { method: 'POST', body: JSON.stringify({ dataset }) }),

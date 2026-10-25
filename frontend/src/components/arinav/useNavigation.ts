@@ -20,6 +20,7 @@ import {
   DEFAULT_NAV,
   diagnosisIds,
   readRouteError,
+  routeStart,
   type EndpointChoice,
   type NavSettings,
   type SimulatedLocation,
@@ -227,7 +228,7 @@ export function useNavigation(buildingId: string | null): Navigation {
   const computeRoute = useCallback(
     (overrides: { start?: Endpoint; target?: Endpoint } = {}) =>
       run(async () => {
-        const from = overrides.start ?? start?.endpoint ?? simulated?.endpoint;
+        const from = overrides.start ?? routeStart(start, simulated);
         const to = overrides.target ?? target?.endpoint;
         if (!buildingId || !from || !to) {
           setMessage('Choose a start and a target first.');
@@ -300,7 +301,7 @@ export function useNavigation(buildingId: string | null): Navigation {
       run(async () => {
         if (!buildingId) return;
         try {
-          const from = start?.endpoint ?? simulated?.endpoint;
+          const from = routeStart(start, simulated);
           previewRevision.current = revision ?? null;
           setPreview(
             await api.navPreviewClosure(buildingId, {
@@ -320,7 +321,7 @@ export function useNavigation(buildingId: string | null): Navigation {
   const nearestExit = useCallback(
     () =>
       run(async () => {
-        const from = start?.endpoint ?? simulated?.endpoint;
+        const from = routeStart(start, simulated);
         if (!buildingId || !from) {
           setMessage('Choose a start first.');
           return;

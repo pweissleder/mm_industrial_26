@@ -6,7 +6,8 @@ import { progressAt, type RouteProgress } from './guidance';
 
 /** Walking speed at 1x (m/s). Vertical moves advance by their official equivalent cost. */
 export const WALK_SPEED = 1.3;
-export const SPEEDS = [0.5, 1, 2, 4, 8] as const;
+/** Walking speeds the navigation card cycles through (one button: 1x -> 2x -> 6x -> 1x). */
+export const SPEEDS = [1, 2, 6] as const;
 /** Announce an instruction this far (m) before its point. */
 export const ANNOUNCE_M = 6;
 const TURN_DEG = 50;
@@ -51,6 +52,26 @@ export function readable(text: string, names: Names): string {
 }
 
 const angleDelta = (from: number, to: number) => ((to - from + 540) % 360) - 180;
+const DOOR_TURN_SPAN_M = 1.5;
+
+/** A point `dist` metres before (<0) or after (>0) waypoint i along the route, on its floor. */
+function pointAlong(wps: RouteWaypoint[], i: number, dist: number): [number, number] | null {
+  const step = dist < 0 ? -1 : 1;
+  let left = Math.abs(dist);
+  let here = wps[i].position;
+  for (let j = i + step; j >= 0 && j < wps.length; j += step) {
+    if (wps[j].floor_id !== wps[i].floor_id) break;
+    const p = wps[j].position;
+    const d = Math.hypot(p[0] - here[0], p[1] - here[1]);
+    if (d >= left) {
+      const t = left / d;
+      return [here[0] + (p[0] - here[0]) * t, here[1] + (p[1] - here[1]) * t];
+    }
+    left -= d;
+    here = p;
+  }
+  return here === wps[i].position ? null : here;
+}
 
 /** Instructions in route order, from the backend's waypoints only (no geometry invented). */
 export function buildInstructions(route: RouteResponse, names: Names): Instruction[] {
@@ -96,7 +117,20 @@ export function buildInstructions(route: RouteResponse, names: Names): Instructi
         push(wp, 'exit', 'Go through the exit door.');
       } else {
         const next = names.space(wps[i + 1]?.space_id);
-        push(wp, 'door', next ? `Go through the door into ${next}.` : 'Go through the door.');
+        const into = next ? ` into ${next}` : '';
+        // Which way the door is taken: the walking direction a little before the door against the
+        // one a little after it (counter-clockwise frame: positive = left).
+        const before = pointAlong(wps, i, -DOOR_TURN_SPAN_M);
+        const after = pointAlong(wps, i, DOOR_TURN_SPAN_M);
+        const bearing = (a: [number, number], b: [number, number]) => (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
+        const turn = before && after ? angleDelta(bearing(before, wp.position), bearing(wp.position, after)) : 0;
+        const text =
+          Math.abs(turn) >= 150
+            ? `Turn around and go through the door${into}.`
+            : Math.abs(turn) >= TURN_DEG
+              ? `Turn ${turn > 0 ? 'left' : 'right'} through the door${into}.`
+              : `Go through the door${into}.`;
+        push(wp, 'door', text);
       }
       continue;
     }
@@ -230,6 +264,28 @@ export class GuidanceSim {
     return [{ type: 'blocked', message }];
   }
 
+  /**
+   * Manual walking (the person, not the clock, moves): set the distance reached along the route,
+   * e.g. from `projectOnRoute`. Announces what is now due; arrives at the end. Starts if idle.
+   */
+  track(distance: number): SimEvent[] {
+    if (!this.route || this.route.status !== 'ok' || !(this.route.waypoints ?? []).length) return [];
+    const events: SimEvent[] = [];
+    if (this.status !== 'active') {
+      if (this.status === 'arrived') return [];
+      this.status = 'active';
+      this.message = null;
+      events.push({ type: 'start', route_revision: this.revision });
+    }
+    this.distance = Math.min(this.total, Math.max(0, distance));
+    events.push(...this.announce());
+    if (this.distance >= this.total - 1e-9) {
+      this.status = 'arrived';
+      events.push({ type: 'arrive' });
+    }
+    return events;
+  }
+
   setSpeed(factor: number): void {
     this.speed = Math.min(8, Math.max(0.25, factor));
   }
@@ -295,4 +351,33 @@ export function remainingElements(route: RouteResponse, distance: number): Set<s
     if (wp.space_id) ids.add(wp.space_id);
   }
   return ids;
+}
+
+/**
+ * Nearest point of the route to `point` on `floor`: distance along the route and the offset (m).
+ * Only walk legs on that floor count (rides keep XY); null if the route never visits the floor.
+ */
+export function projectOnRoute(
+  route: RouteResponse,
+  floor: string,
+  point: [number, number],
+): { distance_m: number; offset_m: number } | null {
+  const wps = route.waypoints ?? [];
+  let best: { distance_m: number; offset_m: number } | null = null;
+  for (let i = 0; i < wps.length; i++) {
+    const a = wps[i];
+    if (a.floor_id !== floor) continue;
+    const b = wps[i + 1];
+    const legOk = b && b.floor_id === floor && b.distance_m > a.distance_m;
+    const [ax, ay] = a.position;
+    const [bx, by] = legOk ? b.position : a.position;
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 ? Math.max(0, Math.min(1, ((point[0] - ax) * dx + (point[1] - ay) * dy) / len2)) : 0;
+    const offset = Math.hypot(point[0] - (ax + t * dx), point[1] - (ay + t * dy));
+    const along = a.distance_m + (legOk ? t * (b.distance_m - a.distance_m) : 0);
+    if (!best || offset < best.offset_m - 1e-9) best = { distance_m: along, offset_m: offset };
+  }
+  return best;
 }

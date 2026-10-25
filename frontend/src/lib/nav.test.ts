@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { RouteResponse } from './api';
 import type { BuildingModel } from './building';
-import { buildUiState, DEFAULT_NAV, endpointLabel, readRouteError, replyAsks, routeBadge } from './nav';
+import { buildUiState, DEFAULT_NAV, endpointLabel, readRouteError, replyAsks, routeBadge, routeStart } from './nav';
 import { decodePcm16, encodeWav, STT_RATE } from './voice';
 import { routeDrawing } from '../components/arinav/routeGeometry';
 
@@ -113,5 +113,43 @@ describe('voice encoding', () => {
     const out = decodePcm16(pcm);
     expect(out[0]).toBeCloseTo(0.5, 2);
     expect(out[1]).toBeCloseTo(-0.5, 2);
+  });
+});
+
+describe('location after navigation (G07)', () => {
+  it('a walked-to location is the next start, labelled as simulation', () => {
+    const ui = buildUiState({
+      buildingId: 'b',
+      start: { endpoint: { kind: 'space', id: 'S1' }, source: 'user' },
+      target: null,
+      simulated: { endpoint: { kind: 'opening', id: 'EXIT' }, label: 'Exit', source: 'simulation' },
+      settings: DEFAULT_NAV,
+      touched: new Set(),
+    });
+    expect(ui.start).toEqual({ kind: 'opening', id: 'EXIT' });
+    expect(ui.start_source).toBe('simulation');
+  });
+
+  it('a manual start still wins over a manually set simulated room', () => {
+    const ui = buildUiState({
+      buildingId: 'b',
+      start: { endpoint: { kind: 'space', id: 'S1' }, source: 'user' },
+      target: null,
+      simulated: { endpoint: { kind: 'space', id: 'S2' }, label: 'Office', source: 'manual' },
+      settings: DEFAULT_NAV,
+      touched: new Set(),
+    });
+    expect(ui.start).toEqual({ kind: 'space', id: 'S1' });
+    expect(ui.start_source).toBeUndefined();
+  });
+
+  it('local routes start where the assistant would: walked location, else the chosen start', () => {
+    const user = { endpoint: { kind: 'space', id: 'S1' }, source: 'user' } as const;
+    const walked = { endpoint: { kind: 'opening', id: 'EXIT' }, label: 'Exit', source: 'simulation' } as const;
+    const manual = { endpoint: { kind: 'space', id: 'S2' }, label: 'Office', source: 'manual' } as const;
+    expect(routeStart(user, walked)).toEqual({ kind: 'opening', id: 'EXIT' });
+    expect(routeStart(user, manual)).toEqual({ kind: 'space', id: 'S1' });
+    expect(routeStart(null, manual)).toEqual({ kind: 'space', id: 'S2' });
+    expect(routeStart(null, null)).toBeUndefined();
   });
 });

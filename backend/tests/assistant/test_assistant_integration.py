@@ -316,3 +316,87 @@ def test_navgraph_asset_edit_is_one_building_for_every_consumer(
             },
         ).json()
         assert route["target"]["space_id"] == OFFICE_F1
+
+
+def test_c02_c03_wheelchair_with_closed_lift_never_gets_stairs(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    """Night task C02/C03: a wheelchair user, the only lift closed, destination downstairs. The
+    model even tries to drop step_free in tool arguments; the constraint must hold through new
+    turns, a mode switch and the route's own constraints (used by guidance reroutes)."""
+    corridor = {"kind": "space", "id": f"{B}-F0-S001"}
+    script = [
+        update(start={"kind": "space", "id": OFFICE_F1}, step_free=True),
+        "Noted, step-free.",
+        (
+            "plan_route",
+            {
+                "start": None,
+                "destination": corridor,
+                "mode": None,
+                "step_free": False,
+                "assume_closed": [],
+            },
+        ),
+        "There is no step-free route right now.",
+        ("find_nearest", {"category": "exit", "step_free": False, "and_route": True}),
+        "No step-free way out at the moment.",
+    ]
+    settings.datasets_dir = datasets_dir
+    transport = Scripted(script)
+    with TestClient(create_app(settings, assistant_transport=transport)) as client:
+        ingest(client)
+        client.post(
+            f"/api/nav/{B}/scenario",
+            json={"action": "close", "element_id": LIFT, "expected_revision": 0},
+        )
+        turn(client, "I use a wheelchair and I'm in Office 1.04.")
+        out = turn(client, "Take me to the ground floor corridor.", mode="precision")
+        tool = out["tools"][0]
+        assert out["state"]["step_free"] is True
+        assert tool["input"]["step_free"] is False  # the model tried to loosen it
+        assert tool["output"].get("status") != "ok" or tool["output"]["reachable"] is False
+        assert "Never suggest stairs" in tool["output"]["constraint"]
+        route = out["ui"].get("route")
+        assert not route or not any(t["kind"] == "stairs" for t in route["transitions"])
+        out = turn(client, "Then the nearest exit.")
+        assert out["state"]["step_free"] is True
+        nearest = out["tools"][0]["output"]
+        routed = nearest.get("route_to_closest") or {}
+        assert not routed or routed.get("status") != "ok" or routed.get("reachable") is False
+        # The route API echoes the constraint it honoured (guidance reroutes reuse it).
+        r = client.post(
+            f"/api/nav/{B}/route",
+            json={
+                "mode": "official",
+                "start": {"kind": "space", "id": OFFICE_F1},
+                "target": corridor,
+                "step_free": True,
+            },
+        ).json()
+        assert r["constraints"]["step_free"] is True and r["reachable"] is False
+
+
+def test_s01_whats_on_my_right_uses_the_pose_and_view_direction(
+    settings: Settings, datasets_dir: Path, ingest: Any
+) -> None:
+    script = [
+        ("describe_surroundings", {"direction": "right"}),
+        "The door to the corridor is on your right.",
+        ("describe_surroundings", {"direction": "right"}),
+        "Which way are you facing?",
+    ]
+    with make_client(settings, datasets_dir, script) as client:
+        ingest(client)
+        pose = {
+            "floor_id": f"{B}-F1",
+            "space_id": OFFICE_F1,
+            "position": [2.5, 2.7],
+            "heading_deg": 90,
+        }
+        out = turn(client, "What's on my right?", pose=pose)
+        items = out["tools"][0]["output"]["items"]
+        assert items and all("right" in (i["side"], i.get("wall_side")) for i in items)
+        assert any(i["kind"] == "door" for i in items)
+        out = turn(client, "And now?", pose=None)  # pose cleared: must ask, not guess
+        assert out["tools"][0]["status"] == "error"

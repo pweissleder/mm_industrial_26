@@ -1,8 +1,11 @@
 from app.ingestion.service import (
+    DatasetInputs,
     DatasetNotFoundError,
     IngestionSummary,
+    dataset_inputs,
     ingest_dataset,
     list_datasets,
+    list_pending_datasets,
 )
 from app.ingestion.uploads import (
     DatasetFile,
@@ -16,14 +19,17 @@ from app.ingestion.uploads import (
 
 __all__ = [
     "DatasetFile",
+    "DatasetInputs",
     "DatasetNotFoundError",
     "IngestionSummary",
     "InvalidUploadError",
     "dataset_file",
+    "dataset_inputs",
     "dataset_name_taken",
     "ingest_dataset",
     "list_datasets",
     "list_files",
+    "list_pending_datasets",
     "remove_dataset",
     "save_upload",
 ]

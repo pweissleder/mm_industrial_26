@@ -264,3 +264,133 @@ SCENARIOS: list[dict[str, Any]] = [
         ],
     },
 ]
+
+S = "swiss-1689"
+OFFICE_038 = {"space_id": f("F0-S038"), "position": [9.5, 28.38]}
+
+# Night task scenarios (held out: not used to tune prompts before their first live run).
+NIGHT_SCENARIOS: list[dict[str, Any]] = [
+    {
+        "id": "wheelchair_lift_closed",
+        "building": F,
+        "held_out": True,
+        "setup_closed": [f("V02")],
+        "title": "Wheelchair user while the only lift is closed (C02/C03)",
+        "turns": [
+            {
+                "user": "I use a wheelchair. I'm at hall access 0.19 and need to get to "
+                "Office 1.04 upstairs.",
+                "expect": {
+                    "state_step_free": True,
+                    "not_uses": "stairs",
+                    "mentions_any": ["lift", "elevator"],
+                    "short": True,
+                },
+            },
+            {
+                "user": "Okay. Then just take me to kitchen 0.28 instead.",
+                "expect": {
+                    "state_step_free": True,
+                    "route_found": True,
+                    "route_to": f("F0-S028"),
+                    "not_uses": "stairs",
+                    "short": True,
+                },
+            },
+        ],
+    },
+    {
+        "id": "leak_room_below",
+        "building": S,
+        "held_out": True,
+        "title": "Leaking dishwasher: which room directly below? (S03)",
+        "turns": [
+            {
+                "user": "The dishwasher in kitchen 1.17 is leaking. Which room directly below "
+                "could be affected?",
+                "expect": {"tools": ["building_fact"], "mentions_any": ["0.59"], "short": True},
+            },
+        ],
+    },
+    {
+        "id": "whats_on_my_right",
+        "building": F,
+        "held_out": True,
+        "title": "What's on my right / behind me, from the simulated pose (S01)",
+        "turns": [
+            {
+                "user": "What's on my right?",
+                "ui": {"pose": {**OFFICE_038, "heading_deg": 180}},
+                "expect": {
+                    "tools": ["describe_surroundings"],
+                    "mentions_any": ["filing cabinet", "cabinet"],
+                    "no_route": True,
+                    "short": True,
+                },
+            },
+            {
+                "user": "And what is behind me now?",
+                "ui": {"pose": {**OFFICE_038, "heading_deg": 0}},
+                "expect": {
+                    "tools": ["describe_surroundings"],
+                    "mentions_any": ["door", "corridor"],
+                    "short": True,
+                },
+            },
+        ],
+    },
+    {
+        "id": "left_unknown_heading",
+        "building": F,
+        "held_out": True,
+        "title": "Side question without a known view direction (S02)",
+        "turns": [
+            {
+                "user": "What is on my left?",
+                "ui": {"pose": {**OFFICE_038, "heading_deg": None}},
+                "expect": {"asks": True, "no_route": True, "short": True},
+            },
+        ],
+    },
+    {
+        "id": "joke_and_thanks",
+        "building": F,
+        "held_out": True,
+        "title": "Small talk without tools (S05)",
+        "turns": [
+            {"user": "Tell me a quick joke.", "expect": {"tools_none": True, "short": True}},
+            {"user": "Thanks, that's all for now!", "expect": {"tools_none": True, "short": True}},
+        ],
+    },
+    {
+        "id": "nearest_exit_opening",
+        "building": F,
+        "held_out": True,
+        "title": "Route to the nearest exit keeps the opening as target (C09)",
+        "turns": [
+            {
+                "user": "I'm in Office 0.38. Take me to the nearest exit.",
+                "expect": {
+                    "route_found": True,
+                    "route_target_kind": "opening",
+                    "state_start": f("F0-S038"),
+                    "short": True,
+                },
+            },
+        ],
+    },
+    {
+        "id": "missing_referent",
+        "building": F,
+        "held_out": True,
+        "title": "Missing referent: 'the biggest one' without context (C08)",
+        "turns": [
+            {
+                "user": "Take me to the biggest one.",
+                "expect": {"no_route": True, "asks": True, "short": True},
+            },
+        ],
+    },
+]
+
+SCENARIOS = SCENARIOS + NIGHT_SCENARIOS

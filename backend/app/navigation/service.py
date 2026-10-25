@@ -33,6 +33,7 @@ from app.navigation.official import building_map as official_map
 from app.navigation.ported import challenge, diagnostics, geometry, operations, precision
 from app.navigation.ported.validation import validate_footprints
 from app.navigation.response import official_response, precision_response, waypoints
+from app.navigation.surroundings import surroundings as _surroundings
 from app.storage import BuildingRepository
 
 JSON = dict[str, Any]
@@ -562,6 +563,12 @@ class NavigationService:
             response["revision"] = entry.revision
         response["closed"] = closed
         response["assume_closed"] = assume
+        # The constraints this route honours, so a later reroute keeps them (never loosens).
+        response["constraints"] = {"step_free": step_free}
+        if mode == "precision":
+            response["constraints"] |= {
+                k: request.get(k) for k in ("profile", "width_m", "safety_m") if k in request
+            }
         response["elapsed_ms"] = _ms(began)
         return response
 
@@ -932,6 +939,23 @@ class NavigationService:
         return {"split": split, "source": reason, "examples": rows}
 
     # ------------------------------------------------------------ location
+
+    def surroundings(
+        self,
+        building_id: str,
+        space_id: str,
+        position: list[float],
+        heading_deg: float | None,
+    ) -> JSON:
+        """Things, doors and neighbouring rooms around a pose (see navigation/surroundings.py)."""
+        entry = self._entry(building_id)
+        if space_id not in entry.spaces:
+            raise NavigationError(
+                "unknown_place", "Unknown room for the position", {"id": space_id}
+            )
+        with entry.lock:
+            closed = set(entry.closed)
+        return _surroundings(entry.data, closed, space_id, position, heading_deg)
 
     def resolve_location(self, request: JSON) -> JSON:
         if not isinstance(request, dict):

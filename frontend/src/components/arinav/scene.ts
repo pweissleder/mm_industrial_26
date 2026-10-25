@@ -28,10 +28,15 @@ import {
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import { constrainItemMove, startItemDrag, type ItemDrag } from '../../lib/edit';
 import { routeDrawing } from './routeGeometry';
+import { EYE_HEIGHT_M, angleDiff, wrap360 } from '../../lib/spatial';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
-import { assetCapFor, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
+import { MAX_VISIBLE_ASSETS, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
 
 const SLAB = 0.15;
+/** Minimap: hidden at phone widths (CSS px), else a rounded card with a thin gray border. */
+const MINIMAP_MIN_WIDTH = 640;
+const MINIMAP_RADIUS = 14;
+const MINIMAP_BORDER = 0xdddddd;
 const WALL_T = 0.1;
 const WALL_INSET = 0.06;
 const EXPLODE_GAP = 12;
@@ -44,6 +49,11 @@ const CLOSED_COLOR = '#e5484d';
 const OPEN_TYPES = new Set(['hall', 'corridor']);
 /** Height of the route line above the floor slab. */
 const ROUTE_LIFT = 0.35;
+// Route fly-through: a chase drone just above walls (2.4 m in overview) and most furniture (the
+// official route ignores furniture), looking ahead and down onto the path.
+const DRONE_HEIGHT_M = 3.4;
+const DRONE_LOOK_DOWN_M = 2.4;
+const DRONE_MPS = 9;
 const ROUTE_COLORS = { official: '#7c3aed', precision: '#004fab', vertical: '#5d6070' };
 
 /** Where a click hit the model, in building coordinates. */
@@ -114,13 +124,24 @@ export interface WalkerPose {
   distanceM?: number;
 }
 
+/** Route fly-through ("drone video"): circle the destination, pull out to the start, fly the
+ * path at drone height looking ahead, then settle on an overview of the whole route. Camera only:
+ * the person never moves. Times in ms from `start`. */
 interface Preview {
-  points: THREE.Vector3[];
-  /** Cumulative length at each point, for constant-speed travel. */
-  lengths: number[];
+  curve: THREE.CatmullRomCurve3;
+  length: number;
+  destination: THREE.Vector3;
+  overviewPos: THREE.Vector3;
+  overviewTarget: THREE.Vector3;
+  fromPos: THREE.Vector3;
+  fromTarget: THREE.Vector3;
+  orbitAngle: number;
+  /** Floor level at each curve point and the point's share of the path (0..1), so floors above
+   * the one being flown over can be hidden (their slab sits just above drone height). */
+  levels: number[];
+  shares: number[];
+  phases: { orbit: number; pull: number; fly: number; settle: number };
   start: number;
-  duration: number;
-  offset: THREE.Vector3;
   onDone?: () => void;
 }
 
@@ -192,6 +213,53 @@ export class BuildingScene {
   private readonly labelRenderer: CSS2DRenderer;
   private readonly scene = new THREE.Scene();
   private readonly camera = new THREE.PerspectiveCamera(40, 1, 0.1, 4000);
+  // POV (night task §5): an eye-height camera at the person; the avatar lives on layer 1, which
+  // only the overview cameras see, so it never blocks the lens.
+  private readonly povCamera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);
+  private readonly miniCamera = new THREE.OrthographicCamera(-15, 15, 12, -12, 0.1, 400);
+  // The minimap is rendered to a texture and drawn as a rounded card with a thin gray border.
+  private readonly miniTarget = new THREE.WebGLRenderTarget(1, 1, { samples: 4 });
+  private readonly miniFrame = new THREE.ShaderMaterial({
+    uniforms: {
+      map: { value: this.miniTarget.texture },
+      size: { value: new THREE.Vector2(1, 1) },
+      radius: { value: MINIMAP_RADIUS },
+      border: { value: 1 },
+      borderColor: { value: new THREE.Color(MINIMAP_BORDER) },
+    },
+    vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: `
+      uniform sampler2D map;
+      uniform vec2 size;
+      uniform float radius;
+      uniform float border;
+      uniform vec3 borderColor;
+      varying vec2 vUv;
+      void main() {
+        // Signed distance (CSS px) to the rounded rectangle: negative inside.
+        vec2 q = abs((vUv - 0.5) * size) - size * 0.5 + radius;
+        float d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - radius;
+        float alpha = 1.0 - smoothstep(-0.75, 0.25, d);
+        if (alpha <= 0.0) discard;
+        float edge = smoothstep(-border - 0.75, -border + 0.25, d);
+        gl_FragColor = vec4(mix(texture2D(map, vUv).rgb, borderColor, edge), alpha);
+        #include <colorspace_fragment>
+      }`,
+    transparent: true,
+    depthTest: false,
+    depthWrite: false,
+  });
+  private readonly miniFrameScene = new THREE.Scene().add(
+    new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.miniFrame),
+  );
+  private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number } = {
+    view: 'overview',
+    yaw: null,
+    yawOffset: 0,
+    pitch: -8,
+  };
+  private povYaw: number | null = null;
+  private split = false;
   private readonly controls: OrbitControls;
   private readonly sun = new THREE.DirectionalLight('#ffffff', 1.5);
   private readonly root = new THREE.Group();
@@ -209,7 +277,6 @@ export class BuildingScene {
   /** Asset culling for huge buildings: null = off, else the ids currently shown. */
   private assetIndex: AssetIndex | null = null;
   private shownAssets: Set<string> | null = null;
-  private assetCap = assetCapFor(0);
   // A selected room's equipment, in the selection orange like a selected asset.
   private readonly roomAssetMat = new THREE.MeshStandardMaterial({
     color: SELECT,
@@ -315,6 +382,8 @@ export class BuildingScene {
   private route: RouteResponse | null = null;
   private model: BuildingModel | null = null;
   private glb: THREE.Object3D | null = null;
+  /** Fly-through: floors above this level are hidden (null: as the view settings say). */
+  private floorCap: number | null = null;
   private hq = false;
   /** Building shown last; switching quality of the same building keeps the camera. */
   private buildingId: string | null = null;
@@ -348,6 +417,8 @@ export class BuildingScene {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(this.renderer.domElement);
 
+    this.camera.layers.enable(1);
+    this.miniCamera.layers.enable(1);
     this.labelRenderer = new CSS2DRenderer();
     this.labelRenderer.domElement.className = 'viewer__labels';
     container.appendChild(this.labelRenderer.domElement);
@@ -410,6 +481,8 @@ export class BuildingScene {
     this.clearDone();
     this.doneMat.dispose();
     for (const m of [this.closedMat, this.diagnosisMat, this.highlightMat]) m.dispose();
+    this.miniTarget.dispose();
+    this.miniFrame.dispose();
     this.markerGeo.dispose();
     this.doorGeo.dispose();
     this.renderer.dispose();
@@ -504,7 +577,22 @@ export class BuildingScene {
     }
   }
 
-  /** Elements the assistant points at (orange, like the selection). */
+  /** POV camera state (per frame from useImmersive); overview keeps the orbit camera. */
+  setLook(look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number }) {
+    const entering = look.view === 'pov' && this.look.view !== 'pov';
+    this.look = look;
+    if (entering) this.povYaw = null;
+    this.controls.enabled = look.view !== 'pov';
+    this.labelRenderer.domElement.style.display = look.view === 'pov' ? 'none' : '';
+    this.needsRender = true;
+  }
+
+  /** Developer split view: POV left, whole building right (same pose). */
+  setSplit(on: boolean) {
+    this.split = on;
+    this.needsRender = true;
+  }
+
   /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
   setWalker(pose: WalkerPose | null) {
     this.walkerPose = pose;
@@ -594,31 +682,155 @@ export class BuildingScene {
     this.frame('iso', true);
   }
 
-  /** Fly the camera along the route once (the walker does not move); `onDone` when finished. */
-  startPreview(route: RouteResponse, durationMs: number, onDone?: () => void) {
+  /** Fly-through of the route (camera only, the walker does not move); `onDone` when finished.
+   * `maxFlyMs` caps the drone part; short routes fly faster than walking, long ones up to the cap. */
+  startPreview(route: RouteResponse, maxFlyMs: number, onDone?: () => void) {
     this.cancelPreview();
     const floorView = new Map(this.floors.map((fv) => [fv.floor.id, fv]));
-    const points = (route.waypoints ?? []).map((w) => {
+    const raw = (route.waypoints ?? []).map((w) => {
       const fv = floorView.get(w.floor_id);
-      return toVec(w.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + ROUTE_LIFT);
+      return {
+        point: toVec(w.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + DRONE_HEIGHT_M),
+        level: fv?.floor.level ?? 0,
+      };
     });
+    // Drop near-duplicate points (they make the spline loop); keep the last one.
+    const kept = raw.filter((p, i) => i === raw.length - 1 || p.point.distanceTo(raw[i + 1].point) > 0.3);
+    const points = kept.map((p) => p.point);
     if (points.length < 2) {
       onDone?.();
       return;
     }
-    const lengths = [0];
-    for (let i = 1; i < points.length; i++) lengths.push(lengths[i - 1] + points[i].distanceTo(points[i - 1]));
+    const curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.5);
+    const length = curve.getLength();
+    const cumulative = [0];
+    for (let i = 1; i < points.length; i++) cumulative.push(cumulative[i - 1] + points[i].distanceTo(points[i - 1]));
+    const total = cumulative[cumulative.length - 1] || 1;
+    const destination = points[points.length - 1].clone().setY(points[points.length - 1].y - DRONE_HEIGHT_M + 1.2);
+    const box = new THREE.Box3().setFromPoints(points);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3()).length();
     const dir = this.camera.position.clone().sub(this.controls.target).normalize();
-    if (dir.y < 0.55) dir.setY(0.55).normalize();
+    if (dir.y < 0.6) dir.setY(0.6).normalize();
+    const toCam = this.camera.position.clone().sub(destination);
     this.fly = null;
-    this.preview = { points, lengths, start: performance.now(), duration: durationMs, offset: dir.multiplyScalar(30), onDone };
+    this.follow = false;
+    this.controls.enabled = false;
+    this.labelRenderer.domElement.style.display = 'none';
+    this.preview = {
+      curve,
+      length,
+      destination,
+      overviewPos: center.clone().add(dir.multiplyScalar(THREE.MathUtils.clamp(size * 1.6, 30, 160))),
+      overviewTarget: center,
+      fromPos: this.camera.position.clone(),
+      fromTarget: this.controls.target.clone(),
+      orbitAngle: Math.atan2(toCam.z, toCam.x),
+      levels: kept.map((p) => p.level),
+      shares: cumulative.map((c) => c / total),
+      phases: {
+        orbit: 1800,
+        pull: 1300,
+        fly: THREE.MathUtils.clamp((length / DRONE_MPS) * 1000, 3500, Math.max(3500, maxFlyMs)),
+        settle: 1400,
+      },
+      start: performance.now(),
+      onDone,
+    };
     this.needsRender = true;
   }
 
   cancelPreview() {
     const done = this.preview?.onDone;
+    if (this.preview) {
+      this.controls.enabled = this.look.view !== 'pov';
+      this.labelRenderer.domElement.style.display = this.look.view === 'pov' ? 'none' : '';
+      this.capFloors(null);
+    }
     this.preview = null;
     done?.();
+  }
+
+  /** The floor level flown over at path share `u`: on a stair/lift leg the lower of its two ends,
+   * so the floor above stays hidden until the drone is up there. */
+  private previewLevel(pv: Preview, u: number): number {
+    let i = 0;
+    while (i < pv.shares.length - 2 && pv.shares[i + 1] <= u) i++;
+    return Math.min(pv.levels[i], pv.levels[i + 1] ?? pv.levels[i]);
+  }
+
+  /** Hide floors above `level` (null: back to the view settings), within the floor focus. */
+  private capFloors(level: number | null) {
+    if (level === this.floorCap) return;
+    this.floorCap = level;
+    const focus = this.settings.floor;
+    const shown = (lvl: number) => (focus === 'all' || lvl <= focus) && (level === null || lvl <= level);
+    for (const fv of this.floors) fv.group.visible = shown(fv.floor.level);
+    this.glb?.traverse((o) => {
+      const lvl = o.userData.floor_level;
+      if (typeof lvl === 'number') o.visible = shown(lvl);
+    });
+    this.needsRender = true;
+  }
+
+  /** Camera pose of the fly-through at `elapsed` ms (with the floor level it shows); null when it
+   * is over. */
+  private previewPose(
+    pv: Preview,
+    elapsed: number,
+  ): { pos: THREE.Vector3; target: THREE.Vector3; level: number } | null {
+    const { orbit, pull, fly, settle } = pv.phases;
+    const orbitPos = (t: number) => {
+      const a = pv.orbitAngle + t * 1.1; // a slow quarter turn around the destination
+      return pv.destination.clone().add(new THREE.Vector3(Math.cos(a) * 7, 4.5, Math.sin(a) * 7));
+    };
+    const ahead = (u: number) =>
+      pv.curve.getPointAt(Math.min(1, u + Math.min(0.3, 9 / pv.length))).add(new THREE.Vector3(0, -DRONE_LOOK_DOWN_M, 0));
+    let t = elapsed;
+    if (t < orbit) {
+      const k = t / orbit;
+      const blend = easeInOut(Math.min(1, t / 700)); // from wherever the camera was
+      return {
+        pos: pv.fromPos.clone().lerp(orbitPos(k), blend),
+        target: pv.fromTarget.clone().lerp(pv.destination, blend),
+        level: pv.levels[pv.levels.length - 1],
+      };
+    }
+    t -= orbit;
+    const startPos = pv.curve.getPointAt(0);
+    const behind = startPos.clone().sub(ahead(0)).setY(0).normalize();
+    const high = startPos.clone().add(behind.multiplyScalar(9)).add(new THREE.Vector3(0, 9, 0));
+    if (t < pull) {
+      const k = easeInOut(t / pull);
+      return {
+        pos: orbitPos(1).lerp(high, k),
+        target: pv.destination.clone().lerp(ahead(0), k),
+        level: k < 0.5 ? pv.levels[pv.levels.length - 1] : pv.levels[0],
+      };
+    }
+    t -= pull;
+    // Stop a few metres short of the destination (it is often a machine the drone would enter).
+    const end = Math.max(0.5, 1 - 6 / pv.length);
+    if (t < fly) {
+      const u = easeInOut(t / fly) * end;
+      // Dive from the high start point onto the path during the first fifth, then follow it.
+      const dive = Math.min(1, t / (fly * 0.2));
+      return {
+        pos: high.clone().lerp(pv.curve.getPointAt(u), easeInOut(dive)),
+        target: ahead(u),
+        level: this.previewLevel(pv, u),
+      };
+    }
+    t -= fly;
+    if (t < settle) {
+      const k = easeInOut(t / settle);
+      return {
+        pos: pv.curve.getPointAt(end).lerp(pv.overviewPos, k),
+        target: ahead(end).lerp(pv.overviewTarget, k),
+        level: this.previewLevel(pv, end),
+      };
+    }
+    return null;
   }
 
   get previewing() {
@@ -645,6 +857,7 @@ export class BuildingScene {
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.03;
     for (const m of [body, head, arrow, ring]) {
+      m.layers.set(1);
       m.renderOrder = 13;
       m.raycast = () => {};
       this.walkerGroup.add(m);
@@ -657,17 +870,19 @@ export class BuildingScene {
   private stepGuidanceCamera(now: number) {
     const pv = this.preview;
     if (pv) {
-      const t = Math.min(1, (now - pv.start) / pv.duration);
-      const total = pv.lengths[pv.lengths.length - 1] || 1;
-      const d = easeInOut(t) * total;
-      let i = 1;
-      while (i < pv.lengths.length - 1 && pv.lengths[i] < d) i++;
-      const span = pv.lengths[i] - pv.lengths[i - 1] || 1;
-      const p = pv.points[i - 1].clone().lerp(pv.points[i], (d - pv.lengths[i - 1]) / span);
-      this.controls.target.lerp(p, 0.2);
-      this.camera.position.lerp(this.controls.target.clone().add(pv.offset), 0.2);
+      const pose = this.previewPose(pv, now - pv.start);
+      if (!pose) {
+        this.camera.position.copy(pv.overviewPos);
+        this.controls.target.copy(pv.overviewTarget);
+        this.needsRender = true;
+        this.cancelPreview();
+        return;
+      }
+      this.capFloors(pose.level);
+      // Light smoothing keeps the drone calm without lagging behind the path.
+      this.camera.position.lerp(pose.pos, 0.35);
+      this.controls.target.lerp(pose.target, 0.35);
       this.needsRender = true;
-      if (t >= 1) this.cancelPreview();
       return;
     }
     if (this.follow && this.walkerPose && !this.fly) {
@@ -835,10 +1050,9 @@ export class BuildingScene {
     this.assetIndex = null;
     this.shownAssets = null;
     if (!this.model) return;
-    this.assetCap = assetCapFor(this.container.clientWidth);
     const index = buildAssetIndex(this.model.assets);
-    if (visibleAssetIds(index, { selection: null, focusFloorId: null, cap: this.assetCap }) === null) {
-      // Under the cap (e.g. after growing the window): everything shows.
+    if (visibleAssetIds(index, { selection: null, focusFloorId: null, cap: MAX_VISIBLE_ASSETS }) === null) {
+      // Under the cap: everything shows.
       for (const a of this.model.assets) {
         const obj = this.objects.get(`asset:${a.id}`);
         if (obj) obj.visible = true;
@@ -864,7 +1078,7 @@ export class BuildingScene {
       selection: this.selection,
       focusFloorId: floorId,
       highlightIds: this.highlightIds,
-      cap: this.assetCap,
+      cap: MAX_VISIBLE_ASSETS,
     });
     if (!next) return;
     const set = (id: string, visible: boolean) => {
@@ -1447,6 +1661,7 @@ export class BuildingScene {
   private applySettings() {
     const s = this.settings;
     const focus = s.floor;
+    this.floorCap = null; // a running fly-through hides its floors again on the next frame
     for (const fv of this.floors) {
       const level = fv.floor.level;
       const hidden = focus !== 'all' && level > focus;
@@ -1610,11 +1825,104 @@ export class BuildingScene {
     this.labelRenderer.setSize(w, h);
     for (const m of Object.values(this.routeMats)) m.resolution.set(w, h);
     this.doneMat.resolution.set(w, h);
-    if (assetCapFor(w) !== this.assetCap) {
-      this.initAssetCulling();
-      this.updateAssetCulling();
-    }
     this.needsRender = true;
+  }
+
+  /** POV frame: eye-height view of the person, plus the overview as a minimap or split half. */
+  private renderPov() {
+    const pose = this.walkerPose;
+    if (!pose) return;
+    const { clientWidth: w, clientHeight: h } = this.container;
+    if (!w || !h) return;
+    const target = wrap360(this.look.yaw ?? pose.headingDeg + this.look.yawOffset);
+    // Calm camera: turn smoothly towards the wanted heading (no head-bob).
+    this.povYaw = this.povYaw === null ? target : wrap360(this.povYaw + angleDiff(this.povYaw, target) * 0.18);
+    const base = this.walkerPoint(pose);
+    const eye = base.clone().setY(base.y - 0.02 + EYE_HEIGHT_M);
+    const yaw = THREE.MathUtils.degToRad(this.povYaw);
+    const pitch = THREE.MathUtils.degToRad(this.look.pitch);
+    const dir = new THREE.Vector3(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.sin(yaw) * Math.cos(pitch));
+    this.povCamera.position.copy(eye);
+    this.povCamera.lookAt(eye.clone().add(dir));
+    const r = this.renderer;
+    // Split: both halves share the area right of the docked panel (nothing hides behind it).
+    const x0 = this.split ? Math.min(this.insetLeft, w / 2) : 0;
+    const povW = this.split ? Math.floor((w - x0) / 2) : w;
+    this.povCamera.aspect = povW / h;
+    this.povCamera.updateProjectionMatrix();
+    r.setScissorTest(true);
+    if (x0 > 0) {
+      r.setViewport(0, 0, x0, h);
+      r.setScissor(0, 0, x0, h);
+      r.clear();
+    }
+    r.setViewport(x0, 0, povW, h);
+    r.setScissor(x0, 0, povW, h);
+    // HQ walls are squashed to the overview wall height (about 1 m in an 8 m hall storey);
+    // at eye height they must be full storey height, or one looks over every wall.
+    const squashed = this.floors
+      .filter((fv) => fv.hq)
+      .map((fv) => [fv, fv.walls.scale.y, fv.walls.position.y] as const);
+    for (const [fv] of squashed) {
+      fv.walls.scale.y = 1;
+      fv.walls.position.y = 0;
+    }
+    r.render(this.scene, this.povCamera);
+    for (const [fv, scale, y] of squashed) {
+      fv.walls.scale.y = scale;
+      fv.walls.position.y = y;
+    }
+    if (this.split) {
+      // Right half: the whole building from the orbit camera, with the person and the route.
+      const half = w - x0 - povW;
+      const aspect = this.camera.aspect;
+      this.camera.aspect = half / h;
+      this.camera.clearViewOffset();
+      this.camera.updateProjectionMatrix();
+      r.setViewport(x0 + povW, 0, half, h);
+      r.setScissor(x0 + povW, 0, half, h);
+      r.render(this.scene, this.camera);
+      this.camera.aspect = aspect;
+      this.resizeCameraOnly();
+    } else if (w > MINIMAP_MIN_WIDTH) {
+      // Minimap (top-down, north up, centred on the person) in the free area's top-left corner;
+      // phones skip it, the first-person view needs the whole screen there.
+      const size = Math.round(Math.min(w, h) * (w < 600 ? 0.34 : 0.26));
+      const mh = Math.round(size * 0.8);
+      const x = Math.min(this.insetLeft, w / 2) + 16;
+      const y = Math.max(8, h - mh - 160); // below the top bar and the immersive mode bar
+      this.miniCamera.left = -15;
+      this.miniCamera.right = 15;
+      this.miniCamera.top = 12;
+      this.miniCamera.bottom = -12;
+      this.miniCamera.position.set(base.x, base.y + 60, base.z);
+      this.miniCamera.up.set(0, 0, -1);
+      this.miniCamera.lookAt(base.x, base.y, base.z);
+      this.miniCamera.updateProjectionMatrix();
+      const dpr = r.getPixelRatio();
+      this.miniTarget.setSize(Math.round(size * dpr), Math.round(mh * dpr));
+      r.setRenderTarget(this.miniTarget);
+      r.setClearColor(0xf4f6fb, 1);
+      r.clear();
+      r.render(this.scene, this.miniCamera);
+      r.setRenderTarget(null);
+      r.setClearColor(0x000000, 0);
+      this.miniFrame.uniforms.size.value.set(size, mh);
+      r.setViewport(x, y, size, mh);
+      r.setScissor(x, y, size, mh);
+      r.render(this.miniFrameScene, this.camera);
+    }
+    r.setScissorTest(false);
+    r.setViewport(0, 0, w, h);
+  }
+
+  private resizeCameraOnly() {
+    const { clientWidth: w, clientHeight: h } = this.container;
+    const inset = Math.min(this.insetLeft, w / 2);
+    this.camera.aspect = (w + inset) / h;
+    if (inset) this.camera.setViewOffset(w + inset, h, 0, 0, w, h);
+    else this.camera.clearViewOffset();
+    this.camera.updateProjectionMatrix();
   }
 
   private tick = (now: number) => {
@@ -1627,11 +1935,15 @@ export class BuildingScene {
       if (t >= 1) this.fly = null;
       this.needsRender = true;
     }
-    if (this.controls.update() || this.needsRender) {
+    const pov = this.look.view === 'pov' && this.walkerPose !== null;
+    if (this.controls.update() || this.needsRender || pov) {
       this.needsRender = false;
-      this.renderer.render(this.scene, this.camera);
-      this.cullRoomLabels();
-      this.labelRenderer.render(this.scene, this.camera);
+      if (pov) this.renderPov();
+      else {
+        this.renderer.render(this.scene, this.camera);
+        this.cullRoomLabels();
+        this.labelRenderer.render(this.scene, this.camera);
+      }
     }
   };
 

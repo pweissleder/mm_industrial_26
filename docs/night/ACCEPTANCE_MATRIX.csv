@@ -1,0 +1,45 @@
+﻿id,priority,module,scenario,expected,evidence_type
+C01,P0,state,"Set location, send turn, explicitly clear location, ask nearest exit",Ask for start; no stale route from previous room,offline+browser
+C02,P0,accessibility,Wheelchair preference; close the only usable lift; request destination upstairs,No stairs recommendation or route fallback violating constraint,offline+live
+C03,P0,accessibility,"Repeat C02 through mode switch, new turn and reroute",Step-free/width constraint persists or explicit user change,offline
+C04,P1,selection,"Inspect a machine, ask What am I looking at?",Correct entity in context; no accidental relocation,browser+live
+C05,P1,endpoints,Start at a valid exact map point and route to an exit,Exact start and final opening preserved,offline+browser
+C06,P1,vertical,Initial vertical move and successive vertical moves without walking,"Correct ordered floors, destination coordinates and arrival",offline+browser
+C07,P1,stale,Clear start or change scene while route/preview visible,Old route and preview removed or explicitly stale,browser
+C08,P1,assistant,Missing referent: the biggest one / the second one,Use actual context or targeted clarification; no unrelated state mutation,offline+live
+C09,P1,assistant,Search returns an opening; request route to it,"Use supported typed endpoint, not asset/space retry guessing",offline+live
+C10,P1,preview,Run fly-through then cancel,Only camera moved; user pose/history distance unchanged,browser
+G01,P1,manual,WASD/arrow movement and mouse look,"Correct relative motion, collision checks, no camera/user confusion",browser
+G02,P1,manual,Hold movement at wall; low FPS/high delta frame,"No wall tunneling, clamp/substep movement",offline+browser
+G03,P1,manual,Type words with WASD in chat and use arrow keys in input,No game movement while typing; ESC releases pointer lock,browser
+G04,P1,manual,"Switch autowalk/manual, pause/resume",Single movement driver; no pose jump or double distance,offline+browser
+G05,P1,reroute,Walk off-route into valid side corridor,Guidance updates/replans without teleport,offline+browser
+G06,P0,reroute,Close upcoming door during movement,"Stop before invalid continuation, discard old audio, valid reroute or stop",offline+browser
+G07,P1,arrival,"Reach target, then ask next nearest destination","Actual new pose available to assistant, arrival emitted once",offline+live
+G08,P1,view,Show POV and developer overview simultaneously,Same pose/floor/heading; overview controls do not move user,browser
+M01,P1,mobile,390x844 portrait conversation + route + microphone,"Map usable, compact chat, reachable controls, no full-screen overlay trap",visual
+M02,P1,mobile,"Landscape rotation, keyboard opening, touch controls","Controls not clipped, proper safe areas and focus",visual
+M03,P1,orientation,Inject heading0/90/180/270 and crossing359/0,Relative arrow consistent and wrap handled; no translation,offline+browser
+M04,P1,orientation,Permission denied / unsupported / no events,Touch fallback and truthful status; no app crash,browser
+M05,P1,orientation,Calibrate then rotate actual handset,Correct POV/arrow; label as physical-test only if really run,physical_device
+S01,P1,spatial,Ask right/left/behind at four known headings,Correct geometry-derived relationship; no screen-coordinate reasoning,offline+live
+S02,P1,spatial,Nearby asset behind a wall,Do not claim visible when occluded; unknown-heading asks clarification,offline
+S03,P1,benchmark,Washing machine leaks: room directly below,Use room_stacked overlap definition; no invented water flow,official+live
+S04,P1,voice,"Long route, repeat hint, mute, interrupt with microphone","No overlap, stale audio stopped, concise grounded guidance",browser+live
+S05,P2,conversation,Tell me a joke / thanks / unrelated short remark,"Normal brief answer, no unnecessary navigation tool",live
+Q01,P1,render,"POV actual frame, multiple positions, target and hallway","Interior visible; no black screen, camera in wall or avatar blocking lens",visual
+Q02,P1,render,1000x860 reference viewport with response and route,Map remains usable; inspect actual screenshot not only DOM,visual
+Q03,P1,cache,Open same HQ building twice,Saved geometry reused; no model-generation/API job,offline+browser
+Q04,P1,cache,Explicit Rebuild with changed generator/material but unchanged input,Rebuild executes deliberately; no hash guard silently ignores request,offline
+Q05,P1,state,Move confirmed chair when HQ model is loaded,Router and shown asset align or honest stale-HQ fallback,offline+visual
+Q06,P2,mobile_render,Run scene under measured mobile/desktop render profiles,Report actual frame time/device context; no invented hardware claims,performance
+H01,P1,memory,"Route planned, previewed, cancelled, walked and arrived",Only actual motion/arrivals count; no double events,offline
+H02,P1,memory,New/clear session and delete history,No stale pose/consent resurrection; sessions isolated,offline+browser
+H03,P1,memory,Demo events mixed with test fixture history,Recap excludes or clearly labels synthetic/test sessions,offline
+H04,P1,privacy,Produce logs/screenshots/webchat ZIP,"No keys, raw private audio/transcripts or unrelated files",artifact_check
+X01,P2,localization_experiment,Unknown synthetic camera image from held-out pose,No pose metadata leakage; errors/uncertainty measured,optional
+V01,P1,video,Record actual start->preview->walk->arrival,Simulation labeled; capture represents real app execution,visual+media
+V02,P1,video,Play both submission videos in full,"Duration, sound/image sync, legibility and no blanks verified",media
+A01,P1,regression,Run final official deterministic harness,"655/655,1338/1338,553/553,239/239 or explicit regressions; no expectation edits",offline
+A02,P1,optional_features,Disable every new optional module,Existing manual/text navigation works; no broken imports/required cache,offline+browser
+A03,P1,delivery,Open final next-webchat ZIP and follow start instructions,"Self-contained context, exact paths/commit, small relevant sources, no secret",artifact_check

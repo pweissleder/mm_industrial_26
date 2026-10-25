@@ -8,3 +8,21 @@ Ingest one with `POST /api/ingestions {"dataset": "<folder name>"}`.
 | `proc-factory-dev-003` | Procedural factory from the Industrial Agents Hackathon 2026 student kit (`data/dev`) | CC0-1.0 |
 
 To ingest any other kit building without copying it, point `DATASETS_DIR` at the kit's `data/dev`, `data/train` or `data/test` folder.
+
+## Datasets without building.json
+
+A dataset folder may contain only floor plans plus `equipment.csv`:
+
+- `floor_<level>.svg` (PNG/JPG plans alone are not enough yet)
+- `equipment.csv`
+
+The ingestion pipeline's first stage, `reconstruct`, rebuilds `building.json` from them:
+
+- SVG floor plans (the kit's Matplotlib export) are parsed exactly: room polygons, room types from fill colour, door/opening/entrance markers, labels.
+- `equipment.csv` gives the pixel-to-metre scale and room names/types.
+- An LLM agent fills what isn't drawn: names of unlabeled rooms, floor heights, door widths.
+- A vision agent that traces image-only floors exists (`trace_floor`) but is switched off (`IMAGE_TRACING` in `reconstructor.py`).
+
+The result is written to `building.json` in the dataset folder, plus a provenance file `reconstruction.json`. The location id is the dataset name. Re-running with `force` reconstructs again.
+
+Example: `test_WO` is `resplan-102` without its building.json.

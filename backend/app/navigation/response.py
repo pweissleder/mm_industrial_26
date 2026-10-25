@@ -11,6 +11,13 @@ from typing import Any
 
 JSON = dict[str, Any]
 SAME_POINT_M = 1e-6
+# Turn words at doors (`turn_directions`): headings are measured over this much walking before and
+# after the door; the door's own landings (the short stub through it) are at most DOOR_STUB_M away.
+TURN_WINDOW_M = 2.0
+DOOR_STUB_M = 0.5
+MIN_LEG_M = 0.3
+STRAIGHT_DEG = 30.0
+TURN_AROUND_DEG = 150.0
 
 
 def _xy(value: Any) -> list[float]:
@@ -44,20 +51,39 @@ def official_response(result: JSON, building: JSON) -> JSON:
     transitions: list[JSON] = []
     vertical = list(result["transitions"])
     door_ids = [e for e in result["element_path"] if e in openings]
-    # Walk segments in traversal order; before each one, the vertical moves that bring the walker
-    # from the current floor to the segment's floor (one ride per floor hop; a route may start in
-    # a stairwell or lift, and intermediate floors have no walk segment). See `_ride_to`.
-    floor = (result.get("start") or {}).get("floor_id")
-    for segment in result["segments"]:
-        floor = _ride_to(segment["floor_id"], floor, vertical, path, transitions, lambda m: m)
-        path.append(
-            {
-                "floor_id": segment["floor_id"],
-                "space_id": segment["space_id"],
-                "kind": "walk",
-                "points": [_xy(p) for p in segment["points"]],
-            }
+
+    def walk(segment: JSON) -> JSON:
+        return {
+            "floor_id": segment["floor_id"],
+            "space_id": segment["space_id"],
+            "kind": "walk",
+            "points": [_xy(p) for p in segment["points"]],
+        }
+
+    if all("order" in item for item in [*result["segments"], *vertical]):
+        # Walk segments and vertical moves in the router's step order (`order`, set by
+        # challenge._assemble_leg), so a route that leaves a floor and comes back without walking
+        # in between (stairs down, other stairs up) keeps its rides where they happen.
+        events = sorted(
+            [(s["order"], s, True) for s in result["segments"]]
+            + [(m["order"], m, False) for m in vertical],
+            key=lambda event: event[0],
         )
+        for _, item, is_walk in events:
+            if is_walk:
+                path.append(walk(item))
+            else:
+                path.append(_connector_entry(item["kind"], item["element_id"], item))
+                transitions.append(_vertical_transition(item))
+        vertical = []
+    else:
+        # Without step order: walk segments in traversal order; before each one, the vertical
+        # moves that bring the walker from the current floor to the segment's floor (one ride per
+        # floor hop; a route may start in a stairwell or lift). See `_ride_to`.
+        floor = (result.get("start") or {}).get("floor_id")
+        for segment in result["segments"]:
+            floor = _ride_to(segment["floor_id"], floor, vertical, path, transitions, lambda m: m)
+            path.append(walk(segment))
     for move in vertical:  # vertical moves with no walk after them (e.g. ends at a stair node)
         path.append(_connector_entry(move["kind"], move["element_id"], move))
         transitions.append(_vertical_transition(move))
@@ -115,6 +141,7 @@ def official_response(result: JSON, building: JSON) -> JSON:
         if response["reachable"]
         else []
     )
+    response["directions"] = turn_directions(response["directions"], response["waypoints"])
     return response
 
 
@@ -354,7 +381,113 @@ def precision_response(result: JSON, building: JSON, start: JSON, target: JSON) 
         "metrics": result["metrics"],
     }
     response["waypoints"] = waypoints(path, transitions, building, start_out, target_out)
+    response["directions"] = turn_directions(response["directions"], response["waypoints"])
     return response
+
+
+# ---------------------------------------------------------------- turns at doors
+
+_THROUGH = re.compile(r"^Walk about (\d+) m through the (door|opening) into (.+)\.$")
+
+
+def turn_directions(lines: list[str], points: list[JSON]) -> list[str]:
+    """Direction lines with left/right at the doors: the n-th "Walk about N m through the door
+    into X." line is the n-th door waypoint passed inside the route (`waypoints` kind "door").
+
+    The turn compares the walking heading before the door with the heading after it (building
+    frame, degrees counter-clockwise from +x, so a positive turn is a left turn): under 30 deg the
+    line stays as it is, 30 to 150 deg is a left/right turn, more is a turn around. Whether the
+    turn is taken before the door ("Walk about 16 m, then turn left through the door into X.") or
+    just behind it ("Walk about 2 m through the door into X, then turn right.") follows from the
+    heading through the door itself. Distances, names and the number of lines never change, and
+    the lines are left untouched when they cannot be matched to the doors one to one."""
+    doors = [index for index, point in enumerate(points) if point.get("kind") == "door"]
+    through = [index for index, line in enumerate(lines) if _THROUGH.match(line)]
+    if not through or len(through) != len(doors):
+        return list(lines)
+    out = list(lines)
+    for line_index, point_index in zip(through, doors, strict=True):
+        turn = door_turn(points, point_index)
+        if turn is not None:
+            out[line_index] = _turn_line(lines[line_index], *turn)
+    return out
+
+
+def _turn_line(line: str, before: float, after: float) -> str:
+    match = _THROUGH.match(line)
+    assert match is not None
+    walked, passage, name = match.groups()
+    total = before + after
+    if abs(total) < STRAIGHT_DEG:
+        return line
+    side = "left" if total > 0 else "right"
+    if abs(after) > abs(before):  # the turn comes right behind the door
+        then = "turn around" if abs(total) > TURN_AROUND_DEG else f"turn {side}"
+        return f"Walk about {walked} m through the {passage} into {name}, then {then}."
+    if abs(total) > TURN_AROUND_DEG:
+        return f"Walk about {walked} m, then turn around and go through the {passage} into {name}."
+    return f"Walk about {walked} m, then turn {side} through the {passage} into {name}."
+
+
+def door_turn(points: list[JSON], index: int) -> tuple[float, float] | None:
+    """(turn before the door, turn behind it) in degrees, left positive, at door waypoint `index`;
+    None when there is too little walking on one side to tell a direction."""
+    floor = points[index]["floor_id"]
+    door = points[index]["position"]
+
+    def landing(step: int) -> int:
+        """The neighbouring vertex of the door's stub on that side (the door itself if none)."""
+        near = index + step
+        if (
+            0 <= near < len(points)
+            and points[near]["floor_id"] == floor
+            and math.dist(points[near]["position"], door) <= DOOR_STUB_M
+        ):
+            return near
+        return index
+
+    pre, post = landing(-1), landing(1)
+    behind = _walk_along(points, pre, -1)
+    ahead = _walk_along(points, post, 1)
+    if behind is None or ahead is None:
+        return None
+    incoming = _heading(behind, points[pre]["position"])
+    outgoing = _heading(points[post]["position"], ahead)
+    if pre != post:
+        crossing = _heading(points[pre]["position"], points[post]["position"])
+        return _signed(crossing - incoming), _signed(outgoing - crossing)
+    return _signed(outgoing - incoming), 0.0
+
+
+def _walk_along(points: list[JSON], start: int, step: int) -> list[float] | None:
+    """The point TURN_WINDOW_M of walking away from vertex `start` in direction `step` (-1 back
+    along the route, +1 forward), on the same floor; None if less than MIN_LEG_M is walkable."""
+    floor = points[start]["floor_id"]
+    here = _xy(points[start]["position"])
+    left = TURN_WINDOW_M
+    index = start + step
+    while 0 <= index < len(points) and points[index]["floor_id"] == floor:
+        there = _xy(points[index]["position"])
+        length = math.dist(here, there)
+        if length >= left:
+            t = left / length
+            return [here[0] + (there[0] - here[0]) * t, here[1] + (there[1] - here[1]) * t]
+        left -= length
+        here = there
+        index += step
+    if TURN_WINDOW_M - left < MIN_LEG_M:
+        return None
+    return here
+
+
+def _heading(a: list[float], b: list[float]) -> float:
+    return math.degrees(math.atan2(b[1] - a[1], b[0] - a[0]))
+
+
+def _signed(degrees: float) -> float:
+    """An angle difference in (-180, 180]."""
+    value = (degrees + 180.0) % 360.0 - 180.0
+    return 180.0 if value == -180.0 else value
 
 
 # ---------------------------------------------------------------- waypoints

@@ -199,3 +199,35 @@ describe('readable messages', () => {
     expect(readable('blocked by proc-campus-dev-001-F0-O0003', n)).not.toMatch(/proc-|O0003/);
   });
 });
+
+describe('door instructions say which way to turn', () => {
+  const wp = (index: number, x: number, y: number, kind: string, space: string, element: string | null = null) => ({
+    index,
+    position: [x, y] as [number, number],
+    floor_id: 'F0',
+    space_id: space,
+    kind,
+    element_id: element,
+    distance_m: 0,
+    heading_deg: 0,
+    elevation_m: 0,
+  });
+  const route = (doorTo: [number, number]) => {
+    // walk east along a corridor, through a door at (6, 0), then on to doorTo
+    const wps = [wp(0, 0, 0, 'start', 'C'), wp(1, 6, 0, 'door', 'C', 'D1'), wp(2, doorTo[0], doorTo[1], 'walk', 'R')];
+    let d = 0;
+    wps.forEach((w, i) => {
+      if (i) d += Math.hypot(w.position[0] - wps[i - 1].position[0], w.position[1] - wps[i - 1].position[1]);
+      w.distance_m = d;
+    });
+    return { status: 'ok', waypoints: wps, transitions: [] } as unknown as RouteResponse;
+  };
+  const room: Names = { space: (id) => (id === 'R' ? 'Kitchen 0.28' : id === 'C' ? 'Corridor' : null), floor: () => 'Ground floor', target: 'the coffee machine' };
+  const doorText = (to: [number, number]) => buildInstructions(route(to), room).find((i) => i.kind === 'door')?.text;
+
+  it('left, right and straight from the walking direction (counter-clockwise frame)', () => {
+    expect(doorText([6, 4])).toBe('Turn left through the door into Kitchen 0.28.');
+    expect(doorText([6, -4])).toBe('Turn right through the door into Kitchen 0.28.');
+    expect(doorText([10, 0])).toBe('Go through the door into Kitchen 0.28.');
+  });
+});

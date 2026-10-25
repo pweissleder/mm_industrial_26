@@ -38,6 +38,10 @@ class ChatResponse(BaseModel):
 
 class DatasetList(BaseModel):
     datasets: list[str]
+    needs_reconstruction: list[str] = Field(
+        default_factory=list,
+        description="Datasets without a building.json but with floor plans to rebuild it from.",
+    )
 
 
 class DatasetAvailability(BaseModel):
@@ -103,3 +107,7 @@ class DatasetFileList(BaseModel):
 
 class UploadResponse(DatasetFileList):
     ingestible: bool = Field(description="True once the dataset has a building.json.")
+    reconstructable: bool = Field(
+        description="True when the dataset has no building.json but floor plans the pipeline "
+        "can reconstruct it from."
+    )

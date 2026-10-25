@@ -1,0 +1,7331 @@
+{
+ "meta": {
+  "seed": 20261025,
+  "n": 140,
+  "datasets_dir": "C:\\Users\\noah3\\Documents\\HackathonTransfer\\SyneraKit-data\\dev",
+  "buildings": {
+   "proc-campus-dev-000": "proc-campus",
+   "proc-campus-dev-013": "proc-campus",
+   "proc-factory-dev-003": "proc-factory",
+   "proc-factory-dev-007": "proc-factory",
+   "swiss-1785": "swiss",
+   "swiss-2074": "swiss",
+   "resplan-1465": "resplan",
+   "resplan-14509": "resplan",
+   "osm-way360544293": "osm",
+   "osm-way27326387": "osm"
+  },
+  "missing_buildings": [],
+  "quotas": {
+   "reachable": 41,
+   "step_free": 22,
+   "endpoints": 30,
+   "closures": 25,
+   "invalid": 22
+  },
+  "generated_utc": "2026-10-25T01:58:34Z",
+  "elapsed_s": 49.9
+ },
+ "cases": [
+  {
+   "index": 0,
+   "case_seed": 1821732005,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S020"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S011"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 35.03,
+    "space_path": [
+     "proc-campus-dev-000-F3-S020",
+     "proc-campus-dev-000-F3-S001",
+     "proc-campus-dev-000-F3-S011"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F3-O0108",
+     "proc-campus-dev-000-F3-O0099"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 35.027,
+    "length_delta_m": 0.003,
+    "waypoint_xy_m": 35.027
+   },
+   "elapsed_ms": 68.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 1,
+   "case_seed": 3351864502,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S012"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 18.26,
+    "space_path": [
+     "proc-campus-dev-013-F1-S009",
+     "proc-campus-dev-013-F1-S001",
+     "proc-campus-dev-013-F1-S012"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F1-O0028",
+     "proc-campus-dev-013-F1-O0031"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 18.26,
+    "length_delta_m": 0.0,
+    "waypoint_xy_m": 18.26
+   },
+   "elapsed_ms": 33.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 2,
+   "case_seed": 3775632221,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S024"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 118.01,
+    "space_path": [
+     "proc-factory-dev-003-F0-S009",
+     "proc-factory-dev-003-F0-S008",
+     "proc-factory-dev-003-F0-S003",
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S024"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0014",
+     "proc-factory-dev-003-F0-O0005",
+     "proc-factory-dev-003-F0-O0004",
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0077"
+    ],
+    "waypoints": 31,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 111.012,
+    "length_delta_m": -0.0022,
+    "waypoint_xy_m": 111.012
+   },
+   "elapsed_ms": 43.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 3,
+   "case_seed": 3883480181,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S018"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S008"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 60.53,
+    "space_path": [
+     "proc-factory-dev-007-F0-S018",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S008"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0021",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-F1-O0039"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 53.533,
+    "length_delta_m": -0.0029,
+    "waypoint_xy_m": 53.533
+   },
+   "elapsed_ms": 23.6,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 4,
+   "case_seed": 580143580,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor_via_other_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S029"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S007"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 31.85,
+    "space_path": [
+     "swiss-1785-F1-S029",
+     "swiss-1785-F1-S031",
+     "swiss-1785-F1-S034",
+     "swiss-1785-F0-S035",
+     "swiss-1785-F1-S035",
+     "swiss-1785-F1-S009",
+     "swiss-1785-F1-S011",
+     "swiss-1785-F1-S007"
+    ],
+    "element_path": [
+     "swiss-1785-F1-O0055",
+     "swiss-1785-F1-O0060",
+     "swiss-1785-V01",
+     "swiss-1785-V03",
+     "swiss-1785-F1-O0041",
+     "swiss-1785-F1-O0064",
+     "swiss-1785-F1-O0063"
+    ],
+    "waypoints": 20,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 19.848,
+    "length_delta_m": 0.0025,
+    "waypoint_xy_m": 19.848
+   },
+   "elapsed_ms": 239.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 5,
+   "case_seed": 1456075399,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F0-S013"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F0-S012"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 15.4,
+    "space_path": [
+     "swiss-2074-F0-S013",
+     "swiss-2074-F0-S014",
+     "swiss-2074-F0-S007",
+     "swiss-2074-F0-S015",
+     "swiss-2074-F0-S012"
+    ],
+    "element_path": [
+     "swiss-2074-F0-O0011",
+     "swiss-2074-F0-O0010",
+     "swiss-2074-F0-O0013",
+     "swiss-2074-F0-O0014"
+    ],
+    "waypoints": 15,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 15.397,
+    "length_delta_m": 0.0028,
+    "waypoint_xy_m": 15.397
+   },
+   "elapsed_ms": 55.4,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 6,
+   "case_seed": 3254308432,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S005"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 20.29,
+    "space_path": [
+     "resplan-1465-F0-S007",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S002",
+     "resplan-1465-F0-S005"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0003",
+     "resplan-1465-F0-O0002",
+     "resplan-1465-F0-O0001"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 20.292,
+    "length_delta_m": -0.0024,
+    "waypoint_xy_m": 20.292
+   },
+   "elapsed_ms": 62.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 7,
+   "case_seed": 3902066727,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S005"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 8.74,
+    "space_path": [
+     "resplan-14509-F0-S004",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S006",
+     "resplan-14509-F0-S005"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0001",
+     "resplan-14509-F0-O0005",
+     "resplan-14509-F0-O0006"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 8.745,
+    "length_delta_m": -0.0047,
+    "waypoint_xy_m": 8.745
+   },
+   "elapsed_ms": 31.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 8,
+   "case_seed": 4100207506,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F2-S005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S018"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 24338.9,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 9,
+   "case_seed": 263865039,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F1-S015"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 43.22,
+    "space_path": [
+     "osm-way27326387-F-2-S005",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F0-S021",
+     "osm-way27326387-F1-S001",
+     "osm-way27326387-F1-S008",
+     "osm-way27326387-F1-S015"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0020",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-V01",
+     "osm-way27326387-V01",
+     "osm-way27326387-F1-O0050",
+     "osm-way27326387-F1-O0061"
+    ],
+    "waypoints": 17,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.0,
+    "drawn_walk_m": 25.222,
+    "length_delta_m": -0.0025,
+    "waypoint_xy_m": 25.222
+   },
+   "elapsed_ms": 30.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 10,
+   "case_seed": 135499825,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S015"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S005"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 53.0,
+    "space_path": [
+     "proc-campus-dev-000-F3-S015",
+     "proc-campus-dev-000-F3-S001",
+     "proc-campus-dev-000-F3-S005"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F3-O0103",
+     "proc-campus-dev-000-F3-O0093"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 53.0,
+    "length_delta_m": 0.0,
+    "waypoint_xy_m": 53.0
+   },
+   "elapsed_ms": 10.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 11,
+   "case_seed": 1795836780,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S016"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S017"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 33.74,
+    "space_path": [
+     "proc-campus-dev-013-F1-S016",
+     "proc-campus-dev-013-F1-S001",
+     "proc-campus-dev-013-F1-S004",
+     "proc-campus-dev-013-F2-S004",
+     "proc-campus-dev-013-F2-S001",
+     "proc-campus-dev-013-F2-S017"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F1-O0035",
+     "proc-campus-dev-013-F1-O0023",
+     "proc-campus-dev-013-V01",
+     "proc-campus-dev-013-F2-O0044",
+     "proc-campus-dev-013-F2-O0057"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.6,
+    "drawn_walk_m": 26.143,
+    "length_delta_m": -0.0034,
+    "waypoint_xy_m": 26.143
+   },
+   "elapsed_ms": 5.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 12,
+   "case_seed": 4130034936,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S022"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S021"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 50.84,
+    "space_path": [
+     "proc-factory-dev-003-F0-S022",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S021"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0027",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0074"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 43.839,
+    "length_delta_m": 0.001,
+    "waypoint_xy_m": 43.839
+   },
+   "elapsed_ms": 7.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 13,
+   "case_seed": 2116871726,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S008"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S013"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 75.21,
+    "space_path": [
+     "proc-factory-dev-007-F0-S008",
+     "proc-factory-dev-007-F0-S005",
+     "proc-factory-dev-007-F0-S004",
+     "proc-factory-dev-007-F0-S001",
+     "proc-factory-dev-007-F0-S013",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S013"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0006",
+     "proc-factory-dev-007-F0-O0005",
+     "proc-factory-dev-007-F0-O0001",
+     "proc-factory-dev-007-F0-O0016",
+     "proc-factory-dev-007-F0-O0015",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-F1-O0044"
+    ],
+    "waypoints": 28,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 68.212,
+    "length_delta_m": -0.0018,
+    "waypoint_xy_m": 68.212
+   },
+   "elapsed_ms": 8.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 14,
+   "case_seed": 1395327720,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S027"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S023"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 9.82,
+    "space_path": [
+     "swiss-1785-F1-S027",
+     "swiss-1785-F1-S031",
+     "swiss-1785-F1-S034",
+     "swiss-1785-F1-S023"
+    ],
+    "element_path": [
+     "swiss-1785-F1-O0068",
+     "swiss-1785-F1-O0060",
+     "swiss-1785-F1-O0050"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 9.823,
+    "length_delta_m": -0.0028,
+    "waypoint_xy_m": 9.823
+   },
+   "elapsed_ms": 11.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 15,
+   "case_seed": 1988734420,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F0-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S009"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 22.85,
+    "space_path": [
+     "swiss-2074-F0-S004",
+     "swiss-2074-F0-S016",
+     "swiss-2074-F0-S017",
+     "swiss-2074-F1-S017",
+     "swiss-2074-F2-S017",
+     "swiss-2074-F2-S014",
+     "swiss-2074-F2-S009"
+    ],
+    "element_path": [
+     "swiss-2074-F0-O0006",
+     "swiss-2074-F0-O0001",
+     "swiss-2074-V02",
+     "swiss-2074-V03",
+     "swiss-2074-F2-O0041",
+     "swiss-2074-F2-O0043"
+    ],
+    "waypoints": 19,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 10.853,
+    "length_delta_m": -0.0034,
+    "waypoint_xy_m": 10.853
+   },
+   "elapsed_ms": 10.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 16,
+   "case_seed": 2522208671,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S002"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S006"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 10.13,
+    "space_path": [
+     "resplan-1465-F0-S002",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S006"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0002",
+     "resplan-1465-F0-O0009"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 10.128,
+    "length_delta_m": 0.0022,
+    "waypoint_xy_m": 10.128
+   },
+   "elapsed_ms": 6.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 17,
+   "case_seed": 967770984,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S006"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S004"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 7.44,
+    "space_path": [
+     "resplan-14509-F0-S006",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S004"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0005",
+     "resplan-14509-F0-O0001"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 7.442,
+    "length_delta_m": -0.002,
+    "waypoint_xy_m": 7.442
+   },
+   "elapsed_ms": 4.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 18,
+   "case_seed": 2007300777,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F1-S008"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F2-S005"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 2.8,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 19,
+   "case_seed": 218155031,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S015"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F1-S011"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 50.09,
+    "space_path": [
+     "osm-way27326387-F-2-S015",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F0-S021",
+     "osm-way27326387-F1-S001",
+     "osm-way27326387-F1-S008",
+     "osm-way27326387-F1-S011"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0012",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-V01",
+     "osm-way27326387-V01",
+     "osm-way27326387-F1-O0050",
+     "osm-way27326387-F1-O0056"
+    ],
+    "waypoints": 17,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.0,
+    "drawn_walk_m": 32.094,
+    "length_delta_m": -0.0043,
+    "waypoint_xy_m": 32.094
+   },
+   "elapsed_ms": 5.6,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 20,
+   "case_seed": 1249403007,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F1-S014"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S025"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 41.65,
+    "space_path": [
+     "proc-campus-dev-000-F1-S014",
+     "proc-campus-dev-000-F2-S014",
+     "proc-campus-dev-000-F3-S014",
+     "proc-campus-dev-000-F3-S001",
+     "proc-campus-dev-000-F3-S025"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-F3-O0102",
+     "proc-campus-dev-000-F3-O0113"
+    ],
+    "waypoints": 10,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 15.2,
+    "drawn_walk_m": 26.447,
+    "length_delta_m": 0.0032,
+    "waypoint_xy_m": 26.447
+   },
+   "elapsed_ms": 6.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 21,
+   "case_seed": 1359688139,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S010"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S004"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 31.05,
+    "space_path": [
+     "proc-campus-dev-013-F2-S010",
+     "proc-campus-dev-013-F2-S001",
+     "proc-campus-dev-013-F2-S004"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F2-O0050",
+     "proc-campus-dev-013-F2-O0044"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 31.05,
+    "length_delta_m": -0.0,
+    "waypoint_xy_m": 31.05
+   },
+   "elapsed_ms": 3.4,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 22,
+   "case_seed": 2204439422,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S013"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S008"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 98.94,
+    "space_path": [
+     "proc-factory-dev-003-F0-S013",
+     "proc-factory-dev-003-F0-S008",
+     "proc-factory-dev-003-F0-S007",
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S008"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0013",
+     "proc-factory-dev-003-F0-O0012",
+     "proc-factory-dev-003-F0-O0003",
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0061"
+    ],
+    "waypoints": 31,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 91.941,
+    "length_delta_m": -0.0012,
+    "waypoint_xy_m": 91.941
+   },
+   "elapsed_ms": 9.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 23,
+   "case_seed": 1716332898,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S021"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S020"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 31.38,
+    "space_path": [
+     "proc-factory-dev-007-F0-S021",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S020"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0025",
+     "proc-factory-dev-007-F0-O0023"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 31.38,
+    "length_delta_m": -0.0,
+    "waypoint_xy_m": 31.38
+   },
+   "elapsed_ms": 2.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 24,
+   "case_seed": 2379832969,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S001"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S002"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 4.96,
+    "space_path": [
+     "swiss-1785-F0-S001",
+     "swiss-1785-F0-S002"
+    ],
+    "element_path": [
+     "swiss-1785-F0-O0003"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 4.959,
+    "length_delta_m": 0.0006,
+    "waypoint_xy_m": 4.959
+   },
+   "elapsed_ms": 3.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 25,
+   "case_seed": 3894242976,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F0-S011"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S009"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 23.66,
+    "space_path": [
+     "swiss-2074-F0-S011",
+     "swiss-2074-F0-S007",
+     "swiss-2074-F0-S017",
+     "swiss-2074-F1-S017",
+     "swiss-2074-F1-S013",
+     "swiss-2074-F1-S008",
+     "swiss-2074-F1-S009"
+    ],
+    "element_path": [
+     "swiss-2074-F0-O0012",
+     "swiss-2074-F0-O0015",
+     "swiss-2074-V02",
+     "swiss-2074-F1-O0032",
+     "swiss-2074-F1-O0026",
+     "swiss-2074-F1-O0025"
+    ],
+    "waypoints": 19,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 6.0,
+    "drawn_walk_m": 17.656,
+    "length_delta_m": 0.0039,
+    "waypoint_xy_m": 17.656
+   },
+   "elapsed_ms": 14.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 26,
+   "case_seed": 2999140095,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S008"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 17.34,
+    "space_path": [
+     "resplan-1465-F0-S007",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S003",
+     "resplan-1465-F0-S008"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0003",
+     "resplan-1465-F0-O0004",
+     "resplan-1465-F0-O0005"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 17.338,
+    "length_delta_m": 0.0015,
+    "waypoint_xy_m": 17.338
+   },
+   "elapsed_ms": 5.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 27,
+   "case_seed": 342906409,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S001"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S003"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 5.23,
+    "space_path": [
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S003"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0003"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 5.227,
+    "length_delta_m": 0.0029,
+    "waypoint_xy_m": 5.227
+   },
+   "elapsed_ms": 1.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 28,
+   "case_seed": 2280969501,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F2-S005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S012"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 0.4,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 29,
+   "case_seed": 2209656628,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S010"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S008"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 54.56,
+    "space_path": [
+     "osm-way27326387-F-2-S010",
+     "osm-way27326387-F-2-S009",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F0-S021",
+     "osm-way27326387-F0-S020",
+     "osm-way27326387-F0-S007",
+     "osm-way27326387-F0-S008"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0011",
+     "osm-way27326387-F-2-O0015",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-V01",
+     "osm-way27326387-F0-O0023",
+     "osm-way27326387-F0-O0037",
+     "osm-way27326387-F0-O0031"
+    ],
+    "waypoints": 22,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 42.565,
+    "length_delta_m": -0.0046,
+    "waypoint_xy_m": 42.565
+   },
+   "elapsed_ms": 5.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 30,
+   "case_seed": 959948931,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S025"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F1-S030"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 53.41,
+    "space_path": [
+     "proc-campus-dev-000-F3-S025",
+     "proc-campus-dev-000-F3-S001",
+     "proc-campus-dev-000-F3-S014",
+     "proc-campus-dev-000-F2-S014",
+     "proc-campus-dev-000-F1-S014",
+     "proc-campus-dev-000-F1-S001",
+     "proc-campus-dev-000-F1-S030"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F3-O0113",
+     "proc-campus-dev-000-F3-O0102",
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-F1-O0042",
+     "proc-campus-dev-000-F1-O0058"
+    ],
+    "waypoints": 17,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 15.2,
+    "drawn_walk_m": 38.206,
+    "length_delta_m": 0.004,
+    "waypoint_xy_m": 38.206
+   },
+   "elapsed_ms": 9.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 31,
+   "case_seed": 2838521662,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S015"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S007"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 34.52,
+    "space_path": [
+     "proc-campus-dev-013-F1-S015",
+     "proc-campus-dev-013-F1-S001",
+     "proc-campus-dev-013-F1-S004",
+     "proc-campus-dev-013-F0-S004",
+     "proc-campus-dev-013-F0-S001",
+     "proc-campus-dev-013-F0-S007"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F1-O0034",
+     "proc-campus-dev-013-F1-O0023",
+     "proc-campus-dev-013-V01",
+     "proc-campus-dev-013-F0-O0003",
+     "proc-campus-dev-013-F0-O0006"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.6,
+    "drawn_walk_m": 26.922,
+    "length_delta_m": -0.0024,
+    "waypoint_xy_m": 26.922
+   },
+   "elapsed_ms": 7.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 32,
+   "case_seed": 2961737664,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S003"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 117.43,
+    "space_path": [
+     "proc-factory-dev-003-F0-S005",
+     "proc-factory-dev-003-F0-S010",
+     "proc-factory-dev-003-F0-S009",
+     "proc-factory-dev-003-F0-S004",
+     "proc-factory-dev-003-F0-S003",
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S003"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0008",
+     "proc-factory-dev-003-F0-O0016",
+     "proc-factory-dev-003-F0-O0007",
+     "proc-factory-dev-003-F0-O0006",
+     "proc-factory-dev-003-F0-O0004",
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0056"
+    ],
+    "waypoints": 38,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 110.434,
+    "length_delta_m": -0.0045,
+    "waypoint_xy_m": 110.434
+   },
+   "elapsed_ms": 11.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 33,
+   "case_seed": 2977602738,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S027"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S011"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 81.47,
+    "space_path": [
+     "proc-factory-dev-007-F0-S027",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S011"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0031",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-F1-O0042"
+    ],
+    "waypoints": 17,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 74.469,
+    "length_delta_m": 0.0014,
+    "waypoint_xy_m": 74.469
+   },
+   "elapsed_ms": 6.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 34,
+   "case_seed": 2587340441,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S010"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S034"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 5.06,
+    "space_path": [
+     "swiss-1785-F0-S010",
+     "swiss-1785-F0-S034"
+    ],
+    "element_path": [
+     "swiss-1785-F0-O0008"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 5.063,
+    "length_delta_m": -0.003,
+    "waypoint_xy_m": 5.063
+   },
+   "elapsed_ms": 14.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 35,
+   "case_seed": 2733857448,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S006"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 20.76,
+    "space_path": [
+     "swiss-2074-F1-S007",
+     "swiss-2074-F1-S005",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F2-S016",
+     "swiss-2074-F2-S005",
+     "swiss-2074-F2-S006"
+    ],
+    "element_path": [
+     "swiss-2074-F1-O0019",
+     "swiss-2074-F1-O0020",
+     "swiss-2074-V01",
+     "swiss-2074-F2-O0037",
+     "swiss-2074-F2-O0036"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 6.0,
+    "drawn_walk_m": 14.757,
+    "length_delta_m": 0.0027,
+    "waypoint_xy_m": 14.757
+   },
+   "elapsed_ms": 9.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 36,
+   "case_seed": 2818490646,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S001"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S003"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 7.52,
+    "space_path": [
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S003"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0004"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 7.523,
+    "length_delta_m": -0.0032,
+    "waypoint_xy_m": 7.523
+   },
+   "elapsed_ms": 5.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 37,
+   "case_seed": 517308869,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S006"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S005"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 2.06,
+    "space_path": [
+     "resplan-14509-F0-S006",
+     "resplan-14509-F0-S005"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0006"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 2.062,
+    "length_delta_m": -0.0015,
+    "waypoint_xy_m": 2.062
+   },
+   "elapsed_ms": 8.4,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 38,
+   "case_seed": 1570062652,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "same_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F1-S016"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F1-S006"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 2.02,
+    "space_path": [
+     "osm-way360544293-F1-S016",
+     "osm-way360544293-F1-S001",
+     "osm-way360544293-F1-S006"
+    ],
+    "element_path": [
+     "osm-way360544293-F1-O0056",
+     "osm-way360544293-F1-O0024"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 2.017,
+    "length_delta_m": 0.0027,
+    "waypoint_xy_m": 2.017
+   },
+   "elapsed_ms": 7929.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 39,
+   "case_seed": 2835966945,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S010"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 51.83,
+    "space_path": [
+     "osm-way27326387-F0-S007",
+     "osm-way27326387-F0-S020",
+     "osm-way27326387-F0-S021",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S009",
+     "osm-way27326387-F-2-S010"
+    ],
+    "element_path": [
+     "osm-way27326387-F0-O0037",
+     "osm-way27326387-F0-O0023",
+     "osm-way27326387-V01",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-F-2-O0015",
+     "osm-way27326387-F-2-O0011"
+    ],
+    "waypoints": 19,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 39.829,
+    "length_delta_m": 0.0006,
+    "waypoint_xy_m": 39.829
+   },
+   "elapsed_ms": 4.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 40,
+   "case_seed": 893605498,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "reachable",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F4-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F0-S002"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 68.46,
+    "space_path": [
+     "proc-campus-dev-000-F4-S009",
+     "proc-campus-dev-000-F3-S009",
+     "proc-campus-dev-000-F2-S009",
+     "proc-campus-dev-000-F1-S009",
+     "proc-campus-dev-000-F0-S009",
+     "proc-campus-dev-000-F0-S001",
+     "proc-campus-dev-000-F0-S002"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-V03",
+     "proc-campus-dev-000-V03",
+     "proc-campus-dev-000-V03",
+     "proc-campus-dev-000-V03",
+     "proc-campus-dev-000-F0-O0008",
+     "proc-campus-dev-000-F0-O0001"
+    ],
+    "waypoints": 12,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 30.4,
+    "drawn_walk_m": 38.062,
+    "length_delta_m": -0.002,
+    "waypoint_xy_m": 38.062
+   },
+   "elapsed_ms": 13.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 41,
+   "case_seed": 852729075,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "step_free",
+   "failed": [],
+   "variant": "non_step_free_opening",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S027"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-000-F0-O0029"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 10.4,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 42,
+   "case_seed": 4218037515,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "step_free",
+   "failed": [],
+   "variant": "non_step_free_opening",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S009"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-013-F0-O0020"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 2.6,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 43,
+   "case_seed": 2199575277,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S038"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S006"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 56.72,
+    "space_path": [
+     "proc-factory-dev-003-F0-S038",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S006"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0044",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0001"
+    ],
+    "waypoints": 14,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 56.724,
+    "length_delta_m": -0.0041,
+    "waypoint_xy_m": 56.724
+   },
+   "elapsed_ms": 5.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 44,
+   "case_seed": 2818789120,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S008"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S013"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 45.37,
+    "space_path": [
+     "proc-factory-dev-007-F0-S008",
+     "proc-factory-dev-007-F0-S005",
+     "proc-factory-dev-007-F0-S004",
+     "proc-factory-dev-007-F0-S001",
+     "proc-factory-dev-007-F0-S013"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0006",
+     "proc-factory-dev-007-F0-O0005",
+     "proc-factory-dev-007-F0-O0001",
+     "proc-factory-dev-007-F0-O0016"
+    ],
+    "waypoints": 14,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 45.371,
+    "length_delta_m": -0.001,
+    "waypoint_xy_m": 45.371
+   },
+   "elapsed_ms": 4.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 45,
+   "case_seed": 697114380,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S031"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S007"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 2.8,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 46,
+   "case_seed": 889136848,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "step_free",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S010"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 1.1,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 47,
+   "case_seed": 1883794508,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S003"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 12.62,
+    "space_path": [
+     "resplan-1465-F0-S009",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S003"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0007",
+     "resplan-1465-F0-O0004"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 12.621,
+    "length_delta_m": -0.0015,
+    "waypoint_xy_m": 12.621
+   },
+   "elapsed_ms": 4.8,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 48,
+   "case_seed": 1073458836,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S006"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S004"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 7.44,
+    "space_path": [
+     "resplan-14509-F0-S006",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S004"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0005",
+     "resplan-14509-F0-O0001"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 7.442,
+    "length_delta_m": -0.002,
+    "waypoint_xy_m": 7.442
+   },
+   "elapsed_ms": 5.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 49,
+   "case_seed": 3673552468,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S019"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S010"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 32.75,
+    "space_path": [
+     "osm-way360544293-F0-S019",
+     "osm-way360544293-F0-S002",
+     "osm-way360544293-F0-S009",
+     "osm-way360544293-F0-S010"
+    ],
+    "element_path": [
+     "osm-way360544293-F0-O0057",
+     "osm-way360544293-F0-O0041",
+     "osm-way360544293-F0-O0046"
+    ],
+    "waypoints": 6,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 32.751,
+    "length_delta_m": -0.0013,
+    "waypoint_xy_m": 32.751
+   },
+   "elapsed_ms": 19.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 50,
+   "case_seed": 1305185952,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "step_free",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S008"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S012"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 3.4,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 51,
+   "case_seed": 1354650934,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S020"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 9.71,
+    "space_path": [
+     "proc-campus-dev-000-F2-S004",
+     "proc-campus-dev-000-F2-S001",
+     "proc-campus-dev-000-F2-S020"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F2-O0062",
+     "proc-campus-dev-000-F2-O0078"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 9.713,
+    "length_delta_m": -0.0031,
+    "waypoint_xy_m": 9.713
+   },
+   "elapsed_ms": 3.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 52,
+   "case_seed": 2916057715,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "step_free",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S018"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S008"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 53.76,
+    "space_path": [
+     "proc-campus-dev-013-F2-S018",
+     "proc-campus-dev-013-F2-S001",
+     "proc-campus-dev-013-F2-S005",
+     "proc-campus-dev-013-F1-S005",
+     "proc-campus-dev-013-F1-S001",
+     "proc-campus-dev-013-F1-S008"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F2-O0058",
+     "proc-campus-dev-013-F2-O0045",
+     "proc-campus-dev-013-V02",
+     "proc-campus-dev-013-F1-O0024",
+     "proc-campus-dev-013-F1-O0027"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.8,
+    "drawn_walk_m": 34.957,
+    "length_delta_m": 0.0031,
+    "waypoint_xy_m": 34.957
+   },
+   "elapsed_ms": 4.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 53,
+   "case_seed": 1609320944,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "step_free",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S022"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S011"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 71.55,
+    "space_path": [
+     "proc-factory-dev-003-F0-S022",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S018",
+     "proc-factory-dev-003-F1-S003",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S011"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0027",
+     "proc-factory-dev-003-F0-O0022",
+     "proc-factory-dev-003-V02",
+     "proc-factory-dev-003-F1-O0056",
+     "proc-factory-dev-003-F1-O0064"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.5,
+    "drawn_walk_m": 53.051,
+    "length_delta_m": -0.0005,
+    "waypoint_xy_m": 53.051
+   },
+   "elapsed_ms": 5.8,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 54,
+   "case_seed": 3986695839,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "step_free",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S012"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S008"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 81.16,
+    "space_path": [
+     "proc-factory-dev-007-F1-S012",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S003",
+     "proc-factory-dev-007-F0-S012",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S013",
+     "proc-factory-dev-007-F0-S001",
+     "proc-factory-dev-007-F0-S004",
+     "proc-factory-dev-007-F0-S005",
+     "proc-factory-dev-007-F0-S008"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F1-O0043",
+     "proc-factory-dev-007-F1-O0034",
+     "proc-factory-dev-007-V02",
+     "proc-factory-dev-007-F0-O0014",
+     "proc-factory-dev-007-F0-O0015",
+     "proc-factory-dev-007-F0-O0016",
+     "proc-factory-dev-007-F0-O0001",
+     "proc-factory-dev-007-F0-O0005",
+     "proc-factory-dev-007-F0-O0006"
+    ],
+    "waypoints": 28,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.5,
+    "drawn_walk_m": 62.663,
+    "length_delta_m": -0.0031,
+    "waypoint_xy_m": 62.663
+   },
+   "elapsed_ms": 7.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 55,
+   "case_seed": 1152711797,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S033"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S008"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 2.3,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 56,
+   "case_seed": 1754987069,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S017"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S011"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 6.71,
+    "space_path": [
+     "swiss-2074-F1-S017",
+     "swiss-2074-F1-S013",
+     "swiss-2074-F1-S011"
+    ],
+    "element_path": [
+     "swiss-2074-F1-O0032",
+     "swiss-2074-F1-O0031"
+    ],
+    "waypoints": 10,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 6.71,
+    "length_delta_m": -0.0001,
+    "waypoint_xy_m": 6.71
+   },
+   "elapsed_ms": 9.4,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 57,
+   "case_seed": 1356313985,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S006"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 8.61,
+    "space_path": [
+     "resplan-1465-F0-S009",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S006"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0007",
+     "resplan-1465-F0-O0009"
+    ],
+    "waypoints": 10,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 8.611,
+    "length_delta_m": -0.0014,
+    "waypoint_xy_m": 8.611
+   },
+   "elapsed_ms": 4.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 58,
+   "case_seed": 2144138733,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S002"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 7.37,
+    "space_path": [
+     "resplan-14509-F0-S005",
+     "resplan-14509-F0-S003",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S002"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0004",
+     "resplan-14509-F0-O0003",
+     "resplan-14509-F0-O0002"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 7.37,
+    "length_delta_m": 0.0003,
+    "waypoint_xy_m": 7.37
+   },
+   "elapsed_ms": 2.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 59,
+   "case_seed": 3004887322,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "step_free",
+   "failed": [],
+   "variant": "cross_floor",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F2-S006"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S001"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 0.5,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 60,
+   "case_seed": 41574321,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "step_free",
+   "failed": [],
+   "variant": "random_pair",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S008"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S002"
+    },
+    "step_free": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 17.34,
+    "space_path": [
+     "osm-way27326387-F0-S008",
+     "osm-way27326387-F0-S007",
+     "osm-way27326387-F0-S020",
+     "osm-way27326387-F0-S002"
+    ],
+    "element_path": [
+     "osm-way27326387-F0-O0031",
+     "osm-way27326387-F0-O0037",
+     "osm-way27326387-F0-O0040"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 17.341,
+    "length_delta_m": -0.0011,
+    "waypoint_xy_m": 17.341
+   },
+   "elapsed_ms": 2.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 61,
+   "case_seed": 2884331461,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "step_free",
+   "failed": [],
+   "variant": "non_step_free_opening",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S029"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-000-F0-O0029"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 6.4,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 62,
+   "case_seed": 3208193540,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "step_free",
+   "failed": [],
+   "variant": "non_step_free_opening",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S001"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-013-F0-O0020"
+    },
+    "step_free": true
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable without the step-free restriction",
+    "diagnosis": "step_free"
+   },
+   "diagnosis_expected": "step_free",
+   "elapsed_ms": 1.2,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 63,
+   "case_seed": 3024878773,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F0-S007"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "proc-campus-dev-000-A00840"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 68.83,
+    "space_path": [
+     "proc-campus-dev-000-F0-S007",
+     "proc-campus-dev-000-F0-S001",
+     "proc-campus-dev-000-F0-S010",
+     "proc-campus-dev-000-F4-S010",
+     "proc-campus-dev-000-F4-S001",
+     "proc-campus-dev-000-F4-S012"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F0-O0006",
+     "proc-campus-dev-000-F0-O0009",
+     "proc-campus-dev-000-V04",
+     "proc-campus-dev-000-F4-O0128",
+     "proc-campus-dev-000-F4-O0130"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 30.2,
+    "drawn_walk_m": 38.63,
+    "length_delta_m": 0.0,
+    "waypoint_xy_m": 38.63
+   },
+   "elapsed_ms": 7.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 64,
+   "case_seed": 511254214,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "opening_start_side",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "proc-campus-dev-013-F2-O0050",
+     "side_space_id": "proc-campus-dev-013-F2-S010"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S010"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 3.0,
+    "space_path": [
+     "proc-campus-dev-013-F2-S010"
+    ],
+    "element_path": [],
+    "waypoints": 3,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 3.0,
+    "length_delta_m": 0.0,
+    "waypoint_xy_m": 3.0
+   },
+   "elapsed_ms": 1.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 65,
+   "case_seed": 2046136175,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "proc-factory-dev-003-A00015"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S026"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 88.09,
+    "space_path": [
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S026"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0079"
+    ],
+    "waypoints": 22,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 81.093,
+    "length_delta_m": -0.0027,
+    "waypoint_xy_m": 81.093
+   },
+   "elapsed_ms": 10.8,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 66,
+   "case_seed": 959206811,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S013"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "proc-factory-dev-007-A00130"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 42.32,
+    "space_path": [
+     "proc-factory-dev-007-F1-S013",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S023"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F1-O0044",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-F0-O0027"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 35.324,
+    "length_delta_m": -0.004,
+    "waypoint_xy_m": 35.324
+   },
+   "elapsed_ms": 7.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 67,
+   "case_seed": 4205231397,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S030"
+    },
+    "target": {
+     "kind": "asset",
+     "id": "swiss-1785-A00278"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 3.1,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 68,
+   "case_seed": 270451191,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start_exact",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "swiss-2074-F1-S014",
+     "position": [
+      5.154,
+      -0.128
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S007"
+    },
+    "exact_start": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 24.5,
+    "space_path": [
+     "swiss-2074-F1-S014",
+     "swiss-2074-F1-S013",
+     "swiss-2074-F1-S017",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F2-S016",
+     "swiss-2074-F2-S005",
+     "swiss-2074-F2-S001",
+     "swiss-2074-F2-S007"
+    ],
+    "element_path": [
+     "swiss-2074-F1-O0027",
+     "swiss-2074-F1-O0032",
+     "swiss-2074-F1-O0017",
+     "swiss-2074-V01",
+     "swiss-2074-F2-O0037",
+     "swiss-2074-F2-O0039",
+     "swiss-2074-F2-O0035"
+    ],
+    "waypoints": 22,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 6.0,
+    "drawn_walk_m": 18.06,
+    "waypoint_xy_m": 18.06
+   },
+   "elapsed_ms": 17.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 69,
+   "case_seed": 2002844383,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "opening_start_side",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "resplan-1465-F0-O0007",
+     "side_space_id": "resplan-1465-F0-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S001"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 4.8,
+    "space_path": [
+     "resplan-1465-F0-S001"
+    ],
+    "element_path": [],
+    "waypoints": 4,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 4.802,
+    "length_delta_m": -0.0019,
+    "waypoint_xy_m": 4.802
+   },
+   "elapsed_ms": 2.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 70,
+   "case_seed": 779008002,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "resplan-14509-A00005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S002"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 4.46,
+    "space_path": [
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S002"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0002"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 4.462,
+    "length_delta_m": -0.0023,
+    "waypoint_xy_m": 4.462
+   },
+   "elapsed_ms": 1.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 71,
+   "case_seed": 3373688353,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start_exact",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "osm-way360544293-F0-S016",
+     "position": [
+      -143.068,
+      -14.632
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S006"
+    },
+    "exact_start": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 26.35,
+    "space_path": [
+     "osm-way360544293-F0-S016",
+     "osm-way360544293-F0-S009",
+     "osm-way360544293-F0-S006"
+    ],
+    "element_path": [
+     "osm-way360544293-F0-O0052",
+     "osm-way360544293-F0-O0045"
+    ],
+    "waypoints": 4,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 30.147,
+    "waypoint_xy_m": 30.147
+   },
+   "elapsed_ms": 20.1,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 72,
+   "case_seed": 1581162247,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "osm-way27326387-A00023"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S005"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 51.14,
+    "space_path": [
+     "osm-way27326387-F-2-S010",
+     "osm-way27326387-F-2-S009",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F0-S021",
+     "osm-way27326387-F0-S020",
+     "osm-way27326387-F0-S003",
+     "osm-way27326387-F0-S004",
+     "osm-way27326387-F0-S005"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0011",
+     "osm-way27326387-F-2-O0015",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-V01",
+     "osm-way27326387-F0-O0023",
+     "osm-way27326387-F0-O0041",
+     "osm-way27326387-F0-O0030",
+     "osm-way27326387-F0-O0029"
+    ],
+    "waypoints": 25,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 39.136,
+    "length_delta_m": 0.0039,
+    "waypoint_xy_m": 39.136
+   },
+   "elapsed_ms": 6.6,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 73,
+   "case_seed": 1968799357,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "proc-campus-dev-000-A00934"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S010"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 53.51,
+    "space_path": [
+     "proc-campus-dev-000-F4-S030",
+     "proc-campus-dev-000-F4-S001",
+     "proc-campus-dev-000-F4-S014",
+     "proc-campus-dev-000-F3-S014",
+     "proc-campus-dev-000-F2-S014",
+     "proc-campus-dev-000-F2-S001",
+     "proc-campus-dev-000-F2-S010"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F4-O0148",
+     "proc-campus-dev-000-F4-O0132",
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-F2-O0072",
+     "proc-campus-dev-000-F2-O0068"
+    ],
+    "waypoints": 17,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 15.2,
+    "drawn_walk_m": 38.309,
+    "length_delta_m": 0.0008,
+    "waypoint_xy_m": 38.309
+   },
+   "elapsed_ms": 10.8,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 74,
+   "case_seed": 681949383,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start_exact",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-campus-dev-013-F2-S004",
+     "position": [
+      -0.351,
+      12.019
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S022"
+    },
+    "exact_start": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 42.44,
+    "space_path": [
+     "proc-campus-dev-013-F2-S004",
+     "proc-campus-dev-013-F2-S001",
+     "proc-campus-dev-013-F2-S022"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F2-O0044",
+     "proc-campus-dev-013-F2-O0062"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 45.193,
+    "waypoint_xy_m": 45.193
+   },
+   "elapsed_ms": 6.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 75,
+   "case_seed": 380400502,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-factory-dev-003-F0-S003",
+     "position": [
+      -11.474,
+      37.468
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S027"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 109.33,
+    "space_path": [
+     "proc-factory-dev-003-F0-S003",
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S027"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0004",
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0080"
+    ],
+    "waypoints": 25,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 102.333,
+    "length_delta_m": -0.0027,
+    "waypoint_xy_m": 102.333
+   },
+   "elapsed_ms": 9.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 76,
+   "case_seed": 2730547048,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-factory-dev-007-F1-S016",
+     "position": [
+      24.889,
+      -10.855
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S019"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 69.06,
+    "space_path": [
+     "proc-factory-dev-007-F1-S016",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S019"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F1-O0047",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-F0-O0022"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 62.064,
+    "length_delta_m": -0.0037,
+    "waypoint_xy_m": 62.064
+   },
+   "elapsed_ms": 7.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 77,
+   "case_seed": 4214449239,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "door_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "swiss-1785-F0-O0033"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S024"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "no connection in the building data (kit 1.1.0 has no route round the outside)",
+    "diagnosis": "unreachable_in_model"
+   },
+   "diagnosis_expected": "unreachable_in_model",
+   "elapsed_ms": 1.5,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 78,
+   "case_seed": 3225441163,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "exit_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S014"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "swiss-2074-F0-O0049"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 14.17,
+    "space_path": [
+     "swiss-2074-F1-S014",
+     "swiss-2074-F1-S013",
+     "swiss-2074-F1-S017",
+     "swiss-2074-F0-S017",
+     "swiss-2074-F0-S016"
+    ],
+    "element_path": [
+     "swiss-2074-F1-O0027",
+     "swiss-2074-F1-O0032",
+     "swiss-2074-V02",
+     "swiss-2074-F0-O0001",
+     "swiss-2074-F0-O0049"
+    ],
+    "waypoints": 14,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 6.0,
+    "drawn_walk_m": 8.174,
+    "length_delta_m": -0.0037,
+    "waypoint_xy_m": 8.174
+   },
+   "elapsed_ms": 5.4,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 79,
+   "case_seed": 2898408999,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "door_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "resplan-1465-F0-O0003"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S006"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 7.5,
+    "space_path": [
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S006"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0009"
+    ],
+    "waypoints": 6,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 7.497,
+    "length_delta_m": 0.0029,
+    "waypoint_xy_m": 7.497
+   },
+   "elapsed_ms": 2.4,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 80,
+   "case_seed": 2870811630,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "door_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "resplan-14509-F0-O0001"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S006"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 6.33,
+    "space_path": [
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S006"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0005"
+    ],
+    "waypoints": 6,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 6.331,
+    "length_delta_m": -0.0012,
+    "waypoint_xy_m": 6.331
+   },
+   "elapsed_ms": 11.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 81,
+   "case_seed": 89687877,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "osm-way360544293-F1-S003",
+     "position": [
+      -73.904,
+      34.148
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S006"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 119.17,
+    "space_path": [
+     "osm-way360544293-F1-S003",
+     "osm-way360544293-F1-S001",
+     "osm-way360544293-F1-S012",
+     "osm-way360544293-F0-S006"
+    ],
+    "element_path": [
+     "osm-way360544293-F1-O0021",
+     "osm-way360544293-F1-O0030",
+     "osm-way360544293-V09"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.0,
+    "drawn_walk_m": 101.173,
+    "length_delta_m": -0.0034,
+    "waypoint_xy_m": 101.173
+   },
+   "elapsed_ms": 7923.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 82,
+   "case_seed": 3557716313,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S001"
+    },
+    "target": {
+     "kind": "point",
+     "space_id": "osm-way27326387-F0-S021",
+     "position": [
+      1.427,
+      -10.079
+     ]
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 7.81,
+    "space_path": [
+     "osm-way27326387-F0-S001",
+     "osm-way27326387-F0-S017",
+     "osm-way27326387-F0-S021"
+    ],
+    "element_path": [
+     "osm-way27326387-F0-O0026",
+     "osm-way27326387-F0-O0048"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 7.808,
+    "length_delta_m": 0.0024,
+    "waypoint_xy_m": 7.808
+   },
+   "elapsed_ms": 4.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 83,
+   "case_seed": 3965275381,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "exit_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F4-S018"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-000-F0-O0029"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 58.08,
+    "space_path": [
+     "proc-campus-dev-000-F4-S018",
+     "proc-campus-dev-000-F4-S001",
+     "proc-campus-dev-000-F4-S004",
+     "proc-campus-dev-000-F3-S004",
+     "proc-campus-dev-000-F2-S004",
+     "proc-campus-dev-000-F1-S004",
+     "proc-campus-dev-000-F0-S004",
+     "proc-campus-dev-000-F0-S001"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F4-O0136",
+     "proc-campus-dev-000-F4-O0122",
+     "proc-campus-dev-000-V01",
+     "proc-campus-dev-000-V01",
+     "proc-campus-dev-000-V01",
+     "proc-campus-dev-000-V01",
+     "proc-campus-dev-000-F0-O0003",
+     "proc-campus-dev-000-F0-O0029"
+    ],
+    "waypoints": 17,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 30.4,
+    "drawn_walk_m": 27.685,
+    "length_delta_m": -0.0046,
+    "waypoint_xy_m": 27.685
+   },
+   "elapsed_ms": 6.0,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 84,
+   "case_seed": 3852383344,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start_exact",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-campus-dev-013-F2-S003",
+     "position": [
+      -1.351,
+      5.04
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F2-S014"
+    },
+    "exact_start": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 10.98,
+    "space_path": [
+     "proc-campus-dev-013-F2-S003",
+     "proc-campus-dev-013-F2-S001",
+     "proc-campus-dev-013-F2-S014"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F2-O0043",
+     "proc-campus-dev-013-F2-O0054"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 12.846,
+    "waypoint_xy_m": 12.846
+   },
+   "elapsed_ms": 4.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 85,
+   "case_seed": 1829131884,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "exit_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S001"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-factory-dev-003-F0-O0020"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 82.62,
+    "space_path": [
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S007",
+     "proc-factory-dev-003-F0-S008",
+     "proc-factory-dev-003-F0-S009",
+     "proc-factory-dev-003-F0-S010"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0003",
+     "proc-factory-dev-003-F0-O0012",
+     "proc-factory-dev-003-F0-O0014",
+     "proc-factory-dev-003-F0-O0016",
+     "proc-factory-dev-003-F0-O0020"
+    ],
+    "waypoints": 18,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 82.625,
+    "length_delta_m": -0.0045,
+    "waypoint_xy_m": 82.625
+   },
+   "elapsed_ms": 6.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 86,
+   "case_seed": 1516568325,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "opening_start_side",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "proc-factory-dev-007-F1-O0034",
+     "side_space_id": "proc-factory-dev-007-F1-S003"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S009"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 77.5,
+    "space_path": [
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S013",
+     "proc-factory-dev-007-F0-S001",
+     "proc-factory-dev-007-F0-S004",
+     "proc-factory-dev-007-F0-S005",
+     "proc-factory-dev-007-F0-S008",
+     "proc-factory-dev-007-F0-S009"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-F0-O0015",
+     "proc-factory-dev-007-F0-O0016",
+     "proc-factory-dev-007-F0-O0001",
+     "proc-factory-dev-007-F0-O0005",
+     "proc-factory-dev-007-F0-O0006",
+     "proc-factory-dev-007-F0-O0010"
+    ],
+    "waypoints": 29,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.0,
+    "drawn_walk_m": 70.5,
+    "length_delta_m": 0.0001,
+    "waypoint_xy_m": 70.5
+   },
+   "elapsed_ms": 5.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 87,
+   "case_seed": 1177890115,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "exit_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S011"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "swiss-1785-F0-O0110"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 17.95,
+    "space_path": [
+     "swiss-1785-F1-S011",
+     "swiss-1785-F1-S009",
+     "swiss-1785-F1-S035",
+     "swiss-1785-F0-S035"
+    ],
+    "element_path": [
+     "swiss-1785-F1-O0064",
+     "swiss-1785-F1-O0041",
+     "swiss-1785-V03",
+     "swiss-1785-F0-O0110"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 6.0,
+    "drawn_walk_m": 11.953,
+    "length_delta_m": -0.0028,
+    "waypoint_xy_m": 11.953
+   },
+   "elapsed_ms": 11.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 88,
+   "case_seed": 1770598938,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "exit_target",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S006"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "swiss-2074-F0-O0050"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 21.05,
+    "space_path": [
+     "swiss-2074-F2-S006",
+     "swiss-2074-F2-S005",
+     "swiss-2074-F2-S016",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F0-S016",
+     "swiss-2074-F0-S017"
+    ],
+    "element_path": [
+     "swiss-2074-F2-O0036",
+     "swiss-2074-F2-O0037",
+     "swiss-2074-V01",
+     "swiss-2074-V01",
+     "swiss-2074-F0-O0001",
+     "swiss-2074-F0-O0050"
+    ],
+    "waypoints": 15,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 9.047,
+    "length_delta_m": 0.0032,
+    "waypoint_xy_m": 9.047
+   },
+   "elapsed_ms": 8.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 89,
+   "case_seed": 4145398021,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "point_start_exact",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "resplan-1465-F0-S006",
+     "position": [
+      12.468,
+      11.811
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S004"
+    },
+    "exact_start": true
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 16.99,
+    "space_path": [
+     "resplan-1465-F0-S006",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S003",
+     "resplan-1465-F0-S004"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0009",
+     "resplan-1465-F0-O0004",
+     "resplan-1465-F0-O0006"
+    ],
+    "waypoints": 11,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 15.649,
+    "waypoint_xy_m": 15.649
+   },
+   "elapsed_ms": 8.6,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 90,
+   "case_seed": 2997624002,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "resplan-14509-A00004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S003"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 5.23,
+    "space_path": [
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S003"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0003"
+    ],
+    "waypoints": 5,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 5.227,
+    "length_delta_m": 0.0029,
+    "waypoint_xy_m": 5.227
+   },
+   "elapsed_ms": 2.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 91,
+   "case_seed": 3080691557,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "osm-way360544293-A00023"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S002"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 123.02,
+    "space_path": [
+     "osm-way360544293-F1-S001",
+     "osm-way360544293-F1-S008",
+     "osm-way360544293-F0-S002"
+    ],
+    "element_path": [
+     "osm-way360544293-F1-O0026",
+     "osm-way360544293-V07"
+    ],
+    "waypoints": 4,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.0,
+    "drawn_walk_m": 105.017,
+    "length_delta_m": 0.0034,
+    "waypoint_xy_m": 105.017
+   },
+   "elapsed_ms": 22.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 92,
+   "case_seed": 3955527189,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "endpoints",
+   "failed": [],
+   "variant": "asset_start",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "osm-way27326387-A00053"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F1-S002"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 37.74,
+    "space_path": [
+     "osm-way27326387-F-2-S020",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F0-S021",
+     "osm-way27326387-F1-S001",
+     "osm-way27326387-F1-S008",
+     "osm-way27326387-F1-S006",
+     "osm-way27326387-F1-S003",
+     "osm-way27326387-F1-S002"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0009",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-V01",
+     "osm-way27326387-V01",
+     "osm-way27326387-F1-O0050",
+     "osm-way27326387-F1-O0067",
+     "osm-way27326387-F1-O0053",
+     "osm-way27326387-F1-O0022"
+    ],
+    "waypoints": 23,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.0,
+    "drawn_walk_m": 19.739,
+    "length_delta_m": 0.0013,
+    "waypoint_xy_m": 19.739
+   },
+   "elapsed_ms": 9.7,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 93,
+   "case_seed": 2736526428,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 25.9,
+    "space_path": [
+     "proc-campus-dev-000-F2-S011",
+     "proc-campus-dev-000-F2-S001",
+     "proc-campus-dev-000-F2-S007"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F2-O0069",
+     "proc-campus-dev-000-F2-O0065"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-campus-dev-000-F2-O0069",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S011"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S007"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-campus-dev-000-F2-O0069",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-000-F2-O0069",
+    "revision": 0
+   },
+   "elapsed_ms": 9.8,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 94,
+   "case_seed": 4238481414,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 25.57,
+    "space_path": [
+     "proc-campus-dev-013-F1-S014",
+     "proc-campus-dev-013-F1-S001",
+     "proc-campus-dev-013-F1-S007"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F1-O0033",
+     "proc-campus-dev-013-F1-O0026"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-campus-dev-013-F1-O0033",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S014"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S007"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-campus-dev-013-F1-O0033",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-013-F1-O0033",
+    "revision": 0
+   },
+   "elapsed_ms": 6.1,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 95,
+   "case_seed": 242773412,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 137.56,
+    "space_path": [
+     "proc-factory-dev-003-F1-S009",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S002",
+     "proc-factory-dev-003-F0-S007",
+     "proc-factory-dev-003-F0-S008",
+     "proc-factory-dev-003-F0-S009",
+     "proc-factory-dev-003-F0-S010",
+     "proc-factory-dev-003-F0-S015"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F1-O0062",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0002",
+     "proc-factory-dev-003-F0-O0003",
+     "proc-factory-dev-003-F0-O0012",
+     "proc-factory-dev-003-F0-O0014",
+     "proc-factory-dev-003-F0-O0016",
+     "proc-factory-dev-003-F0-O0017"
+    ],
+    "waypoints": 37,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-factory-dev-003-F0-O0016",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S015"
+    },
+    "assume_closed": [
+     "proc-factory-dev-003-F0-O0016"
+    ]
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-factory-dev-003-F0-O0016",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "elapsed_ms": 21.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 96,
+   "case_seed": 246333330,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 13.42,
+    "space_path": [
+     "proc-factory-dev-007-F0-S018",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S027"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0021",
+     "proc-factory-dev-007-F0-O0031"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-factory-dev-007-F0-O0021",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S018"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S027"
+    },
+    "assume_closed": [
+     "proc-factory-dev-007-F0-O0021"
+    ]
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-factory-dev-007-F0-O0021",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "elapsed_ms": 4.8,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 97,
+   "case_seed": 2524865886,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "closures",
+   "failed": [],
+   "variant": "room:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 32.36,
+    "space_path": [
+     "swiss-1785-F2-S010",
+     "swiss-1785-F2-S007",
+     "swiss-1785-F2-S030",
+     "swiss-1785-F1-S034",
+     "swiss-1785-F2-S029",
+     "swiss-1785-F2-S018",
+     "swiss-1785-F2-S016",
+     "swiss-1785-F2-S019",
+     "swiss-1785-F2-S013"
+    ],
+    "element_path": [
+     "swiss-1785-F2-O0077",
+     "swiss-1785-F2-O0076",
+     "swiss-1785-V01",
+     "swiss-1785-V04",
+     "swiss-1785-F2-O0079",
+     "swiss-1785-F2-O0096",
+     "swiss-1785-F2-O0084",
+     "swiss-1785-F2-O0082"
+    ],
+    "waypoints": 23,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "swiss-1785-F2-S030",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F2-S010"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F2-S013"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: swiss-1785-F2-S030",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "swiss-1785-F2-S030",
+    "revision": 0
+   },
+   "elapsed_ms": 30.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 98,
+   "case_seed": 2554815463,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 24.2,
+    "space_path": [
+     "swiss-2074-F0-S009",
+     "swiss-2074-F0-S007",
+     "swiss-2074-F0-S017",
+     "swiss-2074-F0-S016",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F2-S016",
+     "swiss-2074-F2-S005",
+     "swiss-2074-F2-S003"
+    ],
+    "element_path": [
+     "swiss-2074-F0-O0016",
+     "swiss-2074-F0-O0015",
+     "swiss-2074-F0-O0001",
+     "swiss-2074-V01",
+     "swiss-2074-V01",
+     "swiss-2074-F2-O0037",
+     "swiss-2074-F2-O0040"
+    ],
+    "waypoints": 20,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "swiss-2074-F0-O0001",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F0-S009"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S003"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 24.39,
+    "space_path": [
+     "swiss-2074-F0-S009",
+     "swiss-2074-F0-S007",
+     "swiss-2074-F0-S017",
+     "swiss-2074-F1-S017",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F2-S016",
+     "swiss-2074-F2-S005",
+     "swiss-2074-F2-S003"
+    ],
+    "element_path": [
+     "swiss-2074-F0-O0016",
+     "swiss-2074-F0-O0015",
+     "swiss-2074-V02",
+     "swiss-2074-F1-O0017",
+     "swiss-2074-V01",
+     "swiss-2074-F2-O0037",
+     "swiss-2074-F2-O0040"
+    ],
+    "waypoints": 21,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 12.0,
+    "drawn_walk_m": 12.394,
+    "length_delta_m": -0.0042,
+    "waypoint_xy_m": 12.394
+   },
+   "scenario": {
+    "action": "close",
+    "element_id": "swiss-2074-F0-O0001",
+    "revision": 0
+   },
+   "elapsed_ms": 21.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 99,
+   "case_seed": 3330004185,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 22.25,
+    "space_path": [
+     "resplan-1465-F0-S004",
+     "resplan-1465-F0-S003",
+     "resplan-1465-F0-S001",
+     "resplan-1465-F0-S010"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0006",
+     "resplan-1465-F0-O0004",
+     "resplan-1465-F0-O0008"
+    ],
+    "waypoints": 13,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "resplan-1465-F0-O0008",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S010"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: resplan-1465-F0-O0008",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "resplan-1465-F0-O0008",
+    "revision": 0
+   },
+   "elapsed_ms": 9.7,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 100,
+   "case_seed": 2824234444,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 8.31,
+    "space_path": [
+     "resplan-14509-F0-S004",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S002"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0001",
+     "resplan-14509-F0-O0002"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "resplan-14509-F0-O0002",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S002"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: resplan-14509-F0-O0002",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "resplan-14509-F0-O0002",
+    "revision": 0
+   },
+   "elapsed_ms": 2.9,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 101,
+   "case_seed": 2641783310,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 63.05,
+    "space_path": [
+     "osm-way360544293-F0-S014",
+     "osm-way360544293-F0-S009",
+     "osm-way360544293-F0-S006",
+     "osm-way360544293-F0-S021"
+    ],
+    "element_path": [
+     "osm-way360544293-F0-O0050",
+     "osm-way360544293-F0-O0045",
+     "osm-way360544293-F0-O0061"
+    ],
+    "waypoints": 6,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "osm-way360544293-F0-O0045",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S014"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S021"
+    },
+    "assume_closed": [
+     "osm-way360544293-F0-O0045"
+    ]
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 104.29,
+    "space_path": [
+     "osm-way360544293-F0-S014",
+     "osm-way360544293-F0-S009",
+     "osm-way360544293-F0-S001",
+     "osm-way360544293-F1-S006",
+     "osm-way360544293-F1-S001",
+     "osm-way360544293-F1-S019",
+     "osm-way360544293-F0-S021"
+    ],
+    "element_path": [
+     "osm-way360544293-F0-O0050",
+     "osm-way360544293-F0-O0040",
+     "osm-way360544293-V06",
+     "osm-way360544293-F1-O0024",
+     "osm-way360544293-F1-O0062",
+     "osm-way360544293-V04"
+    ],
+    "waypoints": 10,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 36.0,
+    "drawn_walk_m": 68.296,
+    "length_delta_m": -0.0061,
+    "waypoint_xy_m": 68.296
+   },
+   "elapsed_ms": 7974.8,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 102,
+   "case_seed": 2485467191,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 23.64,
+    "space_path": [
+     "osm-way27326387-F-2-S021",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S017",
+     "osm-way27326387-F0-S021"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0018",
+     "osm-way27326387-F-2-O0008",
+     "osm-way27326387-V01"
+    ],
+    "waypoints": 9,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "osm-way27326387-F-2-O0018",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S021"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S021"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: osm-way27326387-F-2-O0018",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "osm-way27326387-F-2-O0018",
+    "revision": 0
+   },
+   "elapsed_ms": 4.7,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 103,
+   "case_seed": 3868480939,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 36.41,
+    "space_path": [
+     "proc-campus-dev-000-F2-S022",
+     "proc-campus-dev-000-F2-S001",
+     "proc-campus-dev-000-F2-S028"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F2-O0080",
+     "proc-campus-dev-000-F2-O0086"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-campus-dev-000-F2-O0086",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S022"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S028"
+    },
+    "assume_closed": [
+     "proc-campus-dev-000-F2-O0086"
+    ]
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-campus-dev-000-F2-O0086",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "elapsed_ms": 15.9,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 104,
+   "case_seed": 110794970,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 15.78,
+    "space_path": [
+     "proc-campus-dev-013-F0-S007",
+     "proc-campus-dev-013-F0-S001",
+     "proc-campus-dev-013-F0-S009"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F0-O0006",
+     "proc-campus-dev-013-F0-O0008"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-campus-dev-013-F0-O0008",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S009"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-campus-dev-013-F0-O0008",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-013-F0-O0008",
+    "revision": 2
+   },
+   "elapsed_ms": 5.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 105,
+   "case_seed": 4026674731,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "closures",
+   "failed": [],
+   "variant": "connector:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 81.51,
+    "space_path": [
+     "proc-factory-dev-003-F0-S006",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S025"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0001",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-F1-O0078"
+    ],
+    "waypoints": 22,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-factory-dev-003-V01",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S006"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S025"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 91.08,
+    "space_path": [
+     "proc-factory-dev-003-F0-S006",
+     "proc-factory-dev-003-F0-S001",
+     "proc-factory-dev-003-F0-S019",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S018",
+     "proc-factory-dev-003-F1-S003",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S025"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F0-O0001",
+     "proc-factory-dev-003-F0-O0024",
+     "proc-factory-dev-003-F0-O0023",
+     "proc-factory-dev-003-F0-O0022",
+     "proc-factory-dev-003-V02",
+     "proc-factory-dev-003-F1-O0056",
+     "proc-factory-dev-003-F1-O0078"
+    ],
+    "waypoints": 22,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.5,
+    "drawn_walk_m": 72.582,
+    "length_delta_m": -0.0022,
+    "waypoint_xy_m": 72.582
+   },
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-factory-dev-003-V01",
+    "revision": 0
+   },
+   "elapsed_ms": 21.3,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 106,
+   "case_seed": 2175123523,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 59.62,
+    "space_path": [
+     "proc-factory-dev-007-F0-S025",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S008"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F0-O0029",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-F1-O0039"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-factory-dev-007-F1-O0039",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S025"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S008"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-factory-dev-007-F1-O0039",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-factory-dev-007-F1-O0039",
+    "revision": 0
+   },
+   "elapsed_ms": 7.7,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 107,
+   "case_seed": 102886990,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "closures",
+   "failed": [],
+   "variant": "room:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 17.05,
+    "space_path": [
+     "swiss-1785-F0-S023",
+     "swiss-1785-F0-S035",
+     "swiss-1785-F1-S034",
+     "swiss-1785-F1-S031"
+    ],
+    "element_path": [
+     "swiss-1785-F0-O0018",
+     "swiss-1785-V01",
+     "swiss-1785-F1-O0060"
+    ],
+    "waypoints": 10,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "swiss-1785-F0-S035",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S023"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S031"
+    },
+    "assume_closed": [
+     "swiss-1785-F0-S035"
+    ]
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: swiss-1785-F0-S035",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "elapsed_ms": 18.8,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 108,
+   "case_seed": 1734091324,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "closures",
+   "failed": [],
+   "variant": "connector:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 17.48,
+    "space_path": [
+     "swiss-2074-F2-S013",
+     "swiss-2074-F2-S014",
+     "swiss-2074-F2-S017",
+     "swiss-2074-F2-S016",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F1-S005",
+     "swiss-2074-F1-S003"
+    ],
+    "element_path": [
+     "swiss-2074-F2-O0045",
+     "swiss-2074-F2-O0041",
+     "swiss-2074-F2-O0033",
+     "swiss-2074-V01",
+     "swiss-2074-F1-O0020",
+     "swiss-2074-F1-O0021"
+    ],
+    "waypoints": 19,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "swiss-2074-V01",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F2-S013"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S003"
+    },
+    "assume_closed": [
+     "swiss-2074-V01"
+    ]
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 17.49,
+    "space_path": [
+     "swiss-2074-F2-S013",
+     "swiss-2074-F2-S014",
+     "swiss-2074-F2-S017",
+     "swiss-2074-F1-S017",
+     "swiss-2074-F1-S016",
+     "swiss-2074-F1-S005",
+     "swiss-2074-F1-S003"
+    ],
+    "element_path": [
+     "swiss-2074-F2-O0045",
+     "swiss-2074-F2-O0041",
+     "swiss-2074-V03",
+     "swiss-2074-F1-O0017",
+     "swiss-2074-F1-O0020",
+     "swiss-2074-F1-O0021"
+    ],
+    "waypoints": 19,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 6.0,
+    "drawn_walk_m": 11.49,
+    "length_delta_m": -0.0001,
+    "waypoint_xy_m": 11.49
+   },
+   "elapsed_ms": 22.6,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 109,
+   "case_seed": 3647691939,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 14.19,
+    "space_path": [
+     "resplan-1465-F0-S004",
+     "resplan-1465-F0-S003",
+     "resplan-1465-F0-S001"
+    ],
+    "element_path": [
+     "resplan-1465-F0-O0006",
+     "resplan-1465-F0-O0004"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "resplan-1465-F0-O0004",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S001"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: resplan-1465-F0-O0004",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "resplan-1465-F0-O0004",
+    "revision": 2
+   },
+   "elapsed_ms": 4.8,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 110,
+   "case_seed": 637398381,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 9.26,
+    "space_path": [
+     "resplan-14509-F0-S004",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S003"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0001",
+     "resplan-14509-F0-O0003"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "resplan-14509-F0-O0003",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S003"
+    },
+    "assume_closed": [
+     "resplan-14509-F0-O0003"
+    ]
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 11.61,
+    "space_path": [
+     "resplan-14509-F0-S004",
+     "resplan-14509-F0-S001",
+     "resplan-14509-F0-S006",
+     "resplan-14509-F0-S005",
+     "resplan-14509-F0-S003"
+    ],
+    "element_path": [
+     "resplan-14509-F0-O0001",
+     "resplan-14509-F0-O0005",
+     "resplan-14509-F0-O0006",
+     "resplan-14509-F0-O0004"
+    ],
+    "waypoints": 14,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 0.0,
+    "drawn_walk_m": 11.61,
+    "length_delta_m": 0.0002,
+    "waypoint_xy_m": 11.61
+   },
+   "elapsed_ms": 19.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 111,
+   "case_seed": 4158260741,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 31.65,
+    "space_path": [
+     "osm-way360544293-F0-S018",
+     "osm-way360544293-F0-S001",
+     "osm-way360544293-F0-S009",
+     "osm-way360544293-F0-S010"
+    ],
+    "element_path": [
+     "osm-way360544293-F0-O0055",
+     "osm-way360544293-F0-O0040",
+     "osm-way360544293-F0-O0046"
+    ],
+    "waypoints": 6,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "osm-way360544293-F0-O0055",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S018"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S010"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 67.65,
+    "space_path": [
+     "osm-way360544293-F0-S018",
+     "osm-way360544293-F1-S016",
+     "osm-way360544293-F1-S001",
+     "osm-way360544293-F1-S006",
+     "osm-way360544293-F0-S001",
+     "osm-way360544293-F0-S009",
+     "osm-way360544293-F0-S010"
+    ],
+    "element_path": [
+     "osm-way360544293-V01",
+     "osm-way360544293-F1-O0056",
+     "osm-way360544293-F1-O0024",
+     "osm-way360544293-V06",
+     "osm-way360544293-F0-O0040",
+     "osm-way360544293-F0-O0046"
+    ],
+    "waypoints": 10,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 36.0,
+    "drawn_walk_m": 31.647,
+    "length_delta_m": 0.0033,
+    "waypoint_xy_m": 31.647
+   },
+   "scenario": {
+    "action": "close",
+    "element_id": "osm-way360544293-F0-O0055",
+    "revision": 0
+   },
+   "elapsed_ms": 26.8,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 112,
+   "case_seed": 797944905,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 16.42,
+    "space_path": [
+     "osm-way27326387-F-2-S011",
+     "osm-way27326387-F-2-S008",
+     "osm-way27326387-F-2-S012"
+    ],
+    "element_path": [
+     "osm-way27326387-F-2-O0002",
+     "osm-way27326387-F-2-O0013"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "osm-way27326387-F-2-O0013",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S011"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F-2-S012"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: osm-way27326387-F-2-O0013",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "osm-way27326387-F-2-O0013",
+    "revision": 2
+   },
+   "elapsed_ms": 6.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 113,
+   "case_seed": 2033915052,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 47.87,
+    "space_path": [
+     "proc-campus-dev-000-F4-S014",
+     "proc-campus-dev-000-F3-S014",
+     "proc-campus-dev-000-F3-S001",
+     "proc-campus-dev-000-F3-S022"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-V05",
+     "proc-campus-dev-000-F3-O0102",
+     "proc-campus-dev-000-F3-O0110"
+    ],
+    "waypoints": 9,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-campus-dev-000-F3-O0102",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F4-S014"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S022"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 54.57,
+    "space_path": [
+     "proc-campus-dev-000-F4-S014",
+     "proc-campus-dev-000-F4-S001",
+     "proc-campus-dev-000-F4-S009",
+     "proc-campus-dev-000-F3-S009",
+     "proc-campus-dev-000-F3-S001",
+     "proc-campus-dev-000-F3-S022"
+    ],
+    "element_path": [
+     "proc-campus-dev-000-F4-O0132",
+     "proc-campus-dev-000-F4-O0127",
+     "proc-campus-dev-000-V03",
+     "proc-campus-dev-000-F3-O0097",
+     "proc-campus-dev-000-F3-O0110"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 7.6,
+    "drawn_walk_m": 46.974,
+    "length_delta_m": -0.0043,
+    "waypoint_xy_m": 46.974
+   },
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-000-F3-O0102",
+    "revision": 2
+   },
+   "elapsed_ms": 25.5,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 114,
+   "case_seed": 1476268267,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "closures",
+   "failed": [],
+   "variant": "door:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 22.85,
+    "space_path": [
+     "proc-campus-dev-013-F1-S016",
+     "proc-campus-dev-013-F1-S001",
+     "proc-campus-dev-013-F1-S009"
+    ],
+    "element_path": [
+     "proc-campus-dev-013-F1-O0035",
+     "proc-campus-dev-013-F1-O0028"
+    ],
+    "waypoints": 8,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-campus-dev-013-F1-O0035",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S016"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F1-S009"
+    }
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: proc-campus-dev-013-F1-O0035",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-013-F1-O0035",
+    "revision": 4
+   },
+   "elapsed_ms": 5.9,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 115,
+   "case_seed": 27774953,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "closures",
+   "failed": [],
+   "variant": "connector:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 25.53,
+    "space_path": [
+     "proc-factory-dev-003-F1-S004",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S002",
+     "proc-factory-dev-003-F0-S017",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S020"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F1-O0057",
+     "proc-factory-dev-003-F1-O0055",
+     "proc-factory-dev-003-V01",
+     "proc-factory-dev-003-F0-O0021",
+     "proc-factory-dev-003-F0-O0025"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-factory-dev-003-V01",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F1-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S020"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 35.32,
+    "space_path": [
+     "proc-factory-dev-003-F1-S004",
+     "proc-factory-dev-003-F1-S001",
+     "proc-factory-dev-003-F1-S003",
+     "proc-factory-dev-003-F0-S018",
+     "proc-factory-dev-003-F0-S016",
+     "proc-factory-dev-003-F0-S020"
+    ],
+    "element_path": [
+     "proc-factory-dev-003-F1-O0057",
+     "proc-factory-dev-003-F1-O0056",
+     "proc-factory-dev-003-V02",
+     "proc-factory-dev-003-F0-O0022",
+     "proc-factory-dev-003-F0-O0025"
+    ],
+    "waypoints": 16,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.5,
+    "drawn_walk_m": 16.816,
+    "length_delta_m": 0.0042,
+    "waypoint_xy_m": 16.816
+   },
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-factory-dev-003-V01",
+    "revision": 2
+   },
+   "elapsed_ms": 9.9,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 116,
+   "case_seed": 234278911,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "closures",
+   "failed": [],
+   "variant": "connector:scenario_change",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 61.77,
+    "space_path": [
+     "proc-factory-dev-007-F1-S012",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S002",
+     "proc-factory-dev-007-F0-S011",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S013",
+     "proc-factory-dev-007-F0-S001",
+     "proc-factory-dev-007-F0-S004",
+     "proc-factory-dev-007-F0-S005"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F1-O0043",
+     "proc-factory-dev-007-F1-O0033",
+     "proc-factory-dev-007-V01",
+     "proc-factory-dev-007-F0-O0013",
+     "proc-factory-dev-007-F0-O0015",
+     "proc-factory-dev-007-F0-O0016",
+     "proc-factory-dev-007-F0-O0001",
+     "proc-factory-dev-007-F0-O0005"
+    ],
+    "waypoints": 25,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "proc-factory-dev-007-V01",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F1-S012"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S005"
+    }
+   },
+   "expect": "reachable",
+   "outcome": "reachable",
+   "error": null,
+   "response": {
+    "status": "ok",
+    "length_m": 71.58,
+    "space_path": [
+     "proc-factory-dev-007-F1-S012",
+     "proc-factory-dev-007-F1-S001",
+     "proc-factory-dev-007-F1-S003",
+     "proc-factory-dev-007-F0-S012",
+     "proc-factory-dev-007-F0-S010",
+     "proc-factory-dev-007-F0-S013",
+     "proc-factory-dev-007-F0-S001",
+     "proc-factory-dev-007-F0-S004",
+     "proc-factory-dev-007-F0-S005"
+    ],
+    "element_path": [
+     "proc-factory-dev-007-F1-O0043",
+     "proc-factory-dev-007-F1-O0034",
+     "proc-factory-dev-007-V02",
+     "proc-factory-dev-007-F0-O0014",
+     "proc-factory-dev-007-F0-O0015",
+     "proc-factory-dev-007-F0-O0016",
+     "proc-factory-dev-007-F0-O0001",
+     "proc-factory-dev-007-F0-O0005"
+    ],
+    "waypoints": 25,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "metrics": {
+    "vertical_cost_m": 18.5,
+    "drawn_walk_m": 53.08,
+    "length_delta_m": -0.0,
+    "waypoint_xy_m": 53.08
+   },
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-factory-dev-007-V01",
+    "revision": 2
+   },
+   "elapsed_ms": 18.2,
+   "group": "guaranteed_reachable",
+   "passed": true
+  },
+  {
+   "index": 117,
+   "case_seed": 1032435450,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "closures",
+   "failed": [],
+   "variant": "room:assume_closed",
+   "plain_route": {
+    "status": "ok",
+    "length_m": 39.05,
+    "space_path": [
+     "swiss-1785-F0-S022",
+     "swiss-1785-F0-S021",
+     "swiss-1785-F0-S023",
+     "swiss-1785-F0-S035",
+     "swiss-1785-F1-S034",
+     "swiss-1785-F2-S029",
+     "swiss-1785-F2-S025",
+     "swiss-1785-F2-S023",
+     "swiss-1785-F2-S026",
+     "swiss-1785-F2-S022"
+    ],
+    "element_path": [
+     "swiss-1785-F0-O0031",
+     "swiss-1785-F0-O0032",
+     "swiss-1785-F0-O0018",
+     "swiss-1785-V01",
+     "swiss-1785-V04",
+     "swiss-1785-F2-O0088",
+     "swiss-1785-F2-O0089",
+     "swiss-1785-F2-O0091",
+     "swiss-1785-F2-O0086"
+    ],
+    "waypoints": 26,
+    "warnings": 0,
+    "unreachable_reason": null,
+    "diagnosis": null
+   },
+   "closed_element": "swiss-1785-F2-S023",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F0-S022"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F2-S022"
+    },
+    "assume_closed": [
+     "swiss-1785-F2-S023"
+    ]
+   },
+   "expect": "unreachable",
+   "outcome": "unreachable",
+   "error": null,
+   "response": {
+    "status": "unreachable",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "reachable if closures are lifted: swiss-1785-F2-S023",
+    "diagnosis": "closed"
+   },
+   "diagnosis_expected": "closed",
+   "elapsed_ms": 22.9,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 118,
+   "case_seed": 3317658053,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "invalid",
+   "failed": [],
+   "variant": "unknown_space",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S016"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F9-S999"
+    }
+   },
+   "expect": "error:unknown_place",
+   "outcome": "error:unknown_place",
+   "error": {
+    "code": "unknown_place",
+    "message": "target: no space with id 'proc-campus-dev-000-F9-S999'"
+   },
+   "response": null,
+   "elapsed_ms": 0.1,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 119,
+   "case_seed": 1302660902,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "invalid",
+   "failed": [],
+   "variant": "closed_start_room",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-013-F0-S007",
+    "state": {
+     "revision": 7,
+     "closed": [
+      "proc-campus-dev-013-F0-S007"
+     ],
+     "changed": true
+    }
+   },
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S007"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S019"
+    }
+   },
+   "expect": "blocked",
+   "outcome": "blocked",
+   "error": null,
+   "response": {
+    "status": "blocked",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "The start space proc-campus-dev-013-F0-S007 is closed.",
+    "diagnosis": "closed"
+   },
+   "elapsed_ms": 0.4,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 120,
+   "case_seed": 2831312717,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "invalid",
+   "failed": [],
+   "variant": "point_outside",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-factory-dev-003-F0-S007",
+     "position": [
+      25.5,
+      74.2
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S023"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start: position is outside the space polygon"
+   },
+   "response": null,
+   "elapsed_ms": 0.1,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 121,
+   "case_seed": 2916633606,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "invalid",
+   "failed": [],
+   "variant": "unknown_asset",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "proc-factory-dev-007-A99999"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-007-F0-S024"
+    }
+   },
+   "expect": "error:unknown_place",
+   "outcome": "error:unknown_place",
+   "error": {
+    "code": "unknown_place",
+    "message": "start: no asset with id 'proc-factory-dev-007-A99999'"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 122,
+   "case_seed": 2477984673,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "invalid",
+   "failed": [],
+   "variant": "bad_kind",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "room",
+     "id": "swiss-1785-F0-S012"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S030"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start.kind must be one of space, asset, opening, point"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 123,
+   "case_seed": 1625554992,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "invalid",
+   "failed": [],
+   "variant": "closed_target_exit",
+   "scenario": {
+    "action": "close",
+    "element_id": "swiss-2074-F0-O0049",
+    "state": {
+     "revision": 3,
+     "closed": [
+      "swiss-2074-F0-O0049"
+     ],
+     "changed": true
+    }
+   },
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F0-S007"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "swiss-2074-F0-O0049"
+    }
+   },
+   "expect": "blocked",
+   "outcome": "blocked",
+   "error": null,
+   "response": {
+    "status": "blocked",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "The target door swiss-2074-F0-O0049 is closed.",
+    "diagnosis": "closed"
+   },
+   "elapsed_ms": 0.2,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 124,
+   "case_seed": 4102631343,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "invalid",
+   "failed": [],
+   "variant": "point_nan",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "resplan-1465-F0-S007",
+     "position": [
+      "nan",
+      1.0
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S008"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start.position must be [x, y] with finite numbers"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 125,
+   "case_seed": 1816133970,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "invalid",
+   "failed": [],
+   "variant": "stale_revision",
+   "request": {
+    "action": "close",
+    "element_id": "resplan-14509-F0-O0006",
+    "expected_revision": 9
+   },
+   "expect": "error:revision_conflict",
+   "outcome": "error:revision_conflict",
+   "error": {
+    "code": "revision_conflict",
+    "message": "The scenario changed meanwhile; reload the state and try again"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 126,
+   "case_seed": 3040021526,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "invalid",
+   "failed": [],
+   "variant": "bad_mode",
+   "request": {
+    "mode": "teleport",
+    "start": {
+     "kind": "space",
+     "id": "osm-way360544293-F0-S014"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F1-S014"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "mode must be official or precision"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 127,
+   "case_seed": 878839708,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "invalid",
+   "failed": [],
+   "variant": "step_free_string",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "osm-way27326387-F0-S020"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F1-S007"
+    },
+    "step_free": "yes"
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "step_free must be a boolean"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 128,
+   "case_seed": 1591599050,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "invalid",
+   "failed": [],
+   "variant": "assume_unknown",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F2-S027"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F4-S029"
+    },
+    "assume_closed": [
+     "proc-campus-dev-000-X0"
+    ]
+   },
+   "expect": "error:unknown_place",
+   "outcome": "error:unknown_place",
+   "error": {
+    "code": "unknown_place",
+    "message": "Unknown element id(s) in assume_closed: proc-campus-dev-000-X0"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 129,
+   "case_seed": 4007339222,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "invalid",
+   "failed": [],
+   "variant": "bad_side",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "opening",
+     "id": "proc-campus-dev-013-F2-O0046",
+     "side_space_id": "proc-campus-dev-013-F0-S001"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S016"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start.side_space_id must be one of the opening's spaces"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 130,
+   "case_seed": 1534388038,
+   "building": "proc-factory-dev-003",
+   "family": "proc-factory",
+   "category": "invalid",
+   "failed": [],
+   "variant": "unknown_building",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S025"
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-factory-dev-003-F0-S012"
+    }
+   },
+   "expect": "error:unknown_building",
+   "outcome": "error:unknown_building",
+   "error": {
+    "code": "unknown_building",
+    "message": "Building 'proc-factory-dev-003-nope' is not ingested"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 131,
+   "case_seed": 3618749058,
+   "building": "proc-factory-dev-007",
+   "family": "proc-factory",
+   "category": "invalid",
+   "failed": [],
+   "variant": "change_unknown",
+   "request": {
+    "action": "close",
+    "element_id": "proc-factory-dev-007-X0",
+    "expected_revision": 0
+   },
+   "expect": "error:unknown_place",
+   "outcome": "error:unknown_place",
+   "error": {
+    "code": "unknown_place",
+    "message": "Choose an existing room, door/opening, lift or stairs"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 132,
+   "case_seed": 357886175,
+   "building": "swiss-1785",
+   "family": "swiss",
+   "category": "invalid",
+   "failed": [],
+   "variant": "precision_unsupported",
+   "request": {
+    "mode": "precision",
+    "start": {
+     "kind": "space",
+     "id": "swiss-1785-F1-S004"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-1785-F2-S030"
+    }
+   },
+   "expect": "error:geometry_unsupported",
+   "outcome": "error:geometry_unsupported",
+   "error": {
+    "code": "geometry_unsupported",
+    "message": "Precision routing is not available for this building: Precise navigation currently supports verified procedural factory/campus coordinates only"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 133,
+   "case_seed": 2540660671,
+   "building": "swiss-2074",
+   "family": "swiss",
+   "category": "invalid",
+   "failed": [],
+   "variant": "unknown_space",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "swiss-2074-F1-S016"
+    },
+    "target": {
+     "kind": "space",
+     "id": "swiss-2074-F9-S999"
+    }
+   },
+   "expect": "error:unknown_place",
+   "outcome": "error:unknown_place",
+   "error": {
+    "code": "unknown_place",
+    "message": "target: no space with id 'swiss-2074-F9-S999'"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 134,
+   "case_seed": 2133107294,
+   "building": "resplan-1465",
+   "family": "resplan",
+   "category": "invalid",
+   "failed": [],
+   "variant": "closed_start_room",
+   "scenario": {
+    "action": "close",
+    "element_id": "resplan-1465-F0-S001",
+    "state": {
+     "revision": 5,
+     "closed": [
+      "resplan-1465-F0-S001"
+     ],
+     "changed": true
+    }
+   },
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S001"
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-1465-F0-S008"
+    }
+   },
+   "expect": "blocked",
+   "outcome": "blocked",
+   "error": null,
+   "response": {
+    "status": "blocked",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "The start space resplan-1465-F0-S001 is closed.",
+    "diagnosis": "closed"
+   },
+   "elapsed_ms": 0.2,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 135,
+   "case_seed": 3984971573,
+   "building": "resplan-14509",
+   "family": "resplan",
+   "category": "invalid",
+   "failed": [],
+   "variant": "point_outside",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "resplan-14509-F0-S006",
+     "position": [
+      48.931,
+      50.032
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "resplan-14509-F0-S005"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start: position is outside the space polygon"
+   },
+   "response": null,
+   "elapsed_ms": 0.1,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 136,
+   "case_seed": 307032140,
+   "building": "osm-way360544293",
+   "family": "osm",
+   "category": "invalid",
+   "failed": [],
+   "variant": "unknown_asset",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "asset",
+     "id": "osm-way360544293-A99999"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way360544293-F1-S010"
+    }
+   },
+   "expect": "error:unknown_place",
+   "outcome": "error:unknown_place",
+   "error": {
+    "code": "unknown_place",
+    "message": "start: no asset with id 'osm-way360544293-A99999'"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 137,
+   "case_seed": 757483201,
+   "building": "osm-way27326387",
+   "family": "osm",
+   "category": "invalid",
+   "failed": [],
+   "variant": "bad_kind",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "room",
+     "id": "osm-way27326387-F0-S005"
+    },
+    "target": {
+     "kind": "space",
+     "id": "osm-way27326387-F1-S019"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start.kind must be one of space, asset, opening, point"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 138,
+   "case_seed": 2198864660,
+   "building": "proc-campus-dev-000",
+   "family": "proc-campus",
+   "category": "invalid",
+   "failed": [],
+   "variant": "closed_target_exit",
+   "scenario": {
+    "action": "close",
+    "element_id": "proc-campus-dev-000-F0-O0029",
+    "state": {
+     "revision": 5,
+     "closed": [
+      "proc-campus-dev-000-F0-O0029"
+     ],
+     "changed": true
+    }
+   },
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "space",
+     "id": "proc-campus-dev-000-F3-S013"
+    },
+    "target": {
+     "kind": "opening",
+     "id": "proc-campus-dev-000-F0-O0029"
+    }
+   },
+   "expect": "blocked",
+   "outcome": "blocked",
+   "error": null,
+   "response": {
+    "status": "blocked",
+    "length_m": null,
+    "space_path": [],
+    "element_path": [],
+    "waypoints": 0,
+    "warnings": 0,
+    "unreachable_reason": "The target door proc-campus-dev-000-F0-O0029 is closed.",
+    "diagnosis": "closed"
+   },
+   "elapsed_ms": 0.3,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  },
+  {
+   "index": 139,
+   "case_seed": 404032969,
+   "building": "proc-campus-dev-013",
+   "family": "proc-campus",
+   "category": "invalid",
+   "failed": [],
+   "variant": "point_nan",
+   "request": {
+    "mode": "official",
+    "start": {
+     "kind": "point",
+     "space_id": "proc-campus-dev-013-F1-S007",
+     "position": [
+      "nan",
+      1.0
+     ]
+    },
+    "target": {
+     "kind": "space",
+     "id": "proc-campus-dev-013-F0-S007"
+    }
+   },
+   "expect": "error:invalid_input",
+   "outcome": "error:invalid_input",
+   "error": {
+    "code": "invalid_input",
+    "message": "start.position must be [x, y] with finite numbers"
+   },
+   "response": null,
+   "elapsed_ms": 0.0,
+   "group": "blocked_or_unsupported",
+   "passed": true
+  }
+ ]
+}

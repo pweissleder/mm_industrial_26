@@ -5,7 +5,13 @@ from pydantic import ValidationError
 
 from app.api.deps import RepositoryDep, SettingsDep
 from app.api.schemas import DatasetAvailability, DatasetList, IngestionRequest, IngestionResponse
-from app.ingestion import DatasetNotFoundError, dataset_name_taken, ingest_dataset, list_datasets
+from app.ingestion import (
+    DatasetNotFoundError,
+    dataset_name_taken,
+    ingest_dataset,
+    list_datasets,
+    list_pending_datasets,
+)
 from app.ingestion.service import DATASET_NAME
 
 router = APIRouter(tags=["ingestion"])
@@ -13,7 +19,10 @@ router = APIRouter(tags=["ingestion"])
 
 @router.get("/datasets", response_model=DatasetList)
 def get_datasets(settings: SettingsDep) -> DatasetList:
-    return DatasetList(datasets=list_datasets(settings.datasets_dir))
+    return DatasetList(
+        datasets=list_datasets(settings.datasets_dir),
+        needs_reconstruction=list_pending_datasets(settings.datasets_dir),
+    )
 
 
 @router.get("/datasets/{dataset}/availability", response_model=DatasetAvailability)

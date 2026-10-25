@@ -46,6 +46,22 @@ docker compose -f compose.prod.yaml up --build -d
 
 Open http://localhost:8080 (change with `ARINAV_PORT`). Ingested buildings are still in memory, but the app re-ingests the selected dataset on load, so a restart loses nothing visible. Stop with `docker compose -f compose.prod.yaml down` (add `-v` to also delete uploads).
 
+## Deploy on Vercel
+
+`vercel.json` deploys both apps as one Vercel project with [Services](https://vercel.com/docs/services): `backend` (FastAPI, `backend/app/main.py`) and `frontend` (static Astro build). Routing mirrors the nginx setup: `/api/*` goes to the backend with the path unchanged, everything else to the frontend, all on one origin. The frontend only calls the backend from the browser, so no service bindings are needed. The Docker setup above is unaffected.
+
+Set the backend's variables (`ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, …, see `backend/.env.example`) in the Vercel project settings; `.vercelignore` keeps local `.env` files out of uploads. Leave `PUBLIC_API_BASE_URL` unset. Run everything locally the way Vercel does with `vercel dev`.
+
+Limits compared to Docker: the function's filesystem is read-only, so dataset uploads and pipeline runs that write to `data/` fail (browsing the bundled datasets works); request bodies are capped at 4.5 MB; and in-memory state (closures, chat memory, recaps) is per function instance.
+
+## Deploy on Render (free tier)
+
+`render.yaml` is a [Blueprint](https://render.com/docs/blueprint-spec) with the same split as `compose.prod.yaml`: `arinav-backend` builds `backend/Dockerfile` as a free web service, and `arinav` is a free static site of the Astro build whose `/api/*` rewrite forwards to the backend (same origin in the browser, so no CORS). In the Render dashboard choose **New → Blueprint**, pick this repository, and enter the API keys when asked.
+
+The rewrite points at `https://arinav-backend.onrender.com`. If Render gives the backend a different URL (it adds a suffix when the name is taken), update the destination in `render.yaml`.
+
+Free-tier limits: services sleep after 15 idle minutes and take about a minute to wake; there is no persistent disk, so uploads and pipeline output are lost on sleep, restart and redeploy (the bundled datasets are part of the image and always there); the instance is small (512 MB RAM, 0.1 CPU), so pipeline runs are slow.
+
 ## Run natively (each app on its own)
 
 Needs [uv](https://docs.astral.sh/uv/) (installs Python 3.11 from `backend/.python-version`) and Node.js ≥ 22.12. Use two terminals:
@@ -88,7 +104,7 @@ The frontend is **AriNav** (after Ariadne and her thread), one React island on `
 - **View** (left panel): camera presets, layer toggles, explode floors, wall height, room colours, shadows, grid.
 - **Chat** (bottom): in *Assistant* mode the Claude building assistant with push-to-talk voice (`/api/assistant`, routes drawn on the map, changes only after *Confirm*); without the assistant API it talks to the agent via `POST /api/chat` `{ message, thread_id? }` (one-node LangGraph agent with per-thread memory, returns `{ reply, thread_id }`).
 - **Assistant / Developer** (top bar): *Developer* adds manual routing (official kit 1.1.0 or precision), nearest exit, scenario closures and the kit examples — usable without any AI key. Details, start script and tests: [`docs/PHASE_A_INTEGRATION.md`](docs/PHASE_A_INTEGRATION.md). Live 3D navigation (virtual walker, spoken hints, rerouting): [`docs/PHASE_B_GUIDE.md`](docs/PHASE_B_GUIDE.md).
-- **Upload assets** (top right): creates a new location. You name it first (checked live, case-insensitively, against existing datasets), then add files; the backend stores them in `DATASETS_DIR/<dataset>/`, and a `building.json` is ingested and opened right away.
+- **Upload assets** (top right): creates a new location. You name it first (checked live, case-insensitively, against existing datasets), then add files; the backend stores them in `DATASETS_DIR/<dataset>/`, and a `building.json` is ingested and opened right away. Without one, SVG floor plans (`floor_N.svg`) plus `equipment.csv` are enough (PNG/JPG plans alone are not supported yet): the pipeline's first stage reconstructs `building.json` from them, the Low preview shows *Low n/a* until it has, and the location is named after the dataset.
 - **Two qualities** (tag next to the building name): every building first shows the **Low** preview generated in the browser. The [ingestion pipeline](#agentic-ingestion-pipeline) runs in the background when started from the *LQ only · Build HQ* chip; with *Developer → HQ model → Auto-build* switched on (off by default, because a build calls Claude when a key is set) it also starts on every upload and on opening a dataset that was never processed (a failed run is not restarted on its own). Once it has published a model, the view switches to **HQ**: the pipeline's `model.glb` with the cleaned `building.json` and room descriptions, still clickable and filterable by floor. The *3D source* toggle switches between HQ and the preview.
 - **Processing** (chip in the top bar): stage progress of the run. When the pipeline asks for a review, a dialog opens with the issues, plan previews and a note field, and answers with *Accept with warnings*, *Retry stage* or *Abort run*. Failed runs can be retried and finished ones rebuilt from the same dialog.
 
@@ -100,7 +116,7 @@ Buildings use the starter kit's format (`building.json`: floors, spaces, opening
 
 | Endpoint | What it does |
 |---|---|
-| `GET /api/datasets` | Lists ingestible datasets (subfolders of `DATASETS_DIR` that contain a `building.json`) |
+| `GET /api/datasets` | Lists ingestible datasets (subfolders of `DATASETS_DIR` that contain a `building.json`), plus `needs_reconstruction`: uploads with only SVG floor plans (`floor_N.svg` + `equipment.csv`) whose `building.json` the pipeline's `reconstruct` stage still has to build |
 | `POST /api/ingestions` `{"dataset": "proc-factory-dev-003"}` | Validates and stores that dataset; re-ingesting replaces the building |
 | `GET /api/buildings`, `GET /api/buildings/{id}` | Ingested buildings, with floors and counts |
 | `GET /api/buildings/{id}/model` | The full building (spaces, openings, connectors, assets), used for 3D rendering |

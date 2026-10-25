@@ -4,6 +4,7 @@ import {
   ApiError,
   datasetFileUrl,
   type AssistantStatus,
+  type Endpoint,
   type ConfirmResponse,
   type HealthResponse,
   type RoomGraphData,
@@ -41,10 +42,14 @@ import {
 import { GuidanceVoice, type GuidanceVoiceState } from '../../lib/guidanceVoice';
 import type { Names } from '../../lib/simulation';
 import { createSpeechPort } from '../../lib/voice';
+import { setVoicePrefs, useVoicePrefs, voiceWanted } from '../../lib/voicePrefs';
 import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import GuidancePanel from './GuidancePanel';
+import { ImmersiveBar, LookLayer, PovHud, TouchJoystick } from './ImmersiveControls';
+import { useImmersive } from './useImmersive';
+import { currentFeatures } from '../../lib/features';
 import {
   AlertIcon,
   CodeIcon,
@@ -81,8 +86,11 @@ import Sidebar, { GENERATED_SOURCE, HQ_SOURCE } from './Sidebar';
 import UploadDialog from './UploadDialog';
 import { useGuidance } from './useGuidance';
 import { useHqOutdated } from './useHqOutdated';
+import RecapCard from './RecapCard';
+import { MemoryRecorder, downloadExport, memoryApi, type MemoryRecap } from '../../lib/memory';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
+import { hqDifferences } from '../../lib/hqStale';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
 import CallWrapped from './recap/CallWrapped';
 import {
@@ -178,6 +186,10 @@ export default function AriNavApp() {
     return stored === 'developer' || stored === 'navigator' ? stored : 'user';
   });
   const [datasets, setDatasets] = useState<string[]>([]);
+  // Uploaded plan-only datasets that still need their reconstruct stage (no building.json yet).
+  const [pending, setPending] = useState<string[]>([]);
+  // No building.json yet, so no browser preview: it appears once reconstruction has passed.
+  const [lowUnavailable, setLowUnavailable] = useState(false);
   const [dataset, setDataset] = useState<string | null>(null);
   const [model, setModel] = useState<BuildingModel | null>(null);
   const [buildingId, setBuildingId] = useState<string | null>(null);
@@ -250,6 +262,7 @@ export default function AriNavApp() {
   const { reset: resetNav } = nav;
   const openDataset = useCallback(
     async (name: string, startPipeline = false) => {
+      setLowUnavailable(false);
       setDataset(name);
       setBuildingId(null);
       switchedTo.current = null;
@@ -284,7 +297,34 @@ export default function AriNavApp() {
     [notify, resetNav],
   );
 
-  const refreshDatasets = useCallback(() => api.datasets().then(setDatasets), []);
+  const reconstructOpened = useRef(false);
+  // A plan-only dataset: the pipeline reconstructs building.json first, so run it at once and
+  // open the Low model when that stage has passed.
+  const openPending = useCallback(
+    (name: string) => {
+      setDataset(name);
+      setBuildingId(null);
+      setModel(null);
+      setSelection(null);
+      setLooseGlb(null);
+      setSource(GENERATED_SOURCE);
+      setPick(null);
+      resetNav();
+      setLowUnavailable(true);
+      reconstructOpened.current = false;
+      setRunRequest({ dataset: name, nonce: Date.now() });
+      remember(LAST_DATASET, name);
+    },
+    [resetNav],
+  );
+  const refreshDatasets = useCallback(
+    () =>
+      api.datasetIndex().then(({ datasets: list, needs_reconstruction }) => {
+        setDatasets(list);
+        setPending(needs_reconstruction);
+      }),
+    [],
+  );
 
   // The browser preview shows at once; the pipeline's high-quality version replaces it
   // when ready (unless an uploaded GLB is being looked at) and stays switchable.
@@ -366,6 +406,21 @@ export default function AriNavApp() {
     wasBuilding.current = false;
   }, [run.phase, hq, source, editing, notify]);
 
+  // Reconstruction done: building.json exists now, so load the Low model (once).
+  // Only this dataset's run counts: right after opening it, `run` can still hold the previous
+  // dataset's finished run, whose reconstruct stage may have passed too.
+  const reconstructed =
+    lowUnavailable &&
+    'run' in run &&
+    run.run?.dataset === dataset &&
+    run.run.stages.reconstruct?.status === 'passed';
+  useEffect(() => {
+    if (!reconstructed || !dataset || reconstructOpened.current) return;
+    reconstructOpened.current = true;
+    void openDataset(dataset, false);
+    void refreshDatasets().catch(() => {}); // no longer pending
+  }, [reconstructed, dataset, openDataset, refreshDatasets]);
+
   // A review request opens the processing dialog once; later it waits behind the chip.
   const shownReview = useRef<string | null>(null);
   const reviewId = run.phase === 'review' ? run.run.pending_review?.review_id : undefined;
@@ -376,7 +431,9 @@ export default function AriNavApp() {
     }
   }, [reviewId]);
 
-  const showingHq = source === HQ_SOURCE && !!hq;
+  // Baked HQ furniture must not drift from the router's building: if things moved, show LQ (Q05).
+  const hqStale = useMemo(() => (hq && model ? hqDifferences(hq.building, model) : []), [hq, model]);
+  const showingHq = source === HQ_SOURCE && !!hq && hqStale.length === 0;
   // The HQ model is baked, so only closures (painted red) follow the agent's edits there.
   const hqBuilding = hq?.building;
   const modelClosed = model?.closed;
@@ -419,10 +476,15 @@ export default function AriNavApp() {
     [guideVoice, speechPort],
   );
   const voiceAvailable = !!assistant?.voice;
+  // Hints follow the chat's voice setting (on/off and speed); without voice on the server they
+  // stay silent instead of failing each time.
+  const voicePrefs = useVoicePrefs();
+  const hintsSpoken = voiceAvailable && voiceWanted(voicePrefs, mode === 'navigator');
+  useEffect(() => guideVoice.setMuted(!hintsSpoken), [guideVoice, hintsSpoken]);
+  const voiceSpeed = voicePrefs.speed ?? assistant?.tts_speed?.default;
   useEffect(() => {
-    // Without voice on the server, hints stay silent instead of failing each time.
-    if (assistant && !assistant.voice) guideVoice.setMuted(true);
-  }, [assistant, guideVoice]);
+    if (voiceSpeed !== undefined) guideVoice.setSpeed(voiceSpeed);
+  }, [guideVoice, voiceSpeed]);
   const names = useMemo<Names>(() => {
     const spaces = new Map(viewModel?.spaces.map((x) => [x.id, x.name]) ?? []);
     const floors = new Map(viewModel?.floors.map((f) => [f.id, f.name]) ?? []);
@@ -441,6 +503,8 @@ export default function AriNavApp() {
         : null,
     };
   }, [viewModel, nav.route]);
+  // Opt-in local memory (showcase profile): nothing is recorded until a session is created.
+  const recorder = useMemo(() => new MemoryRecorder(null), []);
   const guidance = useGuidance({
     buildingId,
     route: nav.route,
@@ -449,11 +513,105 @@ export default function AriNavApp() {
     settings: nav.settings,
     onRoute: nav.showRoute,
     voice: guideVoice,
+    memory: recorder,
   });
   const [guidanceHidden, setGuidanceHidden] = useState(false);
+  // ---- Night: profiles (core / immersive / showcase) and immersive navigation -------------
+  const { profile, features } = useMemo(currentFeatures, []);
+  // Walking starts where the person is: the simulated location, else the start they stated/chose.
+  const simLoc = nav.simulated?.endpoint ?? nav.start?.endpoint;
+  const immersiveLocation = useMemo(() => {
+    if (!simLoc || !viewModel) return null;
+    if (simLoc.kind === 'point') return { space_id: simLoc.space_id, position: simLoc.position };
+    if (simLoc.kind === 'space') return { space_id: simLoc.id, position: null };
+    if (simLoc.kind === 'asset') {
+      const a = viewModel.assets.find((x) => x.id === simLoc.id);
+      return a ? { space_id: a.space_id, position: null } : null;
+    }
+    const o = viewModel.openings.find((x) => x.id === simLoc.id);
+    const sid = o?.space_ids.find((x) => x !== 'outside');
+    return sid ? { space_id: sid, position: null } : null;
+  }, [simLoc, viewModel]);
+  // Walking yourself (WASD / joystick) simulates a person with a phone: a developer tool. In the
+  // user view the phone itself is the first-person screen (route walker + phone rotation).
+  const immersiveFeatures = useMemo(() => ({ ...features, game: features.game && developer }), [features, developer]);
+  const immersive = useImmersive({
+    features: immersiveFeatures,
+    model: viewModel,
+    closed: nav.state?.closed ?? [],
+    stepFree: nav.settings.step_free,
+    guidance,
+    location: immersiveLocation,
+  });
+  const navigationMode = guidance.navigating || immersive.view === 'pov' || immersive.driver === 'manual';
+  // An explicitly set start ("Set as start", developer endpoints, map pick) is where the person is
+  // now: it replaces an older location (e.g. where a walk ended) and ends a manual walk elsewhere.
+  // Each explicit choice is a new object, so setting the same start again after a walk counts too.
+  const userChoice = nav.start?.source === 'user' ? nav.start : null;
+  const userStart = userChoice?.endpoint ?? null;
+  const lastUserStart = useRef(userChoice);
+  useEffect(() => {
+    if (userChoice === lastUserStart.current) return;
+    lastUserStart.current = userChoice;
+    if (!userStart) return;
+    const room = userStart.kind === 'point' ? userStart.space_id : userStart.id;
+    const name = room ? elementLabel(room, viewModel) : 'the start';
+    nav.setSimulated({ endpoint: userStart, label: userStart.kind === 'point' ? `a point in ${name}` : name, source: 'manual' });
+    if (immersive.driver === 'manual') immersive.stopManual();
+  }, [userChoice]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // User view: a started navigation takes over from the still first-person pose (no manual walking).
+  const stopStill = immersive.stopManual;
+  useEffect(() => {
+    if (!immersiveFeatures.game && immersive.driver === 'manual' && guidance.navigating) stopStill();
+  }, [immersiveFeatures.game, immersive.driver, guidance.navigating, stopStill]);
+  const povRef = useRef(immersive.view);
+  povRef.current = immersive.view;
+  useEffect(() => {
+    if (immersive.view === 'pov') setSelection(null);
+  }, [immersive.view]);
+
+  // Session memory (showcase only, opt-in): demo sessions are labelled as synthetic.
+  const [memorySession, setMemorySession] = useState<string | null>(null);
+  const [recap, setRecap] = useState<MemoryRecap | null>(null);
+  const [recapOpen, setRecapOpen] = useState(false);
+  const [recapError, setRecapError] = useState<string | null>(null);
+  useEffect(() => recorder.setSession(memorySession), [recorder, memorySession]);
+  const startMemory = useCallback(async () => {
+    const demo = new URLSearchParams(window.location.search).get('demo') === '1';
+    try {
+      const session = await memoryApi.createSession(demo ? 'demo' : 'real');
+      setMemorySession(session.session_id);
+      setRecap(null);
+    } catch {
+      notify('Session memory is not available.');
+    }
+  }, [notify]);
+  const openRecap = useCallback(async () => {
+    if (!memorySession) return;
+    setRecapOpen(true);
+    setRecapError(null);
+    try {
+      setRecap(await memoryApi.recap(memorySession));
+    } catch {
+      setRecapError('Could not load the recap.');
+    }
+  }, [memorySession]);
+  // A confirmed destination: when a navigation actually starts.
+  const startedStatus = guidance.snapshot.status;
+  const lastStarted = useRef(startedStatus);
+  useEffect(() => {
+    const prev = lastStarted.current;
+    lastStarted.current = startedStatus;
+    const t = guidance.snapshot.route?.target;
+    if (startedStatus === 'active' && prev !== 'active' && prev !== 'paused' && prev !== 'recomputing' && t) {
+      recorder.destinationConfirmed({ name: names.target ?? 'destination', kind: t.kind, id: t.id ?? t.space_id });
+    }
+  }, [startedStatus, guidance.snapshot.route, names, recorder]);
   useEffect(() => setGuidanceHidden(false), [nav.route]);
   // While navigating, focus the floor the person is on (higher floors hidden, lower ghosted).
-  const walkerFloor = guidance.navigating ? guidance.snapshot.progress?.floor_id : undefined;
+  const walkerFloor =
+    immersive.manualPose?.floor_id ?? (guidance.navigating ? guidance.snapshot.progress?.floor_id : undefined);
   useEffect(() => {
     if (!walkerFloor) return;
     const level = viewModel?.floors.find((f) => f.id === walkerFloor)?.level;
@@ -467,11 +625,69 @@ export default function AriNavApp() {
     const timer = window.setInterval(() => void navRefresh(), 2000);
     return () => window.clearInterval(timer);
   }, [guidance.navigating, navRefresh]);
+  // Actual simulated movement is the user's position for the next question (not search, focus or
+  // preview): on arrival the real target endpoint (a door stays a door), on pause/stop the point.
+  const navStatus = guidance.snapshot.status;
+  const setSimulatedRef = useRef(nav.setSimulated);
+  setSimulatedRef.current = nav.setSimulated;
+  const lastPoseStatus = useRef(navStatus);
+  useEffect(() => {
+    const prev = lastPoseStatus.current;
+    lastPoseStatus.current = navStatus;
+    if (prev === navStatus) return;
+    const snap = guidance.snapshot;
+    const p = snap.progress;
+    const r = snap.route;
+    if (!p || !r || !['arrived', 'paused', 'stopped', 'blocked'].includes(navStatus)) return;
+    if (navStatus === 'stopped' && snap.distance_m === 0) return; // never moved
+    const t = r.target;
+    const atTarget = navStatus === 'arrived' && t;
+    const endpoint =
+      atTarget && t.kind !== 'point' && t.id
+        ? ({ kind: t.kind, id: t.id } as Endpoint)
+        : ({ kind: 'point', space_id: p.space_id ?? t?.space_id ?? '', position: p.position } as Endpoint);
+    const room = names.space(p.space_id) ?? 'the building';
+    const label = atTarget ? (names.target ?? room) : `a point in ${room}`;
+    setSimulatedRef.current({ endpoint, label, source: 'simulation' });
+  }, [navStatus, guidance.snapshot, names]);
   const wasNavigating = useRef(false);
   useEffect(() => {
-    if (wasNavigating.current && !guidance.navigating) setSettings((s) => ({ ...s, floor: 'all' }));
-    wasNavigating.current = guidance.navigating;
+    if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));
+    wasNavigating.current = navigationMode;
+  }, [navigationMode]);
+  // Starting navigation from the user profile switches to the navigator; finishing (arrived or
+  // stopped) switches back. Not remembered, and a profile picked meanwhile is left alone.
+  const autoNavigator = useRef(false);
+  const sidebarBeforeNav = useRef(false);
+  useEffect(() => {
+    if (guidance.navigating && mode === 'user') {
+      autoNavigator.current = true;
+      sidebarBeforeNav.current = sidebarOpen;
+      setMode('navigator');
+      setSidebarOpen(false);
+    } else if (!guidance.navigating && autoNavigator.current) {
+      autoNavigator.current = false;
+      setMode('user');
+      setSidebarOpen(sidebarBeforeNav.current);
+    }
+    // Only the start and end of navigation switch; the current profile is read, not tracked.
   }, [guidance.navigating]);
+
+  // Manual walking is real (simulated) movement: once the person stands still, that point is the
+  // location for the next question (not where the camera or a search pointed).
+  const manualPose = immersive.manualPose;
+  useEffect(() => {
+    if (!manualPose) return;
+    const timer = window.setTimeout(() => {
+      const room = names.space(manualPose.space_id) ?? 'the building';
+      setSimulatedRef.current({
+        endpoint: { kind: 'point', space_id: manualPose.space_id, position: manualPose.position },
+        label: `a point in ${room}`,
+        source: 'simulation',
+      });
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, [manualPose, names]);
 
   useEffect(() => {
     api
@@ -484,16 +700,21 @@ export default function AriNavApp() {
       .then(setAssistant)
       .catch(() => setAssistant(null));
     api
-      .datasets()
-      .then((list) => {
+      .datasetIndex()
+      .then(({ datasets: list, needs_reconstruction }) => {
         setDatasets(list);
+        setPending(needs_reconstruction);
         const last = recall(LAST_DATASET);
-        const first = last && list.includes(last) ? last : list[0];
-        if (first) void openDataset(first);
+        const known = last && (list.includes(last) || needs_reconstruction.includes(last));
+        const first = known ? last : list[0];
+        if (first && needs_reconstruction.includes(first)) {
+          openPending(first);
+          setLoading(false);
+        } else if (first) void openDataset(first);
         else setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [openDataset]);
+  }, [openDataset, openPending]);
 
   // User profile: the details card folds to its title row 5 s after a selection; hovering or
   // focusing it pauses the timer, and a new selection (or the chevron) unfolds it again.
@@ -606,10 +827,26 @@ export default function AriNavApp() {
     observer.observe(chat);
     return () => observer.disconnect();
   }, []);
+  // Phones: the right rail sits above the details sheet when one is open (--details-h, gap included).
+  useEffect(() => {
+    const app = appRef.current;
+    const card = app?.querySelector<HTMLElement>('.top-stack > .details');
+    if (!app) return;
+    if (!card) {
+      app.style.setProperty('--details-h', '0px');
+      return;
+    }
+    const observer = new ResizeObserver(() =>
+      app.style.setProperty('--details-h', `${card.offsetHeight + 8}px`),
+    );
+    observer.observe(card);
+    return () => observer.disconnect();
+  }, [selection, navigationMode, navigatorMode]);
 
   const changeMode = (next: AppMode) => {
     // Layout editing is a developer tool; unsaved changes keep it open until saved or discarded.
     if (next !== 'developer' && !dirtyRef.current) setEditing(false);
+    autoNavigator.current = false;
     setMode(next);
     remember(LAST_MODE, next);
     setPick(null);
@@ -634,6 +871,7 @@ export default function AriNavApp() {
       let location: SimulatedLocation = {
         endpoint: { kind: 'space', id: spaceId },
         label,
+        source: 'manual',
       };
       try {
         const resolved = await api.resolveLocation({
@@ -642,7 +880,7 @@ export default function AriNavApp() {
           space_id: spaceId,
         });
         if (resolved.status === 'resolved' && resolved.endpoint) {
-          location = { endpoint: resolved.endpoint, label };
+          location = { endpoint: resolved.endpoint, label, source: 'manual' };
         }
       } catch {
         // The room itself is a valid start; resolving only refines it.
@@ -735,7 +973,8 @@ export default function AriNavApp() {
         );
         if (levels.size > 1 && settings.floor !== 'all') setSettings((s) => ({ ...s, floor: 'all' }));
       }
-      if (ui.focus && !route) {
+      // In first person a focused room would tint the whole view; the answer card is enough there.
+      if (ui.focus && !route && povRef.current !== 'pov') {
         const sel = selectionFromFocus(ui.focus);
         focusFloorOf(sel);
         setSelection(sel);
@@ -984,6 +1223,8 @@ export default function AriNavApp() {
     if (result.ingestible) {
       await openDataset(result.dataset, true);
       if (glb) setSource(glb.name);
+    } else if (result.reconstructable) {
+      openPending(result.dataset);
     } else if (glb) {
       // A model without building.json: show it on its own.
       setDataset(null);
@@ -997,15 +1238,36 @@ export default function AriNavApp() {
   const glbUrl =
     source && source !== HQ_SOURCE && dataset ? datasetFileUrl(dataset, source) : looseGlb;
   const empty = !loading && !model && !glbUrl;
+  const allDatasets = useMemo(
+    () => [...datasets, ...pending.filter((d) => !datasets.includes(d))],
+    [datasets, pending],
+  );
 
   // The assistant also sees what the user is inspecting on the map (D2), never as their position.
+  // The person's pose and view heading (walker or manual) for "what's on my right?" questions.
+  const walkerPose = guidance.snapshot.progress;
+  const posePayload = useMemo(() => {
+    const m = immersive.manualPose;
+    const heading = immersive.viewHeading();
+    if (m) return { floor_id: m.floor_id, space_id: m.space_id, position: m.position, heading_deg: heading, source: 'simulation' };
+    if (guidance.navigating && walkerPose?.space_id)
+      return {
+        floor_id: walkerPose.floor_id,
+        space_id: walkerPose.space_id,
+        position: walkerPose.position,
+        heading_deg: heading,
+        source: 'simulation',
+      };
+    return null;
+  }, [immersive, guidance.navigating, walkerPose]);
   const chatUi = useMemo(
     () => ({
       ...nav.ui,
       inspected:
         selection && selection.kind !== 'object' ? { kind: selection.kind, id: selection.id } : null,
+      pose: posePayload,
     }),
-    [nav.ui, selection],
+    [nav.ui, selection, posePayload],
   );
   const chatSelection = useMemo(
     () =>
@@ -1029,8 +1291,9 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
+  // While navigating, the route has the room: no object details.
   const showCard =
-    !!selection && !(navigatorMode && selection.kind === 'space');
+    !!selection && !navigationMode && !(navigatorMode && selection.kind === 'space');
   const routeHandlers =
     selection && selection.kind !== 'object' && !navigatorMode
       ? developer
@@ -1082,6 +1345,8 @@ export default function AriNavApp() {
         onPreviewDone={guidance.previewDone}
         editable={editing}
         onMove={moveElement}
+        look={features.pov ? immersive.look : null}
+        split={developer && isWide && immersive.view === 'pov'}
       />
 
       <header className="topbar card">
@@ -1099,10 +1364,17 @@ export default function AriNavApp() {
             {model.building.name}
           </span>
         )}
-        {model && !glbUrl && !navigatorMode && (
-          <HqPill state={run} showingHq={showingHq} onOpen={() => setPipelineOpen(true)} />
+        {(model || lowUnavailable) && !glbUrl && !navigatorMode && (
+          <HqPill
+            state={run}
+            showingHq={showingHq}
+            lowUnavailable={lowUnavailable}
+            stale={hqStale}
+            onOpen={() => setPipelineOpen(true)}
+          />
         )}
-        {model && !glbUrl && !navigatorMode && hq && hqOutdated && (
+        {/* Moved things already mark the HQ pill (hqStale); this covers the rest, e.g. doors. */}
+        {model && !glbUrl && !navigatorMode && hq && hqOutdated && hqStale.length === 0 && (
           <span
             className="hq-outdated"
             role="status"
@@ -1170,12 +1442,15 @@ export default function AriNavApp() {
       <div className="scrim" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
       <div className="sidebar-slot" inert={!sidebarOpen}>
         <Sidebar
-          datasets={datasets}
+          datasets={allDatasets}
+          pending={pending}
           dataset={dataset}
           onDataset={(d) => {
             if (dirty && !window.confirm('Discard your unsaved layout changes?')) return;
-            void openDataset(d);
+            if (pending.includes(d)) openPending(d);
+            else void openDataset(d);
           }}
+          lowUnavailable={lowUnavailable}
           loading={loading}
           model={viewModel}
           summary={showingHq ? hq.location.metadata?.summary : undefined}
@@ -1215,8 +1490,23 @@ export default function AriNavApp() {
         />
       </div>
 
-      {/* Right edge: camera bar above the floor rail, pinned to the bottom (not pushed by the chat). */}
+      {/* Right edge, pinned to the bottom (phones: above the chat or the details sheet): the
+          Overview / First person switch, the camera bar and the floor rail. */}
       <div className="right-rail" ref={railRef}>
+        {(features.pov || features.game) && model && (
+          <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
+            {features.memory &&
+              (memorySession ? (
+                <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
+                  Session recap
+                </button>
+              ) : (
+                <button className="chip" onClick={() => void startMemory()} title="Remember this session locally (opt-in)">
+                  Remember session
+                </button>
+              ))}
+          </ImmersiveBar>
+        )}
         <nav className={`hud card${hudCompact ? ' hud--compact' : ''}`} aria-label="Camera">
           {!hudCompact && (
             <>
@@ -1348,7 +1638,7 @@ export default function AriNavApp() {
             )}
           </DetailsCard>
         )}
-        {guidanceShown && (
+        {features.guidance && guidanceShown && (
           <GuidancePanel
             guidance={guidance}
             compact={guidanceCompact}
@@ -1360,12 +1650,13 @@ export default function AriNavApp() {
             voiceAvailable={voiceAvailable}
             onMute={() => {
               speechPort.unlock();
-              guideVoice.setMuted(!guideVoice.state.muted);
+              setVoicePrefs({ speak: !hintsSpoken });
             }}
             onRepeat={() => guideVoice.repeat()}
-            onVoiceSpeed={(v) => guideVoice.setSpeed(v)}
+            onVoiceSpeed={(v) => setVoicePrefs({ speed: v })}
             onUnlockAudio={() => speechPort.unlock()}
             onClose={() => setGuidanceHidden(true)}
+            pov={immersive.view === 'pov'}
           />
         )}
       </div>
@@ -1377,8 +1668,22 @@ export default function AriNavApp() {
             Find your way through <span className="text-accent">any building.</span>
           </h1>
           <p>
-            AriNav follows Ariadne’s thread: upload a <code>building.json</code> or a 3D model, then
-            ask the agent where things are and how to get there.
+            {lowUnavailable && run.phase === 'not_built' ? (
+              <>
+                This dataset has floor plans but no <code>building.json</code> yet. Build it from the
+                tag above: the pipeline reconstructs the building first, then the preview appears.
+              </>
+            ) : lowUnavailable ? (
+              <>
+                Reconstructing the building from its floor plans… The quick preview needs a{' '}
+                <code>building.json</code>, so it appears once this step is done.
+              </>
+            ) : (
+              <>
+                AriNav follows Ariadne’s thread: upload a <code>building.json</code>, floor plans or a 3D
+                model, then ask the agent where things are and how to get there.
+              </>
+            )}
           </p>
           <button className="btn btn--accent" onClick={() => setUploadOpen(true)}>
             <UploadIcon width={17} height={17} /> Upload a building
@@ -1387,8 +1692,32 @@ export default function AriNavApp() {
         </section>
       )}
 
+      {features.pov && <LookLayer immersive={immersive} />}
+      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
+      {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
+
+      {features.memory && recapOpen && (
+        <div className="recap-overlay">
+          <RecapCard
+            recap={recap}
+            error={recapError}
+            onClose={() => setRecapOpen(false)}
+            onNewSession={() => void startMemory().then(() => setRecapOpen(false))}
+            onExport={() => memorySession && void downloadExport(memorySession)}
+            onDelete={() => {
+              if (!memorySession) return;
+              void memoryApi.deleteSession(memorySession).finally(() => {
+                setMemorySession(null);
+                setRecap(null);
+                setRecapOpen(false);
+              });
+            }}
+          />
+        </div>
+      )}
 
       <ChatDock
+        compact={navigationMode}
         health={health}
         backendDown={backendDown}
         draft={draft}
@@ -1414,7 +1743,7 @@ export default function AriNavApp() {
 
       <UploadDialog
         open={uploadOpen}
-        datasets={datasets}
+        datasets={allDatasets}
         onClose={() => setUploadOpen(false)}
         onUploaded={(r) => void handleUploaded(r)}
       />
@@ -1432,7 +1761,13 @@ export default function AriNavApp() {
         />
       )}
 
-      <PipelineDialog open={pipelineOpen} pipeline={pipeline} onClose={() => setPipelineOpen(false)} />
+      <PipelineDialog
+        open={pipelineOpen}
+        pipeline={pipeline}
+        lowUnavailable={lowUnavailable}
+        stale={hqStale}
+        onClose={() => setPipelineOpen(false)}
+      />
 
       {toast && (
         <div className="toast" role="status">

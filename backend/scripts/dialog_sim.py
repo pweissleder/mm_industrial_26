@@ -109,6 +109,20 @@ def route_request(ui: JSON) -> JSON | None:
     return request if isinstance(request, dict) else None
 
 
+def uses_kind(value: Any, kind: str) -> bool:
+    """Any `transitions` list anywhere inside a tool output contains a transition of `kind`."""
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key == "transitions" and isinstance(item, list):
+                if any(isinstance(t, dict) and t.get("kind") == kind for t in item):
+                    return True
+            elif uses_kind(item, kind):
+                return True
+    elif isinstance(value, list):
+        return any(uses_kind(item, kind) for item in value)
+    return False
+
+
 def tool_used(tools: Iterable[JSON], name: str) -> bool:
     """`name` was called; find_nearest with and_route=true counts as plan_route (it computes and
     shows the route in the same step)."""
@@ -247,6 +261,16 @@ def check(
             verdicts[key] = value in closed
         elif key == "open_now":
             verdicts[key] = value not in closed
+        elif key == "not_uses":
+            verdicts[key] = not any(
+                t.get("kind") == value for t in (route or {}).get("transitions") or []
+            ) and not any(uses_kind(tool.get("output"), value) for tool in tools)
+        elif key == "tools_none":
+            verdicts[key] = not tools
+        elif key == "route_target_kind":
+            verdicts[key] = (
+                bool(request) and ((request or {}).get("target") or {}).get("kind") == value
+            )
         elif key == "uses":
             verdicts[key] = any(
                 t.get("kind") == value for t in (route or {}).get("transitions") or []
@@ -390,6 +414,9 @@ def run(
         state = navigation.state(building_id)  # each dialog starts with nothing closed
         if state["closed"]:
             navigation.change(building_id, "reset", None, state["revision"])
+        for element in scenario.get("setup_closed") or []:  # e.g. the only lift is closed
+            revision = navigation.state(building_id)["revision"]
+            navigation.change(building_id, "close", element, revision)
         assistant.reset(session_id)
         for index, turn in enumerate(scenario["turns"]):
             estimate = max(turn_costs, default=0.0)

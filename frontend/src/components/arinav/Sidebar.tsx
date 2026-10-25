@@ -31,6 +31,10 @@ interface Props {
   /** The pipeline's building summary, when its result is shown. */
   summary?: string;
   hqAvailable: boolean;
+  /** No building.json yet (being reconstructed from floor plans): no browser preview. */
+  lowUnavailable?: boolean;
+  /** Uploaded datasets without a building.json, listed as "(from floor plans)". */
+  pending?: string[];
   sources: string[];
   source: string;
   onSource: (source: string) => void;
@@ -108,6 +112,8 @@ function LocationTab({
   model,
   summary,
   hqAvailable,
+  lowUnavailable = false,
+  pending = [],
   sources,
   source,
   onSource,
@@ -159,7 +165,7 @@ function LocationTab({
             {!datasets.length && <option value="">No buildings yet — upload one</option>}
             {datasets.map((d) => (
               <option key={d} value={d}>
-                {d}
+                {pending.includes(d) ? `${d} (from floor plans)` : d}
               </option>
             ))}
           </select>
@@ -176,7 +182,7 @@ function LocationTab({
           </div>
         )}
         {loading && <p className="muted">Loading building…</p>}
-        {(sources.length > 0 || hqAvailable) && (
+        {(sources.length > 0 || hqAvailable || lowUnavailable) && (
           <>
             <span className="section__title" id="source-label">
               3D source
@@ -193,8 +199,13 @@ function LocationTab({
               </button>
               <button
                 className="segmented__item"
-                aria-pressed={source === GENERATED_SOURCE}
-                title="Quick preview generated in the browser"
+                aria-pressed={source === GENERATED_SOURCE && !lowUnavailable}
+                disabled={lowUnavailable}
+                title={
+                  lowUnavailable
+                    ? 'Not available – this dataset has no building.json; it is being reconstructed from the floor plans'
+                    : 'Quick preview generated in the browser'
+                }
                 onClick={() => onSource(GENERATED_SOURCE)}
               >
                 Preview
