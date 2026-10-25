@@ -225,3 +225,6 @@ __marimo__/
 # Benchmark runs: keep reports, not the per-run pipeline workspace
 benchmark_results/*/workspace/
 benchmark_results/*.log
+
+# Playwright MCP browser session data
+.playwright-mcp/
