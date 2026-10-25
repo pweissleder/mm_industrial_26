@@ -44,6 +44,9 @@ PROFILES = ("stationary", "all", "none")
 GRAPH_CACHE_SIZE = 8
 CONTEXT_CACHE_SIZE = 400
 PRECISION_MAX_SECONDS = 20.0
+# beside_asset: a person starting "at" equipment stands this far outside its footprint circle.
+BESIDE_CLEARANCE_M = 0.35
+BESIDE_CANDIDATES = 16
 DOOR = official_map.DOOR_PREFIX
 
 
@@ -567,6 +570,10 @@ class NavigationService:
                 response = self._official(entry, start, target, via, step_free, routed, unofficial)
                 if _bool(request.get("exact_start"), "exact_start"):
                     self._exact_start(entry, response, start, routed)
+                elif (
+                    _bool(request.get("beside_asset"), "beside_asset") and start["kind"] == "asset"
+                ):
+                    self._beside_asset(entry, response, start, routed)
                 if min_width is not None:
                     self._width_check(
                         entry, response, min_width, narrow, (start, target, via, step_free, closed)
@@ -650,6 +657,49 @@ class NavigationService:
                     "elements": [{"id": n["id"]} for n in needed],
                 }
         response["width_check"] = check
+
+    def _beside_asset(self, entry: _Entry, response: JSON, start: JSON, closed: list[str]) -> None:
+        """Opt-in: a route from equipment starts where a person can stand next to it, not at the
+        item's centre (the official start, often inside a machine's body): the reachable point just
+        outside its footprint with the shortest official walk to the first door. Costs unchanged."""
+        if response.get("status") != "ok":
+            return
+        asset = entry.assets[start["id"]]
+        space_id = (response.get("start") or {}).get("space_id")
+        first = next((seg for seg in response["path"] if seg.get("kind") != "connector"), None)
+        if not space_id or first is None or first.get("space_id") != space_id:
+            return
+        footprint = asset.get("footprint") or {}
+        size = [float(footprint.get(k) or 0.6) for k in ("width_m", "depth_m")]
+        radius = 0.5 * math.hypot(*size) + BESIDE_CLEARANCE_M
+        cx, cy = (float(v) for v in asset["position"][:2])
+        view = challenge._view(entry.bmap, closed)
+        best: tuple[float, list[float]] | None = None
+        # The leg ends at the door (on the wall): aim at the latest leg point inside the room.
+        for goal in first["points"][:0:-1]:
+            for k in range(BESIDE_CANDIDATES):
+                angle = 2 * math.pi * k / BESIDE_CANDIDATES
+                point = [cx + radius * math.cos(angle), cy + radius * math.sin(angle)]
+                _, length, clear = challenge._walk_points(view, space_id, point, goal)
+                if clear and (best is None or length < best[0]):
+                    best = (float(length), point)
+            if best is not None:
+                break
+        if best is None:
+            response["warnings"] = [
+                *response.get("warnings", []),
+                "beside_asset: no free standing point next to the item; the route starts at it.",
+            ]
+            return
+        self._exact_start(
+            entry, response, {"kind": "point", "space_id": space_id, "position": best[1]}, closed
+        )
+        response["start"] = {**response["start"], "kind": "asset", "id": start["id"]}
+        response["assumptions"] = [
+            *response.get("assumptions", []),
+            f"beside_asset: the person stands {BESIDE_CLEARANCE_M:.2f} m outside the item's "
+            "footprint (furniture is not an obstacle in official routes).",
+        ]
 
     def _exact_start(self, entry: _Entry, response: JSON, start: JSON, closed: list[str]) -> None:
         """Opt-in for live guidance: a point start keeps its exact position. The official graph has

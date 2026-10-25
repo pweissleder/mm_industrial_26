@@ -196,7 +196,8 @@ export function useImmersive(args: {
     } else if (location) {
       const s = w.spaces.get(location.space_id);
       if (s) {
-        const position: [number, number] = location.position ?? [
+        const given = location.position && locate(w, s.floor, location.position) === s.id ? location.position : null;
+        const position: [number, number] = given ?? [
           s.poly.reduce((a, q) => a + q[0], 0) / s.poly.length,
           s.poly.reduce((a, q) => a + q[1], 0) / s.poly.length,
         ];

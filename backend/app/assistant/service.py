@@ -812,8 +812,11 @@ class Assistant:
                 "safety_m": state["safety_m"],
                 "allow_schematic_vertical": True,
             }
-        elif Assistant.door_width(state) is not None:
-            request["min_door_width_m"] = Assistant.door_width(state)
+        else:
+            if Assistant.door_width(state) is not None:
+                request["min_door_width_m"] = Assistant.door_width(state)
+            if start.get("kind") == "asset":
+                request["beside_asset"] = True  # stand next to equipment, not in its body
         return request
 
     def _passable(self, state: JSON, target: JSON, step_free: bool) -> bool:

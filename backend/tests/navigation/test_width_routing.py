@@ -104,3 +104,26 @@ def test_position_phrases_find_rooms_and_equipment(nav: NavigationService) -> No
     assert room["id"] == P + "F0-S021"
     mills = nav.search(BID, "I'm standing next to the CNC mill", limit=5)
     assert mills and all(h["type"] == "cnc_mill" for h in mills)
+
+
+def test_equipment_start_stands_beside_the_item(nav: NavigationService) -> None:
+    query = {
+        "mode": "official",
+        "start": {"kind": "asset", "id": P + "A00001"},
+        "target": space("F0-S028"),
+    }
+    plain = nav.route(BID, query)
+    beside = nav.route(BID, query | {"beside_asset": True})
+    asset = next(a for a in nav.building(BID)["assets"] if a["id"] == P + "A00001")
+    fp = asset["footprint"]
+    half_diag = 0.5 * (fp["width_m"] ** 2 + fp["depth_m"] ** 2) ** 0.5
+
+    def off(point: list[float]) -> float:
+        return float(
+            ((point[0] - asset["position"][0]) ** 2 + (point[1] - asset["position"][1]) ** 2) ** 0.5
+        )
+
+    assert off(plain["start"]["position"]) < half_diag  # the official start is in the machine
+    assert off(beside["start"]["position"]) > half_diag  # the person stands outside it
+    assert beside["path"][0]["points"][0] == beside["start"]["position"]
+    assert beside["start"]["kind"] == "asset" and beside["length_m"] == plain["length_m"]

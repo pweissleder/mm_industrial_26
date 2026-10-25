@@ -208,6 +208,8 @@ export interface RouteRequest {
   unofficial?: { no_production_transit?: boolean; forklift?: boolean };
   /** Official only, point starts: begin at the exact point (first leg re-walked officially). */
   exact_start?: boolean;
+  /** Official only, equipment starts: start just outside the item's footprint. */
+  beside_asset?: boolean;
   /** Official only: avoid doors narrower than this (width-checked routing; doors only). */
   min_door_width_m?: number;
 }

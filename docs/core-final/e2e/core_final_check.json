@@ -9,9 +9,14 @@
      "kind": "asset",
      "id": "proc-factory-dev-003-A00001"
     },
+    "standpoint": [
+     -6.162842499436302,
+     6.5648424994363
+    ],
+    "off_centre_m": 2.3,
     "walker": [
-     -6.984408224674022,
-     8.32713219658977
+     -5.873069824176807,
+     6.37471120348715
     ],
     "floor": "proc-factory-dev-003-F0"
    }
@@ -41,7 +46,7 @@
    "pass": true,
    "detail": {
     "folded_px": 38,
-    "open_px": 221,
+    "open_px": 222,
     "view": "pov",
     "route_kept": true
    }

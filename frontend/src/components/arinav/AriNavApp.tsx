@@ -475,8 +475,18 @@ export default function AriNavApp() {
     if (simLoc.kind === 'point') return { space_id: simLoc.space_id, position: simLoc.position };
     if (simLoc.kind === 'space') return { space_id: simLoc.id, position: null };
     if (simLoc.kind === 'asset') {
+      // Beside the item, never in its body: just outside its footprint, towards the room centre
+      // (useImmersive falls back to the room centre when that point is not in the room).
       const a = viewModel.assets.find((x) => x.id === simLoc.id);
-      return a ? { space_id: a.space_id, position: null } : null;
+      if (!a) return null;
+      const room = viewModel.spaces.find((s) => s.id === a.space_id);
+      const [cx, cy] = [a.position[0], a.position[1]];
+      const [mx, my] = room
+        ? [room.polygon.reduce((t, q) => t + q[0], 0) / room.polygon.length, room.polygon.reduce((t, q) => t + q[1], 0) / room.polygon.length]
+        : [cx + 1, cy];
+      const len = Math.hypot(mx - cx, my - cy) || 1;
+      const r = Math.hypot(a.footprint?.width_m ?? 0.6, a.footprint?.depth_m ?? 0.6) / 2 + 0.35;
+      return { space_id: a.space_id, position: [cx + ((mx - cx) / len) * r, cy + ((my - cy) / len) * r] as [number, number] };
     }
     const o = viewModel.openings.find((x) => x.id === simLoc.id);
     const sid = o?.space_ids.find((x) => x !== 'outside');

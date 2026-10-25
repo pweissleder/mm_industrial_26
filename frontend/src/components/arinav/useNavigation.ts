@@ -242,6 +242,8 @@ export function useNavigation(buildingId: string | null): Navigation {
             target: to,
             step_free: settings.step_free,
             ...(!precision && settings.door_width_m && { min_door_width_m: settings.door_width_m }),
+            // A person "at" equipment stands beside it, not in its body (official costs unchanged).
+            ...(!precision && from.kind === 'asset' && { beside_asset: true }),
             ...(precision && {
               profile: settings.profile,
               width_m: settings.width_m,

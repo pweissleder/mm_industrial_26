@@ -139,13 +139,17 @@ await building(page, FACTORY);
 
 await check('P0_equipment_start_route_and_walker', async () => {
   const body = await devRoute(page, 'CNC mill H-A1-A', 'Assets', 'Kitchen 0.28', 'Rooms');
-  assert(body.start.kind === 'asset', `route start is ${JSON.stringify(body.start)}`);
+  assert(body.start.kind === 'asset' && body.beside_asset === true, `route request ${JSON.stringify(body)}`);
+  // the person stands beside the CNC mill (3.0 x 2.5 m at -7.79, 8.19), not inside it
+  const at = await page.evaluate(() => window.__arinavGuidance.snapshot().route.start.position);
+  const off = Math.hypot(at[0] + 7.791, at[1] - 8.193);
+  assert(off > Math.hypot(3, 2.5) / 2, `route starts ${off.toFixed(2)} m from the mill centre`);
   await page.getByRole('button', { name: 'Start navigation' }).click();
   await page.evaluate(() => window.__arinavGuidance.manualClock(true));
   await page.evaluate(() => window.__arinavGuidance.advance(0.2));
   const s = await g(page);
   await page.screenshot({ path: join(OUT, 'P0-equipment-start-1440.png') });
-  return { start: body.start, walker: s.pos, floor: s.floor };
+  return { start: body.start, standpoint: at, off_centre_m: +off.toFixed(2), walker: s.pos, floor: s.floor };
 });
 
 await check('P0_arrival_check_then_navigation_closes', async () => {
