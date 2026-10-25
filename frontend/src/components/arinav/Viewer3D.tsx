@@ -3,6 +3,7 @@ import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
 import { BuildingScene, type PickHit } from './scene';
 import type { PoseStore } from './useGuidance';
+import type { LookStore } from './useImmersive';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 
 export interface CameraCommand {
@@ -52,6 +53,10 @@ interface Props {
   guidanceCamera?: GuidanceCameraCommand | null;
   /** The route preview finished or was skipped. */
   onPreviewDone?: () => void;
+  /** POV camera state (per frame, outside React rendering). */
+  look?: LookStore | null;
+  /** Developer split view: POV left, building right. */
+  split?: boolean;
 }
 
 export default function Viewer3D({
@@ -72,6 +77,8 @@ export default function Viewer3D({
   walker = null,
   guidanceCamera = null,
   onPreviewDone,
+  look = null,
+  split = false,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const scene = useRef<BuildingScene | null>(null);
@@ -90,6 +97,7 @@ export default function Viewer3D({
     } catch {
       setError('3D view needs WebGL, which this browser does not provide.');
     }
+    if (import.meta.env.DEV) (window as unknown as { __arinavScene?: unknown }).__arinavScene = scene.current;
     return () => {
       scene.current?.dispose();
       scene.current = null;
@@ -132,6 +140,13 @@ export default function Viewer3D({
     current.setWalker(walker.get());
     return walker.subscribe(() => current.setWalker(walker.get()));
   }, [walker, model]);
+  useEffect(() => {
+    const current = scene.current;
+    if (!current || !look) return;
+    current.setLook(look.get());
+    return look.subscribe(() => current.setLook(look.get()));
+  }, [look]);
+  useEffect(() => scene.current?.setSplit(split), [split]);
   useEffect(() => {
     const current = scene.current;
     if (!current || !guidanceCamera) return;

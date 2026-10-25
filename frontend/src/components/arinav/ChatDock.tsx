@@ -90,6 +90,8 @@ interface Props {
   onSelect?: (sel: Selection) => void;
   /** The agent changed the building; reload it so the 3D view shows the edit. */
   onBuildingChanged?: () => void;
+  /** Navigation/POV: keep the conversation folded; show only the last exchange in one line. */
+  compact?: boolean;
 }
 
 /** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
@@ -178,6 +180,7 @@ export default function ChatDock({
   model = null,
   onSelect,
   onBuildingChanged,
+  compact = false,
 }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [input, setInput] = useState('');
@@ -186,6 +189,12 @@ export default function ChatDock({
   const [waitStep, setWaitStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(true);
+  const compactRef = useRef(compact);
+  compactRef.current = compact;
+  // Entering navigation folds the conversation so the map stays visible.
+  useEffect(() => {
+    if (compact) setOpen(false);
+  }, [compact]);
   const [speak, setSpeak] = useState(() => read(local, SPEAK_KEY) === 'true');
   const [speed, setSpeed] = useState<number | null>(() => {
     const v = Number(read(local, SPEED_KEY));
@@ -296,7 +305,7 @@ export default function ChatDock({
     busyRef.current = true;
     if (!viaVoice) push({ role: 'user', text });
     setInput('');
-    setOpen(true);
+    if (!compactRef.current) setOpen(true);
     setPending('thinking');
     setError(null);
     voice.stopPlayback();
@@ -312,7 +321,7 @@ export default function ChatDock({
   async function transcribe(wav: string) {
     if (busyRef.current) return;
     busyRef.current = true;
-    setOpen(true);
+    if (!compactRef.current) setOpen(true);
     setPending('transcribing');
     setError(null);
     let text = '';
@@ -443,6 +452,10 @@ export default function ChatDock({
 
   return (
     <section className="chat" aria-label="Chat with AriNav">
+      {compact && !open && hasLog && (
+        <ChatMini entries={entries} pending={pending} onOpen={() => setOpen(true)} />
+      )}
+
       {hasLog && open && (
         <div className="chat__panel card">
           <header className="chat__head">
@@ -563,7 +576,7 @@ export default function ChatDock({
         </div>
       )}
 
-      {!hasLog && (
+      {!hasLog && !compact && (
         <div className="chat__suggestions" aria-label="Suggestions">
           {SUGGESTIONS.map((s) => (
             <button key={s} className="chip chip--soft" onClick={() => void send(s)}>
@@ -695,5 +708,32 @@ export default function ChatDock({
         </button>
       </form>
     </section>
+  );
+}
+
+/** The last exchange in a small card (compact mode): the visible transcript and a short reply. */
+function ChatMini(props: {
+  entries: { role: string; text?: string; voice?: boolean }[];
+  pending: false | 'thinking' | 'transcribing';
+  onOpen: () => void;
+}) {
+  const lastUser = [...props.entries].reverse().find((e) => e.role === 'user');
+  const lastReply = [...props.entries].reverse().find((e) => e.role === 'assistant' || e.role === 'notice');
+  return (
+    <button type="button" className="chat__mini card" onClick={props.onOpen} aria-label="Show conversation">
+      {lastUser?.text && (
+        <span className="chat__mini-user">
+          {lastUser.voice ? '🎙 ' : ''}
+          {lastUser.text}
+        </span>
+      )}
+      <span className="chat__mini-reply">
+        {props.pending === 'transcribing'
+          ? 'Transcribing speech…'
+          : props.pending
+            ? 'Thinking…'
+            : (lastReply?.text ?? '')}
+      </span>
+    </button>
   );
 }

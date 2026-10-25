@@ -230,6 +230,28 @@ export class GuidanceSim {
     return [{ type: 'blocked', message }];
   }
 
+  /**
+   * Manual walking (the person, not the clock, moves): set the distance reached along the route,
+   * e.g. from `projectOnRoute`. Announces what is now due; arrives at the end. Starts if idle.
+   */
+  track(distance: number): SimEvent[] {
+    if (!this.route || this.route.status !== 'ok' || !(this.route.waypoints ?? []).length) return [];
+    const events: SimEvent[] = [];
+    if (this.status !== 'active') {
+      if (this.status === 'arrived') return [];
+      this.status = 'active';
+      this.message = null;
+      events.push({ type: 'start', route_revision: this.revision });
+    }
+    this.distance = Math.min(this.total, Math.max(0, distance));
+    events.push(...this.announce());
+    if (this.distance >= this.total - 1e-9) {
+      this.status = 'arrived';
+      events.push({ type: 'arrive' });
+    }
+    return events;
+  }
+
   setSpeed(factor: number): void {
     this.speed = Math.min(8, Math.max(0.25, factor));
   }
@@ -295,4 +317,33 @@ export function remainingElements(route: RouteResponse, distance: number): Set<s
     if (wp.space_id) ids.add(wp.space_id);
   }
   return ids;
+}
+
+/**
+ * Nearest point of the route to `point` on `floor`: distance along the route and the offset (m).
+ * Only walk legs on that floor count (rides keep XY); null if the route never visits the floor.
+ */
+export function projectOnRoute(
+  route: RouteResponse,
+  floor: string,
+  point: [number, number],
+): { distance_m: number; offset_m: number } | null {
+  const wps = route.waypoints ?? [];
+  let best: { distance_m: number; offset_m: number } | null = null;
+  for (let i = 0; i < wps.length; i++) {
+    const a = wps[i];
+    if (a.floor_id !== floor) continue;
+    const b = wps[i + 1];
+    const legOk = b && b.floor_id === floor && b.distance_m > a.distance_m;
+    const [ax, ay] = a.position;
+    const [bx, by] = legOk ? b.position : a.position;
+    const dx = bx - ax;
+    const dy = by - ay;
+    const len2 = dx * dx + dy * dy;
+    const t = len2 ? Math.max(0, Math.min(1, ((point[0] - ax) * dx + (point[1] - ay) * dy) / len2)) : 0;
+    const offset = Math.hypot(point[0] - (ax + t * dx), point[1] - (ay + t * dy));
+    const along = a.distance_m + (legOk ? t * (b.distance_m - a.distance_m) : 0);
+    if (!best || offset < best.offset_m - 1e-9) best = { distance_m: along, offset_m: offset };
+  }
+  return best;
 }

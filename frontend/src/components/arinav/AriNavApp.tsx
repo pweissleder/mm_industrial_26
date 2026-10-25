@@ -25,6 +25,9 @@ import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import GuidancePanel from './GuidancePanel';
+import { ImmersiveBar, LookLayer, PovHud, TouchJoystick } from './ImmersiveControls';
+import { useImmersive } from './useImmersive';
+import { currentFeatures } from '../../lib/features';
 import {
   CodeIcon,
   CubeIcon,
@@ -315,9 +318,34 @@ export default function AriNavApp() {
     voice: guideVoice,
   });
   const [guidanceHidden, setGuidanceHidden] = useState(false);
+  // ---- Night: profiles (core / immersive / showcase) and immersive navigation -------------
+  const { profile, features } = useMemo(currentFeatures, []);
+  const simLoc = nav.simulated?.endpoint;
+  const immersiveLocation = useMemo(() => {
+    if (!simLoc || !viewModel) return null;
+    if (simLoc.kind === 'point') return { space_id: simLoc.space_id, position: simLoc.position };
+    if (simLoc.kind === 'space') return { space_id: simLoc.id, position: null };
+    if (simLoc.kind === 'asset') {
+      const a = viewModel.assets.find((x) => x.id === simLoc.id);
+      return a ? { space_id: a.space_id, position: null } : null;
+    }
+    const o = viewModel.openings.find((x) => x.id === simLoc.id);
+    const sid = o?.space_ids.find((x) => x !== 'outside');
+    return sid ? { space_id: sid, position: null } : null;
+  }, [simLoc, viewModel]);
+  const immersive = useImmersive({
+    features,
+    model: viewModel,
+    closed: nav.state?.closed ?? [],
+    stepFree: nav.settings.step_free,
+    guidance,
+    location: immersiveLocation,
+  });
+  const navigationMode = guidance.navigating || immersive.view === 'pov' || immersive.driver === 'manual';
   useEffect(() => setGuidanceHidden(false), [nav.route]);
   // While navigating, focus the floor the person is on (higher floors hidden, lower ghosted).
-  const walkerFloor = guidance.navigating ? guidance.snapshot.progress?.floor_id : undefined;
+  const walkerFloor =
+    immersive.manualPose?.floor_id ?? (guidance.navigating ? guidance.snapshot.progress?.floor_id : undefined);
   useEffect(() => {
     if (!walkerFloor) return;
     const level = viewModel?.floors.find((f) => f.id === walkerFloor)?.level;
@@ -358,9 +386,25 @@ export default function AriNavApp() {
   }, [navStatus, guidance.snapshot, names]);
   const wasNavigating = useRef(false);
   useEffect(() => {
-    if (wasNavigating.current && !guidance.navigating) setSettings((s) => ({ ...s, floor: 'all' }));
-    wasNavigating.current = guidance.navigating;
-  }, [guidance.navigating]);
+    if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));
+    wasNavigating.current = navigationMode;
+  }, [navigationMode]);
+
+  // Manual walking is real (simulated) movement: once the person stands still, that point is the
+  // location for the next question (not where the camera or a search pointed).
+  const manualPose = immersive.manualPose;
+  useEffect(() => {
+    if (!manualPose) return;
+    const timer = window.setTimeout(() => {
+      const room = names.space(manualPose.space_id) ?? 'the building';
+      setSimulatedRef.current({
+        endpoint: { kind: 'point', space_id: manualPose.space_id, position: manualPose.position },
+        label: `a point in ${room}`,
+        source: 'simulation',
+      });
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, [manualPose, names]);
 
   useEffect(() => {
     api
@@ -557,13 +601,30 @@ export default function AriNavApp() {
         : null;
 
   // The assistant also sees what the user is inspecting on the map (D2), never as their position.
+  // The person's pose and view heading (walker or manual) for "what's on my right?" questions.
+  const walkerPose = guidance.snapshot.progress;
+  const posePayload = useMemo(() => {
+    const m = immersive.manualPose;
+    const heading = immersive.viewHeading();
+    if (m) return { floor_id: m.floor_id, space_id: m.space_id, position: m.position, heading_deg: heading, source: 'simulation' };
+    if (guidance.navigating && walkerPose?.space_id)
+      return {
+        floor_id: walkerPose.floor_id,
+        space_id: walkerPose.space_id,
+        position: walkerPose.position,
+        heading_deg: heading,
+        source: 'simulation',
+      };
+    return null;
+  }, [immersive, guidance.navigating, walkerPose]);
   const chatUi = useMemo(
     () => ({
       ...nav.ui,
       inspected:
         selection && selection.kind !== 'object' ? { kind: selection.kind, id: selection.id } : null,
+      pose: posePayload,
     }),
-    [nav.ui, selection],
+    [nav.ui, selection, posePayload],
   );
   const chatSelection = useMemo(
     () =>
@@ -635,6 +696,8 @@ export default function AriNavApp() {
         walker={guidance.pose}
         guidanceCamera={guidance.camera}
         onPreviewDone={guidance.previewDone}
+        look={features.pov ? immersive.look : null}
+        split={developer && isWide && immersive.view === 'pov'}
       />
 
       <header className="topbar card">
@@ -809,7 +872,14 @@ export default function AriNavApp() {
         </section>
       )}
 
-      {!guidanceHidden && (
+      {features.pov && <LookLayer immersive={immersive} />}
+      {(features.pov || features.game) && model && (
+        <ImmersiveBar immersive={immersive} guidance={guidance} features={features} onNotice={notify} />
+      )}
+      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersive.driver === 'manual'} />}
+      {features.game && <TouchJoystick immersive={immersive} />}
+
+      {features.guidance && !guidanceHidden && (
         <GuidancePanel
           guidance={guidance}
           developer={developer}
@@ -830,6 +900,7 @@ export default function AriNavApp() {
       )}
 
       <ChatDock
+        compact={navigationMode}
         health={health}
         backendDown={backendDown}
         draft={draft}

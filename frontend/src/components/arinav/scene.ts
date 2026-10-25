@@ -27,6 +27,7 @@ import {
 } from '../../lib/building';
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import { routeDrawing } from './routeGeometry';
+import { EYE_HEIGHT_M, angleDiff, wrap360 } from '../../lib/spatial';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 
 const SLAB = 0.15;
@@ -150,6 +151,18 @@ export class BuildingScene {
   private readonly labelRenderer: CSS2DRenderer;
   private readonly scene = new THREE.Scene();
   private readonly camera = new THREE.PerspectiveCamera(40, 1, 0.1, 4000);
+  // POV (night task §5): an eye-height camera at the person; the avatar lives on layer 1, which
+  // only the overview cameras see, so it never blocks the lens.
+  private readonly povCamera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);
+  private readonly miniCamera = new THREE.OrthographicCamera(-15, 15, 12, -12, 0.1, 400);
+  private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number } = {
+    view: 'overview',
+    yaw: null,
+    yawOffset: 0,
+    pitch: -8,
+  };
+  private povYaw: number | null = null;
+  private split = false;
   private readonly controls: OrbitControls;
   private readonly sun = new THREE.DirectionalLight('#ffffff', 1.5);
   private readonly root = new THREE.Group();
@@ -289,6 +302,8 @@ export class BuildingScene {
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(this.renderer.domElement);
 
+    this.camera.layers.enable(1);
+    this.miniCamera.layers.enable(1);
     this.labelRenderer = new CSS2DRenderer();
     this.labelRenderer.domElement.className = 'viewer__labels';
     container.appendChild(this.labelRenderer.domElement);
@@ -439,6 +454,22 @@ export class BuildingScene {
   }
 
   /** Elements the assistant points at (yellow). */
+  /** POV camera state (per frame from useImmersive); overview keeps the orbit camera. */
+  setLook(look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number }) {
+    const entering = look.view === 'pov' && this.look.view !== 'pov';
+    this.look = look;
+    if (entering) this.povYaw = null;
+    this.controls.enabled = look.view !== 'pov';
+    this.labelRenderer.domElement.style.display = look.view === 'pov' ? 'none' : '';
+    this.needsRender = true;
+  }
+
+  /** Developer split view: POV left, whole building right (same pose). */
+  setSplit(on: boolean) {
+    this.split = on;
+    this.needsRender = true;
+  }
+
   /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
   setWalker(pose: WalkerPose | null) {
     this.walkerPose = pose;
@@ -579,6 +610,7 @@ export class BuildingScene {
     ring.rotation.x = -Math.PI / 2;
     ring.position.y = 0.03;
     for (const m of [body, head, arrow, ring]) {
+      m.layers.set(1);
       m.renderOrder = 13;
       m.raycast = () => {};
       this.walkerGroup.add(m);
@@ -1476,6 +1508,76 @@ export class BuildingScene {
     this.needsRender = true;
   }
 
+  /** POV frame: eye-height view of the person, plus the overview as a minimap or split half. */
+  private renderPov() {
+    const pose = this.walkerPose;
+    if (!pose) return;
+    const { clientWidth: w, clientHeight: h } = this.container;
+    if (!w || !h) return;
+    const target = wrap360(this.look.yaw ?? pose.headingDeg + this.look.yawOffset);
+    // Calm camera: turn smoothly towards the wanted heading (no head-bob).
+    this.povYaw = this.povYaw === null ? target : wrap360(this.povYaw + angleDiff(this.povYaw, target) * 0.18);
+    const base = this.walkerPoint(pose);
+    const eye = base.clone().setY(base.y - 0.02 + EYE_HEIGHT_M);
+    const yaw = THREE.MathUtils.degToRad(this.povYaw);
+    const pitch = THREE.MathUtils.degToRad(this.look.pitch);
+    const dir = new THREE.Vector3(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.sin(yaw) * Math.cos(pitch));
+    this.povCamera.position.copy(eye);
+    this.povCamera.lookAt(eye.clone().add(dir));
+    const r = this.renderer;
+    const povW = this.split ? Math.floor(w / 2) : w;
+    this.povCamera.aspect = povW / h;
+    this.povCamera.updateProjectionMatrix();
+    r.setScissorTest(true);
+    r.setViewport(0, 0, povW, h);
+    r.setScissor(0, 0, povW, h);
+    r.render(this.scene, this.povCamera);
+    if (this.split) {
+      // Right half: the whole building from the orbit camera, with the person and the route.
+      const half = w - povW;
+      const aspect = this.camera.aspect;
+      this.camera.aspect = half / h;
+      this.camera.clearViewOffset();
+      this.camera.updateProjectionMatrix();
+      r.setViewport(povW, 0, half, h);
+      r.setScissor(povW, 0, half, h);
+      r.render(this.scene, this.camera);
+      this.camera.aspect = aspect;
+      this.resizeCameraOnly();
+    } else {
+      // Minimap (top-down, north up, centred on the person) in the free area's top-left corner.
+      const size = Math.round(Math.min(w, h) * (w < 600 ? 0.34 : 0.26));
+      const mh = Math.round(size * 0.8);
+      const x = Math.min(this.insetLeft, w / 2) + 16;
+      const y = Math.max(8, h - mh - 160); // below the top bar and the immersive mode bar
+      this.miniCamera.left = -15;
+      this.miniCamera.right = 15;
+      this.miniCamera.top = 12;
+      this.miniCamera.bottom = -12;
+      this.miniCamera.position.set(base.x, base.y + 60, base.z);
+      this.miniCamera.up.set(0, 0, -1);
+      this.miniCamera.lookAt(base.x, base.y, base.z);
+      this.miniCamera.updateProjectionMatrix();
+      r.setViewport(x, y, size, mh);
+      r.setScissor(x, y, size, mh);
+      r.setClearColor(0xf4f6fb, 1);
+      r.clear();
+      r.render(this.scene, this.miniCamera);
+      r.setClearColor(0x000000, 0);
+    }
+    r.setScissorTest(false);
+    r.setViewport(0, 0, w, h);
+  }
+
+  private resizeCameraOnly() {
+    const { clientWidth: w, clientHeight: h } = this.container;
+    const inset = Math.min(this.insetLeft, w / 2);
+    this.camera.aspect = (w + inset) / h;
+    if (inset) this.camera.setViewOffset(w + inset, h, 0, 0, w, h);
+    else this.camera.clearViewOffset();
+    this.camera.updateProjectionMatrix();
+  }
+
   private tick = (now: number) => {
     this.stepGuidanceCamera(now);
     if (this.fly) {
@@ -1486,10 +1588,14 @@ export class BuildingScene {
       if (t >= 1) this.fly = null;
       this.needsRender = true;
     }
-    if (this.controls.update() || this.needsRender) {
+    const pov = this.look.view === 'pov' && this.walkerPose !== null;
+    if (this.controls.update() || this.needsRender || pov) {
       this.needsRender = false;
-      this.renderer.render(this.scene, this.camera);
-      this.labelRenderer.render(this.scene, this.camera);
+      if (pov) this.renderPov();
+      else {
+        this.renderer.render(this.scene, this.camera);
+        this.labelRenderer.render(this.scene, this.camera);
+      }
     }
   };
 
