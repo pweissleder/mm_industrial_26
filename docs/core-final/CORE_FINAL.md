@@ -17,6 +17,7 @@ branch up to `3694522`). No change to `main`, no merge.
 | Objects in first person | clicks went to the drag-to-look layer and the orbit camera; cards were hidden while navigating | a click/tap without dragging picks through the eye camera; walls stop the pick; equipment, doors, lifts and stairs open their card in first person |
 | View switch | full segmented control on desktop, folded only on phones | folded to the current view's icon everywhere; hover/click/tap unfolds, a choice, Escape or a click outside folds it; same state as before (no second view state) |
 | Fly-through | — | already removed from the navigation card by Pascal; no entry point left |
+| Simulated person | orange cylinder + ball scaled ×1.6 (about 2.8 m), unlit, drawn over every wall | a worker at real scale (about 1.75 m): white hard hat, orange high-visibility vest with reflective bands, dark trousers, lit like the building; legs and arms swing with the distance walked; a blue position disc and view beam on the floor stay visible and grow with camera distance; parts hidden by walls show as a soft navy silhouette (`walker-*-1440.png`, `scripts/e2e/walker_shots.mjs`) |
 | Precision router | — | works on the factory with all three profiles (9/9 routes obstacle-checked); developer labels now "Machines & fixed equipment / All obstacles / Walls only". A failed precision route is reported, never replaced silently by the official one |
 
 ## Evidence

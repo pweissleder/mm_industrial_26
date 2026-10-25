@@ -303,6 +303,10 @@ export class BuildingScene {
   private readonly routeGroup = new THREE.Group();
   // Guidance: the walker figure, camera follow and a skippable route preview.
   private readonly walkerGroup = new THREE.Group();
+  private readonly walkerHalo = new THREE.Group();
+  private readonly walkerLegs: THREE.Group[] = [];
+  private readonly walkerArms: THREE.Group[] = [];
+  private walkerPhase = 0;
   private walkerPose: WalkerPose | null = null;
   private readonly doneGroup = new THREE.Group();
   private doneDrawnAt = -1;
@@ -570,10 +574,13 @@ export class BuildingScene {
 
   /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
   setWalker(pose: WalkerPose | null) {
+    const before = this.walkerGroup.visible ? this.walkerGroup.position.clone() : null;
     this.walkerPose = pose;
     this.walkerGroup.visible = !!pose && !!this.floors.length;
     if (pose) {
       this.walkerGroup.position.copy(this.walkerPoint(pose));
+      const moved = before ? Math.hypot(before.x - this.walkerGroup.position.x, before.z - this.walkerGroup.position.z) : 0;
+      this.swingWalker(moved < 2 ? moved : 0); // a jump (ride, reroute) is not a step
       // Building frame is counter-clockwise from +x; toVec maps building +y to scene -z.
       this.walkerGroup.rotation.y = THREE.MathUtils.degToRad(pose.headingDeg);
     }
@@ -818,28 +825,91 @@ export class BuildingScene {
   }
 
   private buildWalker() {
-    // A simple, readable figure: body, head and a direction arrow; drawn on top of walls.
-    const mat = (color: string) =>
-      new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true, opacity: 0.95 });
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 1.2, 20), mat('#fb7928'));
-    body.position.y = 0.6;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 14), mat('#fb7928'));
-    head.position.y = 1.5;
-    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 16), mat('#002478'));
-    arrow.rotation.z = -Math.PI / 2; // tip along +x (the heading direction)
-    arrow.position.set(0.85, 0.15, 0);
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.8, 32), mat('#fb7928'));
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.03;
-    for (const m of [body, head, arrow, ring]) {
-      m.layers.set(1);
-      m.renderOrder = 13;
-      m.raycast = () => {};
-      this.walkerGroup.add(m);
+    // A person at real scale (about 1.75 m, facing +x): hard hat, high-visibility vest with
+    // reflective bands, dark trousers; lit like the building. Legs and arms swing with the
+    // distance walked (setWalker). Hidden parts show as a soft navy silhouette through walls.
+    // Transparent pass (opacity 1) so the silhouette below is drawn first, against the building only.
+    const lit = (color: string) => new THREE.MeshLambertMaterial({ color, transparent: true });
+    const capsule = (r: number, len: number) => new THREE.CapsuleGeometry(r, len, 6, 14);
+    const figure = new THREE.Group();
+    const add = (parent: THREE.Object3D, mesh: THREE.Mesh, x: number, y: number, z: number) => {
+      mesh.position.set(x, y, z);
+      parent.add(mesh);
+      return mesh;
+    };
+    const limb = (y: number, z: number, r: number, len: number, color: string, pivot: THREE.Group[]) => {
+      const joint = new THREE.Group();
+      joint.position.set(0, y, z);
+      add(joint, new THREE.Mesh(capsule(r, len), lit(color)), 0, -(len / 2 + r), 0);
+      figure.add(joint);
+      pivot.push(joint);
+    };
+    limb(0.9, 0.095, 0.075, 0.72, '#26324d', this.walkerLegs); // trousers
+    limb(0.9, -0.095, 0.075, 0.72, '#26324d', this.walkerLegs);
+    const torso = add(figure, new THREE.Mesh(capsule(0.17, 0.36), lit('#fb7928')), 0, 1.2, 0);
+    torso.scale.set(0.72, 1, 1);
+    for (const y of [1.1, 1.3]) {
+      const band = add(figure, new THREE.Mesh(new THREE.CylinderGeometry(0.173, 0.173, 0.035, 20), lit('#e9edf5')), 0, y, 0);
+      band.scale.set(0.72, 1, 1);
     }
-    // Readable at building scale (rooms are tens of metres across).
-    this.walkerGroup.scale.setScalar(1.6);
+    limb(1.47, 0.235, 0.055, 0.46, '#fb7928', this.walkerArms); // vest sleeves
+    limb(1.47, -0.235, 0.055, 0.46, '#fb7928', this.walkerArms);
+    add(figure, new THREE.Mesh(new THREE.SphereGeometry(0.105, 18, 14), lit('#d6a888')), 0, 1.64, 0);
+    const hat = add(
+      figure,
+      new THREE.Mesh(new THREE.SphereGeometry(0.122, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), lit('#f7f8fb')),
+      0.01,
+      1.675,
+      0,
+    );
+    hat.scale.set(1.05, 0.9, 1);
+    add(figure, new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.014, 22), lit('#f7f8fb')), 0.035, 1.675, 0);
+    // Through walls: the same shapes, drawn only where the building is in front of them (before
+    // the figure itself, so the figure never shows its own silhouette).
+    const ghost = new THREE.MeshBasicMaterial({
+      color: '#002478',
+      transparent: true,
+      opacity: 0.32,
+      depthWrite: false,
+      depthFunc: THREE.GreaterDepth,
+    });
+    const meshes: THREE.Mesh[] = [];
+    figure.traverse((o) => o instanceof THREE.Mesh && meshes.push(o));
+    for (const m of meshes) {
+      const copy = new THREE.Mesh(m.geometry, ghost);
+      copy.renderOrder = 11;
+      m.add(copy);
+    }
+    // On the floor: position disc and a view beam, always visible and grown with distance.
+    const floor = (geometry: THREE.BufferGeometry, color: string, opacity: number) => {
+      const m = new THREE.Mesh(
+        geometry,
+        new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthTest: false, depthWrite: false }),
+      );
+      m.rotation.x = -Math.PI / 2;
+      m.renderOrder = 12;
+      this.walkerHalo.add(m);
+      return m;
+    };
+    floor(new THREE.CircleGeometry(2.4, 40, -Math.PI / 6, Math.PI / 3), '#2f6bff', 0.18).position.y = 0.03;
+    floor(new THREE.CircleGeometry(0.5, 40), '#2f6bff', 0.28).position.y = 0.035;
+    floor(new THREE.RingGeometry(0.5, 0.58, 48), '#ffffff', 0.95).position.y = 0.04;
+    floor(new THREE.RingGeometry(0.58, 0.64, 48), '#2f6bff', 0.9).position.y = 0.04;
+    this.walkerGroup.add(this.walkerHalo, figure);
+    this.walkerGroup.traverse((o) => {
+      o.layers.set(1);
+      o.raycast = () => {};
+      if (o instanceof THREE.Mesh && o.renderOrder === 0) o.renderOrder = 13;
+    });
     this.walkerGroup.visible = false;
+  }
+
+  /** Legs and arms swing with the distance walked; standing still straightens them. */
+  private swingWalker(moved: number) {
+    this.walkerPhase = moved > 1e-4 ? this.walkerPhase + (moved / 0.75) * Math.PI : 0;
+    const swing = moved > 1e-4 ? Math.sin(this.walkerPhase) * 0.45 : 0;
+    this.walkerLegs.forEach((leg, i) => (leg.rotation.z = i ? -swing : swing));
+    this.walkerArms.forEach((arm, i) => (arm.rotation.z = (i ? swing : -swing) * 0.8));
   }
 
   private stepGuidanceCamera(now: number) {
@@ -859,6 +929,14 @@ export class BuildingScene {
       this.controls.target.lerp(pose.target, 0.35);
       this.needsRender = true;
       return;
+    }
+    if (this.walkerGroup.visible) {
+      // The floor disc stays readable from far away; the figure itself keeps its real size.
+      const grow = THREE.MathUtils.clamp(this.camera.position.distanceTo(this.walkerGroup.position) / 30, 1, 4);
+      if (Math.abs(this.walkerHalo.scale.x - grow) > 0.05) {
+        this.walkerHalo.scale.setScalar(grow);
+        this.needsRender = true;
+      }
     }
     if (this.follow && this.walkerPose && !this.fly) {
       const p = this.walkerPoint(this.walkerPose);
