@@ -90,7 +90,8 @@ if ($Phone) {
         Write-Host "Phone: https://$($a.IPAddress):4321  ($where; accept the certificate warning once)"
     }
 }
-Write-Host "AriNav: http://localhost:4321  (backend http://localhost:$BackendPort, mode: $mode). Ctrl+C stops both."
+$scheme = if ($Phone) { 'https' } else { 'http' }
+Write-Host "AriNav: ${scheme}://localhost:4321  (backend http://localhost:$BackendPort, mode: $mode). Ctrl+C stops both."
 try { foreach ($p in $processes) { $p.WaitForExit() } }
 finally {
     foreach ($p in $processes) {
