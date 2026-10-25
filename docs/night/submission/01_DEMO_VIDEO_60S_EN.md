@@ -15,3 +15,18 @@ Real application capture; use one supported building and a valid route. On-scree
 If POV or reroute is not ready, substitute a real working route overview/manual interaction. Do not make a pre-rendered imaginary path appear to be app execution. Speech may be edited to fit actual runtime; export and verify duration, audio, readability and labels.
 
 Optional recap caption, only from actual demo events: “Your session, at a glance.” No invented visited-room or distance counts.
+
+## Final cut (night build) — `arinav_demo_60s.mp4`
+
+Built by `scripts/media/build_videos.py` from real app recordings/screenshots; file outside Git in `HackathonTransfer/Night_2026-10-25/media/`. Narration as subtitled:
+
+- AriNav turns a building file into an indoor navigator you can talk to.
+- I say where I am and ask for a coffee. It finds the nearest machine, about twenty metres away.
+- One more question, and the official route appears, with step by step directions.
+- I start the walkthrough: a guidance card, short spoken hints, and a first person view at eye height. It is a labelled simulation, not live positioning.
+- And I have arrived.
+- Now the only lift is closed. For a wheelchair user, AriNav says honestly that there is no step free way upstairs. It never falls back to the stairs.
+- Instead it offers a step free destination on the same floor.
+- I can also walk myself, with the keyboard or a touch joystick. Walls stop me.
+- Asked 'What's on my right?', AriNav answers from the geometry around the person's position and view direction, and never claims to see through walls.
+- Grounded in the data. Accessible by default. Honest about what it knows.
