@@ -15,11 +15,14 @@ on real hardware. **EXPERIMENT/NOT BUILT** = intentionally left out.
 | Closures with confirmation, one scenario for map, router, assistant | PROVEN |
 | "What's on my right / behind me" from pose + view direction; occlusion; asks if heading unknown | PROVEN offline + live + browser scene |
 | Leak → room directly below (`room_stacked`, no water simulation) | PROVEN live |
-| Guidance card, preview fly-through (camera only), simulated walk with short spoken hints | SIMULATION (labelled "Simulated walkthrough") |
+| Guidance card, 4-phase drone fly-through (camera only), simulated walk with short spoken hints | SIMULATION (labelled "Simulated walkthrough"); fly-through phases reviewed in screenshots |
+| Turn words at doors ("Walk about 16 m, then turn left through the door into Kitchen 0.28."); left as plain text when the geometry is unclear | PROVEN (backend unit + real route) |
+| Spoken text: units spelled out for the voice ("16 metres", "about", "degrees"); labels like "Office 0.38" kept | PROVEN (unit tests); ElevenLabs TTS answered HTTP 200 on 25.10. morning |
 | First person at 1.65 m, minimap, developer split view | PROVEN render (browser screenshots) |
-| Walk yourself: WASD / arrows / drag-look, touch joystick, wall sliding, no tunnelling, rides | SIMULATION, PROVEN logic (54 + 990 cases) |
+| Walk yourself (developer mode only): WASD / arrows / drag-look, speed 1–8 m/s, touch joystick, wall sliding, no tunnelling, rides with E/Q or tap | SIMULATION, PROVEN logic (54 + 990 cases), mode separation checked in the browser |
+| An explicitly set start replaces the walked-to location; local routes and the assistant use the same start | PROVEN (unit + browser check) |
 | Off-route while walking → replan from the person, no teleport | PROVEN (browser G05) |
-| Phone rotation (permission button, calibration, truthful status) | NOT TESTED on a phone (synthetic events pass) |
+| Phone rotation (permission button, calibration, truthful status incl. "needs HTTPS"); `Start-AriNav.ps1 -Phone` serves HTTPS on the LAN | NOT TESTED on a phone (synthetic events pass) |
 | HQ showcase: 3 buildings, saved by building id, reopen without generation, explicit Rebuild, moved thing → "HQ outdated · showing LQ" | PROVEN (HQ suite 8/8) |
 | Opt-in local session memory + recap (export, delete, new session; demo sessions labelled) | PROVEN (backend tests + browser recap) |
 | Camera image localisation | NOT BUILT (budget/time; left as experiment) |
@@ -51,8 +54,10 @@ on real hardware. **EXPERIMENT/NOT BUILT** = intentionally left out.
 ## Known limits
 
 - Positions are simulated or stated; nothing is measured. Floor changes are drawn schematically.
-- ElevenLabs character quota ran out during the media build (HTTP 401 from ElevenLabs): spoken
-  hints in the app will report "Spoken hints paused" until the quota is renewed.
+- ElevenLabs: the quota ran out during the night media build; on 25.10. morning the raised key
+  answered HTTP 200 again (`scripts/windows/Check-ElevenLabs.ps1`). The key lacks the `user_read`
+  permission, so the remaining character count cannot be read through the API. When the quota is
+  used up again, the app reports "Spoken hints paused" and keeps navigating.
 - Rebuild starts from the dataset file: an asset moved only in this session keeps HQ marked
   outdated (honest, but not "fixed" by Rebuild).
 - Precision routing is not available for every data family.

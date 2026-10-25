@@ -5,13 +5,17 @@
 # Usage: powershell -File scripts/windows/Start-AriNav.ps1 [-Live] [-DatasetsDir <folder>]
 #        [-BackendPort 8000] [-Uv <path to uv.exe>] [-Profile core|immersive|showcase]
 # -Profile sets the default feature profile (URL ?profile= still overrides it).
+# -Phone serves the frontend over HTTPS on the local network (self-signed dev certificate, nothing
+#  installed) so a phone can use rotation; open https://<this PC's IP>:4321 and accept the warning.
+#  Windows may ask once whether Node may accept connections on private networks.
 # The backend runs with `uv run` when uv is found, otherwise with backend/.venv (uv sync first).
 [CmdletBinding()]
 param([switch]$Live,
       [string]$DatasetsDir = '',
       [ValidateRange(1024, 65535)][int]$BackendPort = 8000,
       [string]$Uv = '',
-      [ValidateSet('', 'core', 'immersive', 'showcase')][string]$Profile = '')
+      [ValidateSet('', 'core', 'immersive', 'showcase')][string]$Profile = '',
+      [switch]$Phone)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'KeyStore.ps1')
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -47,6 +51,7 @@ $frontend.WorkingDirectory = Join-Path $root 'frontend'
 $frontend.UseShellExecute = $false
 $frontend.Environment['BACKEND_URL'] = "http://localhost:$BackendPort"
 if ($Profile) { $frontend.Environment['PUBLIC_ARINAV_PROFILE'] = $Profile }
+if ($Phone) { $frontend.Environment['ARINAV_PHONE'] = '1' }
 
 $processes = @()
 try {
@@ -74,6 +79,17 @@ try {
 }
 $processes += [Diagnostics.Process]::Start($frontend)
 $mode = if ($Live) { 'live' } else { 'offline' }
+if ($Phone) {
+    # Adapters with a default gateway (Wi-Fi, LAN) first; virtual switches/VPNs only as a fallback.
+    $nets = @(Get-NetIPConfiguration -ErrorAction SilentlyContinue | Where-Object { $_.IPv4DefaultGateway -and $_.NetAdapter.Status -eq 'Up' })
+    $ips = if ($nets) { $nets | ForEach-Object { "$(@($_.IPv4Address)[0].IPAddress) ($($_.InterfaceAlias))" } } else {
+        (Get-NetIPAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object { $_.IPAddress -notmatch '^(127|169\.254)\.' }).IPAddress
+    }
+    foreach ($ip in $ips) {
+        $address, $alias = $ip -split ' ', 2
+        Write-Host "Phone: https://${address}:4321 $alias (same network as the phone; accept the certificate warning once)"
+    }
+}
 Write-Host "AriNav: http://localhost:4321  (backend http://localhost:$BackendPort, mode: $mode). Ctrl+C stops both."
 try { foreach ($p in $processes) { $p.WaitForExit() } }
 finally {

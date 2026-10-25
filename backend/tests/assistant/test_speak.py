@@ -111,3 +111,13 @@ def test_lru_evicts_oldest() -> None:
     cache.put(("c", 1.1), "C")
     assert cache.get(("b", 1.1)) is None
     assert cache.get(("a", 1.1)) == "A" and cache.get(("c", 1.1)) == "C"
+
+
+def test_tts_gets_units_spelled_out(client: TestClient) -> None:
+    voice = with_voice(client, FakeVoice())
+    assert voice is not None
+    response = client.post(
+        "/api/assistant/speak", json={"text": "Turn left in 21 m into Office 0.38.", "speed": 1.0}
+    )
+    assert response.status_code == 200, response.text
+    assert voice.calls == [("Turn left in 21 metres into Office 0.38.", 1.0)]

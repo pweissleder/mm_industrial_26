@@ -24,7 +24,7 @@ for (const [q, which] of [['Office 0.38','Start'],['Kitchen 0.28','Target']]) {
 await p.getByRole('button', { name: 'Compute route' }).click();
 await p.locator('.guidance').waitFor();
 await p.evaluate(() => window.__arinavGuidance.manualClock(true));
-await p.getByRole('button', { name: 'Preview route' }).click();
+await p.getByRole('button', { name: 'Fly-through' }).click();
 await p.waitForTimeout(1500);
 await p.getByRole('button', { name: /Skip preview/ }).click().catch(() => {});
 await p.getByRole('button', { name: 'Start navigation' }).click();

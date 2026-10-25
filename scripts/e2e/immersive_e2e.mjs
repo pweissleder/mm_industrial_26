@@ -108,10 +108,10 @@ await page.evaluate(() => window.__arinavGuidance.manualClock(true));
 
 await check('C10_preview_moves_only_the_camera', async () => {
   const before = await g(page);
-  await page.getByRole('button', { name: 'Preview route' }).click();
+  await page.getByRole('button', { name: 'Fly-through' }).click();
   await page.waitForTimeout(2000);
   const during = await g(page);
-  await page.getByRole('button', { name: /Skip preview|Preview route/ }).first().click();
+  await page.getByRole('button', { name: /Skip preview|Fly-through/ }).first().click();
   assert(during.d === before.d && during.status === 'idle', 'walker moved during preview');
   return { distance: during.d };
 });

@@ -43,6 +43,11 @@ const CLOSED_COLOR = '#e5484d';
 const OPEN_TYPES = new Set(['hall', 'corridor']);
 /** Height of the route line above the floor slab. */
 const ROUTE_LIFT = 0.35;
+// Route fly-through: a chase drone just above walls (2.4 m in overview) and most furniture (the
+// official route ignores furniture), looking ahead and down onto the path.
+const DRONE_HEIGHT_M = 3.4;
+const DRONE_LOOK_DOWN_M = 2.4;
+const DRONE_MPS = 9;
 const ROUTE_COLORS = { official: '#7c3aed', precision: '#004fab', vertical: '#5d6070' };
 
 /** Where a click hit the model, in building coordinates. */
@@ -88,13 +93,24 @@ export interface WalkerPose {
   distanceM?: number;
 }
 
+/** Route fly-through ("drone video"): circle the destination, pull out to the start, fly the
+ * path at drone height looking ahead, then settle on an overview of the whole route. Camera only:
+ * the person never moves. Times in ms from `start`. */
 interface Preview {
-  points: THREE.Vector3[];
-  /** Cumulative length at each point, for constant-speed travel. */
-  lengths: number[];
+  curve: THREE.CatmullRomCurve3;
+  length: number;
+  destination: THREE.Vector3;
+  overviewPos: THREE.Vector3;
+  overviewTarget: THREE.Vector3;
+  fromPos: THREE.Vector3;
+  fromTarget: THREE.Vector3;
+  orbitAngle: number;
+  /** Floor level at each curve point and the point's share of the path (0..1), so floors above
+   * the one being flown over can be hidden (their slab sits just above drone height). */
+  levels: number[];
+  shares: number[];
+  phases: { orbit: number; pull: number; fly: number; settle: number };
   start: number;
-  duration: number;
-  offset: THREE.Vector3;
   onDone?: () => void;
 }
 
@@ -274,6 +290,8 @@ export class BuildingScene {
   private route: RouteResponse | null = null;
   private model: BuildingModel | null = null;
   private glb: THREE.Object3D | null = null;
+  /** Fly-through: floors above this level are hidden (null: as the view settings say). */
+  private floorCap: number | null = null;
   private hq = false;
   /** Building shown last; switching quality of the same building keeps the camera. */
   private buildingId: string | null = null;
@@ -559,31 +577,155 @@ export class BuildingScene {
     this.frame('iso', true);
   }
 
-  /** Fly the camera along the route once (the walker does not move); `onDone` when finished. */
-  startPreview(route: RouteResponse, durationMs: number, onDone?: () => void) {
+  /** Fly-through of the route (camera only, the walker does not move); `onDone` when finished.
+   * `maxFlyMs` caps the drone part; short routes fly faster than walking, long ones up to the cap. */
+  startPreview(route: RouteResponse, maxFlyMs: number, onDone?: () => void) {
     this.cancelPreview();
     const floorView = new Map(this.floors.map((fv) => [fv.floor.id, fv]));
-    const points = (route.waypoints ?? []).map((w) => {
+    const raw = (route.waypoints ?? []).map((w) => {
       const fv = floorView.get(w.floor_id);
-      return toVec(w.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + ROUTE_LIFT);
+      return {
+        point: toVec(w.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + DRONE_HEIGHT_M),
+        level: fv?.floor.level ?? 0,
+      };
     });
+    // Drop near-duplicate points (they make the spline loop); keep the last one.
+    const kept = raw.filter((p, i) => i === raw.length - 1 || p.point.distanceTo(raw[i + 1].point) > 0.3);
+    const points = kept.map((p) => p.point);
     if (points.length < 2) {
       onDone?.();
       return;
     }
-    const lengths = [0];
-    for (let i = 1; i < points.length; i++) lengths.push(lengths[i - 1] + points[i].distanceTo(points[i - 1]));
+    const curve = new THREE.CatmullRomCurve3(points, false, 'centripetal', 0.5);
+    const length = curve.getLength();
+    const cumulative = [0];
+    for (let i = 1; i < points.length; i++) cumulative.push(cumulative[i - 1] + points[i].distanceTo(points[i - 1]));
+    const total = cumulative[cumulative.length - 1] || 1;
+    const destination = points[points.length - 1].clone().setY(points[points.length - 1].y - DRONE_HEIGHT_M + 1.2);
+    const box = new THREE.Box3().setFromPoints(points);
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3()).length();
     const dir = this.camera.position.clone().sub(this.controls.target).normalize();
-    if (dir.y < 0.55) dir.setY(0.55).normalize();
+    if (dir.y < 0.6) dir.setY(0.6).normalize();
+    const toCam = this.camera.position.clone().sub(destination);
     this.fly = null;
-    this.preview = { points, lengths, start: performance.now(), duration: durationMs, offset: dir.multiplyScalar(30), onDone };
+    this.follow = false;
+    this.controls.enabled = false;
+    this.labelRenderer.domElement.style.display = 'none';
+    this.preview = {
+      curve,
+      length,
+      destination,
+      overviewPos: center.clone().add(dir.multiplyScalar(THREE.MathUtils.clamp(size * 1.6, 30, 160))),
+      overviewTarget: center,
+      fromPos: this.camera.position.clone(),
+      fromTarget: this.controls.target.clone(),
+      orbitAngle: Math.atan2(toCam.z, toCam.x),
+      levels: kept.map((p) => p.level),
+      shares: cumulative.map((c) => c / total),
+      phases: {
+        orbit: 1800,
+        pull: 1300,
+        fly: THREE.MathUtils.clamp((length / DRONE_MPS) * 1000, 3500, Math.max(3500, maxFlyMs)),
+        settle: 1400,
+      },
+      start: performance.now(),
+      onDone,
+    };
     this.needsRender = true;
   }
 
   cancelPreview() {
     const done = this.preview?.onDone;
+    if (this.preview) {
+      this.controls.enabled = this.look.view !== 'pov';
+      this.labelRenderer.domElement.style.display = this.look.view === 'pov' ? 'none' : '';
+      this.capFloors(null);
+    }
     this.preview = null;
     done?.();
+  }
+
+  /** The floor level flown over at path share `u`: on a stair/lift leg the lower of its two ends,
+   * so the floor above stays hidden until the drone is up there. */
+  private previewLevel(pv: Preview, u: number): number {
+    let i = 0;
+    while (i < pv.shares.length - 2 && pv.shares[i + 1] <= u) i++;
+    return Math.min(pv.levels[i], pv.levels[i + 1] ?? pv.levels[i]);
+  }
+
+  /** Hide floors above `level` (null: back to the view settings), within the floor focus. */
+  private capFloors(level: number | null) {
+    if (level === this.floorCap) return;
+    this.floorCap = level;
+    const focus = this.settings.floor;
+    const shown = (lvl: number) => (focus === 'all' || lvl <= focus) && (level === null || lvl <= level);
+    for (const fv of this.floors) fv.group.visible = shown(fv.floor.level);
+    this.glb?.traverse((o) => {
+      const lvl = o.userData.floor_level;
+      if (typeof lvl === 'number') o.visible = shown(lvl);
+    });
+    this.needsRender = true;
+  }
+
+  /** Camera pose of the fly-through at `elapsed` ms (with the floor level it shows); null when it
+   * is over. */
+  private previewPose(
+    pv: Preview,
+    elapsed: number,
+  ): { pos: THREE.Vector3; target: THREE.Vector3; level: number } | null {
+    const { orbit, pull, fly, settle } = pv.phases;
+    const orbitPos = (t: number) => {
+      const a = pv.orbitAngle + t * 1.1; // a slow quarter turn around the destination
+      return pv.destination.clone().add(new THREE.Vector3(Math.cos(a) * 7, 4.5, Math.sin(a) * 7));
+    };
+    const ahead = (u: number) =>
+      pv.curve.getPointAt(Math.min(1, u + Math.min(0.3, 9 / pv.length))).add(new THREE.Vector3(0, -DRONE_LOOK_DOWN_M, 0));
+    let t = elapsed;
+    if (t < orbit) {
+      const k = t / orbit;
+      const blend = easeInOut(Math.min(1, t / 700)); // from wherever the camera was
+      return {
+        pos: pv.fromPos.clone().lerp(orbitPos(k), blend),
+        target: pv.fromTarget.clone().lerp(pv.destination, blend),
+        level: pv.levels[pv.levels.length - 1],
+      };
+    }
+    t -= orbit;
+    const startPos = pv.curve.getPointAt(0);
+    const behind = startPos.clone().sub(ahead(0)).setY(0).normalize();
+    const high = startPos.clone().add(behind.multiplyScalar(9)).add(new THREE.Vector3(0, 9, 0));
+    if (t < pull) {
+      const k = easeInOut(t / pull);
+      return {
+        pos: orbitPos(1).lerp(high, k),
+        target: pv.destination.clone().lerp(ahead(0), k),
+        level: k < 0.5 ? pv.levels[pv.levels.length - 1] : pv.levels[0],
+      };
+    }
+    t -= pull;
+    // Stop a few metres short of the destination (it is often a machine the drone would enter).
+    const end = Math.max(0.5, 1 - 6 / pv.length);
+    if (t < fly) {
+      const u = easeInOut(t / fly) * end;
+      // Dive from the high start point onto the path during the first fifth, then follow it.
+      const dive = Math.min(1, t / (fly * 0.2));
+      return {
+        pos: high.clone().lerp(pv.curve.getPointAt(u), easeInOut(dive)),
+        target: ahead(u),
+        level: this.previewLevel(pv, u),
+      };
+    }
+    t -= fly;
+    if (t < settle) {
+      const k = easeInOut(t / settle);
+      return {
+        pos: pv.curve.getPointAt(end).lerp(pv.overviewPos, k),
+        target: ahead(end).lerp(pv.overviewTarget, k),
+        level: this.previewLevel(pv, end),
+      };
+    }
+    return null;
   }
 
   get previewing() {
@@ -623,17 +765,19 @@ export class BuildingScene {
   private stepGuidanceCamera(now: number) {
     const pv = this.preview;
     if (pv) {
-      const t = Math.min(1, (now - pv.start) / pv.duration);
-      const total = pv.lengths[pv.lengths.length - 1] || 1;
-      const d = easeInOut(t) * total;
-      let i = 1;
-      while (i < pv.lengths.length - 1 && pv.lengths[i] < d) i++;
-      const span = pv.lengths[i] - pv.lengths[i - 1] || 1;
-      const p = pv.points[i - 1].clone().lerp(pv.points[i], (d - pv.lengths[i - 1]) / span);
-      this.controls.target.lerp(p, 0.2);
-      this.camera.position.lerp(this.controls.target.clone().add(pv.offset), 0.2);
+      const pose = this.previewPose(pv, now - pv.start);
+      if (!pose) {
+        this.camera.position.copy(pv.overviewPos);
+        this.controls.target.copy(pv.overviewTarget);
+        this.needsRender = true;
+        this.cancelPreview();
+        return;
+      }
+      this.capFloors(pose.level);
+      // Light smoothing keeps the drone calm without lagging behind the path.
+      this.camera.position.lerp(pose.pos, 0.35);
+      this.controls.target.lerp(pose.target, 0.35);
       this.needsRender = true;
-      if (t >= 1) this.cancelPreview();
       return;
     }
     if (this.follow && this.walkerPose && !this.fly) {
@@ -1343,6 +1487,7 @@ export class BuildingScene {
   private applySettings() {
     const s = this.settings;
     const focus = s.floor;
+    this.floorCap = null; // a running fly-through hides its floors again on the next frame
     for (const fv of this.floors) {
       const level = fv.floor.level;
       const hidden = focus !== 'all' && level > focus;

@@ -487,3 +487,12 @@
   color: var(--ink-2);
   font-size: 13px;
 }
+
+.immersive-bar__speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.immersive-bar__speed input {
+  width: 90px;
+}

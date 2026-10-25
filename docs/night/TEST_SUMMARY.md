@@ -19,6 +19,26 @@ this branch tonight; evidence files are linked. Nothing below was measured on a 
 | Full visual scenes against the LIVE app (recorded) | **3/3**: coffee → route → walk → arrival; wheelchair + closed lift → no stairs → alternative; walk yourself → "what's on my right" | `scenes/*.png`, `scenes/scenes_log.json` |
 | Session memory / recap (showcase, opt-in, demo labelled synthetic) | backend 25 tests; browser recap after preview + walk: preview not counted, 21.4 m walked | `e2e/H01-recap-1280.png` |
 
+## Follow-up 2026-10-25 morning (after the API-limit stop)
+
+Re-run on the final state of the branch against a separate offline stack (backend without any API
+key on :8010 with the kit `dev` buildings, frontend dev server on :4322; `ARINAV_URL`/`ARINAV_API`).
+No Anthropic product calls. Rows above that are not repeated here are from the night run.
+
+| Area | Result | Evidence / command |
+|---|---|---|
+| Backend unit/integration (incl. new `test_spoken.py`, `test_turn_directions.py`) | **490 passed**, 4 skipped, 3 deselected | `backend: .venv/Scripts/python -m pytest -q` |
+| Backend lint on changed files | ruff + format + mypy clean (pre-existing findings remain in untouched `navgraph_viz.py`, `buildings.py`, `nav_cases.py`) | `ruff check`, `mypy app scripts` |
+| Frontend unit | **175 passed** (17 files); `tsc` clean; `astro check` 0 errors | `frontend: npx vitest run` |
+| Browser: immersive | **15/15** (one earlier run 14/15: A02 got a transient "Search is not available"; the same search answered 200 directly; next runs green) | `e2e/immersive_e2e.json` |
+| Browser: Phase B guidance regression | **14/14** | `scripts/e2e/guidance_e2e.mjs` |
+| Fly-through phases (destination, pull-out, drone, overview), 1-floor and 2-floor route, walker stays at 0 m | reviewed in screenshots; found and fixed: drone view hidden under the slab of the floor above | `e2e/F01-flythrough-*.png` · `scripts/e2e/flythrough_shots.mjs` |
+| User vs developer first person (browser) | user: no walk button, speed, WASD help, ride prompt/chips; W does not move (0 m). developer: all present, W moves | `scripts/e2e/mode_check.mjs` |
+| Set start after walking (browser) | route starts at the walked point, panel says "where you walked"; setting the same start again replaces it and ends walking | `scripts/e2e/start_check.mjs` |
+| ElevenLabs key (safe check, key never shown) | voice 200, TTS 200 ("Walk about 16 metres, then turn left …"); subscription endpoint 401 `missing_permissions` (`user_read`) | `scripts/windows/Check-ElevenLabs.ps1` |
+
+Not re-run this morning: kit harness, seeded cases, live dialogs, Phase A and HQ browser suites.
+
 ## Render performance (measured, software GL only)
 
 | Context | Median frame | p95 | Draw calls | Triangles |

@@ -151,6 +151,14 @@ export function readRouteError(e: RouteError | null | undefined): {
 export const diagnosisIds = (d: Diagnosis | null | undefined): string[] =>
   (d?.elements ?? []).map((x) => String(x.id)).filter(Boolean);
 
+/** Where a locally computed route starts: where the person actually walked to (simulation) is newer
+ * than an earlier start (setting a start again replaces the walked location), as in `buildUiState`;
+ * otherwise the chosen start, then any other known location. */
+export function routeStart(start: EndpointChoice | null, simulated: SimulatedLocation | null): Endpoint | undefined {
+  if (simulated?.source === 'simulation') return simulated.endpoint;
+  return start?.endpoint ?? simulated?.endpoint;
+}
+
 /** The `ui` sent with a turn: explicit user choices only. */
 export function buildUiState(args: {
   buildingId: string | null;

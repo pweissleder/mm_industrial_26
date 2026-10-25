@@ -67,7 +67,7 @@ export interface ExternalPose {
   position: [number, number];
   heading_deg: number;
 }
-const PREVIEW_MS = 7000;
+const PREVIEW_MS = 9000; // cap for the drone part of the fly-through
 
 const endpointOf = (end: RouteResponse['target']): Endpoint | null => {
   if (!end) return null;

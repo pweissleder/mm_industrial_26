@@ -9,6 +9,7 @@ import type { Immersive } from './useImmersive';
 const ORIENTATION_TEXT: Record<string, string> = {
   off: 'Phone rotation',
   unsupported: 'Rotation not available',
+  insecure: 'Rotation needs HTTPS',
   denied: 'Rotation not allowed',
   waiting: 'Waiting for sensor…',
   active: 'Rotation on',
@@ -29,7 +30,15 @@ export function ImmersiveBar(props: {
     <div className="immersive-bar card" role="toolbar" aria-label="Navigation view">
       {features.pov && (
         <div className="segmented segmented--small" role="group" aria-label="Camera">
-          <button className="segmented__item" aria-pressed={!pov} onClick={() => im.setView('overview')}>
+          <button
+            className="segmented__item"
+            aria-pressed={!pov}
+            onClick={() => {
+              // user view: the still first-person pose ends with first person
+              if (!features.game && manual) im.stopManual();
+              im.setView('overview');
+            }}
+          >
             Overview
           </button>
           <button
@@ -61,6 +70,21 @@ export function ImmersiveBar(props: {
           {manual ? 'Walking yourself' : 'Walk myself'}
         </button>
       )}
+      {features.game && manual && (
+        <label className="chip immersive-bar__speed" title="Walking speed (Shift doubles it)">
+          Speed
+          <input
+            type="range"
+            min={1}
+            max={8}
+            step={0.5}
+            value={im.walkSpeed}
+            aria-label="Walking speed in metres per second"
+            onChange={(e) => im.setWalkSpeed(Number(e.target.value))}
+          />
+          <span>{im.walkSpeed.toFixed(1)} m/s</span>
+        </label>
+      )}
       {features.orientation && pov && (
         <>
           <button
@@ -77,7 +101,8 @@ export function ImmersiveBar(props: {
           )}
         </>
       )}
-      {manual &&
+      {features.game &&
+        manual &&
         im.rides.map((r) =>
           r.floors.map((f) => (
             <button
@@ -97,7 +122,8 @@ export function ImmersiveBar(props: {
   );
 }
 
-/** POV overlay: next step, relative arrow and a clear "simulated" label. */
+/** POV overlay: next step, relative arrow and a clear "simulated" label. `manualHelp`: walking
+ * yourself (developer), with key help and the stairs/lift prompt; the user view has neither. */
 export function PovHud(props: { immersive: Immersive; guidance: Guidance; manualHelp: boolean; split?: boolean }) {
   const { immersive: im, guidance: g } = props;
   if (im.view !== 'pov') return null;
@@ -123,7 +149,7 @@ export function PovHud(props: { immersive: Immersive; guidance: Guidance; manual
           </span>
         </div>
       )}
-      {im.driver === 'manual' && <RidePrompt immersive={im} />}
+      {props.manualHelp && <RidePrompt immersive={im} />}
       {props.manualHelp && <span className="pov-hud__help">WASD / arrows to walk · drag to look · E / Q stairs and lifts · Esc frees the mouse</span>}
     </div>
   );

@@ -114,7 +114,7 @@ export default function GuidancePanel(props: Props) {
               </button>
             ) : (
               <button className="btn btn--ghost btn--sm" onClick={g.preview} disabled={!g.canStart}>
-                Preview route
+                Fly-through
               </button>
             )}
           </>

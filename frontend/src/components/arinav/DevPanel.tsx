@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   api,
   type ClearanceProfile,
+  type Endpoint,
   type NavExample,
   type NavSearchResult,
   type SearchKind,
@@ -114,6 +115,8 @@ export default function DevPanel(props: Props) {
 function EndpointRow(props: {
   which: Which;
   choice: EndpointChoice | null;
+  /** Where the person walked to since: the route starts there (`routeStart`). */
+  walked?: Endpoint | null;
   model: BuildingModel | null;
   picking: boolean;
   onPick: () => void;
@@ -125,8 +128,16 @@ function EndpointRow(props: {
     <div className="endpoint">
       <span className="endpoint__title">{title}</span>
       <span className="endpoint__value">
-        {props.choice ? endpointLabel(props.choice.endpoint, props.model) : 'Not set'}
-        {props.choice?.source === 'assistant' && <span className="tag">from assistant</span>}
+        {props.walked ? (
+          <>
+            {endpointLabel(props.walked, props.model)} <span className="tag">where you walked</span>
+          </>
+        ) : (
+          <>
+            {props.choice ? endpointLabel(props.choice.endpoint, props.model) : 'Not set'}
+            {props.choice?.source === 'assistant' && <span className="tag">from assistant</span>}
+          </>
+        )}
       </span>
       <div className="endpoint__actions">
         <button
@@ -183,10 +194,11 @@ function EndpointsSection({ nav, model, buildingId, selection, picking, onPick }
   }, [buildingId, q, kind]);
 
   const fromSelection = selection ? endpointFromSelection(selection) : null;
-  const row = (which: Which, choice: EndpointChoice | null) => (
+  const row = (which: Which, choice: EndpointChoice | null, walked: Endpoint | null = null) => (
     <EndpointRow
       which={which}
       choice={choice}
+      walked={walked}
       model={model}
       picking={picking === which}
       onPick={() => onPick(picking === which ? null : which)}
@@ -198,7 +210,7 @@ function EndpointsSection({ nav, model, buildingId, selection, picking, onPick }
   return (
     <section className="section">
       <span className="section__title">Route endpoints</span>
-      {row('start', nav.start)}
+      {row('start', nav.start, nav.simulated?.source === 'simulation' ? nav.simulated.endpoint : null)}
       {row('target', nav.target)}
       <div className="search">
         <SearchIcon />

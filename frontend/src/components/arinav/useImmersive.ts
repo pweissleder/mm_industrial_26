@@ -13,7 +13,7 @@ import type { ExternalPose, Guidance } from './useGuidance';
 
 export type CameraView = 'overview' | 'pov';
 export type Driver = 'autowalk' | 'manual';
-export type OrientationStatus = 'off' | 'unsupported' | 'denied' | 'waiting' | 'active';
+export type OrientationStatus = 'off' | 'unsupported' | 'insecure' | 'denied' | 'waiting' | 'active';
 
 /** What the 3D view needs per frame for the POV camera (read outside React rendering). */
 export interface LookState {
@@ -28,7 +28,12 @@ export interface LookStore {
   subscribe(listener: () => void): () => void;
 }
 
-const WALK_MPS = 1.4;
+const WALK_MPS = 3; // default walking speed (m/s); adjustable 1-8, Shift doubles it
+const SPEED_KEY = 'arinav:walk-mps';
+const readSpeed = () => {
+  const v = typeof localStorage !== 'undefined' ? Number(localStorage.getItem(SPEED_KEY)) : NaN;
+  return Number.isFinite(v) && v >= 1 && v <= 8 ? v : WALK_MPS;
+};
 const TURN_DPS = 100;
 const LOOK_DEG_PER_PX = 0.25;
 const MAX_PITCH = 60;
@@ -87,6 +92,9 @@ export interface Immersive {
   /** Stairs/lifts usable from where the manual person stands. */
   rides: { id: string; name: string; kind: string; floors: { id: string; name: string }[]; usable: boolean; reason: string | null }[];
   rideTo: (connectorId: string, floorId: string) => void;
+  /** Keyboard/joystick walking speed in m/s (1-8, default 3; Shift doubles it). */
+  walkSpeed: number;
+  setWalkSpeed: (mps: number) => void;
   /** The next floor up/down reachable from here (stairs or lift), for E/Q and the HUD prompt. */
   rideOptions: { up: RideOption | null; down: RideOption | null };
   /** Take the stairs/lift one floor up (+1) or down (-1); false if nothing usable. */
@@ -153,8 +161,23 @@ export function useImmersive(args: {
     }
   }, []);
 
+  // Walking speed for the keyboard / joystick (remembered locally).
+  const [walkSpeed, setWalkSpeedState] = useState(readSpeed);
+  const walkSpeedRef = useRef(walkSpeed);
+  walkSpeedRef.current = walkSpeed;
+  const setWalkSpeed = useCallback((mps: number) => {
+    const v = Math.max(1, Math.min(8, mps));
+    setWalkSpeedState(v);
+    try {
+      localStorage.setItem(SPEED_KEY, String(v));
+    } catch {
+      /* private mode: not remembered */
+    }
+  }, []);
+
+  // Without `game` (user mode, phones) the pose still exists for first person and phone rotation,
+  // but nothing moves it except the route walker: the phone itself is the first-person screen.
   const startManual = useCallback((): string | null => {
-    if (!features.game) return 'Manual walking is switched off in this profile.';
     const w = latest.current.world;
     if (!w) return 'Open a building first.';
     const walker = latest.current.guidance.pose.get();
@@ -271,7 +294,7 @@ export function useImmersive(args: {
         const fwd = (k.has('w') || k.has('ArrowUp') ? 1 : 0) - (k.has('s') || k.has('ArrowDown') ? 1 : 0) + stick.current[1];
         const right = (k.has('d') ? 1 : 0) - (k.has('a') ? 1 : 0) + stick.current[0];
         if (fwd || right) {
-          const speed = WALK_MPS * (k.has('Shift') ? 2 : 1) * dt;
+          const speed = walkSpeedRef.current * (k.has('Shift') ? 2 : 1) * dt;
           const h = (p.heading * Math.PI) / 180;
           const f = Math.max(-1, Math.min(1, fwd));
           const r = Math.max(-1, Math.min(1, right));
@@ -324,6 +347,11 @@ export function useImmersive(args: {
       | undefined;
     if (!Ctor) {
       setOrientation('unsupported');
+      return;
+    }
+    // Phone browsers block motion sensors on plain http pages (iOS then denies the permission).
+    if (typeof window !== 'undefined' && window.isSecureContext === false) {
+      setOrientation('insecure');
       return;
     }
     if (typeof Ctor.requestPermission === 'function') {
@@ -477,6 +505,8 @@ export function useImmersive(args: {
     arrowDeg,
     rides,
     rideTo,
+    walkSpeed,
+    setWalkSpeed,
     rideOptions,
     rideStep,
     manualPose,

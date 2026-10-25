@@ -40,6 +40,25 @@ Core bleibt allein lauffähig (A02 geprüft), Showcase = Immersive + Sitzungs-Re
   (vollständig dekodiert, keine Schwarzbilder, Ton vorhanden, Beschleunigungen im Bild markiert).
 - **Abgabeentwürfe:** `docs/night/submission/03_ARCHITECTURE_INTEGRATION_EN.md` mit echten Werten.
 
+## Nachtrag 25.10. Vormittag (Fortsetzung nach API-Limit)
+
+Fertiggestellt und geprüft (Details `TEST_SUMMARY.md`, Abschnitt *Follow-up*):
+- **Selbst gehen nur im Developer-Modus**, Geschwindigkeit 1–8 m/s (Standard 3, Shift ×2,
+  lokal gemerkt). User-Ansicht: Ich-Perspektive ohne Gehsteuerung, ohne WASD-Hinweis und ohne
+  Treppen-Teleport (vorher noch sichtbar – behoben).
+- **Handy:** `Start-AriNav.ps1 -Phone` (HTTPS mit Wegwerf-Zertifikat im LAN), Status
+  „Rotation needs HTTPS“ auf http. Kein Test auf echtem Handy.
+- **Set start:** ersetzt die gelaufene Position (auch derselbe Start erneut); lokale Routen,
+  Sperr-Vorschau und Notausgang starten wie der Assistent an der gelaufenen Position (vorher
+  konnte die lokale Route am alten Start beginnen – behoben).
+- **Abbiegehinweise an Türen** (Backend `directions`, Frontend-Karte): links/rechts/umdrehen nur
+  bei klarer Geometrie, sonst unveränderter Text.
+- **Sprechtext:** Einheiten ausgeschrieben („16 metres“). Ein Schreibfehler des abgebrochenen
+  Laufs (Steuerzeichen statt `` im Regex) hätte Satzzeichen durch ein Steuerzeichen ersetzt – behoben,
+  Regressionstest ergänzt. ElevenLabs antwortet wieder mit HTTP 200.
+- **Fly-through** (4 Phasen): Drohnenphase lag unter der Decke des Obergeschosses – Etagen
+  oberhalb der überflogenen werden während des Flugs ausgeblendet. HQ-Rendering nicht verändert.
+
 ## BELEG
 
 `docs/night/TEST_SUMMARY.md` (alle Zahlen + Befehle), `docs/night/e2e/*.json|png`,
@@ -54,9 +73,8 @@ Core bleibt allein lauffähig (A02 geprüft), Showcase = Immersive + Sitzungs-Re
 
 ## BLOCKER
 
-- **ElevenLabs-Kontingent erschöpft** (ab ~03:30, ElevenLabs antwortet HTTP 401 bei neuen Texten):
-  Sprachhinweise in der App pausieren mit Hinweis; die letzten zwei Demo-Video-Segmente sind daher
-  ohne Sprecher, mit Texteinblendung + Untertitel. Kein Abo/keine Aufladung vorgenommen.
+- ~~ElevenLabs-Kontingent erschöpft~~ – am 25.10. vormittags wieder HTTP 200 (Limit erhöht). Die
+  in der Nacht gebauten Demo-Videos haben in den letzten zwei Segmenten weiterhin keinen Sprecher.
 
 ## Budget
 

@@ -342,8 +342,11 @@ export default function AriNavApp() {
     const sid = o?.space_ids.find((x) => x !== 'outside');
     return sid ? { space_id: sid, position: null } : null;
   }, [simLoc, viewModel]);
+  // Walking yourself (WASD / joystick) simulates a person with a phone: a developer tool. In the
+  // user view the phone itself is the first-person screen (route walker + phone rotation).
+  const immersiveFeatures = useMemo(() => ({ ...features, game: features.game && developer }), [features, developer]);
   const immersive = useImmersive({
-    features,
+    features: immersiveFeatures,
     model: viewModel,
     closed: nav.state?.closed ?? [],
     stepFree: nav.settings.step_free,
@@ -351,6 +354,33 @@ export default function AriNavApp() {
     location: immersiveLocation,
   });
   const navigationMode = guidance.navigating || immersive.view === 'pov' || immersive.driver === 'manual';
+  // An explicitly set start ("Set as start", developer endpoints, map pick) is where the person is
+  // now: it replaces an older location (e.g. where a walk ended) and ends a manual walk elsewhere.
+  // Each explicit choice is a new object, so setting the same start again after a walk counts too.
+  const userChoice = nav.start?.source === 'user' ? nav.start : null;
+  const userStart = userChoice?.endpoint ?? null;
+  const lastUserStart = useRef(userChoice);
+  useEffect(() => {
+    if (userChoice === lastUserStart.current) return;
+    lastUserStart.current = userChoice;
+    if (!userStart) return;
+    const room = userStart.kind === 'point' ? userStart.space_id : userStart.id;
+    const name = room ? elementLabel(room, viewModel) : 'the start';
+    nav.setSimulated({ endpoint: userStart, label: userStart.kind === 'point' ? `a point in ${name}` : name, source: 'manual' });
+    if (immersive.driver === 'manual') immersive.stopManual();
+  }, [userChoice]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // The route fly-through uses the overview camera.
+  const setView = immersive.setView;
+  useEffect(() => {
+    if (guidance.previewing && immersive.view === 'pov') setView('overview');
+  }, [guidance.previewing, immersive.view, setView]);
+
+  // User view: a started navigation takes over from the still first-person pose (no manual walking).
+  const stopStill = immersive.stopManual;
+  useEffect(() => {
+    if (!immersiveFeatures.game && immersive.driver === 'manual' && guidance.navigating) stopStill();
+  }, [immersiveFeatures.game, immersive.driver, guidance.navigating, stopStill]);
   const povRef = useRef(immersive.view);
   povRef.current = immersive.view;
   useEffect(() => {
@@ -927,7 +957,7 @@ export default function AriNavApp() {
 
       {features.pov && <LookLayer immersive={immersive} />}
       {(features.pov || features.game) && model && (
-        <ImmersiveBar immersive={immersive} guidance={guidance} features={features} onNotice={notify}>
+        <ImmersiveBar immersive={immersive} guidance={guidance} features={immersiveFeatures} onNotice={notify}>
           {features.memory &&
             (memorySession ? (
               <button className="chip chip--on" onClick={() => void openRecap()} title="This session is remembered locally">
@@ -940,8 +970,8 @@ export default function AriNavApp() {
             ))}
         </ImmersiveBar>
       )}
-      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
-      {features.game && <TouchJoystick immersive={immersive} />}
+      {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
+      {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
 
       {features.memory && recapOpen && (
         <div className="recap-overlay">

@@ -143,11 +143,11 @@ await manual(page);
 
 await check('01_preview_keeps_user_position', async () => {
   const before = await snap(page);
-  await page.getByRole('button', { name: 'Preview route' }).click();
+  await page.getByRole('button', { name: 'Fly-through' }).click();
   await page.waitForTimeout(2500);
   const during = await snap(page);
   await page.screenshot({ path: join(OUT, 'e2e-01-preview.png') });
-  await page.getByRole('button', { name: /Skip preview|Preview route/ }).first().click();
+  await page.getByRole('button', { name: /Skip preview|Fly-through/ }).first().click();
   const pose = await page.evaluate(() => window.__arinavGuidance.pose());
   assert(during.d === before.d && during.status === 'idle', `walker moved during preview: ${JSON.stringify(during)}`);
   assert(pose === null, 'a walker was shown before Start navigation');
