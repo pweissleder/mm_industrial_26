@@ -166,3 +166,18 @@ def test_upload_without_building_or_plans_is_neither(client: TestClient) -> None
     assert response.status_code == 201
     assert response.json()["ingestible"] is False
     assert response.json()["reconstructable"] is False
+
+
+def test_upload_of_png_plans_only_is_not_reconstructable(client: TestClient) -> None:
+    """Tracing plan images is switched off: without an SVG there is nothing to build from."""
+    response = client.post(
+        "/api/datasets/png-only/files",
+        files=[
+            ("files", ("floor_0.png", b"\x89PNG", "image/png")),
+            ("files", ("equipment.csv", b"id,name\n", "text/csv")),
+        ],
+    )
+
+    assert response.status_code == 201
+    assert response.json()["ingestible"] is False
+    assert response.json()["reconstructable"] is False

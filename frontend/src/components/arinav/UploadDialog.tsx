@@ -5,7 +5,8 @@ import { AlertIcon, CheckIcon, CloseIcon, FileIcon, UploadIcon } from './Icons';
 const ACCEPT = '.json,.glb,.gltf,.png,.jpg,.jpeg,.svg,.csv,.pdf,.txt,.md';
 const DATASET_NAME = /^[A-Za-z0-9][A-Za-z0-9_-]*$/;
 const CHECK_DELAY_MS = 300;
-const FLOOR_PLAN = /^floor_-?\d+(_plain)?\.(svg|png|jpe?g)$/i;
+// Only SVG floor plans can be reconstructed for now (PNG/JPG tracing is switched off).
+const FLOOR_PLAN = /^floor_-?\d+\.svg$/i;
 
 interface Props {
   open: boolean;
@@ -154,7 +155,7 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
 
         <p className="muted">
           Every upload creates a new location. Include a <code>building.json</code>, or floor plans
-          (<code>floor_N.svg</code> works best, .png/.jpg too) with <code>equipment.csv</code> — the
+          (<code>floor_N.svg</code>) with <code>equipment.csv</code> — the
           pipeline reconstructs the building from them. A <code>.glb</code> model can be viewed in 3D on
           its own.
         </p>
@@ -200,7 +201,7 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
                 browse
               </button>
             </p>
-            <span className="muted">building.json, .glb, floor_N.svg/.png plans, equipment.csv</span>
+            <span className="muted">building.json, .glb, floor_N.svg plans, equipment.csv</span>
             <input
               ref={picker}
               type="file"
@@ -238,7 +239,7 @@ export default function UploadDialog({ open, datasets, onClose, onUploaded }: Pr
         {nothingToBuild && (
           <span className="name-status name-status--bad">
             <AlertIcon width={14} height={14} />
-            Nothing to build from: add building.json, floor_N.svg/.png plans, or a .glb.
+            Nothing to build from: add building.json, floor_N.svg plans, or a .glb. PNG/JPG plans alone are not supported yet.
           </span>
         )}
 

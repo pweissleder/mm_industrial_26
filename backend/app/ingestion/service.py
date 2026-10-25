@@ -10,7 +10,8 @@ from app.domain.building import BuildingFile
 from app.storage import BuildingRepository
 
 DATASET_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]*$")
-PLAN_IMAGE = re.compile(r"^floor_(-?\d+)(_plain)?\.(svg|png|jpe?g)$", re.I)
+# Only SVG floor plans can be reconstructed for now; PNG/JPG tracing is switched off.
+PLAN_IMAGE = re.compile(r"^floor_(-?\d+)\.svg$", re.I)
 
 
 class DatasetNotFoundError(LookupError):

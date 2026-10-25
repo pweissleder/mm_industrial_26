@@ -1,8 +1,8 @@
 """Stage 0: rebuild building.json from floor plans when the dataset has none.
 
 Floors with a kit SVG are parsed exactly (`tools.svgplan`) and assembled with
-equipment.csv (`tools.reconstruct`). Floors with only a PNG/JPG are traced by a vision
-call into the same plan primitives (approximate). What no source holds (floor heights,
+equipment.csv (`tools.reconstruct`). A vision tracer for floors with only a PNG/JPG
+(`trace_floor`) exists but is switched off (`IMAGE_TRACING`). What no source holds (floor heights,
 room types of empty rooms, door widths) is defaulted; online, an agent looks at the plan
 images and fills those gaps. The result is written into the dataset folder as
 building.json, with `reconstruction.json` recording how, so every later stage, ingestion
@@ -50,6 +50,9 @@ from navgraph.model import Building
 BUILDING_FILE = "building.json"
 PROVENANCE_FILE = "reconstruction.json"
 REPORT_FILE = "reports/reconstruction.json"
+# Tracing PNG/JPG-only floors with `trace_floor` is kept but disconnected: too inexact for now,
+# so only SVG floors are reconstructed (uploads also count only SVGs as reconstructable).
+IMAGE_TRACING = False
 PLAN_FILE = re.compile(r"^floor_(-?\d+)(_plain)?\.(svg|png|jpe?g)$", re.I)
 
 TRACE_PROMPT = """\
@@ -307,6 +310,12 @@ def run(ctx: StageContext) -> StageReport:
     for level, found in sorted(files.items()):
         if "svg" in found:
             floors.append(parse_floor_svg(found["svg"], level))
+        elif not IMAGE_TRACING:
+            return _failed(
+                ctx,
+                f"Floor {level} has only an image ({found['image'].name}); reconstructing from "
+                "images is switched off for now. Upload floor_<level>.svg or building.json.",
+            )
         elif ctx.offline:
             return _failed(
                 ctx,

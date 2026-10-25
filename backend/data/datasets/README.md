@@ -13,7 +13,7 @@ To ingest any other kit building without copying it, point `DATASETS_DIR` at the
 
 A dataset folder may contain only floor plans plus `equipment.csv`:
 
-- `floor_<level>.svg` (best), or `floor_<level>.png` / `.jpg` (also work)
+- `floor_<level>.svg` (PNG/JPG plans alone are not enough yet)
 - `equipment.csv`
 
 The ingestion pipeline's first stage, `reconstruct`, rebuilds `building.json` from them:
@@ -21,7 +21,7 @@ The ingestion pipeline's first stage, `reconstruct`, rebuilds `building.json` fr
 - SVG floor plans (the kit's Matplotlib export) are parsed exactly: room polygons, room types from fill colour, door/opening/entrance markers, labels.
 - `equipment.csv` gives the pixel-to-metre scale and room names/types.
 - An LLM agent fills what isn't drawn: names of unlabeled rooms, floor heights, door widths.
-- Image-only floors are traced by a vision agent (approximate, needs an API key).
+- A vision agent that traces image-only floors exists (`trace_floor`) but is switched off (`IMAGE_TRACING` in `reconstructor.py`).
 
 The result is written to `building.json` in the dataset folder, plus a provenance file `reconstruction.json`. The location id is the dataset name. Re-running with `force` reconstructs again.
 

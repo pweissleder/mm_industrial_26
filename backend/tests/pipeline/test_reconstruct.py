@@ -197,7 +197,7 @@ def test_overrides_change_room_type_name_and_floor_height() -> None:
     assert plain.building.floors[0].height_m == 3.0
 
 
-# 7. vision fallback
+# 7. vision fallback (kept, but switched off by default: IMAGE_TRACING)
 
 
 def _vision_dataset(tmp_path: Path) -> Path:
@@ -256,6 +256,7 @@ def test_vision_fallback_traces_image_only_floor(
     def fake_trace(*_a: Any, **_k: Any) -> tuple[reconstructor.TracedFloor, Any]:
         return _traced(), usage
 
+    monkeypatch.setattr(reconstructor, "IMAGE_TRACING", True)
     monkeypatch.setattr(reconstructor, "run_structured", fake_trace)
     monkeypatch.setattr(
         reconstructor,
@@ -279,7 +280,27 @@ def test_vision_fallback_traces_image_only_floor(
     assert {o.kind for o in built.openings} == {"door", "entrance"}
 
 
-def test_vision_fallback_offline_fails_asking_for_api_key(tmp_path: Path) -> None:
+def test_image_only_floor_fails_while_tracing_is_switched_off(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    directory = _vision_dataset(tmp_path)
+
+    def no_trace(*_a: Any, **_k: Any) -> Any:
+        raise AssertionError("the vision tracer must not be called")
+
+    monkeypatch.setattr(reconstructor, "run_structured", no_trace)
+
+    report = reconstructor.run(_ctx(tmp_path, directory, SimpleNamespace()))
+
+    assert report.status == "failed"
+    assert "switched off" in report.summary
+    assert not (directory / "building.json").exists()
+
+
+def test_vision_fallback_offline_fails_asking_for_api_key(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(reconstructor, "IMAGE_TRACING", True)
     directory = _vision_dataset(tmp_path)
 
     report = reconstructor.run(_ctx(tmp_path, directory, None))

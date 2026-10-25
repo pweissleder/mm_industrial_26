@@ -104,10 +104,12 @@ def test_lists_plan_only_datasets_as_needing_reconstruction(
 def test_dataset_inputs(datasets_dir: Path) -> None:
     plans = datasets_dir / "plans"
     plans.mkdir()
-    (plans / "floor_-1_plain.PNG").write_bytes(b"x")
+    (plans / "floor_-1_plain.png").write_bytes(b"x")
+    assert dataset_inputs(plans) == DatasetInputs(False, False)  # images alone: not yet
+    (plans / "floor_-1.SVG").write_bytes(b"x")
 
     assert dataset_inputs(datasets_dir / DATASET) == DatasetInputs(True, False)
     assert dataset_inputs(plans) == DatasetInputs(False, True)
-    (plans / "floor_-1_plain.PNG").rename(plans / "floorplan.png")
+    (plans / "floor_-1.SVG").rename(plans / "floorplan.svg")
     assert dataset_inputs(plans) == DatasetInputs(False, False)
     assert dataset_inputs(datasets_dir / "missing") == DatasetInputs(False, False)
