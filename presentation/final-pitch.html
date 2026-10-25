@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AriNav · Talk to Your Building · Final pitch</title>
+<style>
+  :root {
+    --ink: #2b2b2b; --ink-2: #5d6070; --muted: #8f909a;
+    --navy: #002478; --blue: #004fab; --blue-50: #ebf2ff;
+    --orange: #fb7928; --orange-50: #fff1e7; --good: #12a594; --red: #e5484d; --line: #ececf0;
+    --ease: cubic-bezier(.2, .8, .2, 1);
+    font-family: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--ink);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #0e1530; overflow: hidden; }
+  .deck { position: fixed; inset: 0; display: grid; place-items: center; }
+
+  /* ---------- slide shell + transitions ---------- */
+  .slide {
+    position: absolute; width: 1280px; height: 720px; padding: 56px 72px;
+    display: flex; flex-direction: column; border-radius: 18px; overflow: hidden;
+    background:
+      radial-gradient(60% 55% at 92% 4%, rgba(132, 110, 255, 0.18), transparent 70%),
+      radial-gradient(45% 40% at 98% 92%, rgba(251, 121, 40, 0.16), transparent 70%),
+      radial-gradient(55% 50% at 20% 105%, rgba(0, 79, 171, 0.12), transparent 70%),
+      #fafafb;
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .6s var(--ease), visibility 0s linear .6s, filter .6s var(--ease);
+    filter: blur(6px);
+  }
+  .slide.active { opacity: 1; visibility: visible; pointer-events: auto; filter: none; transition: opacity .6s var(--ease), filter .6s var(--ease); }
+  .slide.dark { background: #0b1230; color: #fff; }
+
+  /* staggered entrance: add class "in" and --d (delay index) */
+  .in { opacity: 0; transform: translateY(26px) scale(.98); }
+  .slide.active .in { animation: rise .8s var(--ease) forwards; animation-delay: calc(var(--d, 0) * 120ms + 150ms); }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ---------- type ---------- */
+  .eyebrow { color: var(--orange); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; font-size: 14px; }
+  h1 { font-size: 68px; line-height: 1.02; letter-spacing: -.035em; margin: 12px 0 0; }
+  h2 { font-size: 46px; line-height: 1.05; letter-spacing: -.03em; margin: 8px 0 26px; color: var(--navy); }
+  .accent { color: var(--orange); }
+  .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 14px; position: relative; z-index: 3; }
+  .dark .foot { color: #aab6e0; }
+  .logo { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; }
+  .todo { background: #fff3cf; color: #7a5a00; border-radius: 6px; padding: 1px 6px; font-size: 12px; font-weight: 600; }
+
+  /* ---------- screenshot frames ---------- */
+  .shot { position: relative; overflow: hidden; border-radius: 16px; background: #eef1f8; box-shadow: 0 18px 50px -18px rgba(0, 36, 120, .45), 0 0 0 1px rgba(0, 36, 120, .08); }
+  .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: var(--ox, 50%) var(--oy, 50%); transform: scale(var(--z, 1)); }
+  .slide.active .shot.kb img { animation: kenburns 14s ease-out forwards; }
+  @keyframes kenburns { from { transform: scale(var(--z, 1)); } to { transform: scale(calc(var(--z, 1) * 1.12)); } }
+  .shot .cap { position: absolute; left: 14px; bottom: 14px; z-index: 2; background: rgba(11, 18, 48, .82); backdrop-filter: blur(6px); color: #fff; font-weight: 700; font-size: 17px; padding: 8px 14px; border-radius: 999px; display: inline-flex; gap: 8px; align-items: center; }
+  .shot .cap i { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); }
+
+  /* hero full-bleed */
+  .bleed { position: absolute; inset: 0; border-radius: 0; box-shadow: none; }
+  .veil { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(11, 18, 48, .94) 0%, rgba(11, 18, 48, .78) 38%, rgba(11, 18, 48, .1) 75%); }
+  .veil.bottom { background: linear-gradient(0deg, rgba(11, 18, 48, .95) 0%, rgba(11, 18, 48, .55) 45%, rgba(11, 18, 48, .05) 80%); }
+  .over { position: relative; z-index: 2; }
+
+  /* animated route line over hero */
+  .route-svg { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .route-svg path { fill: none; stroke: var(--orange); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 14 12; filter: drop-shadow(0 0 8px rgba(251, 121, 40, .8)); }
+  .slide.active .route-svg path { animation: march 1.2s linear infinite; }
+  @keyframes march { to { stroke-dashoffset: -26; } }
+  .ping { position: absolute; z-index: 1; width: 22px; height: 22px; border-radius: 50%; background: var(--orange); transform: translate(-50%, -50%); }
+  .ping::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 3px solid var(--orange); animation: ping 1.8s ease-out infinite; }
+  @keyframes ping { from { transform: scale(1); opacity: 1; } to { transform: scale(4); opacity: 0; } }
+
+  /* ---------- slide 2: four questions ---------- */
+  .quad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; flex: 1; min-height: 0; }
+  .qcard { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+  .qcard .shot { flex: 1; }
+  .tag { align-self: flex-start; font-size: 14px; font-weight: 800; letter-spacing: .1em; color: #fff; background: var(--navy); border-radius: 999px; padding: 6px 14px; }
+  .tag.o { background: var(--orange); }
+  .bubble { background: var(--navy); color: #fff; font-size: 18px; font-weight: 600; line-height: 1.3; padding: 12px 16px; border-radius: 16px 16px 4px 16px; align-self: flex-end; max-width: 100%; }
+
+  /* phone mockups (screens captured at 390×844, top bar cropped) */
+  .phones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; flex: 1; min-height: 0; justify-items: center; }
+  .pcol { display: flex; flex-direction: column; align-items: center; gap: 10px; min-height: 0; }
+  .phone { position: relative; height: 446px; aspect-ratio: 390 / 770; padding: 7px; border-radius: 34px; background: #0b1230;
+           box-shadow: 0 24px 50px -20px rgba(0, 36, 120, .55), inset 0 0 0 2px #2a3566; }
+  .phone img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: bottom; border-radius: 27px; background: #fafafb; }
+  .phone::before { content: ''; position: absolute; top: 13px; left: 50%; width: 64px; height: 7px; border-radius: 7px; background: #0b1230; transform: translateX(-50%); z-index: 1; }
+  .slide.active .pcol .phone { animation: float 6s ease-in-out infinite; animation-delay: calc(var(--d, 0) * -1.5s); }
+  @keyframes float { 50% { transform: translateY(-8px); } }
+  .pcap { font-weight: 800; font-size: 18px; color: var(--navy); text-align: center; }
+
+  /* ---------- slide 3: demo ---------- */
+  .demo { display: grid; grid-template-columns: 1fr 300px; gap: 24px; flex: 1; min-height: 0; }
+  .live { position: absolute; top: 16px; left: 16px; z-index: 2; display: inline-flex; align-items: center; gap: 8px; background: var(--red); color: #fff; font-weight: 800; letter-spacing: .1em; font-size: 14px; padding: 7px 14px; border-radius: 999px; }
+  .live::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: #fff; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .chips { display: flex; flex-direction: column; gap: 12px; justify-content: center; counter-reset: s; }
+  .chip { counter-increment: s; display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 4px 16px rgba(0, 36, 120, .08); font-weight: 700; font-size: 19px; color: var(--navy); }
+  .chip::before { content: counter(s); flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 16px; }
+  .chip.o::before { background: var(--orange); }
+  .chip span { font-size: 22px; }
+
+  /* ---------- slide 4: numbers ---------- */
+  .rings { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; margin-top: 8px; }
+  .ring { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .dial { --p: 0; width: 210px; height: 210px; border-radius: 50%; display: grid; place-items: center; position: relative;
+          background: conic-gradient(var(--c, var(--navy)) calc(var(--p) * 1%), #e4e8f3 0); }
+  .dial::before { content: ''; position: absolute; inset: 16px; border-radius: 50%; background: #fafafb; }
+  .dial b { position: relative; font-size: 46px; font-weight: 800; letter-spacing: -.03em; color: var(--navy); line-height: 1; text-align: center; }
+  .dial b small { display: block; font-size: 17px; font-weight: 700; color: var(--muted); letter-spacing: 0; margin-top: 6px; }
+  .ring .lbl { font-size: 19px; font-weight: 700; color: var(--ink-2); text-align: center; }
+  .band { margin-top: 30px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: #fff; border-radius: 999px; padding: 10px 18px; font-weight: 700; font-size: 17px; color: var(--navy); box-shadow: 0 4px 14px rgba(0, 36, 120, .08); }
+  .pill.g::before { content: '✓'; color: var(--good); font-weight: 900; }
+  .pill code { font-size: 15px; color: var(--ink-2); }
+  .src { font-size: 12px; color: var(--muted); text-align: center; margin-top: 14px; }
+
+  /* ---------- slide 5: pipeline ---------- */
+  .pipe { display: grid; grid-template-columns: 1fr 44px 1fr 44px 1fr 44px 1fr; align-items: center; height: 330px; }
+  .stage { display: flex; flex-direction: column; gap: 12px; height: 100%; }
+  .stage .shot { flex: 1; }
+  .stage .shot.white { background: #fff; }
+  .stage .shot.white img { object-fit: contain; }
+  .stage b { font-size: 20px; color: var(--navy); text-align: center; }
+  .arrow { height: 4px; border-radius: 4px; margin: 0 6px; background: linear-gradient(90deg, var(--orange) 50%, transparent 0) 0 0 / 16px 4px repeat-x; position: relative; top: -16px; }
+  .slide.active .arrow { animation: flow .6s linear infinite; }
+  @keyframes flow { to { background-position: 16px 0; } }
+  .arrow::after { content: ''; position: absolute; right: -6px; top: -6px; border: 8px solid transparent; border-left-color: var(--orange); }
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+  .tier { border-radius: 14px; padding: 16px 20px; background: #fff; box-shadow: 0 4px 14px rgba(0, 36, 120, .08); display: flex; align-items: center; gap: 14px; font-size: 18px; font-weight: 700; color: var(--navy); }
+  .tier i { flex: none; width: 14px; height: 40px; border-radius: 6px; }
+
+  /* ---------- slide 6: gallery ---------- */
+  .gallery { display: grid; grid-template-columns: 1.35fr 1fr 1fr 0.55fr; grid-template-rows: 1fr 1fr; gap: 16px; flex: 1; min-height: 0; }
+  .gallery .big { grid-row: span 2; }
+  .gallery .tall { grid-row: span 2; }
+  .gallery .shot { transition: transform .4s var(--ease); }
+  .gallery .shot:hover { transform: scale(1.02); }
+
+  /* ---------- slide 7 ---------- */
+  .big-close { font-size: 84px; line-height: 1.02; letter-spacing: -.04em; margin: 0; font-weight: 800; }
+
+  .hud { position: fixed; bottom: 14px; right: 18px; color: #aab6e0; font: 13px/1 system-ui, sans-serif; opacity: .8; }
+  .progress { position: fixed; left: 0; bottom: 0; height: 3px; background: var(--orange); transition: width .5s var(--ease); }
+
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { background: #fff; overflow: visible; height: auto; }
+    .deck { position: static; display: block; }
+    .slide { position: relative; opacity: 1 !important; visibility: visible !important; filter: none !important; transform: none !important; border-radius: 0; page-break-after: always; break-after: page; }
+    .in { opacity: 1 !important; transform: none !important; animation: none !important; }
+    .hud, .progress { display: none; }
+    * { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1 · Hook (0:00–0:12) -->
+  <section class="slide dark">
+    <div class="shot bleed kb" style="--z: 1.8; --ox: 30%; --oy: 40%"><img src="img/walker.png" alt="Walker following a route in the 3D building" /></div>
+    <div class="veil"></div>
+    <svg class="route-svg" viewBox="0 0 1280 720"><path d="M1250 690 C 1120 640, 1040 560, 960 500 S 820 360, 790 290" /></svg>
+    <div class="ping" style="left: 790px; top: 290px"></div>
+    <div class="over">
+      <span class="logo in" style="--d: 0"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fb7928" stroke-width="2.2" stroke-linecap="round"><path d="M4 18c3-8 6 2 8-6s5 2 8-6"/><circle cx="4" cy="18" r="1.6" fill="#fb7928"/><circle cx="20" cy="6" r="1.6" fill="#fb7928"/></svg>AriNav</span>
+      <div style="margin-top: 120px; max-width: 640px">
+        <div class="eyebrow in" style="--d: 1">Industrial Agents Hackathon 2026 · Track 01</div>
+        <h1 class="in" style="--d: 2">Where is the<br />3D printer?</h1>
+        <h1 class="in accent" style="--d: 4; font-size: 44px; margin-top: 18px">Just ask the building.</h1>
+      </div>
+    </div>
+    <div class="foot"><span>Pascal Weissleder · Alexander Schumov · Noah Seifert · Deyan Mihaylov</span><span>1 / 7</span></div>
+  </section>
+
+  <!-- 2 · The four questions (0:12–0:25) -->
+  <section class="slide">
+    <h2 class="in" style="margin-bottom: 18px">Find. Route. Edit. <span class="accent">React.</span></h2>
+    <div class="phones">
+      <div class="pcol in" style="--d: 1"><span class="tag">FIND</span>
+        <div class="phone"><img src="img/phone-find.png" alt="“Where is the 3D printer?” answered with the zone and the four printers" /></div>
+        <div class="pcap">Finds all four</div></div>
+      <div class="pcol in" style="--d: 2"><span class="tag">ROUTE</span>
+        <div class="phone"><img src="img/phone-route.png" alt="Step-free route to the CNC mill drawn in 3D" /></div>
+        <div class="pcap">Step-free, via the lift</div></div>
+      <div class="pcol in" style="--d: 3"><span class="tag o">EDIT</span>
+        <div class="phone"><img src="img/phone-edit.png" alt="Closing a door waits for Confirm" /></div>
+        <div class="pcap">Waits for Confirm</div></div>
+      <div class="pcol in" style="--d: 4"><span class="tag o">REACT</span>
+        <div class="phone"><img src="img/phone-react.png" alt="Lift closed: no step-free route, stairs offered" /></div>
+        <div class="pcap">Lift closed → offers stairs</div></div>
+    </div>
+    <div class="foot"><span></span><span>2 / 7</span></div>
+  </section>
+
+  <!-- 3 · Live demo (0:25–1:40) -->
+  <section class="slide">
+    <div class="eyebrow in">Live demo · 75 s</div>
+    <h2 class="in" style="--d: 1; margin-bottom: 18px">Talk to the building</h2>
+    <div class="demo">
+      <div class="shot kb in" style="--d: 2; --z: 1.15; --ox: 40%; --oy: 45%"><img src="img/navgraph.png" alt="Factory in 3D with the routing graph and a route to the CNC mill" /><span class="live">LIVE</span><span class="cap"><i></i>Switch to the app · backup video ready</span></div>
+      <div class="chips">
+        <div class="chip in" style="--d: 3"><span>🎙</span> 3D printer?</div>
+        <div class="chip in" style="--d: 4"><span>🧭</span> CNC mill, no stairs</div>
+        <div class="chip o in" style="--d: 5"><span>⛔</span> Close the lift</div>
+        <div class="chip o in" style="--d: 6"><span>🚪</span> Add a door</div>
+        <div class="chip in" style="--d: 7"><span>🏗</span> Move a machine</div>
+      </div>
+    </div>
+    <div class="foot"><span>Fertigung Ost 36 · factory hall + 3 office floors</span><span>3 / 7</span></div>
+  </section>
+
+  <!-- 4 · Does it work (1:40–2:10) -->
+  <section class="slide">
+    <div class="eyebrow in">Does it work</div>
+    <h2 class="in" style="--d: 1">99 % end to end. 100 % in the core.</h2>
+    <div class="rings">
+      <div class="ring in" style="--d: 2"><div class="dial" data-p="99.2" style="--c: var(--orange)"><b data-count="650">0<small>/ 655</small></b></div><div class="lbl">Benchmark questions</div></div>
+      <div class="ring in" style="--d: 3"><div class="dial" data-p="99.4"><b data-count="2118">0<small>/ 2130</small></b></div><div class="lbl">Warm-up questions</div></div>
+      <div class="ring in" style="--d: 4"><div class="dial" data-p="100" style="--c: var(--good)"><b data-count="240">0<small>/ 240</small></b></div><div class="lbl">Buildings ingested · 42 s</div></div>
+      <div class="ring in" style="--d: 5"><div class="dial" data-p="100" style="--c: var(--blue)"><b data-count="8.39" data-prefix="$">0<small>17.5 min</small></b></div><div class="lbl">All 2,785 questions</div></div>
+    </div>
+    <div class="band">
+      <span class="pill g in" style="--d: 6">1,338 / 1,338 routes, ±1 cm</span>
+      <span class="pill g in" style="--d: 7">Claude Haiku</span>
+      <span class="pill in" style="--d: 8">▶ <code>uv run poe benchmark --data &lt;building&gt;</code></span>
+    </div>
+    <div class="src">Kit train + dev, 25 Oct 2026 · benchmark_results/graph-train-dev · docs/reports/nav_benchmark_1_1_0.md</div>
+    <div class="foot"><span></span><span>4 / 7</span></div>
+  </section>
+
+  <!-- 5 · How it works (2:10–2:35) -->
+  <section class="slide">
+    <div class="eyebrow in">How it works</div>
+    <h2 class="in" style="--d: 1">Floor plan in. Conversation out.</h2>
+    <div class="pipe">
+      <div class="stage in" style="--d: 2"><div class="shot white"><img src="img/floorplan.png" alt="Floor plan" /></div><b>Plan</b></div>
+      <div class="arrow in" style="--d: 3"></div>
+      <div class="stage in" style="--d: 4"><div class="shot kb" style="--z: 2; --ox: 62%; --oy: 50%"><img src="img/navgraph.png" alt="Routing graph" /></div><b>Graph</b></div>
+      <div class="arrow in" style="--d: 5"></div>
+      <div class="stage in" style="--d: 6"><div class="shot kb" style="--z: 1.6; --ox: 66%; --oy: 52%"><img src="img/building.png" alt="3D model" /></div><b>3D model</b></div>
+      <div class="arrow in" style="--d: 7"></div>
+      <div class="stage in" style="--d: 8"><div class="shot kb" style="--z: 1.6; --ox: 62%; --oy: 55%"><img src="img/voice.png" alt="Agent answering with directions" /></div><b>Talk</b></div>
+    </div>
+    <div class="tiers">
+      <div class="tier in" style="--d: 9"><i style="background: var(--blue)"></i>Deterministic routing</div>
+      <div class="tier in" style="--d: 10"><i style="background: var(--orange)"></i>Claude agent + Confirm</div>
+      <div class="tier in" style="--d: 11"><i style="background: var(--good)"></i>Opus-checked pipeline</div>
+    </div>
+    <div class="foot"><span>FastAPI · LangGraph · Claude · Astro + React · three.js · ElevenLabs</span><span>5 / 7</span></div>
+  </section>
+
+  <!-- 6 · What we added (2:35–2:55) -->
+  <section class="slide">
+    <div class="eyebrow in">What you did not ask for</div>
+    <h2 class="in" style="--d: 1">Built for the people inside.</h2>
+    <div class="gallery">
+      <div class="shot kb big in" style="--d: 2; --z: 1.5; --ox: 47%; --oy: 40%"><img src="img/walker.png" alt="Walk-along guidance" /><span class="cap"><i></i>Walk-along voice guide</span></div>
+      <div class="shot kb in" style="--d: 3; --z: 2.2; --ox: 90%; --oy: 18%"><img src="img/confirm.png" alt="Closed lift" /><span class="cap"><i></i>Closures</span></div>
+      <div class="shot kb in" style="--d: 4; --z: 1.5; --ox: 20%; --oy: 50%"><img src="img/developer.png" alt="Developer profile" /><span class="cap"><i></i>Developer mode</span></div>
+      <div class="shot kb tall in" style="--d: 5; --z: 1; --ox: 50%; --oy: 50%"><img src="img/mobile.png" alt="Phone layout" /><span class="cap"><i></i>Phone</span></div>
+      <div class="shot kb in" style="--d: 6; --z: 1.3; --ox: 50%; --oy: 50%"><img src="img/hq.png" alt="Build high-quality 3D model" /><span class="cap"><i></i>One-click HQ 3D</span></div>
+      <div class="shot in" style="--d: 7; background: #fff"><img src="img/floorplan.png" alt="Floor plan to building" style="object-fit: contain" /><span class="cap"><i></i>Plan → building <span class="todo">confirm</span></span></div>
+    </div>
+    <div class="foot"><span>+ memory &amp; “Call Wrapped” · 12/13 tricky dialogs passed</span><span>6 / 7</span></div>
+  </section>
+
+  <!-- 7 · Close (2:55–3:00) -->
+  <section class="slide dark">
+    <div class="shot bleed kb" style="--z: 1.5; --ox: 82%; --oy: 45%"><img src="img/building.png" alt="Building in 3D" /></div>
+    <div class="veil bottom"></div>
+    <div class="over" style="margin-top: auto">
+      <p class="big-close in">Any building.<br />A map you can <span class="accent">talk to.</span></p>
+    </div>
+    <div class="foot" style="margin-top: 36px"><span class="logo in" style="--d: 2; font-size: 18px">AriNav · github.com/pweissleder/mm_industrial_26</span><span>Thank you · 7 / 7</span></div>
+  </section>
+
+</div>
+<div class="progress"></div>
+<div class="hud">← → or click · F fullscreen · Ctrl+P for PDF</div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const bar = document.querySelector('.progress');
+  let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function fit() {
+    const k = Math.min(innerWidth / 1280, innerHeight / 720) * 0.96;
+    slides.forEach((s) => (s.style.transform = `scale(${k})`));
+  }
+  // Fill the dials and count the numbers up whenever their slide opens.
+  function animateNumbers(slide, dur = 1600) {
+    slide.querySelectorAll('.dial').forEach((dial) => {
+      const target = parseFloat(dial.dataset.p);
+      const b = dial.querySelector('b[data-count]');
+      const end = parseFloat(b.dataset.count), prefix = b.dataset.prefix || '';
+      const decimals = (b.dataset.count.split('.')[1] || '').length;
+      const small = b.querySelector('small').outerHTML;
+      const t0 = performance.now();
+      (function tick(t) {
+        const k = dur ? Math.min(1, (t - t0) / dur) : 1, e = 1 - Math.pow(1 - k, 3);
+        dial.style.setProperty('--p', (target * e).toFixed(2));
+        b.innerHTML = prefix + (end * e).toFixed(decimals) + small;
+        if (k < 1) requestAnimationFrame(tick);
+      })(t0);
+    });
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, j) => s.classList.toggle('active', j === i));
+    bar.style.width = `${((i + 1) / slides.length) * 100}%`;
+    history.replaceState(null, '', `#${i + 1}`);
+    animateNumbers(slides[i]);
+  }
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) show(i + 1);
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) show(i - 1);
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key.toLowerCase() === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  });
+  addEventListener('click', (e) => show(i + (e.clientX > innerWidth / 3 ? 1 : -1)));
+  addEventListener('resize', fit);
+  addEventListener('beforeprint', () => slides.forEach((s) => animateNumbers(s, 0)));
+  fit();
+  show(i);
+</script>
+</body>
+</html>
