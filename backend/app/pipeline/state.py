@@ -35,6 +35,14 @@ STAGE_ORDER: tuple[Stage, ...] = (
     "suggest",
 )
 
+# "full" builds the whole location (3D model, metadata). "graph" is the benchmark variant:
+# deterministic, geometry-preserving cleanup plus the relationship graph, nothing else.
+PipelineMode = Literal["full", "graph"]
+MODE_STAGES: dict[PipelineMode, tuple[Stage, ...]] = {
+    "full": STAGE_ORDER,
+    "graph": ("raw_validation", "graph_build", "graph_validate"),
+}
+
 
 def utcnow() -> datetime:
     return datetime.now(UTC)
@@ -188,6 +196,7 @@ class RunRecord(BaseModel):
     location_id: str | None = None
     status: RunStatus = RunStatus.QUEUED
     current_stage: Stage | None = None
+    mode: PipelineMode = "full"
     offline: bool = False
     owner_pid: int | None = Field(default=None, description="Process driving the run.")
     owner_boot: str | None = Field(default=None, description="Id of that process's runner.")
@@ -216,6 +225,7 @@ class PipelineState(TypedDict, total=False):
     dataset_dir: str
     location_id: str
     force: bool
+    mode: PipelineMode
     # Stage results as StageReport dumps, keyed by stage (last attempt wins).
     reports: Annotated[dict[str, dict[str, Any]], _merge]
     attempts: Annotated[dict[str, int], _merge]

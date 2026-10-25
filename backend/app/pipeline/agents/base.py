@@ -77,6 +77,7 @@ class StageContext:
     dataset_dir: Path
     attempt: int = 1
     feedback: str | None = None  # deviations / orchestrator reason when this is a retry
+    preserve_geometry: bool = False  # graph mode: no fix may move or delete measured entities
 
     @property
     def offline(self) -> bool:

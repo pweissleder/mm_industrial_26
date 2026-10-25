@@ -136,11 +136,14 @@ Without `ANTHROPIC_API_KEY` (or with `--offline`), only the deterministic tools 
 cd backend
 uv run poe ingest proc-factory-dev-003            # asks in the terminal when a run needs review
 uv run poe ingest --all --datasets-dir ../problem_statement/industrial-agents-hackathon-2026/data/dev --offline --on-review accept_with_warnings
+uv run poe ingest proc-factory-dev-003 --graph-only   # benchmark variant: stages 1-2 only, deterministic
 ```
+
+**Graph-only mode** (`--graph-only`, or `"mode": "graph"` in the API) is the benchmark variant: raw validation with deterministic, geometry-preserving cleanup, then graph build and validation; no 3D model, no metadata, no model calls. `uv run poe benchmark` ingests every building this way and answers its questions with Claude Haiku 5.5; see [`SUBMISSION/BENCHMARK.md`](SUBMISSION/BENCHMARK.md).
 
 | Endpoint | What it does |
 |---|---|
-| `POST /api/pipeline-runs` `{"dataset", "force"?}` | Starts a run in the background (202) and returns its `RunRecord` |
+| `POST /api/pipeline-runs` `{"dataset", "force"?, "mode"?}` | Starts a run in the background (202) and returns its `RunRecord`; `mode` is `full` (default) or `graph` |
 | `GET /api/pipeline-runs[/{run_id}]` | Run status, per-stage progress, orchestrator decisions, token usage per agent; `?dataset=` filters the list (newest first) |
 | `POST /api/pipeline-runs/{run_id}/resume` `{"review_id", "option", "note"?}` | Answers a `needs_review` run. `pending_review` holds the prompt for a frontend: title, message, issues, artifacts, and the options `accept_with_warnings`, `retry` or `abort` |
 | `GET /api/locations[/{id}]`, `GET /api/locations/{id}/model.glb` | Locations (`has_model` in the list), their metadata, and the 3D model |

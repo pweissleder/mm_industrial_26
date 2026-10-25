@@ -2,6 +2,7 @@
 
 Run from backend/:  uv run poe ingest proc-factory-dev-003 [more datasets] [--offline]
                     uv run poe ingest --all --datasets-dir <kit>/data/dev --offline
+                    uv run poe ingest proc-factory-dev-003 --graph-only   (benchmark variant)
 Without ANTHROPIC_API_KEY (or with --offline) only the deterministic tools run. When a
 run pauses for review, you're asked to accept, retry or abort in the terminal.
 """
@@ -13,7 +14,7 @@ from pathlib import Path
 from app.config import get_settings
 from app.ingestion import list_datasets
 from app.pipeline.runner import PipelineRunner
-from app.pipeline.state import ReviewDecision, RunRecord, RunStatus
+from app.pipeline.state import MODE_STAGES, ReviewDecision, RunRecord, RunStatus
 from app.tracing import configure_tracing
 
 
@@ -36,7 +37,7 @@ def _ask(record: RunRecord) -> ReviewDecision:
 def _print(record: RunRecord) -> None:
     print(f"{record.dataset}: {record.status} (run {record.run_id})")
     for stage, run in record.stages.items():
-        if run.status != "pending":
+        if run.status != "pending" and stage in MODE_STAGES[record.mode]:
             print(f"  {stage:<16} {run.status:<8} x{run.attempts}  {run.summary or ''}")
     if record.error:
         print(f"  error: {record.error}")
@@ -49,6 +50,11 @@ def main() -> int:
     parser.add_argument("--datasets-dir", type=Path, default=None)
     parser.add_argument("--offline", action="store_true", help="deterministic tools only")
     parser.add_argument("--force", action="store_true", help="re-run unchanged inputs")
+    parser.add_argument(
+        "--graph-only",
+        action="store_true",
+        help="benchmark variant: deterministic cleanup + relationship graph, no 3D or metadata",
+    )
     parser.add_argument(
         "--on-review",
         choices=["ask", "accept_with_warnings", "abort"],
@@ -68,7 +74,9 @@ def main() -> int:
 
     failures = 0
     for dataset in datasets:
-        record = runner.run_sync(dataset, force=args.force)
+        record = runner.run_sync(
+            dataset, force=args.force, mode="graph" if args.graph_only else "full"
+        )
         while record.status == RunStatus.NEEDS_REVIEW:
             if args.on_review != "ask" or not sys.stdin.isatty():
                 review = record.pending_review

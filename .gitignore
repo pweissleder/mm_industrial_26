@@ -221,3 +221,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+
+# Benchmark runs: keep reports, not the per-run pipeline workspace
+benchmark_results/*/workspace/
+benchmark_results/*.log

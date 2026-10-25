@@ -1,0 +1,3122 @@
+[
+  {
+    "dataset": "osm-way10053349",
+    "location_id": "osm-way10053349",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.16769820800982416,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way13507441",
+    "location_id": "osm-way13507441",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.059989416011376306,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way19183732",
+    "location_id": "osm-way19183732",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.0818327919987496,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way37850565",
+    "location_id": "osm-way37850565",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.06441900000208989,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way476929995",
+    "location_id": "osm-way476929995",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1502669580077054,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way50299720",
+    "location_id": "osm-way50299720",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.29401870800938923,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way52060470",
+    "location_id": "osm-way52060470",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3810513750067912,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way58216509",
+    "location_id": "osm-way58216509",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3290392919880105,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way61408163",
+    "location_id": "osm-way61408163",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.33475754100072663,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-000",
+    "location_id": "proc-campus-train-000",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.15471295799943618,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-001",
+    "location_id": "proc-campus-train-001",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.22994820900203194,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-002",
+    "location_id": "proc-campus-train-002",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.12698254200222436,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-003",
+    "location_id": "proc-campus-train-003",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11130658301408403,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-004",
+    "location_id": "proc-campus-train-004",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1429681250010617,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-011",
+    "location_id": "proc-campus-train-011",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.15509337499679532,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-012",
+    "location_id": "proc-campus-train-012",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.19576587500341702,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-013",
+    "location_id": "proc-campus-train-013",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.16661504199146293,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-014",
+    "location_id": "proc-campus-train-014",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.36378762499953154,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-016",
+    "location_id": "proc-campus-train-016",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14034741699288134,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-train-019",
+    "location_id": "proc-campus-train-019",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.23725987499346957,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-005",
+    "location_id": "proc-factory-train-005",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11627633299212903,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-006",
+    "location_id": "proc-factory-train-006",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.07642750001105014,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-007",
+    "location_id": "proc-factory-train-007",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11627104200306349,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-008",
+    "location_id": "proc-factory-train-008",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.08173708300455473,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-009",
+    "location_id": "proc-factory-train-009",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11107308299688157,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-010",
+    "location_id": "proc-factory-train-010",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.09850337500392925,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-015",
+    "location_id": "proc-factory-train-015",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1830106249981327,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-017",
+    "location_id": "proc-factory-train-017",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.06416645800345577,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-018",
+    "location_id": "proc-factory-train-018",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.07579112499661278,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-train-020",
+    "location_id": "proc-factory-train-020",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14578758299467154,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-10002",
+    "location_id": "resplan-10002",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02909758299938403,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-10192",
+    "location_id": "resplan-10192",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.026353791006840765,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-10428",
+    "location_id": "resplan-10428",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03282995799963828,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-10504",
+    "location_id": "resplan-10504",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027739124998333864,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-10650",
+    "location_id": "resplan-10650",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.025006042007589713,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-10882",
+    "location_id": "resplan-10882",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03482062499097083,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-1095",
+    "location_id": "resplan-1095",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.033780875004595146,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-11076",
+    "location_id": "resplan-11076",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.026561000006040558,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-11706",
+    "location_id": "resplan-11706",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.025877958003547974,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-11816",
+    "location_id": "resplan-11816",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.029701666993787512,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-120",
+    "location_id": "resplan-120",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03186233299493324,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12034",
+    "location_id": "resplan-12034",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.06312604100094177,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-1224",
+    "location_id": "resplan-1224",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03832479199627414,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12304",
+    "location_id": "resplan-12304",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.022328582999762148,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12336",
+    "location_id": "resplan-12336",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.026835583004867658,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12462",
+    "location_id": "resplan-12462",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027348667004844174,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12750",
+    "location_id": "resplan-12750",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.024186374997952953,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12844",
+    "location_id": "resplan-12844",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.023975709002115764,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12867",
+    "location_id": "resplan-12867",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.030574042000807822,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12878",
+    "location_id": "resplan-12878",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11993625000468455,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12897",
+    "location_id": "resplan-12897",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.026591874993755482,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-12985",
+    "location_id": "resplan-12985",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03553520899731666,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-13024",
+    "location_id": "resplan-13024",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.033517584000946954,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-13846",
+    "location_id": "resplan-13846",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.0402017090091249,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-14012",
+    "location_id": "resplan-14012",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03526249999413267,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-14211",
+    "location_id": "resplan-14211",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03155275000608526,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-14407",
+    "location_id": "resplan-14407",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.06591566700080875,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-14602",
+    "location_id": "resplan-14602",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03236037500028033,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-15074",
+    "location_id": "resplan-15074",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03146241699869279,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-15183",
+    "location_id": "resplan-15183",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03206079200026579,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-15550",
+    "location_id": "resplan-15550",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027796167007181793,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-15793",
+    "location_id": "resplan-15793",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027337749997968785,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16021",
+    "location_id": "resplan-16021",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02592433401150629,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16188",
+    "location_id": "resplan-16188",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.032497499996679835,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16407",
+    "location_id": "resplan-16407",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03237295799772255,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16484",
+    "location_id": "resplan-16484",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03419120800390374,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16645",
+    "location_id": "resplan-16645",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03244795900536701,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16778",
+    "location_id": "resplan-16778",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03424983299919404,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-1702",
+    "location_id": "resplan-1702",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04864170801010914,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-1804",
+    "location_id": "resplan-1804",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027708166002412327,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-2100",
+    "location_id": "resplan-2100",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.032264209003187716,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-2247",
+    "location_id": "resplan-2247",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.028969374994630925,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-2478",
+    "location_id": "resplan-2478",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03637220899690874,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-2515",
+    "location_id": "resplan-2515",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02985166700091213,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-2587",
+    "location_id": "resplan-2587",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03094920799776446,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-3207",
+    "location_id": "resplan-3207",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03457633400103077,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-3221",
+    "location_id": "resplan-3221",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.038908500006073155,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-3562",
+    "location_id": "resplan-3562",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.028812207994633354,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-3806",
+    "location_id": "resplan-3806",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03288637500372715,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-3971",
+    "location_id": "resplan-3971",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027438499993877485,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-4294",
+    "location_id": "resplan-4294",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02666470799886156,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-4303",
+    "location_id": "resplan-4303",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03792837500805035,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-433",
+    "location_id": "resplan-433",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.030691166990436614,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-4378",
+    "location_id": "resplan-4378",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.027225041994825006,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-4429",
+    "location_id": "resplan-4429",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02917804100434296,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-4453",
+    "location_id": "resplan-4453",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.030612374990596436,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-457",
+    "location_id": "resplan-457",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03521629099850543,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-47",
+    "location_id": "resplan-47",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03492812499462161,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-5277",
+    "location_id": "resplan-5277",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.026703750001615845,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-553",
+    "location_id": "resplan-553",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.031157334000454284,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-56",
+    "location_id": "resplan-56",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02949895799974911,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-5783",
+    "location_id": "resplan-5783",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.029635999992024153,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-5871",
+    "location_id": "resplan-5871",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03195629199035466,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-6242",
+    "location_id": "resplan-6242",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.0364092499949038,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-6565",
+    "location_id": "resplan-6565",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.030329083994729444,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-666",
+    "location_id": "resplan-666",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.032597124998574145,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-6994",
+    "location_id": "resplan-6994",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04417808300058823,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-7151",
+    "location_id": "resplan-7151",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.041638458002125844,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-7471",
+    "location_id": "resplan-7471",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02765575000375975,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-7667",
+    "location_id": "resplan-7667",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03384170800563879,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-7709",
+    "location_id": "resplan-7709",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.032696832990041,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-7948",
+    "location_id": "resplan-7948",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03513183399627451,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8006",
+    "location_id": "resplan-8006",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.02924491700832732,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8080",
+    "location_id": "resplan-8080",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.030777749998378567,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8174",
+    "location_id": "resplan-8174",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03303779200359713,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8431",
+    "location_id": "resplan-8431",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03137212499859743,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8449",
+    "location_id": "resplan-8449",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03329104199656285,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8565",
+    "location_id": "resplan-8565",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03527375000703614,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8889",
+    "location_id": "resplan-8889",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03247104199544992,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-9082",
+    "location_id": "resplan-9082",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.05073629099933896,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-9204",
+    "location_id": "resplan-9204",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03947800000605639,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-9416",
+    "location_id": "resplan-9416",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03505725000286475,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-9515",
+    "location_id": "resplan-9515",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03621408299659379,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-9809",
+    "location_id": "resplan-9809",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04283241600205656,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-9872",
+    "location_id": "resplan-9872",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04398770800617058,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1075",
+    "location_id": "swiss-1075",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.16273404100502376,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1104",
+    "location_id": "swiss-1104",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.4129309580021072,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1110",
+    "location_id": "swiss-1110",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.37719095799548086,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-116",
+    "location_id": "swiss-116",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.410129458992742,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-120",
+    "location_id": "swiss-120",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.35202483300236054,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1224",
+    "location_id": "swiss-1224",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3990999160014326,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1283",
+    "location_id": "swiss-1283",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.13693408299877774,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1355",
+    "location_id": "swiss-1355",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2818998750008177,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1390",
+    "location_id": "swiss-1390",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.4075537079916103,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1433",
+    "location_id": "swiss-1433",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11590233299648389,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1444",
+    "location_id": "swiss-1444",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1683891249995213,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1457",
+    "location_id": "swiss-1457",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1905555830016965,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1463",
+    "location_id": "swiss-1463",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.30709245799516793,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1470",
+    "location_id": "swiss-1470",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.09490495799400378,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-148",
+    "location_id": "swiss-148",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.18117770800017752,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1543",
+    "location_id": "swiss-1543",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.33673841699783225,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-15503",
+    "location_id": "swiss-15503",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.22934537500259466,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1571",
+    "location_id": "swiss-1571",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.37775541699375026,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-16357",
+    "location_id": "swiss-16357",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.07379858300555497,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1650",
+    "location_id": "swiss-1650",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1951879169937456,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-18196",
+    "location_id": "swiss-18196",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.17451783298747614,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-18256",
+    "location_id": "swiss-18256",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.25922058400465176,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-18260",
+    "location_id": "swiss-18260",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1335350409935927,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1828",
+    "location_id": "swiss-1828",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14565079199383035,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1829",
+    "location_id": "swiss-1829",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2625536249979632,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1860",
+    "location_id": "swiss-1860",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.43577854199975263,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1883",
+    "location_id": "swiss-1883",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2677429169998504,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1889",
+    "location_id": "swiss-1889",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.27492829199763946,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1898",
+    "location_id": "swiss-1898",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.13892491700244136,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1922",
+    "location_id": "swiss-1922",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.9028772500023479,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1928",
+    "location_id": "swiss-1928",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2889754170028027,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1936",
+    "location_id": "swiss-1936",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.17843420800636522,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1956",
+    "location_id": "swiss-1956",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.23083470900019165,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1970",
+    "location_id": "swiss-1970",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.24200312500761356,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2049",
+    "location_id": "swiss-2049",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.5765374999900814,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2084",
+    "location_id": "swiss-2084",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.368746292006108,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-210",
+    "location_id": "swiss-210",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.43207587499637157,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-22",
+    "location_id": "swiss-22",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.33141045800584834,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2214",
+    "location_id": "swiss-2214",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.49033212500216905,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2216",
+    "location_id": "swiss-2216",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.5320077079959447,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2221",
+    "location_id": "swiss-2221",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.16093587499926798,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2235",
+    "location_id": "swiss-2235",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.4069288750033593,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2274",
+    "location_id": "swiss-2274",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.4364125839929329,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2314",
+    "location_id": "swiss-2314",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3911517500091577,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2390",
+    "location_id": "swiss-2390",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.31416216600337066,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2476",
+    "location_id": "swiss-2476",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14750533300684765,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2482",
+    "location_id": "swiss-2482",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.15162091598904226,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-256",
+    "location_id": "swiss-256",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3911372080037836,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2798",
+    "location_id": "swiss-2798",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.5480994160025148,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-28",
+    "location_id": "swiss-28",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.19125891700969078,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2974",
+    "location_id": "swiss-2974",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3082422909938032,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2975",
+    "location_id": "swiss-2975",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.35858683299738914,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3066",
+    "location_id": "swiss-3066",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.42726341700472403,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3092",
+    "location_id": "swiss-3092",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3618397500104038,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3096",
+    "location_id": "swiss-3096",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2059072090050904,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3197",
+    "location_id": "swiss-3197",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.23675170799833722,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-325",
+    "location_id": "swiss-325",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14524499999242835,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-328",
+    "location_id": "swiss-328",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.19918158400105312,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3284",
+    "location_id": "swiss-3284",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.48854287499852944,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-333",
+    "location_id": "swiss-333",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.15311383300286252,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3338",
+    "location_id": "swiss-3338",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.255369457998313,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3355",
+    "location_id": "swiss-3355",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.25290208400110714,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3418",
+    "location_id": "swiss-3418",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3225017080112593,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-373",
+    "location_id": "swiss-373",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.20838337500754278,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-390",
+    "location_id": "swiss-390",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11514070800330956,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-401",
+    "location_id": "swiss-401",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.13107041700277478,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-430",
+    "location_id": "swiss-430",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1045577500044601,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-433",
+    "location_id": "swiss-433",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.6123657499992987,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-437",
+    "location_id": "swiss-437",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.483369458001107,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-442",
+    "location_id": "swiss-442",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3252130839973688,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-474",
+    "location_id": "swiss-474",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.553461834002519,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-4967",
+    "location_id": "swiss-4967",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.10859533298935276,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-5354",
+    "location_id": "swiss-5354",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.23001691699028015,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-5422",
+    "location_id": "swiss-5422",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.08535249999840744,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-5690",
+    "location_id": "swiss-5690",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.29804212499584537,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-5779",
+    "location_id": "swiss-5779",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.055139125004643574,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-59",
+    "location_id": "swiss-59",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11201399999845307,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-6148",
+    "location_id": "swiss-6148",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11344387500139419,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-624",
+    "location_id": "swiss-624",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.22242416600056458,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-6456",
+    "location_id": "swiss-6456",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.20948454200697597,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-668",
+    "location_id": "swiss-668",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2522852910042275,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-685",
+    "location_id": "swiss-685",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.5001530419976916,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-692",
+    "location_id": "swiss-692",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.7447195419954369,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-920",
+    "location_id": "swiss-920",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.20811808299913537,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-921",
+    "location_id": "swiss-921",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.7763564170018071,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way22744230",
+    "location_id": "osm-way22744230",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.4497814170026686,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way27326387",
+    "location_id": "osm-way27326387",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.09421112498966977,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way27917482",
+    "location_id": "osm-way27917482",
+    "status": "completed",
+    "passed": true,
+    "seconds": 2.486187417001929,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "osm-way360544293",
+    "location_id": "osm-way360544293",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.10884045901184436,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-dev-000",
+    "location_id": "proc-campus-dev-000",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.26653412499581464,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-dev-001",
+    "location_id": "proc-campus-dev-001",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.1672985829936806,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-dev-002",
+    "location_id": "proc-campus-dev-002",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.16696091700578108,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-dev-006",
+    "location_id": "proc-campus-dev-006",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.17177112500939984,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-dev-009",
+    "location_id": "proc-campus-dev-009",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3550107909977669,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-campus-dev-013",
+    "location_id": "proc-campus-dev-013",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.12832349998643622,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-003",
+    "location_id": "proc-factory-dev-003",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.3928082920028828,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-004",
+    "location_id": "proc-factory-dev-004",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.11797725000360515,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-005",
+    "location_id": "proc-factory-dev-005",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2314840409962926,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-007",
+    "location_id": "proc-factory-dev-007",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.13779620900459122,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-008",
+    "location_id": "proc-factory-dev-008",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.16838691699376795,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-010",
+    "location_id": "proc-factory-dev-010",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.09912358300061896,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-011",
+    "location_id": "proc-factory-dev-011",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.24382641700503882,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "proc-factory-dev-012",
+    "location_id": "proc-factory-dev-012",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.21788379199279007,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-14509",
+    "location_id": "resplan-14509",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.040130583991413005,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-1465",
+    "location_id": "resplan-1465",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.0413985000050161,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-15179",
+    "location_id": "resplan-15179",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04590179199294653,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-16154",
+    "location_id": "resplan-16154",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.038120458004414104,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-1677",
+    "location_id": "resplan-1677",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04357945801166352,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-3832",
+    "location_id": "resplan-3832",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.03780983301112428,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-439",
+    "location_id": "resplan-439",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.042088000001967885,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-7336",
+    "location_id": "resplan-7336",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.04128095800115261,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8169",
+    "location_id": "resplan-8169",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.036157416994683444,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "resplan-8269",
+    "location_id": "resplan-8269",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.034772041006363,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1689",
+    "location_id": "swiss-1689",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.931543208003859,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-1785",
+    "location_id": "swiss-1785",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.23900295898783952,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-203",
+    "location_id": "swiss-203",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2947435000096448,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2074",
+    "location_id": "swiss-2074",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.12401825000415556,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2211",
+    "location_id": "swiss-2211",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.7859061250055674,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-2325",
+    "location_id": "swiss-2325",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2560100840055384,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-31",
+    "location_id": "swiss-31",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.2697571250027977,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-3254",
+    "location_id": "swiss-3254",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14681799999380019,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-450",
+    "location_id": "swiss-450",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14726795800379477,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-460",
+    "location_id": "swiss-460",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.14955304200702813,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-5097",
+    "location_id": "swiss-5097",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.6175719999882858,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  },
+  {
+    "dataset": "swiss-5462",
+    "location_id": "swiss-5462",
+    "status": "completed",
+    "passed": true,
+    "seconds": 0.08073095799773,
+    "stages": {
+      "raw_validation": "passed",
+      "graph_build": "passed",
+      "graph_validate": "passed"
+    },
+    "problems": []
+  }
+]
