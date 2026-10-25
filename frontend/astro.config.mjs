@@ -22,7 +22,8 @@ export default defineConfig({
     server: {
       watch: usePolling ? { usePolling: true, interval: 300 } : undefined,
       proxy: {
-        '/api': { target: backendUrl, changeOrigin: true },
+        // ws: the live presence channel (/api/live) is a WebSocket.
+        '/api': { target: backendUrl, changeOrigin: true, ws: true },
       },
     },
   },

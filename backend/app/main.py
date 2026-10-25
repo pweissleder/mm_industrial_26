@@ -1,3 +1,4 @@
+import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from typing import Any
@@ -25,6 +26,7 @@ from app.api.routes import (
     managed_agent,
     memory,
     navigation,
+    people,
     pipeline,
     recaps,
     uploads,
@@ -34,9 +36,12 @@ from app.assistant.recap import RecapService
 from app.assistant.voice import ElevenLabsVoice
 from app.config import Settings, get_settings
 from app.guardrails import AnthropicInputClassifier, InputGuard
+from app.ingestion import open_dataset
 from app.navigation import NavigatorFactory, NavigatorRegistry, build_navigation_service
 from app.navigation.scenario_sync import scenario_navigator_factory
 from app.pipeline.runner import PipelineRunner
+from app.presence import PositionStore, PresenceService, SessionLeases, load_profiles
+from app.presence.live import LiveHub
 from app.storage import BuildingRepository, InMemoryBuildingRepository
 from app.tracing import configure_tracing
 
@@ -94,6 +99,16 @@ def create_recaps(settings: Settings, assistant: Assistant) -> RecapService:
     )
 
 
+def create_presence(settings: Settings, navigation: Any) -> PresenceService:
+    """People from configuration, leases in this process, positions in `state_dir`."""
+    return PresenceService(
+        load_profiles(settings.profiles_file),
+        SessionLeases(settings.user_lease_seconds),
+        PositionStore(settings.state_dir / "positions.sqlite3"),
+        navigation,
+    )
+
+
 def create_voice(settings: Settings) -> ElevenLabsVoice | None:
     if not settings.elevenlabs_api_key:
         return None
@@ -134,6 +149,15 @@ def create_app(
             repository,
             navigator_factory or scenario_navigator_factory(app.state.navigation, repository),
         )
+        app.state.presence = create_presence(settings, app.state.navigation)
+        app.state.navigation.people = app.state.presence  # people are places: search, routes
+        app.state.live = LiveHub()
+        app.state.live.bind(asyncio.get_running_loop())
+        app.state.presence.listeners.append(app.state.live.notify)
+        expiry = asyncio.create_task(app.state.live.watch(app.state.presence))
+        app.state.presence.seed(
+            lambda dataset: open_dataset(repository, settings.datasets_dir, dataset).building_id
+        )
         app.state.assistant = create_assistant(settings, app.state.navigation)
         if assistant_transport is not None:
             app.state.assistant.transport = assistant_transport
@@ -147,7 +171,9 @@ def create_app(
             settings, repository=app.state.building_repository
         )
         yield
+        expiry.cancel()
         await app.state.pipeline_runner.wait()
+        app.state.presence.positions.close()
 
     app = FastAPI(title=settings.app_name, lifespan=lifespan)
     app.state.settings = settings
@@ -162,6 +188,7 @@ def create_app(
     app.include_router(chat.router, prefix="/api")
     app.include_router(managed_agent.router, prefix="/api")
     app.include_router(ingestion.router, prefix="/api")
+    app.include_router(people.router, prefix="/api")
     app.include_router(buildings.router, prefix="/api")
     app.include_router(uploads.router, prefix="/api")
     app.include_router(pipeline.router, prefix="/api")

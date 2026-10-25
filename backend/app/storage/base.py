@@ -22,9 +22,19 @@ class StoredBuilding:
         return self.data.building.id
 
 
+class StaleBuildingError(RuntimeError):
+    """A save based on a version that is no longer the stored one (someone saved meanwhile)."""
+
+
 class BuildingRepository(Protocol):
-    def save(self, dataset: str, data: BuildingFile) -> bool:
-        """Store a building, replacing any with the same ID. Returns True if replaced."""
+    def save(
+        self, dataset: str, data: BuildingFile, *, expected: BuildingFile | None = None
+    ) -> bool:
+        """Store a building, replacing any with the same ID. Returns True if replaced.
+
+        With `expected`, the save only happens while the stored version is still that one
+        (compared by identity), else it raises `StaleBuildingError`.
+        """
         ...
 
     def get(self, building_id: str) -> StoredBuilding | None: ...

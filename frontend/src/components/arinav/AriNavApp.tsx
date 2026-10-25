@@ -9,6 +9,8 @@ import {
   type RoomGraphData,
   type TurnResponse,
   type UploadResponse,
+  type UserPresence,
+  type UserSession,
 } from '../../lib/api';
 import { floorLabel, type BuildingModel, type Selection } from '../../lib/building';
 import {
@@ -56,6 +58,11 @@ import { useGuidance } from './useGuidance';
 import RecapCard from './RecapCard';
 import { MemoryRecorder, downloadExport, memoryApi, type MemoryRecap } from '../../lib/memory';
 import { useNavigation, type Which } from './useNavigation';
+import { useFollowPerson } from './useFollowPerson';
+import { usePeople } from './usePeople';
+import { usePerson } from './usePerson';
+import AccountDialog from './AccountDialog';
+import PeopleHere from './PeopleHere';
 import { usePipeline } from './usePipeline';
 import { hqDifferences } from '../../lib/hqStale';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
@@ -206,7 +213,14 @@ export default function AriNavApp() {
     // Only crossing the breakpoint folds or unfolds; the mode is read, not tracked.
   }, [isRoomy]);
   const appRef = useRef<HTMLDivElement>(null);
-  const nav = useNavigation(buildingId);
+  const person = usePerson();
+  const personId = person.profile?.id ?? null;
+  const nav = useNavigation(buildingId, personId);
+  const [accountOpen, setAccountOpen] = useState(false);
+  // A tab without a person logs in first (once the server is reachable and has people).
+  const needsLogin = person.status === 'none' || person.status === 'ended';
+  const [personFocus, setPersonFocus] = useState<{ id: string; nonce: number } | null>(null);
+  const switchBuildingRef = useRef<((id: string) => Promise<boolean>) | null>(null);
   const developer = mode === 'developer';
   const navigatorMode = mode === 'navigator';
   const userMode = mode === 'user';
@@ -230,8 +244,9 @@ export default function AriNavApp() {
       setPick(null);
       resetNav();
       try {
+        // Opening never resets a building others are using; only a fresh upload reloads it.
         const [ingestion, files] = await Promise.all([
-          api.ingest(name),
+          startPipeline ? api.ingest(name) : api.openDataset(name),
           api.datasetFiles(name).catch(() => []),
         ]);
         setModel(await api.buildingModel(ingestion.building_id));
@@ -311,6 +326,8 @@ export default function AriNavApp() {
   }, [scenarioRevision, reloadModel]);
 
   const graphOn = settings.layers.graph;
+  // Who is in which room (set below, from the people here); the graph shows people as nodes.
+  const [peopleRooms, setPeopleRooms] = useState('');
   useEffect(() => {
     setGraph(null);
     if (!graphOn || !buildingId) return;
@@ -322,7 +339,7 @@ export default function AriNavApp() {
     return () => {
       live = false;
     };
-  }, [graphOn, buildingId, edits]);
+  }, [graphOn, buildingId, edits, peopleRooms]);
   const { state: run } = pipeline;
   const hq = run.phase === 'ready' ? run.hq : null;
   const wasBuilding = useRef(false);
@@ -443,11 +460,13 @@ export default function AriNavApp() {
         const label = elementLabel(id, viewModel);
         return label === id ? null : label;
       },
-      target: t
-        ? t.kind === 'point'
-          ? `the chosen point in ${spaces.get(t.space_id) ?? 'the room'}`
-          : elementLabel(t.id ?? t.space_id, viewModel)
-        : null,
+      target: nav.route?.target_person
+        ? nav.route.target_person.name
+        : t
+          ? t.kind === 'point'
+            ? `the chosen point in ${spaces.get(t.space_id) ?? 'the room'}`
+            : elementLabel(t.id ?? t.space_id, viewModel)
+          : null,
     };
   }, [viewModel, nav.route]);
   // Opt-in local memory (showcase profile): nothing is recorded until a session is created.
@@ -462,6 +481,29 @@ export default function AriNavApp() {
     voice: guideVoice,
     memory: recorder,
   });
+  const people = usePeople(buildingId, person, nav, guidance);
+  // A route to a person follows them while they move.
+  const following = useFollowPerson({
+    buildingId,
+    route: nav.route,
+    guidance,
+    here: people.here,
+    showRoute: nav.showRoute,
+  });
+  const followMessage = following.message;
+  useEffect(() => {
+    if (followMessage) notify(followMessage);
+  }, [followMessage, notify]);
+  const destination = following.name
+    ? following.name +
+      (following.status === 'updating'
+        ? ' · updating'
+        : following.status === 'offline'
+          ? ' (offline · last known place)'
+          : '')
+    : names.target;
+  const roomsNow = people.here.map((u) => `${u.profile.id}:${u.position?.space_id ?? ''}`).join();
+  useEffect(() => setPeopleRooms(roomsNow), [roomsNow]);
   const [guidanceHidden, setGuidanceHidden] = useState(false);
   // ---- Night: profiles (core / immersive / showcase) and immersive navigation -------------
   const { profile, features } = useMemo(currentFeatures, []);
@@ -890,6 +932,34 @@ export default function AriNavApp() {
     if (!isWide) setSidebarOpen(false);
   };
 
+  // Logged in (or switched): continue in the building where that person currently is.
+  const handleChosen = useCallback(
+    (session: UserSession) => {
+      setAccountOpen(false);
+      setPersonFocus(null);
+      const at = session.presence?.building_id;
+      if (at && at !== buildingId) void switchBuildingRef.current?.(at);
+    },
+    [buildingId],
+  );
+
+  // A person from the list: show their floor, select them and zoom to them.
+  const focusPresence = useCallback(
+    (presence: UserPresence) => {
+      const floorId = presence.position?.floor_id;
+      const level = viewModel?.floors.find((f) => f.id === floorId)?.level;
+      const top = Math.max(...(viewModel?.floors.map((f) => f.level) ?? [0]));
+      if (level !== undefined && !(settings.floor === 'all' && level === top)) {
+        setSettings((s) => ({ ...s, floor: level }));
+      }
+      setSettings((s) => (s.layers.people ? s : { ...s, layers: { ...s.layers, people: true } }));
+      setSelection(null);
+      setPersonFocus({ id: presence.profile.id, nonce: Date.now() });
+      if (!isWide) setSidebarOpen(false);
+    },
+    [viewModel, settings.floor, isWide],
+  );
+
   /** Switch to the building a turn refers to (ids map to datasets via /api/buildings). */
   const switchBuilding = useCallback(
     async (id: string) => {
@@ -903,6 +973,12 @@ export default function AriNavApp() {
     },
     [datasets, openDataset, notify],
   );
+  switchBuildingRef.current = switchBuilding;
+  // Selecting a thing (or another building) ends the person selection.
+  useEffect(() => {
+    if (selection) setPersonFocus(null);
+  }, [selection]);
+  useEffect(() => setPersonFocus(null), [buildingId]);
 
   const applyTurn = useCallback(
     async (turn: TurnResponse) => {
@@ -918,7 +994,12 @@ export default function AriNavApp() {
         if (levels.size > 1 && settings.floor !== 'all') setSettings((s) => ({ ...s, floor: 'all' }));
       }
       // In first person a focused room would tint the whole view; the answer card is enough there.
-      if (ui.focus && !route && povRef.current !== 'pov') {
+      // A person the assistant found: select them and zoom to them, like in the people list.
+      const person =
+        ui.focus?.kind === 'user' ? people.here.find((u) => u.profile.id === ui.focus?.id) : null;
+      if (person) {
+        if (!route) focusPresence(person);
+      } else if (ui.focus && ui.focus.kind !== 'user' && !route && povRef.current !== 'pov') {
         const sel = selectionFromFocus(ui.focus);
         focusFloorOf(sel);
         setSelection(sel);
@@ -936,7 +1017,7 @@ export default function AriNavApp() {
         setCamera({ action: 'fit', nonce: Date.now() });
       }
     },
-    [buildingId, switchBuilding, nav, viewModel, settings.floor, focusFloorOf],
+    [buildingId, switchBuilding, nav, viewModel, settings.floor, focusFloorOf, people.here, focusPresence],
   );
 
   const handleConfirmed = useCallback(
@@ -1076,6 +1157,8 @@ export default function AriNavApp() {
         diagnosis={nav.diagnosis}
         closed={closed}
         walker={guidance.pose}
+        people={people.markers}
+        focusPerson={personFocus}
         guidanceCamera={guidance.camera}
         onPreviewDone={guidance.previewDone}
         look={features.pov ? immersive.look : null}
@@ -1143,11 +1226,36 @@ export default function AriNavApp() {
             <span className="topbar__upload-label">Upload assets</span>
           </button>
         )}
+        <button
+          type="button"
+          className={`topbar__avatar${person.profile ? '' : ' topbar__avatar--empty'}`}
+          style={person.profile ? { background: person.profile.color } : undefined}
+          onClick={() => setAccountOpen(true)}
+          aria-label={person.profile ? `${person.profile.name}: switch person` : 'Choose who you are'}
+          title={person.profile ? `${person.profile.name} (switch person)` : 'Choose who you are'}
+        >
+          {person.profile?.initials ?? '?'}
+        </button>
       </header>
+      <AccountDialog
+        open={accountOpen || (needsLogin && !backendDown)}
+        mode={needsLogin ? 'login' : 'switch'}
+        person={person}
+        onClose={() => setAccountOpen(false)}
+        onChosen={handleChosen}
+      />
 
       <div className="scrim" onClick={() => setSidebarOpen(false)} aria-hidden="true" />
       <div className="sidebar-slot" inert={!sidebarOpen}>
         <Sidebar
+          peopleHere={
+            <PeopleHere
+              here={people.here}
+              personId={personId}
+              focused={personFocus?.id ?? null}
+              onFocus={focusPresence}
+            />
+          }
           datasets={allDatasets}
           pending={pending}
           dataset={dataset}
@@ -1319,7 +1427,7 @@ export default function AriNavApp() {
             guidance={guidance}
             compact={guidanceCompact}
             developer={developer}
-            destination={names.target}
+            destination={destination}
             floorName={names.floor}
             scenarioRevision={nav.state?.revision}
             voice={voiceState ?? guideVoice.state}
@@ -1402,6 +1510,7 @@ export default function AriNavApp() {
         ui={chatUi}
         selection={chatSelection}
         simulated={nav.simulated}
+        personId={personId}
         onTurn={(turn) => void applyTurn(turn)}
         onConfirmed={handleConfirmed}
         onPick={(purpose, reply) => setPick({ kind: purpose, reply })}

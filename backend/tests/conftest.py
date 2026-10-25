@@ -10,8 +10,11 @@ from app.main import create_app
 
 
 @pytest.fixture
-def settings() -> Settings:
+def settings(tmp_path_factory: pytest.TempPathFactory) -> Settings:
     return Settings(
+        state_dir=tmp_path_factory.mktemp("state"),
+        # No people by default: their start positions would load buildings at startup.
+        profiles_file=tmp_path_factory.mktemp("people") / "profiles.json",
         _env_file=None,
         anthropic_api_key=None,
         managed_agent_id=None,

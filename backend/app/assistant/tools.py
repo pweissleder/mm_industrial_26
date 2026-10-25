@@ -7,8 +7,11 @@ ENDPOINT: dict[str, Any] = {
     "additionalProperties": False,
     "required": ["kind", "id"],
     "properties": {
-        "kind": {"type": "string", "enum": ["space", "asset", "opening"]},
-        "id": {"type": "string", "description": "Exact ID from a find_places/find_nearest result"},
+        "kind": {"type": "string", "enum": ["space", "asset", "opening", "user"]},
+        "id": {
+            "type": "string",
+            "description": "Exact ID from a find_places/find_nearest result; kind user = a person",
+        },
     },
 }
 NULLABLE_ENDPOINT: dict[str, Any] = {"anyOf": [ENDPOINT, {"type": "null"}]}
@@ -51,9 +54,9 @@ def build_tools(operation_fields: str) -> list[dict[str, Any]]:
     return [
         tool(
             "find_places",
-            "Search the active building's rooms, equipment, doors/exits and lifts/stairs by name, "
-            "type "
-            "or number. Read-only: it never changes the user's start or destination.",
+            "Search the active building's rooms, equipment, doors/exits, lifts/stairs and the "
+            "people currently in it (kind person; results of kind user) by name, type or number. "
+            "Read-only: it never changes the user's start or destination.",
             {
                 "query": {
                     "type": "string",
@@ -63,7 +66,14 @@ def build_tools(operation_fields: str) -> list[dict[str, Any]]:
                     "anyOf": [
                         {
                             "type": "string",
-                            "enum": ["room", "equipment", "door", "exit", "lift_or_stairs"],
+                            "enum": [
+                                "room",
+                                "equipment",
+                                "door",
+                                "exit",
+                                "lift_or_stairs",
+                                "person",
+                            ],
                         },
                         {"type": "null"},
                     ]
@@ -107,9 +117,9 @@ def build_tools(operation_fields: str) -> list[dict[str, Any]]:
             "plan_route",
             "Compute and show a route with the deterministic router. null start/destination use "
             "the "
-            "session. Destinations may be rooms, equipment or doors/exits (the route then ends at "
-            "that "
-            "door). assume_closed = IDs treated as closed for this preview only.",
+            "session. Destinations may be rooms, equipment, doors/exits (the route then ends at "
+            "that door) or a person ({kind: user, id}: the route ends where they are now). "
+            "assume_closed = IDs treated as closed for this preview only.",
             {
                 "start": NULLABLE_ENDPOINT,
                 "destination": NULLABLE_ENDPOINT,

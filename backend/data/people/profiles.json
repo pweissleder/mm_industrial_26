@@ -1,0 +1,32 @@
+[
+  {
+    "id": "alex",
+    "name": "Alex Berger",
+    "color": "#2563eb",
+    "start": {
+      "dataset": "proc-factory-dev-003",
+      "endpoint": {"kind": "space", "id": "proc-factory-dev-003-F0-S023"},
+      "label": "Office 0.23"
+    }
+  },
+  {
+    "id": "sam",
+    "name": "Sam Okafor",
+    "color": "#16a34a",
+    "start": {
+      "dataset": "proc-factory-dev-003",
+      "endpoint": {"kind": "space", "id": "proc-factory-dev-003-F0-S021"},
+      "label": "Quality lab 0.21"
+    }
+  },
+  {
+    "id": "jordan",
+    "name": "Jordan Lee",
+    "color": "#9333ea",
+    "start": {
+      "dataset": "proc-factory-dev-003",
+      "endpoint": {"kind": "space", "id": "proc-factory-dev-003-F1-S010"},
+      "label": "Meeting room 1.10"
+    }
+  }
+]

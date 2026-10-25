@@ -15,7 +15,7 @@ from app.navigation.errors import NavigationError
 
 JSON = dict[str, Any]
 OUTSIDE = "outside"
-SEARCH_KINDS = ("room", "asset", "opening", "exit", "connector")
+SEARCH_KINDS = ("room", "asset", "opening", "exit", "connector", "person")
 # Openings carry no names; they are searched when asked for, or when the query talks about doors.
 DOOR_WORDS = frozenset(
     {"door", "doors", "opening", "openings", "entrance", "entrances", "exit", "exits", "emergency"}
@@ -72,7 +72,10 @@ def search(
     floor_level: int | None = None,
     limit: int | None = 12,
     closed: Collection[str] = (),
+    people: Collection[JSON] = (),
 ) -> list[JSON]:
+    """`people`: the building's positioned people (`{id, name, floor_id, space_id, ...}`), found
+    by name like any place; their rows have kind "user" (a route endpoint kind)."""
     tokens = words(query)
     if not tokens:
         raise NavigationError("invalid_input", "Give at least one search word")
@@ -169,6 +172,23 @@ def search(
                     "step_free": c.get("step_free"),
                 },
                 text,
+            )
+    if kind in (None, "person"):
+        for person in people:
+            room = spaces.get(person.get("space_id") or "", {})
+            add(
+                {
+                    "kind": "user",
+                    "id": person["id"],
+                    "name": person["name"],
+                    "type": "person",
+                    **floor_fields(person.get("floor_id")),
+                    "space_id": person.get("space_id"),
+                    "space_name": room.get("name"),
+                    "status": person.get("status"),
+                    "place": person.get("label"),
+                },
+                " ".join([person["name"], "person", "colleague", person["id"]]),
             )
     rows.sort(key=lambda r: (-r[0], r[1], r[2]["id"]))
     best = rows[0][0] if rows else 0.0

@@ -45,6 +45,8 @@ interface Props {
   onClose: () => void;
   /** Developer mode: the developer controls, shown in their own tab. */
   developer?: ReactNode;
+  /** Who is in this building (read-only), shown under the building section. */
+  peopleHere?: ReactNode;
 }
 
 type Tab = 'location' | 'view' | 'developer';
@@ -120,6 +122,7 @@ function LocationTab({
   settings,
   selection,
   onSelect,
+  peopleHere,
 }: Props) {
   const [query, setQuery] = useState('');
   const floors = useMemo(
@@ -228,6 +231,8 @@ function LocationTab({
           </>
         )}
       </section>
+
+      {model && peopleHere}
 
       {model && (
         <section className="section section--grow">

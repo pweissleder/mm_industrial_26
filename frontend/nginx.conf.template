@@ -1,5 +1,12 @@
 # Production: serve the static Astro build and proxy /api to FastAPI on the same
 # origin, as the dev server does. ${BACKEND_URL} is filled in at container start.
+
+# WebSocket upgrades (live presence, /api/live) pass through; plain requests keep "close".
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
 server {
     listen 80;
     server_name _;
@@ -17,7 +24,9 @@ server {
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        # Agent replies can take a while.
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        # Agent replies can take a while; live connections get a ping every 25 s.
         proxy_read_timeout 300s;
         proxy_request_buffering off;
     }

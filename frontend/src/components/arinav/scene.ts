@@ -89,6 +89,21 @@ const HQ_LAYERS: Record<string, 'spaces' | 'walls' | 'assets' | 'openings'> = {
   opening: 'openings',
 };
 
+/** Another person on the map (multi-user presence), drawn as the walker figure in their color. */
+export interface PersonMarker {
+  id: string;
+  name: string;
+  initials: string;
+  color: string;
+  floorId: string;
+  position: Point;
+  /** Degrees, counter-clockwise from +x; null: no known direction (no arrow). */
+  headingDeg: number | null;
+  online: boolean;
+  /** The current person ("You"); hidden while the guidance walker shows them. */
+  self?: boolean;
+}
+
 /** The simulated person (Phase B guidance): floor, XY in the building frame, heading (deg). */
 export interface WalkerPose {
   floorId: string;
@@ -137,6 +152,7 @@ const GRAPH_COLORS: Record<string, string> = {
   entrance: '#12a594',
   stairs: '#fb7928',
   lift: '#fb7928',
+  person: '#8f909a',
   closed: '#e5484d',
   cut: '#e5484d',
 };
@@ -159,6 +175,46 @@ function isGhost(obj: THREE.Object3D): boolean {
   for (let o: THREE.Object3D | null = obj; o; o = o.parent) if (o.userData.ghost) return true;
   return false;
 }
+
+/** The person figure: body, head, a direction arrow and a ground ring, drawn on top of walls. */
+function makeFigure(color: string, accent: string, opacity = 0.95): THREE.Group {
+  const group = new THREE.Group();
+  const mat = (c: string) =>
+    new THREE.MeshBasicMaterial({ color: c, depthTest: false, transparent: true, opacity });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 1.2, 20), mat(color));
+  body.position.y = 0.6;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 14), mat(color));
+  head.position.y = 1.5;
+  const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 16), mat(accent));
+  arrow.rotation.z = -Math.PI / 2; // tip along +x (the heading direction)
+  arrow.position.set(0.85, 0.15, 0);
+  arrow.name = 'arrow';
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.8, 32), mat(color));
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.03;
+  for (const m of [body, head, arrow, ring]) {
+    m.layers.set(1);
+    m.renderOrder = 13;
+    m.raycast = () => {};
+    group.add(m);
+  }
+  // Readable at building scale (rooms are tens of metres across).
+  group.scale.setScalar(1.6);
+  return group;
+}
+
+function disposeFigure(group: THREE.Object3D) {
+  group.traverse((o) => {
+    if (o instanceof THREE.Mesh) {
+      o.geometry.dispose();
+      (o.material as THREE.Material).dispose();
+    }
+    if (o instanceof CSS2DObject) o.element.remove();
+  });
+}
+
+/** Farther than this, a person's figure jumps to the new place instead of gliding (metres). */
+const GLIDE_MAX_M = 25;
 
 function makeLabel(text: string, className: string): CSS2DObject {
   const el = document.createElement('div');
@@ -296,7 +352,11 @@ export class BuildingScene {
   // Route: shared materials and marker geometry, so a redraw allocates only line buffers.
   private readonly routeGroup = new THREE.Group();
   // Guidance: the walker figure, camera follow and a skippable route preview.
-  private readonly walkerGroup = new THREE.Group();
+  private walkerGroup = new THREE.Group();
+  // Other people: one figure (with a name chip) per person id.
+  private readonly peopleGroup = new THREE.Group();
+  private readonly people = new Map<string, { marker: PersonMarker; figure: THREE.Group }>();
+  private focusedPerson: string | null = null;
   private walkerPose: WalkerPose | null = null;
   private readonly doneGroup = new THREE.Group();
   private doneDrawnAt = -1;
@@ -400,7 +460,7 @@ export class BuildingScene {
     this.scene.add(this.sun, this.sun.target, this.root, this.connectors, this.highlight, this.graph);
     this.scene.add(this.routeGroup);
     this.buildWalker();
-    this.scene.add(this.walkerGroup);
+    this.scene.add(this.walkerGroup, this.peopleGroup);
     this.scene.add(this.doneGroup);
 
     this.pin = makeLabel('', 'viewer__pin');
@@ -442,6 +502,7 @@ export class BuildingScene {
     this.resizeObserver.disconnect();
     this.controls.dispose();
     this.clear();
+    this.setPeople([]);
     this.clearRouteObjects();
     for (const m of Object.values(this.routeMats)) m.dispose();
     for (const m of Object.values(this.markerMats)) m.dispose();
@@ -560,7 +621,9 @@ export class BuildingScene {
   /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
   setWalker(pose: WalkerPose | null) {
     this.walkerPose = pose;
+    const walking = this.walkerGroup.visible;
     this.walkerGroup.visible = !!pose && !!this.floors.length;
+    if (walking !== this.walkerGroup.visible) this.syncPeople(); // "You" gives way to the walker
     if (pose) {
       this.walkerGroup.position.copy(this.walkerPoint(pose));
       // Building frame is counter-clockwise from +x; toVec maps building +y to scene -z.
@@ -734,7 +797,7 @@ export class BuildingScene {
       const lvl = o.userData.floor_level;
       if (typeof lvl === 'number') o.visible = shown(lvl);
     });
-    this.needsRender = true;
+    this.syncPeople();
   }
 
   /** Camera pose of the fly-through at `elapsed` ms (with the floor level it shows); null when it
@@ -807,28 +870,99 @@ export class BuildingScene {
   }
 
   private buildWalker() {
-    // A simple, readable figure: body, head and a direction arrow; drawn on top of walls.
-    const mat = (color: string) =>
-      new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true, opacity: 0.95 });
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 1.2, 20), mat('#fb7928'));
-    body.position.y = 0.6;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 14), mat('#fb7928'));
-    head.position.y = 1.5;
-    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 16), mat('#002478'));
-    arrow.rotation.z = -Math.PI / 2; // tip along +x (the heading direction)
-    arrow.position.set(0.85, 0.15, 0);
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.8, 32), mat('#fb7928'));
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.03;
-    for (const m of [body, head, arrow, ring]) {
-      m.layers.set(1);
-      m.renderOrder = 13;
-      m.raycast = () => {};
-      this.walkerGroup.add(m);
-    }
-    // Readable at building scale (rooms are tens of metres across).
-    this.walkerGroup.scale.setScalar(1.6);
+    this.walkerGroup = makeFigure('#fb7928', '#002478');
     this.walkerGroup.visible = false;
+  }
+
+  /** Show other people; each keeps its figure while its colour and status stay the same. */
+  setPeople(markers: PersonMarker[]) {
+    const wanted = new Map(markers.map((m) => [m.id, m]));
+    for (const [id, shown] of this.people) {
+      const next = wanted.get(id);
+      if (
+        next &&
+        next.color === shown.marker.color &&
+        next.online === shown.marker.online &&
+        !!next.self === !!shown.marker.self
+      )
+        continue;
+      this.peopleGroup.remove(shown.figure);
+      disposeFigure(shown.figure);
+      this.people.delete(id);
+    }
+    for (const marker of markers) {
+      const shown = this.people.get(marker.id);
+      if (shown) {
+        shown.marker = marker;
+        continue;
+      }
+      const figure = makeFigure(marker.color, '#002478', marker.online ? 0.95 : 0.45);
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = [
+        'viewer__person',
+        marker.online ? '' : 'viewer__person--offline',
+        marker.self ? 'viewer__person--self' : '',
+      ]
+        .filter(Boolean)
+        .join(' ');
+      chip.style.setProperty('--person', marker.color);
+      // Tap shows the name on touch screens; hover does it with a mouse (CSS).
+      chip.addEventListener('click', () => chip.classList.toggle('is-open'));
+      chip.addEventListener('pointerdown', (e) => e.stopPropagation());
+      const label = new CSS2DObject(chip);
+      label.position.y = 2.3;
+      label.center.set(0.5, 1);
+      figure.add(label);
+      this.peopleGroup.add(figure);
+      this.people.set(marker.id, { marker, figure });
+    }
+    this.syncPeople();
+  }
+
+  /** Select a person: their name stays shown and (with `fly`) the camera zooms to them. */
+  focusPerson(id: string | null, fly = true) {
+    this.focusedPerson = id;
+    this.syncPeople();
+    const shown = id ? this.people.get(id) : undefined;
+    if (shown && fly && shown.figure.visible) {
+      const at = shown.figure.position;
+      this.flyTo(new THREE.Box3().setFromCenterAndSize(at.clone(), new THREE.Vector3(4, 3, 4)));
+    }
+  }
+
+  /** Place the people figures on their (possibly exploded) floors; hidden floors hide them,
+      and so does the People layer being off. */
+  private syncPeople() {
+    const layer = this.settings.layers.people !== false;
+    for (const { marker, figure } of this.people.values()) {
+      const fv = this.floors.find((f) => f.floor.id === marker.floorId);
+      figure.visible =
+        layer && !!fv && fv.group.visible && !(marker.self && this.walkerGroup.visible);
+      // Glide to the new place (updates arrive a few times a second); jump to a new floor, a
+      // far place or the first one.
+      const target = toVec(marker.position, (fv?.floor.elevation_m ?? 0) + this.floorOffset(fv) + 0.02);
+      const placed = figure.userData.target as THREE.Vector3 | undefined;
+      if (!placed || figure.userData.floorId !== marker.floorId || placed.distanceTo(target) > GLIDE_MAX_M)
+        figure.position.copy(target);
+      figure.userData.target = target;
+      figure.userData.floorId = marker.floorId;
+      const arrow = figure.getObjectByName('arrow');
+      if (arrow) arrow.visible = marker.headingDeg !== null;
+      figure.rotation.y = THREE.MathUtils.degToRad(marker.headingDeg ?? 0);
+      const chip = figure.children.find((c) => c instanceof CSS2DObject) as CSS2DObject | undefined;
+      if (chip) {
+        chip.visible = figure.visible;
+        const status = marker.online ? '' : ' (offline)';
+        chip.element.textContent = marker.initials;
+        chip.element.dataset.name = marker.name + status;
+        chip.element.setAttribute('aria-label', marker.name + status);
+        chip.element.title = marker.name + status;
+        chip.element.classList.toggle('is-open', marker.id === this.focusedPerson);
+        chip.element.classList.toggle('is-selected', marker.id === this.focusedPerson);
+      }
+    }
+    this.needsRender = true;
   }
 
   private stepGuidanceCamera(now: number) {
@@ -1593,15 +1727,19 @@ export class BuildingScene {
     for (const [id, { at }] of nodes) {
       const n = byId.get(id)!;
       dots.setMatrixAt(i, new THREE.Matrix4().setPosition(at));
-      color.set(
-        !n.connected_to_outside
-          ? GRAPH_COLORS.cut
-          : n.closed
-            ? '#9a9db0'
-            : spaceColor(n as unknown as Space),
-      );
-      // Room fills are pastel; the dots need a stronger version of the same hue to stand out.
-      if (n.connected_to_outside && !n.closed) color.offsetHSL(0, 0.45, -0.3);
+      if (n.kind === 'user') {
+        color.set(n.color ?? GRAPH_COLORS.person); // a person: their own colour
+      } else {
+        color.set(
+          !n.connected_to_outside
+            ? GRAPH_COLORS.cut
+            : n.closed
+              ? '#9a9db0'
+              : spaceColor(n as unknown as Space),
+        );
+        // Room fills are pastel; the dots need a stronger version of the same hue to stand out.
+        if (n.connected_to_outside && !n.closed) color.offsetHSL(0, 0.45, -0.3);
+      }
       dots.setColorAt(i++, color);
       this.graphDotIds.push(id);
     }
@@ -1657,6 +1795,7 @@ export class BuildingScene {
         );
       }
     }
+    this.syncPeople();
     // The model's stair/lift shafts span storeys, so they can't follow exploded floors.
     this.connectors.visible = s.layers.connectors && !(this.hq && s.explode > 0);
     if (this.glb) {
@@ -1881,8 +2020,19 @@ export class BuildingScene {
     this.camera.updateProjectionMatrix();
   }
 
+  /** Move people figures a step towards their latest place (smooth remote movement). */
+  private stepPeople() {
+    for (const { figure } of this.people.values()) {
+      const target = figure.userData.target as THREE.Vector3 | undefined;
+      if (!target || figure.position.distanceToSquared(target) < 1e-4) continue;
+      figure.position.lerp(target, 0.18);
+      this.needsRender = true;
+    }
+  }
+
   private tick = (now: number) => {
     this.stepGuidanceCamera(now);
+    this.stepPeople();
     if (this.fly) {
       const t = Math.min(1, (now - this.fly.start) / this.fly.duration);
       const k = easeInOut(t);

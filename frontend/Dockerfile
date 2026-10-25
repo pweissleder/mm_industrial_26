@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Targets: `dev` (Astro dev server, used by compose.yaml) and `prod` (static build
 # behind nginx, used by compose.prod.yaml). `prod` is the default.
 

@@ -1,7 +1,7 @@
 from typing import Any
 
 import networkx as nx
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 
 from app.api.deps import NavigatorsDep, RepositoryDep
 from app.api.schemas import BuildingDetail, BuildingSummary, FloorOut
@@ -69,13 +69,50 @@ def get_building_model(building_id: str, navigators: NavigatorsDep) -> dict[str,
 
 
 @router.get("/{building_id}/graph")
-def get_building_graph(building_id: str, navigators: NavigatorsDep) -> dict[str, Any]:
-    """The level-1 navgraph RoomGraph as node-link JSON, for the debug graph view."""
+def get_building_graph(
+    building_id: str, navigators: NavigatorsDep, request: Request
+) -> dict[str, Any]:
+    """The level-1 navgraph RoomGraph as node-link JSON, for the debug graph view.
+
+    People in the building are nodes too (`user:<id>`, kind "user"), linked to the room they are
+    in by a "person" edge whose `cost_m` is the walk from the room's anchor to them.
+    """
     building = Building.from_dict(_live(navigators, building_id))
     graph = RoomGraph(building).g
     cost = OrganizerCost()
     for a, b, e in graph.edges(data=True):
         e["cost_m"] = _edge_cost(building, cost, a, b, e)
+    presence = getattr(request.app.state, "presence", None)
+    for person in presence.located(building_id) if presence else []:
+        space = building.spaces.get(person["space_id"] or "")
+        if space is None or space.id not in graph:
+            continue
+        node = f"user:{person['id']}"
+        graph.add_node(
+            node,
+            kind="user",
+            name=person["name"],
+            color=person["color"],
+            status=person["status"],
+            floor_id=person["floor_id"],
+            anchor=person["position"],
+            connected_to_outside=graph.nodes[space.id].get("connected_to_outside", True),
+        )
+        try:
+            walk = round(cost.walk(space, space.anchor, tuple(person["position"])), 3)
+        except Exception:  # degenerate room geometry: the link without a length
+            walk = None
+        graph.add_edge(
+            space.id,
+            node,
+            key=node,
+            kind="person",
+            element=node,
+            step_free=True,
+            synthetic=False,
+            closed=False,
+            cost_m=walk,
+        )
     return nx.node_link_data(graph, edges="edges")
 
 

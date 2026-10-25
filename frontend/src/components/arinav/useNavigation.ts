@@ -25,23 +25,24 @@ import {
   type NavSettings,
   type SimulatedLocation,
 } from '../../lib/nav';
+import { personKey } from './usePerson';
 import type { RouteView } from './Viewer3D';
 
 const SIM_KEY = 'arinav:simulated-location:';
 
-function loadSim(buildingId: string): SimulatedLocation | null {
+function loadSim(key: string): SimulatedLocation | null {
   try {
-    const raw = sessionStorage.getItem(SIM_KEY + buildingId);
+    const raw = sessionStorage.getItem(key);
     return raw ? (JSON.parse(raw) as SimulatedLocation) : null;
   } catch {
     return null;
   }
 }
 
-function saveSim(buildingId: string, value: SimulatedLocation | null) {
+function saveSim(key: string, value: SimulatedLocation | null) {
   try {
-    if (value) sessionStorage.setItem(SIM_KEY + buildingId, JSON.stringify(value));
-    else sessionStorage.removeItem(SIM_KEY + buildingId);
+    if (value) sessionStorage.setItem(key, JSON.stringify(value));
+    else sessionStorage.removeItem(key);
   } catch {
     // Storage can be unavailable; the location then lasts until reload.
   }
@@ -85,7 +86,8 @@ export interface Navigation {
   previewClosure: (elementIds: string[]) => Promise<void>;
   nearestExit: () => Promise<void>;
   runOperation: (operation: string, args: Record<string, unknown>) => Promise<void>;
-  setSimulated: (value: SimulatedLocation | null) => void;
+  /** `publish: false` takes over a place the server already has (no echo back to it). */
+  setSimulated: (value: SimulatedLocation | null, options?: { publish?: boolean }) => void;
   applyState: (state: NavState | null) => void;
   /** Applies a turn's `ui` (except focus and building switch, which the app handles). */
   applyTurn: (turn: TurnResponse) => void;
@@ -97,7 +99,12 @@ export interface Navigation {
 const describeError = (e: unknown) =>
   e instanceof ApiError ? e.message : 'The navigation service is not reachable.';
 
-export function useNavigation(buildingId: string | null): Navigation {
+/** `personId` scopes the remembered location: each person keeps their own per building. */
+export function useNavigation(
+  buildingId: string | null,
+  personId: string | null = null,
+): Navigation {
+  const simKey = buildingId ? personKey(SIM_KEY + buildingId, personId) : null;
   const [state, setState] = useState<NavState | null>(null);
   const [unavailable, setUnavailable] = useState<string | null>(null);
   const [start, setStart] = useState<EndpointChoice | null>(null);
@@ -140,9 +147,9 @@ export function useNavigation(buildingId: string | null): Navigation {
     setState(null);
     setUnavailable(null);
     setCleared(new Set());
-    setSimulatedState(buildingId ? loadSim(buildingId) : null);
+    setSimulatedState(simKey ? loadSim(simKey) : null);
     void refresh();
-  }, [buildingId, refresh]);
+  }, [simKey, refresh]);
 
   // Whatever changed the scenario (this panel, the assistant, another tab, the team agent), a
   // route or closure preview computed under an older revision is stale: drop it.
@@ -362,9 +369,22 @@ export function useNavigation(buildingId: string | null): Navigation {
   );
 
   const setSimulated = useCallback(
-    (value: SimulatedLocation | null) => {
+    (value: SimulatedLocation | null, { publish = true }: { publish?: boolean } = {}) => {
       setSimulatedState(value);
-      if (buildingId) saveSim(buildingId, value);
+      if (simKey) saveSim(simKey, value);
+      // The chosen person's place is shared: set here, others see it; cleared, they no longer do
+      // (they stay in this building, their current location, without a spot on the map).
+      if (publish && personId && buildingId) {
+        const published = value
+          ? api.setPosition({
+              building_id: buildingId,
+              endpoint: value.endpoint,
+              label: value.label,
+              source: value.source ?? 'manual',
+            })
+          : api.clearPosition();
+        published.catch(() => undefined);
+      }
       setCleared((c) => {
         const next = new Set(c);
         if (value) next.delete('start');
@@ -373,7 +393,7 @@ export function useNavigation(buildingId: string | null): Navigation {
       });
       if (!value) setRouteView(null); // its start was that location
     },
-    [buildingId],
+    [simKey, personId, buildingId],
   );
 
   const applyTurn = useCallback(

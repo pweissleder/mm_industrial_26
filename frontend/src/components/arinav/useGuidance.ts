@@ -51,6 +51,9 @@ export interface Guidance {
   recenter: () => void;
   /** Manual walking: the person's pose, or null to give the walker back to the clock. */
   setExternal: (pose: ExternalPose | null) => void;
+  /** Recompute the route being walked from where the person is now (the target moved);
+      false when no navigation is in progress. */
+  retarget: (message: string) => boolean;
 }
 
 const SNAPSHOT_MS = 100;
@@ -68,6 +71,10 @@ export interface ExternalPose {
   heading_deg: number;
 }
 const PREVIEW_MS = 9000; // cap for the drone part of the fly-through
+
+/** Where a route goes: a person stays that person (so a reroute follows them), else the place. */
+export const routeTargetOf = (route: RouteResponse): Endpoint | null =>
+  route.target_person ? { kind: 'user', id: route.target_person.id } : endpointOf(route.target);
 
 const endpointOf = (end: RouteResponse['target']): Endpoint | null => {
   if (!end) return null;
@@ -231,7 +238,7 @@ export function useGuidance(args: {
     (from: { space_id: string | null; position: [number, number] }, message: string) => {
       const snap = sim.current.snapshot();
       const id = latest.current.buildingId;
-      const target = snap.route ? endpointOf(snap.route.target) : null;
+      const target = snap.route ? routeTargetOf(snap.route) : null;
       if (!id || !target || !snap.route) return;
       const wasActive = snap.status === 'active';
       const route = snap.route;
@@ -305,6 +312,23 @@ export function useGuidance(args: {
       : { space_id: snap.progress.space_id, position: snap.progress.position };
     reroute(from, 'The building changed · checking your route…');
   }, [scenarioRevision, reroute]);
+
+  const retarget = useCallback(
+    (message: string) => {
+      const snap = sim.current.snapshot();
+      const moving = snap.status === 'active' || snap.status === 'paused';
+      if (!moving || !snap.route || !snap.progress) return false;
+      const ext = external.current;
+      reroute(
+        ext
+          ? { space_id: ext.space_id, position: ext.position }
+          : { space_id: snap.progress.space_id, position: snap.progress.position },
+        message,
+      );
+      return true;
+    },
+    [reroute],
+  );
 
   // Manual walking: the person (not the clock) moves. Their pose is shown as is; progress along
   // the route comes from projecting it; more than OFF_ROUTE_M away replans from where they stand.
@@ -412,5 +436,6 @@ export function useGuidance(args: {
     overview,
     recenter,
     setExternal,
+    retarget,
   };
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RoomGraphData, RouteResponse } from '../../lib/api';
 import type { BuildingModel, Selection } from '../../lib/building';
-import { BuildingScene, type PickHit } from './scene';
+import { BuildingScene, type PersonMarker, type PickHit } from './scene';
 import type { PoseStore } from './useGuidance';
 import type { LookStore } from './useImmersive';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
@@ -27,6 +27,7 @@ export interface GuidanceCameraCommand {
 }
 
 const NONE: readonly string[] = [];
+const NO_PEOPLE: readonly PersonMarker[] = [];
 
 interface Props {
   model: BuildingModel | null;
@@ -57,6 +58,10 @@ interface Props {
   look?: LookStore | null;
   /** Developer split view: POV left, building right. */
   split?: boolean;
+  /** People in this building (multi-user presence), you included. */
+  people?: readonly PersonMarker[];
+  /** A person chosen in the list: selected and zoomed to (`nonce` repeats the zoom). */
+  focusPerson?: { id: string; nonce: number } | null;
 }
 
 export default function Viewer3D({
@@ -79,6 +84,8 @@ export default function Viewer3D({
   onPreviewDone,
   look = null,
   split = false,
+  people = NO_PEOPLE,
+  focusPerson = null,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const scene = useRef<BuildingScene | null>(null);
@@ -147,6 +154,8 @@ export default function Viewer3D({
     return look.subscribe(() => current.setLook(look.get()));
   }, [look]);
   useEffect(() => scene.current?.setSplit(split), [split]);
+  useEffect(() => scene.current?.setPeople([...people]), [people, model]);
+  useEffect(() => scene.current?.focusPerson(focusPerson?.id ?? null, !!focusPerson), [focusPerson]);
   useEffect(() => {
     const current = scene.current;
     if (!current || !guidanceCamera) return;

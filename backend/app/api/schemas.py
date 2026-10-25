@@ -69,6 +69,10 @@ class IngestionResponse(BaseModel):
     vertical_connectors: int
     assets: int
     replaced: bool
+    loaded: bool = Field(
+        default=True,
+        description="False when the dataset was already loaded and opening kept its live version.",
+    )
 
 
 class FloorOut(BaseModel):

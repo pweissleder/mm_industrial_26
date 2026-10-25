@@ -1,6 +1,7 @@
 """Ingest a dataset folder (starter-kit format) into building storage."""
 
 import re
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -29,6 +30,8 @@ class IngestionSummary:
     vertical_connectors: int
     assets: int
     replaced: bool
+    # False when `open_dataset` found the building already loaded and left it as it was.
+    loaded: bool = True
 
 
 @dataclass(frozen=True)
@@ -70,20 +73,20 @@ def _building_file(datasets_dir: Path, dataset: str) -> Path:
     return path
 
 
-@traceable(
-    run_type="tool", name="ingest_dataset", process_inputs=lambda i: {"dataset": i["dataset"]}
-)
-def ingest_dataset(
-    repository: BuildingRepository, datasets_dir: Path, dataset: str
-) -> IngestionSummary:
-    """Validate `<datasets_dir>/<dataset>/building.json` and store it.
+_locks: dict[str, threading.Lock] = {}
+_locks_guard = threading.Lock()
 
-    Re-ingesting a building replaces its previous version.
-    """
-    data = BuildingFile.model_validate_json(_building_file(datasets_dir, dataset).read_bytes())
-    replaced = repository.save(dataset, data)
+
+def _dataset_lock(dataset: str) -> threading.Lock:
+    """One lock per dataset, so concurrent opens/reloads of it never interleave."""
+    if not DATASET_NAME.match(dataset):
+        raise DatasetNotFoundError(dataset)
+    with _locks_guard:
+        return _locks.setdefault(dataset, threading.Lock())
+
+
+def _summary(dataset: str, data: BuildingFile, *, replaced: bool, loaded: bool) -> IngestionSummary:
     meta = data.building
-
     return IngestionSummary(
         dataset=dataset,
         building_id=meta.id,
@@ -94,4 +97,39 @@ def ingest_dataset(
         vertical_connectors=len(data.vertical_connectors),
         assets=len(data.assets),
         replaced=replaced,
+        loaded=loaded,
     )
+
+
+@traceable(
+    run_type="tool", name="ingest_dataset", process_inputs=lambda i: {"dataset": i["dataset"]}
+)
+def ingest_dataset(
+    repository: BuildingRepository, datasets_dir: Path, dataset: str
+) -> IngestionSummary:
+    """Validate `<datasets_dir>/<dataset>/building.json` and store it.
+
+    Re-ingesting a building replaces its previous version.
+    """
+    with _dataset_lock(dataset):
+        data = BuildingFile.model_validate_json(_building_file(datasets_dir, dataset).read_bytes())
+        replaced = repository.save(dataset, data)
+    return _summary(dataset, data, replaced=replaced, loaded=True)
+
+
+def open_dataset(
+    repository: BuildingRepository, datasets_dir: Path, dataset: str
+) -> IngestionSummary:
+    """The dataset's building, ingesting it only if it is not loaded yet.
+
+    Opening is idempotent: a building another browser already opened keeps its live version
+    (asset edits, scenario closures) instead of being reset to `building.json`. An explicit
+    reload is `ingest_dataset`.
+    """
+    with _dataset_lock(dataset):
+        loaded = next((b for b in repository.list() if b.dataset == dataset), None)
+        if loaded is not None:
+            return _summary(dataset, loaded.data, replaced=False, loaded=False)
+        data = BuildingFile.model_validate_json(_building_file(datasets_dir, dataset).read_bytes())
+        replaced = repository.save(dataset, data)
+    return _summary(dataset, data, replaced=replaced, loaded=True)

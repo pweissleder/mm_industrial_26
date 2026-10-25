@@ -93,6 +93,11 @@ Understanding requests
   Say that this is the room directly underneath; do not simulate or promise water flow.
 - Search results never change the user's start or destination. Only use update_session for what
   the user actually said ("I'm in ...", "I'm next to the hand dryer", "I use a wheelchair").
+- People are places too: "take me to Sam", "where is Alex?" -> find_places with the name (kind
+  person); a result of kind user is a person who is in this building now. Route to them with
+  plan_route destination {kind: user, id}; the route ends where they are right now. Say where they
+  are (their room) and whether they are offline (their last known place). If find_places finds
+  nobody, they are not in this building or have not set where they are: say so.
 - "I don't know where I am, but there is X here": find_places for X. If one room matches, use it
   as the start and say so; if several rooms match, ask which one (name them with their floor).
 - Needs: coffee -> asset_type:coffee_machine or room_type:kitchen; restroom/toilet ->
@@ -352,6 +357,10 @@ class Assistant:
     def check_endpoint(self, data: JSON, endpoint: JSON | None) -> JSON | None:
         if endpoint is None:
             return None
+        if isinstance(endpoint, dict) and endpoint.get("kind") == "user":
+            # A person: the place where they are now (a route there follows plan_route's person).
+            person = self.navigation.locate_person(data["building"]["id"], endpoint.get("id"))
+            return self.check_endpoint(data, person["endpoint"])
         if isinstance(endpoint, dict) and endpoint.get("kind") == "point":
             # An exact map point (UI only): a space and an XY inside the building frame.
             position = endpoint.get("position")
@@ -533,15 +542,17 @@ class Assistant:
             "door": "opening",
             "exit": "exit",
             "lift_or_stairs": "connector",
+            "person": "person",
         }.get(args.get("kind") or "")
         results = self.navigation.search(building_id, query, kind, args.get("floor_level"), 12)
         rows = [{k: v for k, v in r.items() if k not in {"score", "floor_id"}} for r in results]
         self.memory.add_search(session.id, building_id, "find_places", query, len(rows))
         out: JSON = {"shown": len(rows), "results": rows}
         if len(rows) == 1:
-            ui["focus"] = {"kind": rows[0]["kind"], "id": rows[0]["id"]}
-        if rows:
-            ui["highlight"] = [r["id"] for r in rows]
+            ui["focus"] = {"kind": rows[0]["kind"], "id": rows[0]["id"]}  # kind user: a person
+        places = [r["id"] for r in rows if r["kind"] != "user"]
+        if places:
+            ui["highlight"] = places
         if not rows:
             out["note"] = "Nothing matches. Say so and offer a related place type or ask the user."
         elif len(rows) > 1:
@@ -647,6 +658,12 @@ class Assistant:
     def tool_plan_route(self, session: Session, args: JSON, ui: JSON) -> JSON:
         state = session.state
         data = self._data(session)
+        wanted = args.get("destination")
+        person = (
+            self.navigation.locate_person(state["building_id"], wanted.get("id"))
+            if isinstance(wanted, dict) and wanted.get("kind") == "user"
+            else None
+        )
         start = self.check_endpoint(data, args.get("start")) or state["start"]
         destination = self.check_endpoint(data, args.get("destination")) or state["destination"]
         missing = [n for n, v in (("start", start), ("destination", destination)) if v is None]
@@ -670,6 +687,9 @@ class Assistant:
         state["destination"] = destination
         assume = [str(x) for x in args.get("assume_closed") or []]
         request = self._route_request(state, start, destination, assume)
+        if person is not None:
+            # The person themself, not their current spot: the app's route then follows them.
+            request["target"] = {"kind": "user", "id": person["id"]}
         ui["endpoints"] = {"start": start, "destination": destination}
         ui["settings"] = self._settings(state)
         try:
@@ -730,6 +750,16 @@ class Assistant:
             "assumed_closed": assume or None,
             "step_free": state["step_free"],
         }
+        if person is not None:
+            summary["to"] = person["name"]
+            summary["person"] = {
+                "name": person["name"],
+                "where": (self.describe(data, destination) or {}).get("name"),
+                "status": person["status"],
+                "note": "offline: their last known place"
+                if person["status"] == "offline"
+                else None,
+            }
         if state["step_free"]:
             summary["constraint"] = STEP_FREE_NOTE
         if moved_from:

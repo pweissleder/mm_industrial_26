@@ -435,6 +435,50 @@ code {
   white-space: nowrap;
 }
 
+/* Another person on the map: their initials; hover (or tap) shows the name. */
+.viewer__person {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border: 2px solid #fff;
+  border-radius: var(--pill);
+  background: var(--person, var(--navy));
+  color: #fff;
+  font: 700 11px/1 inherit;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.viewer__person:hover::after,
+.viewer__person:focus-visible::after,
+.viewer__person.is-open::after {
+  content: attr(data-name);
+  font-weight: 600;
+}
+
+.viewer__person--self {
+  box-shadow:
+    0 0 0 2px var(--person, var(--navy)),
+    0 1px 6px rgba(0, 0, 0, 0.25);
+}
+
+.viewer__person.is-selected {
+  transform: scale(1.15);
+  outline: 3px solid var(--orange);
+  outline-offset: 1px;
+}
+
+.viewer__person--offline {
+  opacity: 0.6;
+  filter: grayscale(0.4);
+}
+
 .viewer__pin {
   position: relative;
   margin-bottom: 10px;
@@ -600,6 +644,174 @@ code {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+/* People: avatars (initials on the person's colour), an online dot, the list of who is here. */
+.people__avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.people__online {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: var(--good);
+}
+
+.people__avatar--sm {
+  width: 28px;
+  height: 28px;
+  font-size: 10.5px;
+  flex: none;
+}
+
+.people-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.people-list__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.people-list__row:hover:not(:disabled) {
+  background: var(--gray-50);
+}
+
+.people-list__row[aria-pressed='true'] {
+  background: var(--blue-50);
+}
+
+.people-list__row:disabled {
+  cursor: default;
+}
+
+.people-list__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.people-list__text .muted {
+  overflow: hidden;
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Header avatar: who you are; opens the account switcher. */
+.topbar__avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font: 700 12px/1 var(--font);
+  box-shadow: 0 0 0 1px var(--line);
+  cursor: pointer;
+  flex: none;
+}
+
+.topbar__avatar--empty {
+  background: var(--gray-100);
+  color: var(--ink-2);
+}
+
+/* Account dialog (login and switching person). */
+.accounts {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.accounts__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+.accounts__tile:hover:not(:disabled),
+.accounts__tile:focus-visible {
+  border-color: var(--blue);
+  background: var(--blue-50);
+}
+
+.accounts__tile[aria-pressed='true'] {
+  border-color: var(--blue);
+  box-shadow: inset 0 0 0 1px var(--blue);
+}
+
+.accounts__tile:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.accounts__avatar {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.accounts__name {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.accounts__meta {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.people__error {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--bad);
 }
 
 .section__toggle {

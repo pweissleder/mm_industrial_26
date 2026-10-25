@@ -53,6 +53,7 @@ def test_ingests_dataset_and_exposes_building(client: TestClient) -> None:
         "vertical_connectors": summary["vertical_connectors"],
         "assets": summary["assets"],
         "replaced": False,
+        "loaded": True,
     }
     assert summary["spaces"] > 0 and summary["assets"] > 0
 

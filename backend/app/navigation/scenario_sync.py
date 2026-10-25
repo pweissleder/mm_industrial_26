@@ -11,23 +11,31 @@ agent, the graph overlay and the served building model. So:
 - asset edits (`add_asset`, `move_asset`, `remove_asset`) are saved as the building's new version
   in the repository (with the closures as element flags), so the official router, the precision
   router (obstacles) and the served model all see the same things;
+- one call at a time per navigator (a lock), and an asset edit is only saved over the version the
+  navigator was built from: if someone stored a newer one meanwhile, the edit is refused
+  (`stale_building`) rather than silently overwriting it;
 - topology edits (`add_door`, the builder tools) and `save` are not offered: they would change the
   building under the official router without it knowing (team decision to revisit).
 """
 
 import json
+import threading
 from typing import Any, Protocol
 
 from app.domain.building import BuildingFile
 from app.navigation.base import BuildingNavigator, NavigatorFactory
 from app.navigation.errors import NavigationError
 from app.navigation.navgraph_engine import NavgraphNavigator
-from app.storage import BuildingRepository
+from app.storage import BuildingRepository, StaleBuildingError
 
 BLOCKED_TOOLS = frozenset(
     {"add_door", "add_floor", "add_space", "add_entrance", "add_connector", "save"}
 )
 ASSET_TOOLS = frozenset({"add_asset", "move_asset", "remove_asset"})
+STALE_MESSAGE = (
+    "The building was changed by someone else meanwhile; this edit was not saved. "
+    "Look at the building again and retry."
+)
 BLOCKED_MESSAGE = (
     "Adding doors, spaces, entrances, connectors or floors is not available here: the official "
     "router would not see them. Closures and things (assets) can be changed."
@@ -54,6 +62,8 @@ class ScenarioNavgraphNavigator(NavgraphNavigator):
         repository: BuildingRepository | None = None,
     ) -> None:
         super().__init__(data)
+        self._source = data
+        self._lock = threading.RLock()
         self._building_id = data.building.id
         self._scenario = scenario
         self._repository = repository
@@ -83,34 +93,44 @@ class ScenarioNavgraphNavigator(NavgraphNavigator):
         return None
 
     def primer(self) -> str:
-        self._mirror()
-        return super().primer()
+        with self._lock:
+            self._mirror()
+            return super().primer()
 
     def snapshot(self) -> dict[str, Any]:
-        self._mirror()
-        return super().snapshot()
+        with self._lock:
+            self._mirror()
+            return super().snapshot()
 
     def call(self, name: str, args: dict[str, Any]) -> str:
         if name in BLOCKED_TOOLS:
             return json.dumps({"error": "not_available", "message": BLOCKED_MESSAGE})
-        self._mirror()
-        before = set(self._bi.b.closed)
-        result = super().call(name, args)
-        if name == "set_closed":
-            refused = self._write_through(before)
-            self._mirror()  # the service's state wins either way
-            if refused:
-                return json.dumps({"error": "change_refused", "message": refused})
-        elif name in ASSET_TOOLS and '"error"' not in result[:40]:
-            self._save_version()
-        return result
+        with self._lock:
+            self._mirror()
+            before = set(self._bi.b.closed)
+            result = super().call(name, args)
+            if name == "set_closed":
+                refused = self._write_through(before)
+                self._mirror()  # the service's state wins either way
+                if refused:
+                    return json.dumps({"error": "change_refused", "message": refused})
+            elif name in ASSET_TOOLS and '"error"' not in result[:40] and not self._save_version():
+                return json.dumps({"error": "stale_building", "message": STALE_MESSAGE})
+            return result
 
-    def _save_version(self) -> None:
-        """Store the edited building as the new version of the one building source."""
+    def _save_version(self) -> bool:
+        """Store the edited building as the new version of the one building source; False when
+        a newer version was stored meanwhile (the edit is then dropped with this navigator)."""
         stored = self._repository.get(self._building_id) if self._repository else None
         if stored is None or self._repository is None:
-            return
-        self._repository.save(stored.dataset, BuildingFile.model_validate(self.snapshot()))
+            return True
+        try:
+            saved = BuildingFile.model_validate(self.snapshot())
+            self._repository.save(stored.dataset, saved, expected=self._source)
+        except StaleBuildingError:
+            return False
+        self._source = saved
+        return True
 
 
 def scenario_navigator_factory(

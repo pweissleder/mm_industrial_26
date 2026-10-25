@@ -1,4 +1,12 @@
-export type Layer = 'spaces' | 'walls' | 'assets' | 'openings' | 'connectors' | 'labels' | 'graph';
+export type Layer =
+  | 'spaces'
+  | 'walls'
+  | 'assets'
+  | 'openings'
+  | 'connectors'
+  | 'labels'
+  | 'people'
+  | 'graph';
 
 export const LAYERS: { id: Layer; label: string }[] = [
   { id: 'spaces', label: 'Rooms' },
@@ -7,6 +15,7 @@ export const LAYERS: { id: Layer; label: string }[] = [
   { id: 'openings', label: 'Doors' },
   { id: 'connectors', label: 'Stairs & lifts' },
   { id: 'labels', label: 'Labels' },
+  { id: 'people', label: 'People' },
   { id: 'graph', label: 'Nav graph' },
 ];
 
@@ -25,7 +34,16 @@ export interface ViewSettings {
 
 export const DEFAULT_VIEW: ViewSettings = {
   floor: 'all',
-  layers: { spaces: true, walls: true, assets: true, openings: true, connectors: true, labels: true, graph: false },
+  layers: {
+    spaces: true,
+    walls: true,
+    assets: true,
+    openings: true,
+    connectors: true,
+    labels: true,
+    people: true,
+    graph: false,
+  },
   explode: 0,
   wallHeight: 2.4,
   colorBy: 'room',

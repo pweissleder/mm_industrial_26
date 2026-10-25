@@ -228,3 +228,6 @@ benchmark_results/*.log
 
 # Playwright MCP browser session data
 .playwright-mcp/
+
+# Multi-user presence state (last-known positions); a volume in production.
+backend/data/state/

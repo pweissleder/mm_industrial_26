@@ -6,6 +6,7 @@ from app.ingestion.service import (
     ingest_dataset,
     list_datasets,
     list_pending_datasets,
+    open_dataset,
 )
 from app.ingestion.uploads import (
     DatasetFile,
@@ -30,6 +31,7 @@ __all__ = [
     "list_datasets",
     "list_files",
     "list_pending_datasets",
+    "open_dataset",
     "remove_dataset",
     "save_upload",
 ]

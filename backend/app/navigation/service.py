@@ -21,9 +21,10 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Protocol, TypeVar
 
 import networkx as nx
+from shapely.geometry import Point
 
 from app.config import Settings
 from app.navigation import kit, location, search
@@ -45,6 +46,8 @@ GRAPH_CACHE_SIZE = 8
 CONTEXT_CACHE_SIZE = 400
 PRECISION_MAX_SECONDS = 20.0
 DOOR = official_map.DOOR_PREFIX
+# A person's point may sit this far outside its room polygon (rounding, wall thickness).
+PLACE_TOLERANCE_M = 0.05
 
 
 class LRUCache(Generic[K, V]):
@@ -145,10 +148,19 @@ def _stored_closures(data: JSON) -> set[str]:
     return flagged | {i for i in data.get("closed") or [] if i in known}
 
 
+class People(Protocol):
+    """Who is where (PresenceService): people are places too, found by name and routable."""
+
+    def located(self, building_id: str) -> list[JSON]: ...
+
+    def locate(self, building_id: str, user_id: Any) -> JSON: ...
+
+
 class NavigationService:
     def __init__(self, repository: BuildingRepository, datasets_dir: Path | None = None) -> None:
         self.repository = repository
         self.datasets_dir = datasets_dir
+        self.people: People | None = None
         self._entries: dict[str, _Entry] = {}
         self._lock = threading.Lock()
 
@@ -313,9 +325,25 @@ class NavigationService:
         floor_level: int | None = None,
         limit: int = 12,
     ) -> list[JSON]:
-        """Rooms, assets, openings (exits flagged) and connectors matching `query`, best first."""
+        """Rooms, assets, openings (exits flagged), connectors and people (kind "user") matching
+        `query`, best first."""
         entry = self._entry(building_id)
-        return search.search(entry.data, query, kind, floor_level, limit, entry.closed)
+        people = self.people.located(building_id) if self.people else []
+        return search.search(entry.data, query, kind, floor_level, limit, entry.closed, people)
+
+    def locate_person(self, building_id: str, user_id: Any) -> JSON:
+        """A person's current place in this building (`endpoint` is a room/asset/door/point)."""
+        self._entry(building_id)
+        if self.people is None:
+            raise NavigationError("unknown_place", "People are not available here")
+        return self.people.locate(building_id, user_id)
+
+    def _person(self, building_id: str, spec: Any) -> tuple[Any, JSON | None]:
+        """A `{kind: "user", id}` endpoint resolved to where that person is now."""
+        if not (isinstance(spec, dict) and spec.get("kind") == "user"):
+            return spec, None
+        person = self.locate_person(building_id, spec.get("id"))
+        return person["endpoint"], person
 
     def suggestions(self, building_id: str, query: str) -> list[str]:
         return search.suggestions(self._entry(building_id).data, query)
@@ -537,8 +565,13 @@ class NavigationService:
         mode = request.get("mode") or "official"
         if mode not in ("official", "precision"):
             raise NavigationError("invalid_input", "mode must be official or precision")
-        start = self._check_endpoint(entry, request.get("start"), "start")
-        target = self._check_endpoint(entry, request.get("target"), "target")
+        # A person (kind "user") is routed to where they are now, to their exact spot.
+        start_spec, start_person = self._person(building_id, request.get("start"))
+        target_spec, target_person = self._person(building_id, request.get("target"))
+        start = self._check_endpoint(entry, start_spec, "start")
+        target = self._check_endpoint(entry, target_spec, "target")
+        exact_start = _bool(request.get("exact_start"), "exact_start") or start_person is not None
+        exact_target = _bool(request.get("exact_target"), "exact_target") or bool(target_person)
         via_raw = request.get("via") or []
         if not isinstance(via_raw, list):
             raise NavigationError("invalid_input", "via must be a list of endpoints")
@@ -552,8 +585,10 @@ class NavigationService:
             closed = sorted(entry.closed | set(assume))
             if mode == "official":
                 response = self._official(entry, start, target, via, step_free, closed, unofficial)
-                if _bool(request.get("exact_start"), "exact_start"):
+                if exact_start:
                     self._exact_start(entry, response, start, closed)
+                if exact_target:
+                    self._exact_target(entry, response, target, closed)
             else:
                 if via:
                     raise NavigationError(
@@ -561,6 +596,11 @@ class NavigationService:
                     )
                 response = self._precision(entry, request, start, target, step_free, closed)
             response["revision"] = entry.revision
+        for key, person in (("start_person", start_person), ("target_person", target_person)):
+            if person is not None:
+                response[key] = {
+                    k: person[k] for k in ("id", "name", "status", "label", "revision", "moving")
+                }
         response["closed"] = closed
         response["assume_closed"] = assume
         # The constraints this route honours, so a later reroute keeps them (never loosens).
@@ -613,6 +653,69 @@ class NavigationService:
             *response.get("assumptions", []),
             "exact_start: the first leg starts at the given point (official walkable area); "
             "length_m stays the official cost from the space.",
+        ]
+        response["waypoints"] = waypoints(
+            response["path"],
+            response["transitions"],
+            entry.data,
+            response["start"],
+            response["target"],
+        )
+
+    def _exact_target(self, entry: _Entry, response: JSON, target: JSON, closed: list[str]) -> None:
+        """The route ends exactly at a point target (a person's spot), not at its room's anchor.
+
+        The last leg inside the target space is re-walked from where it enters the room to the
+        point, on the same official walkable area and visibility graph as `_exact_start`. Unlike
+        `exact_start`, `length_m` becomes the endpoint-aware length: the official length with
+        that leg's walk replaced (`official_length_m` keeps the room-to-room cost)."""
+        position = target.get("position")
+        if response.get("status") != "ok" or target.get("kind") != "point" or position is None:
+            return
+        space_id = target["space_id"]
+        last = next(
+            (
+                i
+                for i in range(len(response["path"]) - 1, -1, -1)
+                if response["path"][i].get("kind") != "connector"
+            ),
+            None,
+        )
+        if last is None or response["path"][last].get("space_id") != space_id:
+            return
+        segment = response["path"][last]
+        point = [float(position[0]), float(position[1])]
+        view = challenge._view(entry.bmap, closed)
+        old = segment["points"]
+        # Keep the leg up to its last point from which the person's spot is walkable.
+        walk, walked, clear, kept = [], 0.0, False, []
+        for k in range(len(old) - 1):
+            walk, walked, clear = challenge._walk_points(view, space_id, old[k], point)
+            if clear:
+                kept = old[:k]
+                break
+        if not clear:
+            response["warnings"] = [
+                *response.get("warnings", []),
+                "exact_target: no clear walk to the given point; the route ends in the room.",
+            ]
+            return
+
+        def polyline(points: list[Any]) -> float:
+            return sum(math.dist(a, b) for a, b in zip(points, points[1:], strict=False))
+
+        new_points = [[float(x), float(y)] for x, y in [*kept, *walk]]
+        delta = polyline(new_points) - polyline(old)
+        segment["points"] = new_points
+        response["official_length_m"] = response.get("length_m")
+        if isinstance(response.get("length_m"), int | float):
+            response["length_m"] = round(max(0.0, response["length_m"] + delta), 3)
+        response["target"] = {**response["target"], "position": point}
+        response["exact_target_m"] = round(float(walked), 3)
+        response["assumptions"] = [
+            *response.get("assumptions", []),
+            "exact_target: the route ends at the given point (official walkable area); length_m "
+            "includes that last walk, official_length_m is the room-to-room cost.",
         ]
         response["waypoints"] = waypoints(
             response["path"],
@@ -956,6 +1059,52 @@ class NavigationService:
         with entry.lock:
             closed = set(entry.closed)
         return _surroundings(entry.data, closed, space_id, position, heading_deg)
+
+    def has_building(self, building_id: Any) -> bool:
+        return isinstance(building_id, str) and self.repository.get(building_id) is not None
+
+    def place(self, building_id: str, spec: Any, tolerance_m: float = PLACE_TOLERANCE_M) -> JSON:
+        """Where an endpoint is: `{endpoint, floor_id, space_id, position, building_version}`.
+
+        For a person's position (presence): IDs must exist and a point must lie in its room.
+        `building_version` changes whenever a new version of the building is stored, so a saved
+        position can be revalidated against it.
+        """
+        entry = self._entry(building_id)
+        endpoint = self._check_endpoint(entry, spec, "position")
+        kind = endpoint["kind"]
+        if kind == "point":
+            space = entry.spaces[endpoint["space_id"]]
+            position = location._position(endpoint["position"])
+            if location._polygon(space).distance(Point(position)) > tolerance_m:
+                raise NavigationError(
+                    "invalid_input",
+                    "position: the point is not inside the given room",
+                    {"space_id": space["id"], "position": position},
+                )
+            endpoint["position"] = position
+            space_id, floor_id = space["id"], space["floor_id"]
+        elif kind == "space":
+            space = entry.spaces[endpoint["id"]]
+            anchor = location._polygon(space).representative_point()
+            position = [round(anchor.x, 3), round(anchor.y, 3)]
+            space_id, floor_id = space["id"], space["floor_id"]
+        elif kind == "asset":
+            asset = entry.assets[endpoint["id"]]
+            position = [float(v) for v in asset["position"]]
+            space_id, floor_id = asset.get("space_id"), asset["floor_id"]
+        else:
+            opening = entry.openings[endpoint["id"]]
+            position = [float(v) for v in opening["position"]]
+            space_id = endpoint.get("side_space_id") or search.inside_space(opening, entry.spaces)
+            floor_id = opening["floor_id"]
+        return {
+            "endpoint": endpoint,
+            "floor_id": floor_id,
+            "space_id": space_id,
+            "position": position,
+            "building_version": entry.ingested_at.isoformat(),
+        }
 
     def resolve_location(self, request: JSON) -> JSON:
         if not isinstance(request, dict):

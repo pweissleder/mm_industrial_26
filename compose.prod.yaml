@@ -12,6 +12,8 @@ services:
     volumes:
       # Uploaded datasets survive restarts; first start seeds it with the bundled samples.
       - datasets:/app/data/datasets
+      # Last-known positions of people (multi-user presence) survive restarts and redeploys.
+      - state:/app/data/state
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
       interval: 10s
@@ -34,3 +36,4 @@ services:
 
 volumes:
   datasets:
+  state:

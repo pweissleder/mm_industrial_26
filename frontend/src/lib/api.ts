@@ -35,6 +35,76 @@ export interface IngestionResponse {
   vertical_connectors: number;
   assets: number;
   replaced: boolean;
+  /** False when the dataset was already loaded: opening kept its live version (edits, closures). */
+  loaded?: boolean;
+}
+
+// --- people and presence (backend/app/presence) ---------------------------------------
+
+/** A selectable person (not a view mode); everyone has the same rights. */
+export interface UserProfile {
+  id: string;
+  name: string;
+  initials: string;
+  color: string;
+  avatar: string | null;
+}
+
+export interface UserDirectory {
+  /** Everyone; `building_id` is each person's current location (null: none yet). */
+  profiles: (UserProfile & { occupied: boolean; building_id: string | null })[];
+  lease_seconds: number;
+}
+
+/** A person in their current building, with their last validated map position (if any). */
+export interface UserPresence {
+  profile: UserProfile;
+  building_id: string;
+  status: 'online' | 'offline';
+  /** False when the saved place no longer resolves in the building (see `unavailable_reason`). */
+  available: boolean;
+  unavailable_reason: string | null;
+  /** null: in the building, but without a place on the map. */
+  position: {
+    endpoint: Endpoint;
+    floor_id: string;
+    space_id: string | null;
+    position: Point;
+    building_version: string;
+    label: string | null;
+    heading: number | null;
+    source: 'manual' | 'simulation' | 'qr' | 'hypothesis';
+    moving: boolean;
+  } | null;
+  revision: number;
+  updated_at: string;
+}
+
+export interface UserSession {
+  token: string;
+  profile: UserProfile;
+  generation: number;
+  lease_seconds: number;
+  expires_in: number;
+  presence: UserPresence | null;
+}
+
+/** Without `endpoint` the person only enters the building (it becomes their location). */
+export interface PositionUpdate {
+  building_id: string;
+  endpoint?: Endpoint;
+  label?: string;
+  heading?: number;
+  source?: NonNullable<UserPresence['position']>['source'];
+  moving?: boolean;
+}
+
+export const SESSION_HEADER = 'X-AriNav-Session';
+let sessionToken: string | null = null;
+
+/** The person session sent with every request (`null`: none chosen). */
+export function setSessionToken(token: string | null) {
+  sessionToken = token;
 }
 
 export interface BuildingSummary {
@@ -138,7 +208,19 @@ export type Endpoint =
   | { kind: 'space'; id: string }
   | { kind: 'asset'; id: string }
   | { kind: 'opening'; id: string; side_space_id?: string }
-  | { kind: 'point'; space_id: string; position: Point };
+  | { kind: 'point'; space_id: string; position: Point }
+  /** A person: routed to where they are now (the response names them in `target_person`). */
+  | { kind: 'user'; id: string };
+
+/** The person a route starts or ends at, as resolved for that route. */
+export interface RoutePerson {
+  id: string;
+  name: string;
+  status: 'online' | 'offline';
+  label: string | null;
+  revision: number;
+  moving: boolean;
+}
 
 export type NavMode = 'official' | 'precision';
 export type ClearanceProfile = 'stationary' | 'all' | 'none';
@@ -208,6 +290,8 @@ export interface RouteRequest {
   unofficial?: { no_production_transit?: boolean; forklift?: boolean };
   /** Official only, point starts: begin at the exact point (first leg re-walked officially). */
   exact_start?: boolean;
+  /** Official only, point targets: end at the exact point (on for a person target). */
+  exact_target?: boolean;
 }
 
 export interface RouteEnd {
@@ -274,6 +358,11 @@ export interface RouteResponse {
   path: RoutePathSegment[];
   transitions: RouteTransition[];
   waypoints?: RouteWaypoint[];
+  /** A route to a person: who, as of which position revision (routes follow them). */
+  target_person?: RoutePerson | null;
+  start_person?: RoutePerson | null;
+  /** With an exact target, the room-to-room official cost (`length_m` includes the last walk). */
+  official_length_m?: number | null;
   /** Constraints this route honours (a reroute must keep them). */
   constraints?: { step_free: boolean; profile?: ClearanceProfile; width_m?: number; safety_m?: number };
   /** Router directions without element ids; `directions_raw` keeps the router's own lines. */
@@ -531,8 +620,12 @@ export interface RoomGraphData {
   graph: { building: Record<string, unknown>; floors: Floor[]; closed: string[] };
   nodes: {
     id: string;
-    kind: 'space' | 'outside';
+    /** user: a person in the building (`user:<id>`), linked to their room by a "person" edge. */
+    kind: 'space' | 'outside' | 'user';
     name: string;
+    /** Person nodes: their colour and online/offline status. */
+    color?: string;
+    status?: 'online' | 'offline';
     /** False when no door chain leads outside: usually a missing door or connector. */
     connected_to_outside: boolean;
     ref?: string | null;
@@ -555,7 +648,7 @@ export interface RoomGraphData {
     source: string;
     target: string;
     key: string;
-    /** door | opening | entrance | stairs | lift */
+    /** door | opening | entrance | stairs | lift | person (a room to a person in it) */
     kind: string;
     element: string;
     step_free: boolean;
@@ -601,7 +694,11 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const json = !(init?.body instanceof FormData);
   const response = await fetch(`${API_BASE_URL}/api${path}`, {
     ...init,
-    headers: { ...(json && { 'Content-Type': 'application/json' }), ...init?.headers },
+    headers: {
+      ...(json && { 'Content-Type': 'application/json' }),
+      ...(sessionToken && { [SESSION_HEADER]: sessionToken }),
+      ...init?.headers,
+    },
   });
   if (!response.ok) {
     const body = (await response.json().catch(() => null)) as ErrorBody | null;
@@ -666,8 +763,41 @@ export const api = {
       needs_reconstruction: r.needs_reconstruction ?? [],
     })),
   datasets: () => request<{ datasets: string[] }>('/datasets').then((r) => r.datasets),
+  /** (Re)load building.json, replacing the live version (edits, closures) for everyone. */
   ingest: (dataset: string) =>
     request<IngestionResponse>('/ingestions', { method: 'POST', body: JSON.stringify({ dataset }) }),
+  /** The dataset's building, loaded only if needed: never resets what others changed. */
+  openDataset: (dataset: string) =>
+    request<IngestionResponse>(`/datasets/${encodeURIComponent(dataset)}/open`, { method: 'POST' }),
+  users: () => request<UserDirectory>('/users'),
+  /** Become `profileId`; the current token header lets a reload continue its own lease. */
+  claimUser: (profileId: string) =>
+    request<UserSession>('/user-sessions', post({ profile_id: profileId })),
+  heartbeat: () =>
+    request<{ profile_id: string; generation: number; expires_in: number }>(
+      '/user-sessions/current/heartbeat',
+      { method: 'POST' },
+    ),
+  /** Free a person for others (their last position stays, offline). */
+  releaseUser: (token: string) =>
+    fetch(`${API_BASE_URL}/api/user-sessions/current`, {
+      method: 'DELETE',
+      headers: { [SESSION_HEADER]: token },
+      keepalive: true,
+    }).then(() => undefined),
+  setPosition: (update: PositionUpdate) =>
+    request<UserPresence>('/user-sessions/current/position', {
+      method: 'PUT',
+      body: JSON.stringify(update),
+    }),
+  clearPosition: () =>
+    request<{ profile_id: string; presence: UserPresence | null }>('/user-sessions/current/position', {
+      method: 'DELETE',
+    }),
+  buildingUsers: (buildingId: string) =>
+    request<{ building_id: string; users: UserPresence[] }>(
+      `/buildings/${encodeURIComponent(buildingId)}/users`,
+    ),
   buildings: () => request<BuildingSummary[]>('/buildings'),
   buildingModel: (id: string) => request<BuildingModel>(`/buildings/${encodeURIComponent(id)}/model`),
   buildingGraph: (id: string) => request<RoomGraphData>(`/buildings/${encodeURIComponent(id)}/graph`),

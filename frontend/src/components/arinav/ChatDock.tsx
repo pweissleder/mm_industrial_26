@@ -35,6 +35,7 @@ import {
   SendIcon,
   SparkleIcon,
 } from './Icons';
+import { personKey } from './usePerson';
 import { useVoice } from './useVoice';
 import VoiceToggle from './VoiceToggle';
 
@@ -100,6 +101,8 @@ interface Props {
   compact?: boolean;
   /** Show a Call Wrapped recap (the backend starts one after every N ended conversations). */
   onOpenRecap?: (id: string) => void;
+  /** The chosen person; each keeps their own assistant conversation. */
+  personId?: string | null;
 }
 
 /** Name/ref/id -> selection, skipping names shared by several things (e.g. twenty "Desk"s). */
@@ -260,7 +263,9 @@ export default function ChatDock({
   onBuildingChanged,
   compact = false,
   onOpenRecap,
+  personId = null,
 }: Props) {
+  const sessionKey = personKey(SESSION_KEY, personId);
   const developer = profile === 'developer';
   const isNavigator = profile === 'navigator';
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -426,7 +431,7 @@ export default function ChatDock({
   }
 
   async function sendTurn(text: string, viaVoice: boolean) {
-    const sessionId = read(session, SESSION_KEY) ?? undefined;
+    const sessionId = read(session, sessionKey) ?? undefined;
     const wantSpeech = canSpeak && (viaVoice || speak);
     const sendUi = selection && detachedKey === selKey ? { ...ui, inspected: null } : ui;
     const started = epoch.current;
@@ -440,7 +445,7 @@ export default function ChatDock({
         ...(wantSpeech && ttsSpeed !== undefined && { tts_speed: ttsSpeed }),
       });
       if (started !== epoch.current) return;
-      if (turn.session_id) write(session, SESSION_KEY, turn.session_id);
+      if (turn.session_id) write(session, sessionKey, turn.session_id);
       const audio = turn.audio_pcm16
         ? { pcm: turn.audio_pcm16, rate: turn.sample_rate ?? 16000 }
         : undefined;
@@ -557,7 +562,7 @@ export default function ChatDock({
   }, [open, busy, recording, hovering, awaitingAnswer, entries.length, activity]);
 
   async function answerProposal(entryId: number, proposal: Proposal, approved: boolean) {
-    const sessionId = read(session, SESSION_KEY) ?? '';
+    const sessionId = read(session, sessionKey) ?? '';
     const mark = (state: ProposalState) =>
       setEntries((prev) =>
         prev.map((e) => (e.id === entryId && e.role === 'proposal' ? { ...e, state } : e)),
@@ -574,9 +579,23 @@ export default function ChatDock({
     }
   }
 
+  // Another person: their conversation is theirs; drop what is shown and replies still on the way.
+  const shownPerson = useRef(personId);
+  useEffect(() => {
+    if (shownPerson.current === personId) return;
+    shownPerson.current = personId;
+    epoch.current++;
+    busyRef.current = false;
+    setPending(false);
+    voice.stopPlayback();
+    setThreadId(undefined);
+    setEntries([]);
+    setError(null);
+  }, [personId, voice]);
+
   /** Start over: forget the server-side session or thread and drop any reply still on its way. */
   function newConversation() {
-    const sessionId = read(session, SESSION_KEY);
+    const sessionId = read(session, sessionKey);
     epoch.current++;
     busyRef.current = false;
     setPending(false);
@@ -588,7 +607,7 @@ export default function ChatDock({
         .then((r) => r.recap && onOpenRecap?.(r.recap.id))
         .catch(() => undefined);
     }
-    write(session, SESSION_KEY, null);
+    write(session, sessionKey, null);
     setThreadId(undefined);
     setEntries([]);
     setError(null);

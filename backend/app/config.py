@@ -45,6 +45,12 @@ class Settings(BaseSettings):
     # Per-file limit for POST /api/datasets/{dataset}/files.
     max_upload_bytes: int = 50_000_000
 
+    # Multi-user presence: the selectable people (JSON list), the directory of state that must
+    # survive restarts (last-known positions; mount it in production), and the session lease.
+    profiles_file: Path = BACKEND_DIR / "data" / "people" / "profiles.json"
+    state_dir: Path = BACKEND_DIR / "data" / "state"
+    user_lease_seconds: float = Field(default=30.0, gt=0)
+
     # Ingestion pipeline: JSON workspace, asset library seed, and per-role models.
     workspace_dir: Path = BACKEND_DIR / "data" / "workspace"
     asset_library_seed_dir: Path = BACKEND_DIR / "data" / "asset_library" / "seed"
