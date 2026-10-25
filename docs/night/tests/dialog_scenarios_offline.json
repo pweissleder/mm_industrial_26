@@ -1,0 +1,685 @@
+{
+  "generated": "2026-10-25 01:41 UTC",
+  "kind": "offline scripted tool calls: state/tool/guard logic, not NLU",
+  "test_file": "backend/tests/assistant/test_dialog_scenarios.py",
+  "pytest_exit_code": 0,
+  "totals": {
+    "passed": 54,
+    "xfail": 6
+  },
+  "per_matrix_row": {
+    "C01": {
+      "passed": 4
+    },
+    "C02": {
+      "passed": 4
+    },
+    "C03": {
+      "passed": 5
+    },
+    "C04": {
+      "passed": 2
+    },
+    "C05": {
+      "passed": 2,
+      "xfail": 1
+    },
+    "C06": {
+      "passed": 1
+    },
+    "C07": {
+      "passed": 2
+    },
+    "C08": {
+      "passed": 2
+    },
+    "C09": {
+      "passed": 2
+    },
+    "H01": {
+      "passed": 1
+    },
+    "H02": {
+      "passed": 2
+    },
+    "H03": {
+      "passed": 1
+    },
+    "INV-1": {
+      "passed": 1
+    },
+    "INV-2": {
+      "passed": 2,
+      "xfail": 1
+    },
+    "INV-3": {
+      "passed": 4,
+      "xfail": 2
+    },
+    "INV-4": {
+      "passed": 6,
+      "xfail": 1
+    },
+    "INV-5": {
+      "passed": 2,
+      "xfail": 1
+    },
+    "INV-7": {
+      "passed": 1
+    },
+    "S01": {
+      "passed": 4
+    },
+    "S02": {
+      "passed": 3
+    },
+    "S03": {
+      "passed": 2
+    },
+    "S05": {
+      "passed": 1
+    }
+  },
+  "scenarios": [
+    {
+      "id": "C01a",
+      "matrix_row": "C01",
+      "checks": "UI start set, then explicitly cleared (start=null): nearest exit asks for the start (missing_start), no route from the old room, no nearest() call",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.295"
+    },
+    {
+      "id": "C01b",
+      "matrix_row": "C01",
+      "checks": "a UI start that the UI no longer sends (key omitted, older clients) is dropped too",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.111"
+    },
+    {
+      "id": "C01c",
+      "matrix_row": "C01",
+      "checks": "a start the USER stated (update_session) survives turns without a UI start; the exit route then starts there and ends at an exit door",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.146"
+    },
+    {
+      "id": "C01d",
+      "matrix_row": "C01",
+      "checks": "destination=null from the UI clears the destination: plan_route with null endpoints fails honestly (missing_endpoint) instead of reusing the old destination",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.099"
+    },
+    {
+      "id": "C02a",
+      "matrix_row": "C02",
+      "checks": "wheelchair user, only lift closed (confirmed scenario), destination on another floor; model passes step_free=false: request stays step-free, unreachable, no stairs, constraint note returned",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.376"
+    },
+    {
+      "id": "C02b",
+      "matrix_row": "C02",
+      "checks": "lift closed, find_nearest exit with step_free=false from F1: nearest() still asked step-free, no exit offered, no route, constraint note",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.139"
+    },
+    {
+      "id": "C02c",
+      "matrix_row": "C02",
+      "checks": "what-if (assume_closed=[lift]) for a step-free user: unreachable, no stairs; the real scenario is untouched and the next route uses the open lift again",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.158"
+    },
+    {
+      "id": "C02d",
+      "matrix_row": "C02",
+      "checks": "lift closed in precision mode, model drops step_free: failed honestly (no official fallback, mode stays precision), step-free request, constraint note, no route shown",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.246"
+    },
+    {
+      "id": "C03a",
+      "matrix_row": "C03",
+      "checks": "step-free survives a UI mode switch to precision and back and a new turn; the official route then uses the lift, never the stairs",
+      "turns": 3,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.388"
+    },
+    {
+      "id": "C03b",
+      "matrix_row": "C03",
+      "checks": "UI building switch keeps step-free and width but clears start, destination and the previous building's conversation",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.133"
+    },
+    {
+      "id": "C03c",
+      "matrix_row": "C03",
+      "checks": "only an explicit user change lifts step-free: UI toggle off, back on via update_session, then the user lifts it; only then a stairs route (lift closed) is ok",
+      "turns": 4,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.192"
+    },
+    {
+      "id": "C03d",
+      "matrix_row": "C03",
+      "checks": "reroute after a scenario change by another consumer: same session endpoints, step-free still requested, now unreachable without stairs",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.368"
+    },
+    {
+      "id": "C03e",
+      "matrix_row": "C03",
+      "checks": "a precision route echoes the binding width; a UI mode switch keeps width/safety",
+      "turns": 3,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.270"
+    },
+    {
+      "id": "C04a",
+      "matrix_row": "C04",
+      "checks": "inspected machine reaches the model context by name; start/destination untouched",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.101"
+    },
+    {
+      "id": "C04b",
+      "matrix_row": "C04",
+      "checks": "an unknown inspected item is dropped (not kept from before); the 'selection' alias works; inspected=null clears",
+      "turns": 3,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.109"
+    },
+    {
+      "id": "C05a",
+      "matrix_row": "C05",
+      "checks": "exact map-point start routes to an exit door: point start (requested XY) and final opening position preserved",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.136"
+    },
+    {
+      "id": "C05b",
+      "matrix_row": "C05",
+      "checks": "a map point in an unknown room is refused with a ui_note; no fallback to the earlier start",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.355"
+    },
+    {
+      "id": "C05c",
+      "matrix_row": "C05",
+      "checks": "a map point far outside its room polygon is refused at sync (ui_note), not stored as 'a point in Office 1.04'",
+      "turns": 1,
+      "result": "xfail",
+      "defect": "sync_ui/check_endpoint only checks that the point's space exists, not that the position lies inside it (the error text claims 'not inside a room'); the bad point is stored and the router refuses it only later",
+      "detail": "",
+      "time_s": "0.086"
+    },
+    {
+      "id": "C06a",
+      "matrix_row": "C06",
+      "checks": "successive vertical moves (campus): F0->F4 by lift, then from the arrival room F4->F1; floors visited in order, the second route starts where the first arrived",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.183"
+    },
+    {
+      "id": "C07a",
+      "matrix_row": "C07",
+      "checks": "propose closing the lift changes nothing; Confirm applies it, drops the stale last_route, the proposal cannot be confirmed twice; the next turn sees the closure",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.416"
+    },
+    {
+      "id": "C07b",
+      "matrix_row": "C07",
+      "checks": "a cancelled proposal changes nothing and the model is told it was cancelled",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.108"
+    },
+    {
+      "id": "C08a",
+      "matrix_row": "C08",
+      "checks": "missing referent ('the biggest one'): a clarifying text-only turn mutates nothing (state, UI, navigation calls)",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.117"
+    },
+    {
+      "id": "C08b",
+      "matrix_row": "C08",
+      "checks": "'the second one' resolves from the previous turn's ranked results: the model context carries the found places in order (name = kind:id); the route goes to the second",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.157"
+    },
+    {
+      "id": "C09a",
+      "matrix_row": "C09",
+      "checks": "search returns an opening (exit) and an asset; routes to them keep the typed endpoint: the exit route ends at the door, the asset route targets the asset (not room centre)",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.142"
+    },
+    {
+      "id": "C09b",
+      "matrix_row": "C09",
+      "checks": "an opening id passed as a space is refused (unknown_place), no router call, no guessing of another type",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.354"
+    },
+    {
+      "id": "S01_east",
+      "matrix_row": "S01",
+      "checks": "pose heading 0 deg (CCW from +X): the corridor door due east is 'ahead'; the direction filter keeps only that side; heading normalised to [0, 360)",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.095"
+    },
+    {
+      "id": "S01_north",
+      "matrix_row": "S01",
+      "checks": "pose heading 90 deg (CCW from +X): the corridor door due east is 'right'; the direction filter keeps only that side; heading normalised to [0, 360)",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.086"
+    },
+    {
+      "id": "S01_west",
+      "matrix_row": "S01",
+      "checks": "pose heading 180 deg (CCW from +X): the corridor door due east is 'behind'; the direction filter keeps only that side; heading normalised to [0, 360)",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.084"
+    },
+    {
+      "id": "S01_south",
+      "matrix_row": "S01",
+      "checks": "pose heading -90 deg (CCW from +X): the corridor door due east is 'left'; the direction filter keeps only that side; heading normalised to [0, 360)",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.081"
+    },
+    {
+      "id": "S02_occluded",
+      "matrix_row": "S02",
+      "checks": "server racks in the next room are reported 'behind a wall', never visible; things in the own room are visible",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.334"
+    },
+    {
+      "id": "S02_no_heading",
+      "matrix_row": "S02",
+      "checks": "unknown view direction: no sides are given and the result tells the model to ask; the direction filter is not applied",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.085"
+    },
+    {
+      "id": "S02_no_pose",
+      "matrix_row": "S02",
+      "checks": "no pose (cleared): describe_surroundings refuses (missing_pose) instead of guessing",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.108"
+    },
+    {
+      "id": "S03_leak_below",
+      "matrix_row": "S03",
+      "checks": "leak in Office 1.04: room_stacked below = the largest-overlap room on F0 (Hall access 0.19), highlighted; no route, no state change",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.121"
+    },
+    {
+      "id": "S03_no_floor_below",
+      "matrix_row": "S03",
+      "checks": "room_stacked below the ground floor and malformed arguments are honest errors (invalid_input), nothing invented",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.095"
+    },
+    {
+      "id": "S05_chitchat",
+      "matrix_row": "S05",
+      "checks": "a joke/thanks turn without tools passes the reply through and mutates nothing (no navigation call, state and step-free unchanged)",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.368"
+    },
+    {
+      "id": "H01_only_navigation_counts",
+      "matrix_row": "H01",
+      "checks": "activity recap counts only motion/arrivals inside a navigation; preview motion, a duplicate arrival and motion after arrival do not count; paused time excluded",
+      "turns": 0,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.030"
+    },
+    {
+      "id": "H02_reset_and_isolation",
+      "matrix_row": "H02",
+      "checks": "two assistant sessions are isolated; a reset session comes back without the old pose, start, step-free or history",
+      "turns": 3,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.124"
+    },
+    {
+      "id": "H02_deleted_history_not_resurrected",
+      "matrix_row": "H02",
+      "checks": "a deleted activity session cannot be appended to or read again; new ids are fresh",
+      "turns": 0,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.042"
+    },
+    {
+      "id": "H03_synthetic_labelled",
+      "matrix_row": "H03",
+      "checks": "demo and test sessions are labelled synthetic in the recap; real ones are not",
+      "turns": 0,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.064"
+    },
+    {
+      "id": "INV_search_does_not_move_start",
+      "matrix_row": "INV-2",
+      "checks": "find_places and find_nearest (no route) only highlight: start and destination stay, no endpoints/route in the UI payload, no router call",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.156"
+    },
+    {
+      "id": "INV_preview_closure_changes_nothing",
+      "matrix_row": "INV-2",
+      "checks": "preview_closure for a step-free user reports consequences but changes neither the scenario, the revision, the session nor creates a proposal",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.138"
+    },
+    {
+      "id": "INV_clear_is_real",
+      "matrix_row": "INV-1",
+      "checks": "'Clear simulated location' (start=null, pose=null) really clears: surroundings and nearest refuse, the model sees no start/pose",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.325"
+    },
+    {
+      "id": "INV_step_free_tightens_only",
+      "matrix_row": "INV-4",
+      "checks": "session step-free + find_nearest(step_free=false, and_route): nearest() and the route request are step-free; the route uses the lift",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.147"
+    },
+    {
+      "id": "INV_step_free_tool_tightens_persists",
+      "matrix_row": "INV-4",
+      "checks": "a tool argument step_free=true tightens the session and the next route stays step-free",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.162"
+    },
+    {
+      "id": "INV_step_free_guard_defence",
+      "matrix_row": "INV-4",
+      "checks": "fault injection: a router that ignores step_free returns a stairs route; the assistant's guard turns it into 'no step-free route', shows no route and records a failed route",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.132"
+    },
+    {
+      "id": "INV_lift_closed_no_stairs_fallback",
+      "matrix_row": "INV-4",
+      "checks": "lift closed, step-free nearest toilet with route: the same-floor toilet is chosen (the closer one downstairs is not offered via stairs), no vertical transition",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.373"
+    },
+    {
+      "id": "INV_route_constraints_echoed",
+      "matrix_row": "INV-4",
+      "checks": "precision + step-free + width/safety from the UI: the route request and the route's own constraints echo exactly the session settings (guidance reroutes reuse them)",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.246"
+    },
+    {
+      "id": "INV_width_no_silent_fallback",
+      "matrix_row": "INV-4",
+      "checks": "precision with a 1.0 m width that no door path supports: failed with the 'offer official' hint, no silent official route, width and mode unchanged, one router call",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.181"
+    },
+    {
+      "id": "INV_width_binding_nearest",
+      "matrix_row": "INV-4",
+      "checks": "precision mode with a required width of 1.0 m: find_nearest must not rank kitchens whose only doors are 0.9 m as reachable",
+      "turns": 1,
+      "result": "xfail",
+      "defect": "find_nearest ignores the session width (NavigationPort.nearest has no width parameter): Kitchen 0.28 behind a 0.9 m door is ranked first for a 1.0 m width",
+      "detail": "",
+      "time_s": "0.129"
+    },
+    {
+      "id": "INV_location_source_simulation",
+      "matrix_row": "INV-3",
+      "checks": "UI start with start_source='simulation' is labelled known_from='simulation' in the snapshot and in the session_state the model sees",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.334"
+    },
+    {
+      "id": "INV_location_source_manual",
+      "matrix_row": "INV-3",
+      "checks": "UI start with start_source=None is labelled known_from='manual' in the snapshot and in the session_state the model sees",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.084"
+    },
+    {
+      "id": "INV_location_source_qr",
+      "matrix_row": "INV-3",
+      "checks": "UI start with start_source='qr' is labelled known_from='qr' in the snapshot and in the session_state the model sees",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.086"
+    },
+    {
+      "id": "INV_location_source_hypothesis",
+      "matrix_row": "INV-3",
+      "checks": "UI start with start_source='hypothesis' is labelled known_from='hypothesis' in the snapshot and in the session_state the model sees",
+      "turns": 1,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.089"
+    },
+    {
+      "id": "INV_location_source_unknown_not_manual",
+      "matrix_row": "INV-3",
+      "checks": "an unsupported source (e.g. an experimental image estimate) must not be labelled 'manual' (= user-confirmed)",
+      "turns": 1,
+      "result": "xfail",
+      "defect": "sync_ui maps any unknown start_source to 'manual', so an unverified estimate is presented to the model as a manually confirmed position",
+      "detail": "",
+      "time_s": "0.087"
+    },
+    {
+      "id": "INV_location_source_after_update_session",
+      "matrix_row": "INV-3",
+      "checks": "a start the user states after an earlier QR start must not inherit the stale 'qr' label",
+      "turns": 2,
+      "result": "xfail",
+      "defect": "update_session (and plan_route) set state.start but never start_source; the previous UI source ('qr') stays and is shown as known_from for the new start",
+      "detail": "",
+      "time_s": "0.166"
+    },
+    {
+      "id": "INV_stale_pose_rejected",
+      "matrix_row": "INV-5",
+      "checks": "invalid poses are discarded, never kept from the previous turn: foreign-building room, non-finite position; a non-finite heading becomes 'unknown'",
+      "turns": 4,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.195"
+    },
+    {
+      "id": "INV_pose_outside_room_rejected",
+      "matrix_row": "INV-5",
+      "checks": "a pose whose position lies far outside its claimed room is discarded",
+      "turns": 1,
+      "result": "xfail",
+      "defect": "_check_pose only checks that the space id exists and the XY is finite; a pose 60 m away from Office 1.04 is accepted and describe_surroundings answers from it",
+      "detail": "",
+      "time_s": "0.111"
+    },
+    {
+      "id": "INV_route_preview_does_not_move_user",
+      "matrix_row": "INV-2",
+      "checks": "'how far is it from the kitchen to the lab?' (plan_route with an explicit other start) must not relocate the user: the next nearest search still starts at Office 1.04",
+      "turns": 2,
+      "result": "xfail",
+      "defect": "tool_plan_route writes an explicit start into session.state['start'] (and keeps the old start_source), so a route between two other places moves the user",
+      "detail": "",
+      "time_s": "0.514"
+    },
+    {
+      "id": "INV_unknown_room_honest_error",
+      "matrix_row": "INV-7",
+      "checks": "unknown room ids from the model give unknown_place for route and update_session; start and destination are untouched; no router call",
+      "turns": 2,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.165"
+    },
+    {
+      "id": "INV_building_switch_by_tool",
+      "matrix_row": "INV-5",
+      "checks": "select_building: unknown id refused; a real switch clears start, proposals and history (the old proposal cannot be confirmed); an unknown UI building is refused and the state stays",
+      "turns": 3,
+      "result": "passed",
+      "defect": null,
+      "detail": "",
+      "time_s": "0.240"
+    }
+  ]
+}
