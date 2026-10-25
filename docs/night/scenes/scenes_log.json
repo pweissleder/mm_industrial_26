@@ -1,70 +1,41 @@
 {
-  "when": "2026-10-25T02:22:21.443Z",
+  "when": "2026-10-25T02:29:55.699Z",
   "videos": {
-    "scene1": "C:\\Users\\noah3\\AppData\\Local\\Temp\\arinav-scenes-video\\scene1_coffee_route_arrival.webm",
     "scene3": "C:\\Users\\noah3\\AppData\\Local\\Temp\\arinav-scenes-video\\scene3_walk_whats_on_my_right.webm"
   },
   "marks": {
-    "scene1": {
-      "start": 26.28,
-      "walk0": 29.57,
-      "walk1": 39.57,
-      "arrive0": 41.38
-    },
     "scene3": {
-      "walk0": 17.51,
-      "ask0": 46.2
+      "walk0": 17.05,
+      "ask0": 35.05
     }
   },
   "log": [
     {
-      "t": "2026-10-25T02:20:55.025Z",
-      "scene": 1,
-      "what": "said: I'm in Office 0.38. Where can I get a coffee?",
-      "reply": "The closest coffee machine is in Kitchen 0.28, on the same floor. It's about 21 m away, and the route is on the map.\nDirections · 21.4 m · 4 steps\nOfficial route · furniture ignored\nStart in Office 0.38 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 16 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nFinding places\nNoting your position and needs\nFinding the closest options\nShowing directions",
-      "replies_before": 0
-    },
-    {
-      "t": "2026-10-25T02:21:03.391Z",
-      "scene": 1,
-      "what": "said: And how do I get there?",
-      "reply": "Leave Office 0.38 into Office corridor 0.16, then follow the corridor about 16 m to Kitchen 0.28. The coffee machine is a couple of metres inside, about 21 m in total with no stairs. The step-by-step directions are next to the chat.\nDirections · 21.4 m · 4 steps\nOfficial route · furniture ignored\nStart in Office 0.38 on Ground floor.\nWalk about 2 m through the door into Office corridor 0.16.\nWalk about 16 m through the door into Kitchen 0.28.\nWalk about 2 m. You have arrived at Kitchen 0.28 on Ground floor.\nChecking routes\nShowing directions",
-      "replies_before": 1
-    },
-    {
-      "t": "2026-10-25T02:21:24.109Z",
-      "scene": 1,
-      "what": "final status",
-      "status": "arrived",
-      "distance": 21.3523,
-      "total": 21.3523
-    },
-    {
-      "t": "2026-10-25T02:21:38.139Z",
+      "t": "2026-10-25T02:29:22.796Z",
       "scene": 3,
       "what": "said: I'm in Office 0.38.",
       "reply": "You're in Office 0.38 on the ground floor. Where would you like to go?\nFinding places\nNoting your position and needs",
       "replies_before": 0
     },
     {
-      "t": "2026-10-25T02:22:11.698Z",
+      "t": "2026-10-25T02:29:45.513Z",
       "scene": 3,
       "what": "pose before question",
       "pose": {
         "floor_id": "proc-factory-dev-003-F0",
         "space_id": "proc-factory-dev-003-F0-S016",
         "position": [
-          6.684376594516588,
-          29.85597383371055
+          6.0125818063929275,
+          29.89660393963877
         ],
-        "heading": 80
+        "heading": 100
       }
     },
     {
-      "t": "2026-10-25T02:22:16.800Z",
+      "t": "2026-10-25T02:29:50.659Z",
       "scene": 3,
       "what": "said: What's on my right?",
-      "reply": "Nothing is listed on your right in Office corridor 0.16. Your position now shows as that corridor rather than Office 0.38, so tell me if you've moved or want me to reset it.",
+      "reply": "On your right, the nearest door is to Locker room 0.39, about 3 m ahead. Further along are doors to Meeting room 0.40 (about 8.5 m) and Meeting room 0.27 (about 10 m), then Kitchen 0.28 at about 14 m.",
       "replies_before": 1
     }
   ]

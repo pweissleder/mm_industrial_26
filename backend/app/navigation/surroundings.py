@@ -17,7 +17,9 @@ from shapely.geometry import LineString, Polygon
 
 JSON = dict[str, Any]
 SIDES = ("ahead", "left", "behind", "right")
-LATERAL_M = 0.6  # this far off the line of sight counts as "on the right/left" further along
+LATERAL_M = 0.4  # this far off the line of sight counts as "on the right/left" further along
+WALL_SIDE_MAX_M = 10.0
+WALL_SIDE_MIN_DEG = 8.0
 
 
 def _side(rel: float) -> str:
@@ -39,7 +41,10 @@ def _relative(
         rel = (bearing - heading + 540) % 360 - 180  # + = counter-clockwise = left
         out |= {"side": _side(rel), "relative_deg": round(rel)}
         lateral = -math.sin(math.radians(rel)) * math.hypot(dx, dy)  # + = to the right
-        if out["side"] == "ahead" and abs(lateral) >= LATERAL_M:
+        # Only near and clearly off-axis: far away a few degrees of heading error would move doors
+        # of the opposite wall to "this side".
+        near = math.hypot(dx, dy) <= WALL_SIDE_MAX_M and abs(rel) >= WALL_SIDE_MIN_DEG
+        if out["side"] == "ahead" and abs(lateral) >= LATERAL_M and near:
             out["wall_side"] = "right" if lateral > 0 else "left"
     return out
 
