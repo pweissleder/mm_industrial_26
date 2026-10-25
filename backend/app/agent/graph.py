@@ -38,13 +38,16 @@ def build_graph(
     model: BaseChatModel | None,
     checkpointer: BaseCheckpointSaver[str] | None = None,
     guard: InputGuard | None = None,
+    instructions: str | None = None,
 ) -> AgentGraph:
     """Compile the agent graph.
 
     With `model=None` the graph runs in offline mode and echoes the user, so the
     stack works end to end without an API key. Every turn passes the input `guard`
-    first (rules only by default); blocked turns never reach the model.
+    first (rules only by default); blocked turns never reach the model. `instructions`
+    are appended to the system prompt (the benchmark answerer's answer format).
     """
+    system = f"{SYSTEM_PROMPT}\n\n{instructions}" if instructions else SYSTEM_PROMPT
 
     async def assistant(
         state: MessagesState, runtime: Runtime[AgentContext]
@@ -54,9 +57,9 @@ def build_graph(
             return {"messages": [AIMessage(content=f"(offline mode) You said: {last}")]}
         navigator = runtime.context.navigator if runtime.context else None
         if navigator is None:
-            response = await model.ainvoke([SystemMessage(SYSTEM_PROMPT), *state["messages"]])
+            response = await model.ainvoke([SystemMessage(system), *state["messages"]])
         else:
-            prompt = f"{SYSTEM_PROMPT}\n\n{navigator.primer()}"
+            prompt = f"{system}\n\n{navigator.primer()}"
             response = await model.bind_tools(navigator.tool_schemas()).ainvoke(
                 [SystemMessage(prompt), *state["messages"]]
             )

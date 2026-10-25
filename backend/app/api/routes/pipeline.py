@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from app.ingestion import DatasetNotFoundError
 from app.pipeline.runner import PipelineRunner, RunNotFoundError, RunStateError
-from app.pipeline.state import ReviewDecision, RunRecord
+from app.pipeline.state import PipelineMode, ReviewDecision, RunRecord
 from app.pipeline.store import LocationRecord
 
 router = APIRouter(tags=["pipeline"])
@@ -32,6 +32,11 @@ ARTIFACT_TYPES = {
 class PipelineRunRequest(BaseModel):
     dataset: str = Field(min_length=1, max_length=200, examples=["proc-factory-dev-003"])
     force: bool = Field(default=False, description="Re-run even if the input is unchanged.")
+    mode: PipelineMode = Field(
+        default="full",
+        description="'graph' = benchmark variant: deterministic cleanup and the relationship "
+        "graph only, no 3D model or metadata.",
+    )
 
 
 class LocationSummary(BaseModel):
@@ -63,7 +68,7 @@ def _location(runner: PipelineRunner, location_id: str) -> LocationRecord:
 @router.post("/pipeline-runs", response_model=RunRecord, status_code=status.HTTP_202_ACCEPTED)
 async def start_run(body: PipelineRunRequest, runner: RunnerDep) -> RunRecord:
     try:
-        return await runner.start(body.dataset, force=body.force)
+        return await runner.start(body.dataset, force=body.force, mode=body.mode)
     except DatasetNotFoundError:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, f"Dataset '{body.dataset}' not found"

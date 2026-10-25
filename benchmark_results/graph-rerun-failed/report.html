@@ -1,0 +1,495 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Benchmark results</title><style>
+:root{--bg:#f7f7f5;--panel:#fff;--text:#1d1d1b;--muted:#6b6b66;--line:#e3e3de;
+--good:#2f8f5b;--warn:#c58a1b;--bad:#c2412d;--track:#ecece7;--code:#f1f1ed}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--panel:#1f1f1d;
+--text:#ecece8;--muted:#9a9a93;--line:#33332f;--track:#2c2c29;--code:#262623}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:18px;margin:36px 0 12px}
+.meta{color:var(--muted);margin:0 0 24px;overflow-wrap:anywhere}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.card .label{color:var(--muted);font-size:13px}.card .value{font-size:28px;font-weight:650}
+.card .note{color:var(--muted);font-size:13px}
+.card.good .value{color:var(--good)}.card.bad .value{color:var(--bad)}
+.card.warn .value{color:var(--warn)}
+table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);
+border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;color:var(--muted);font-weight:600}tr.total td{font-weight:650}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar{height:8px;background:var(--track);border-radius:4px;min-width:120px;margin-top:7px}
+.fill{height:100%;border-radius:4px}.fill.good{background:var(--good)}
+.fill.warn{background:var(--warn)}.fill.bad{background:var(--bad)}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;
+border:1px solid var(--line)}.tag.bad{color:var(--bad)}.tag.good{color:var(--good)}
+details{margin-top:4px}summary{cursor:pointer;color:var(--muted)}
+pre{background:var(--code);padding:8px 10px;border-radius:6px;white-space:pre-wrap;
+word-break:break-word;font-size:12.5px;margin:6px 0}
+.scroll{overflow-x:auto}code{font-size:13px}
+</style></head><body><main><h1>Graph-only benchmark</h1><p class="meta">2026-10-25 06:01 · model <code>claude-haiku-5-5</code> · /Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/problem_statement/industrial-agents-hackathon-2026/data/train, /Users/pascal/Documents/Repositories/Privat/Hackathons/mm_industrial_26/problem_statement/industrial-agents-hackathon-2026/data/dev</p><div class="cards"><div class="card good"><div class="label">Pipeline (graph mode)</div><div class="value">6/6</div><div class="note">buildings passed</div></div><div class="card bad"><div class="label">Benchmark questions</div><div class="value">20.0%</div><div class="note">1/5 correct</div></div><div class="card bad"><div class="label">Warm-up questions</div><div class="value">0.167</div><div class="note">mean score, 2/12 full marks</div></div><div class="card "><div class="label">Questions</div><div class="value">17</div><div class="note">0 failed to run</div></div><div class="card "><div class="label">Cost</div><div class="value">$0.06</div><div class="note">1.0 min</div></div></div><h2>Score by question kind</h2><div class="scroll"><table><tr><th>Group / kind</th><th>Correct</th><th>Accuracy</th><th>Mean score</th></tr><tr class="total"><td>basic/ALL</td><td class="num">2/12</td><td class="num">16.7%<div class="bar"><div class="fill bad" style="width:16.7%"></div></div></td><td class="num">0.167</td></tr><tr class=""><td>basic/locate</td><td class="num">1/1</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>basic/route</td><td class="num">0/5</td><td class="num">0.0%<div class="bar"><div class="fill bad" style="width:0.0%"></div></div></td><td class="num">0.000</td></tr><tr class=""><td>basic/route_step_free</td><td class="num">0/1</td><td class="num">0.0%<div class="bar"><div class="fill bad" style="width:0.0%"></div></div></td><td class="num">0.000</td></tr><tr class=""><td>basic/route_with_closure</td><td class="num">1/3</td><td class="num">33.3%<div class="bar"><div class="fill bad" style="width:33.3%"></div></div></td><td class="num">0.333</td></tr><tr class=""><td>basic/tour</td><td class="num">0/2</td><td class="num">0.0%<div class="bar"><div class="fill bad" style="width:0.0%"></div></div></td><td class="num">0.000</td></tr><tr class="total"><td>benchmark/ALL</td><td class="num">1/5</td><td class="num">20.0%<div class="bar"><div class="fill bad" style="width:20.0%"></div></div></td><td class="num">0.200</td></tr><tr class=""><td>benchmark/errand</td><td class="num">1/1</td><td class="num">100.0%<div class="bar"><div class="fill good" style="width:100.0%"></div></div></td><td class="num">1.000</td></tr><tr class=""><td>benchmark/room_stacked</td><td class="num">0/2</td><td class="num">0.0%<div class="bar"><div class="fill bad" style="width:0.0%"></div></div></td><td class="num">0.000</td></tr><tr class=""><td>benchmark/shared_walls_count</td><td class="num">0/1</td><td class="num">0.0%<div class="bar"><div class="fill bad" style="width:0.0%"></div></div></td><td class="num">0.000</td></tr><tr class=""><td>benchmark/straight_line_3d</td><td class="num">0/1</td><td class="num">0.0%<div class="bar"><div class="fill bad" style="width:0.0%"></div></div></td><td class="num">0.000</td></tr></table></div><p class="meta">Benchmark questions: official scorer. Warm-up routes: organizer rules (valid route, best length ÷ our length, full marks within 1 %). 0 expected answers recomputed with the kit 1.1.0 route model.</p><h2>Pipeline: 6/6 buildings passed</h2><p class="meta">Graph mode: raw validation with deterministic cleanup, graph build, graph validation. Passed = completed without review, every stage passed, floors, outlines, openings and connectors identical to the source.</p><details><summary>6 buildings passed (show)</summary><div class="scroll"><table><tr><th>Building</th><th>Result</th><th>Time</th><th>Stages and problems</th></tr><tr><td><code>osm-way27917482</code></td><td><span class="tag good">passed</span></td><td class="num">2.4 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way37850565</code></td><td><span class="tag good">passed</span></td><td class="num">0.1 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way52060470</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>osm-way58216509</code></td><td><span class="tag good">passed</span></td><td class="num">0.5 s</td><td>3/3 stages passed</td></tr><tr><td><code>proc-factory-train-006</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr><tr><td><code>swiss-1650</code></td><td><span class="tag good">passed</span></td><td class="num">0.2 s</td><td>3/3 stages passed</td></tr></table></div></details><h2>Misses and errors: 14</h2><div class="scroll"><table><tr><th>Question</th><th>Kind</th><th>Score</th><th>Why</th></tr><tr><td><code>osm-way37850565-H02</code></td><td>room_stacked</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>There&#x27;s water dripping from the ceiling in Büro (Ground floor). Which room is directly above it? Finish with a line &#x27;Answer: &lt;room name or number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;space&quot;,
+ &quot;space_id&quot;: &quot;osm-way37850565-F1-S002&quot;,
+ &quot;accept&quot;: [
+  &quot;1.02&quot;
+ ],
+ &quot;reject&quot;: [
+  &quot;1.03&quot;
+ ]
+}</pre><pre>There are three rooms named Büro on the Ground floor, and the building doesn&#x27;t say which one is leaking. I used the first one listed (osm-way37850565-F0-S010, 26.06 m²), which has the Floor 1 Büro directly above it (osm-way37850565-F1-S003, 32.74 m²). If the leak is in one of the other two Büros, tell me and I&#x27;ll check that one. The room above the other two is Büro (osm-way37850565-F1-S002) for the Büro with the centre at (2.61, -12.59), and Büro (osm-way37850565-F1-S002) also sits above the one at (-1.79, -11.12).
+
+Answer: Büro (osm-way37850565-F1-S003)</pre></details></td></tr><tr><td><code>osm-way37850565-H03</code></td><td>room_stacked</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>There&#x27;s water dripping from the ceiling in Büro (Ground floor). Which room is directly above it? Finish with a line &#x27;Answer: &lt;room name or number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;space&quot;,
+ &quot;space_id&quot;: &quot;osm-way37850565-F1-S003&quot;,
+ &quot;accept&quot;: [
+  &quot;1.03&quot;
+ ],
+ &quot;reject&quot;: [
+  &quot;1.02&quot;
+ ]
+}</pre><pre>There are three rooms named &quot;Büro&quot; on the Ground floor, and none has a room number, so I can&#x27;t tell which one has the leak. Here is what sits directly above each:
+
+- **Büro (osm-way37850565-F0-S010)**, 26.06 m²: directly above is **Büro (osm-way37850565-F1-S003)** on Floor 1, with 25.9 m² of overlap.
+- **Büro (osm-way37850565-F0-S011)**, 20.94 m²: directly above is **Büro (osm-way37850565-F1-S002)**, with 20.9 m² of overlap.
+- **Büro (osm-way37850565-F0-S012)**, 24.21 m²: above it are **Büro (osm-way37850565-F1-S002)**, with 14.0 m² of overlap, and **Büro (osm-way37850565-F1-S001)**, with 10.2 m².
+
+If you tell me which Büro the drip is in (for example by its position in the building or a neighbouring room), I can give you the exact room above. For now I&#x27;ve used the first one, the largest of the three, which is the one with the main overlap above it.
+
+Answer: Büro (osm-way37850565-F1-S003)</pre></details></td></tr><tr><td><code>osm-way37850565-H04</code></td><td>shared_walls_count</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>We&#x27;re soundproofing Büro (Floor 1). How many other rooms on that floor share a wall with it? Count every room whose wall runs along it for at least 1 m, with or without a door between them; corridors, stairwells and lifts don&#x27;t count. Finish with a line &#x27;Answer: &lt;number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;number&quot;,
+ &quot;value&quot;: 3,
+ &quot;unit&quot;: &quot;rooms&quot;,
+ &quot;relative_tolerance&quot;: 0.0,
+ &quot;absolute_tolerance&quot;: 0.0
+}</pre><pre>I used the first of the nine rooms named &quot;Büro&quot; on Floor 1 (space `osm-way37850565-F1-S001`), since they all share the same name and none has a room number. Its wall-sharing neighbours are:
+
+- Mehrzweckraum (S004), 6.9 m of shared wall
+- Büro (S002), 6.8 m of shared wall
+
+Both runs are at least 1 m, so both count. If you meant a different Büro on Floor 1, tell me its number and I&#x27;ll recount.
+
+Answer: 2</pre></details></td></tr><tr><td><code>osm-way37850565-Q05</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Kopierraum (Ground floor) to Büro (Floor 1)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S003&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S002&quot;,
+ &quot;optimal_length_m&quot;: 66.65,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F0-S003&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S002&quot;,
+  &quot;osm-way37850565-F0-S007&quot;,
+  &quot;osm-way37850565-F1-S017&quot;,
+  &quot;osm-way37850565-F1-S016&quot;,
+  &quot;osm-way37850565-F1-S015&quot;,
+  &quot;osm-way37850565-F1-S002&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F0-O0028&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0030&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-F1-O0025&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0018&quot;
+ ]
+}</pre><pre>The route to the Büro on Floor 1 is about 60 m, going up the stairs. There are nine rooms named &quot;Büro&quot; on Floor 1 and none has a room number, so I routed to the first one listed (area 23.2 m²). If you meant a different Büro, tell me which one and I&#x27;ll route there.
+
+1. Start in Kopierraum (Ground floor).
+2. Go into Flur.
+3. Go into Eingangshalle.
+4. Go into Stairwell 0.07 and take the stairs up to Floor 1.
+5. On Floor 1, go into Treppenhaus, then Flur.
+6. Go into Büro.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way37850565-F0-S003&quot;, &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S001&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way37850565-F0-S003&quot;, &quot;osm-way37850565-F0-S001&quot;, &quot;osm-way37850565-F0-S002&quot;, &quot;osm-way37850565-F0-S007&quot;, &quot;osm-way37850565-F1-S017&quot;, &quot;osm-way37850565-F1-S016&quot;, &quot;osm-way37850565-F1-S015&quot;, &quot;osm-way37850565-F1-S001&quot;], &quot;element_path&quot;: [&quot;osm-way37850565-F0-O0028&quot;, &quot;osm-way37850565-F0-O0027&quot;, &quot;osm-way37850565-F0-O0030&quot;, &quot;osm-way37850565-V01&quot;, &quot;osm-way37850565-F1-O0025&quot;, &quot;osm-way37850565-F1-O0008&quot;, &quot;osm-way37850565-F1-O0017&quot;], &quot;length_m&quot;: 59.65}
+Answer: osm-way37850565-F0-S003 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S007 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S001</pre></details></td></tr><tr><td><code>osm-way37850565-Q06</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Kitchen 2.05 (Floor 2) to Büro (Floor 1)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F2-S005&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S006&quot;,
+ &quot;optimal_length_m&quot;: 40.55,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F2-S005&quot;,
+  &quot;osm-way37850565-F2-S001&quot;,
+  &quot;osm-way37850565-F2-S006&quot;,
+  &quot;osm-way37850565-F1-S017&quot;,
+  &quot;osm-way37850565-F1-S016&quot;,
+  &quot;osm-way37850565-F1-S015&quot;,
+  &quot;osm-way37850565-F1-S006&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F2-O0003&quot;,
+  &quot;osm-way37850565-F2-O0022&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-F1-O0025&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0010&quot;
+ ]
+}</pre><pre>The walk from Kitchen 2.05 to a Büro on Floor 1 is about 53 m, using the stairs. Floor 1 has nine rooms named &quot;Büro&quot; and none carries a room number, so I routed to the first one listed (osm-way37850565-F1-S001). If you meant another, tell me its number or position and I&#x27;ll re-route.
+
+Directions:
+1. Start in Kitchen 2.05 (Floor 2).
+2. Go into the Treppenhaus after about 4 m.
+3. Go into Stairwell 2.06 after about 6 m.
+4. Take the stairs down to Floor 1.
+5. Go into the Treppenhaus after about 1 m.
+6. Go into the Flur after about 5 m.
+7. Go into the Büro after about 26 m. You arrive after about 3 m more.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way37850565-F2-S005&quot;, &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S001&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way37850565-F2-S005&quot;, &quot;osm-way37850565-F2-S001&quot;, &quot;osm-way37850565-F2-S006&quot;, &quot;osm-way37850565-F1-S017&quot;, &quot;osm-way37850565-F1-S016&quot;, &quot;osm-way37850565-F1-S015&quot;, &quot;osm-way37850565-F1-S001&quot;], &quot;element_path&quot;: [&quot;osm-way37850565-F2-O0003&quot;, &quot;osm-way37850565-F2-O0022&quot;, &quot;osm-way37850565-V01&quot;, &quot;osm-way37850565-F1-O0025&quot;, &quot;osm-way37850565-F1-O0008&quot;, &quot;osm-way37850565-F1-O0017&quot;], &quot;length_m&quot;: 53.14}
+Answer: osm-way37850565-F2-S005 -&gt; osm-way37850565-F2-S001 -&gt; osm-way37850565-F2-S006 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S001</pre></details></td></tr><tr><td><code>osm-way37850565-Q07</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Büro (Ground floor) to Toilet 2.03 (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S011&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F2-S003&quot;,
+ &quot;optimal_length_m&quot;: 44.18,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F0-S011&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S002&quot;,
+  &quot;osm-way37850565-F0-S007&quot;,
+  &quot;osm-way37850565-F1-S017&quot;,
+  &quot;osm-way37850565-F2-S006&quot;,
+  &quot;osm-way37850565-F2-S001&quot;,
+  &quot;osm-way37850565-F2-S002&quot;,
+  &quot;osm-way37850565-F2-S003&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F0-O0034&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0030&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-V01&quot;,
+  &quot;osm-way37850565-F2-O0022&quot;,
+  &quot;osm-way37850565-F2-O0004&quot;,
+  &quot;osm-way37850565-F2-O0005&quot;
+ ]
+}</pre><pre>I couldn&#x27;t tell which &quot;Büro&quot; you mean: there are three on the Ground floor, all with the same name and no room number. I used the one closest to Toilet 2.03 (the 26.06 m² office at the top of the building, id osm-way37850565-F0-S010). The other two would take 44 m and 48 m.
+
+From that Büro:
+1. Go out into the Flur (about 3 m).
+2. Continue into the Eingangshalle (about 6 m).
+3. Enter Stairwell 0.07 (about 5 m) and take the stairs up to Floor 1, then on to Floor 2.
+4. On Floor 2, go into Treppenhaus (about 1 m), then the Foyer (about 6 m).
+5. Arrive at Toilet 2.03 after about 9 m more.
+
+The total walk is about 43 m. This route uses stairs. If you need step-free access, ask again and I&#x27;ll route you via the lift.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way37850565-F0-S010&quot;, &quot;to_space_id&quot;: &quot;osm-way37850565-F2-S003&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way37850565-F0-S010&quot;, &quot;osm-way37850565-F0-S001&quot;, &quot;osm-way37850565-F0-S002&quot;, &quot;osm-way37850565-F0-S007&quot;, &quot;osm-way37850565-F1-S017&quot;, &quot;osm-way37850565-F2-S006&quot;, &quot;osm-way37850565-F2-S001&quot;, &quot;osm-way37850565-F2-S002&quot;, &quot;osm-way37850565-F2-S003&quot;], &quot;element_path&quot;: [&quot;osm-way37850565-F0-O0033&quot;, &quot;osm-way37850565-F0-O0027&quot;, &quot;osm-way37850565-F0-O0030&quot;, &quot;osm-way37850565-V01&quot;, &quot;osm-way37850565-V01&quot;, &quot;osm-way37850565-F2-O0022&quot;, &quot;osm-way37850565-F2-O0004&quot;, &quot;osm-way37850565-F2-O0005&quot;], &quot;length_m&quot;: 42.89}
+Answer: osm-way37850565-F0-S010 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S007 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F2-S006 -&gt; osm-way37850565-F2-S001 -&gt; osm-way37850565-F2-S002 -&gt; osm-way37850565-F2-S003</pre></details></td></tr><tr><td><code>osm-way37850565-Q08</code></td><td>route_step_free</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Is there a step-free route from Büro (Ground floor) to Toilet 0.04 (Ground floor)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S012&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S004&quot;,
+ &quot;optimal_length_m&quot;: 11.32,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F0-S012&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S004&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F0-O0035&quot;,
+  &quot;osm-way37850565-F0-O0029&quot;
+ ]
+}</pre><pre>Yes. All three ground-floor rooms named &quot;Büro&quot; have a step-free route to Toilet 0.04, and none of them needs stairs or the lift. Each goes through the Flur:
+
+- **Büro (S010, 26.06 m²):** Büro → Flur → Toilet 0.04, about 8.2 m
+- **Büro (S011, 20.94 m²):** Büro → Flur → Toilet 0.04, about 7.5 m (shortest)
+- **Büro (S012, 24.21 m²):** Büro → Flur → Toilet 0.04, about 11.3 m
+
+The three offices share the same name and no room number, so I can&#x27;t tell which one you mean. I&#x27;ve given the shortest route, from Büro S011, in the answer line. If you meant another one, tell me which and I&#x27;ll give its route.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way37850565-F0-S011&quot;, &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S004&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way37850565-F0-S011&quot;, &quot;osm-way37850565-F0-S001&quot;, &quot;osm-way37850565-F0-S004&quot;], &quot;element_path&quot;: [&quot;osm-way37850565-F0-O0034&quot;, &quot;osm-way37850565-F0-O0029&quot;], &quot;length_m&quot;: 7.53}
+Answer: osm-way37850565-F0-S011 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S004</pre></details></td></tr><tr><td><code>osm-way37850565-Q09</code></td><td>route_with_closure</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Stairs is closed for maintenance. How do I get from Büro (Floor 1) to Toilet 0.04 (Ground floor)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way37850565-F1-S006&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S004&quot;,
+ &quot;optimal_length_m&quot;: 52.76,
+ &quot;space_path&quot;: [
+  &quot;osm-way37850565-F1-S006&quot;,
+  &quot;osm-way37850565-F1-S015&quot;,
+  &quot;osm-way37850565-F1-S016&quot;,
+  &quot;osm-way37850565-F1-S018&quot;,
+  &quot;osm-way37850565-F0-S008&quot;,
+  &quot;osm-way37850565-F0-S002&quot;,
+  &quot;osm-way37850565-F0-S001&quot;,
+  &quot;osm-way37850565-F0-S004&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way37850565-F1-O0010&quot;,
+  &quot;osm-way37850565-F1-O0008&quot;,
+  &quot;osm-way37850565-F1-O0026&quot;,
+  &quot;osm-way37850565-V02&quot;,
+  &quot;osm-way37850565-F0-O0031&quot;,
+  &quot;osm-way37850565-F0-O0027&quot;,
+  &quot;osm-way37850565-F0-O0029&quot;
+ ],
+ &quot;closed_element_id&quot;: &quot;osm-way37850565-V01&quot;
+}</pre><pre>The stairs are avoided, so the route uses the lift. I couldn&#x27;t tell which of the nine rooms called &quot;Büro&quot; on Floor 1 you meant, so I routed from the first one listed (Büro, Floor 1, id S001). If you meant a different one, let me know its number and I&#x27;ll recalculate.
+
+From Büro (Floor 1), the route is:
+1. Go into the Flur on Floor 1 (about 3 m).
+2. Continue into the Treppenhaus (about 26 m).
+3. Enter Lift 1.18 (about 5 m) and ride it down to the Ground floor.
+4. Step out into the Eingangshalle.
+5. Go through the Flur on the Ground floor (about 5 m) into Toilet 0.04 (about 5 m).
+
+The total walk is about 65 m.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way37850565-F1-S001&quot;, &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S004&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way37850565-F1-S001&quot;, &quot;osm-way37850565-F1-S015&quot;, &quot;osm-way37850565-F1-S016&quot;, &quot;osm-way37850565-F1-S018&quot;, &quot;osm-way37850565-F0-S008&quot;, &quot;osm-way37850565-F0-S002&quot;, &quot;osm-way37850565-F0-S001&quot;, &quot;osm-way37850565-F0-S004&quot;], &quot;element_path&quot;: [&quot;osm-way37850565-F1-O0017&quot;, &quot;osm-way37850565-F1-O0008&quot;, &quot;osm-way37850565-F1-O0026&quot;, &quot;osm-way37850565-V02&quot;, &quot;osm-way37850565-F0-O0031&quot;, &quot;osm-way37850565-F0-O0027&quot;, &quot;osm-way37850565-F0-O0029&quot;], &quot;length_m&quot;: 65.35}
+Answer: osm-way37850565-F1-S001 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S018 -&gt; osm-way37850565-F0-S008 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S004</pre></details></td></tr><tr><td><code>osm-way37850565-Q10</code></td><td>tour</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Starting at Büro (Ground floor), visit Büro (Ground floor), then Büro (Floor 1) in this order. What is the route?</pre><pre>{
+ &quot;stops&quot;: [
+  &quot;osm-way37850565-F0-S011&quot;,
+  &quot;osm-way37850565-F0-S010&quot;,
+  &quot;osm-way37850565-F1-S010&quot;
+ ],
+ &quot;optimal_length_m&quot;: 56.3,
+ &quot;legs&quot;: [
+  {
+   &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S011&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way37850565-F0-S010&quot;,
+   &quot;optimal_length_m&quot;: 9.35,
+   &quot;space_path&quot;: [
+    &quot;osm-way37850565-F0-S011&quot;,
+    &quot;osm-way37850565-F0-S001&quot;,
+    &quot;osm-way37850565-F0-S010&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way37850565-F0-O0034&quot;,
+    &quot;osm-way37850565-F0-O0033&quot;
+   ]
+  },
+  {
+   &quot;from_space_id&quot;: &quot;osm-way37850565-F0-S010&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S010&quot;,
+   &quot;optimal_length_m&quot;: 46.95,
+   &quot;space_path&quot;: [
+    &quot;osm-way37850565-F0-S010&quot;,
+    &quot;osm-way37850565-F0-S001&quot;,
+    &quot;osm-way37850565-F0-S002&quot;,
+    &quot;osm-way37850565-F0-S007&quot;,
+    &quot;osm-way37850565-F1-S017&quot;,
+    &quot;osm-way37850565-F1-S016&quot;,
+    &quot;osm-way37850565-F1-S015&quot;,
+    &quot;osm-way37850565-F1-S010&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way37850565-F0-O0033&quot;,
+    &quot;osm-way37850565-F0-O0027&quot;,
+    &quot;osm-way37850565-F0-O0030&quot;,
+    &quot;osm-way37850565-V01&quot;,
+    &quot;osm-way37850565-F1-O0025&quot;,
+    &quot;osm-way37850565-F1-O0008&quot;,
+    &quot;osm-way37850565-F1-O0012&quot;
+   ]
+  }
+ ]
+}</pre><pre>Starting in Büro on the Ground floor, the second stop is the same room, so the walk is just the trip up to Büro on Floor 1. Since several rooms share these names, I used the first listed Büro on each floor (Ground floor: osm-way37850565-F0-S010; Floor 1: osm-way37850565-F1-S001). If you meant a different one, let me know its room number.
+
+The route is 56.13 m. It takes the stairs (not the lift), so it is not step-free:
+1. Start in Büro (Ground floor).
+2. Go into Flur (about 3 m).
+3. Go into Eingangshalle (about 6 m).
+4. Go into Stairwell 0.07 (about 5 m).
+5. Take the stairs to Floor 1.
+6. Go into Treppenhaus (about 1 m).
+7. Go into Flur (about 5 m).
+8. Go into Büro on Floor 1 (about 26 m).
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way37850565-F0-S010&quot;, &quot;to_space_id&quot;: &quot;osm-way37850565-F1-S001&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way37850565-F0-S010&quot;, &quot;osm-way37850565-F0-S001&quot;, &quot;osm-way37850565-F0-S002&quot;, &quot;osm-way37850565-F0-S007&quot;, &quot;osm-way37850565-F1-S017&quot;, &quot;osm-way37850565-F1-S016&quot;, &quot;osm-way37850565-F1-S015&quot;, &quot;osm-way37850565-F1-S001&quot;], &quot;element_path&quot;: [&quot;osm-way37850565-F0-O0033&quot;, &quot;osm-way37850565-F0-O0027&quot;, &quot;osm-way37850565-F0-O0030&quot;, &quot;osm-way37850565-V01&quot;, &quot;osm-way37850565-F1-O0025&quot;, &quot;osm-way37850565-F1-O0008&quot;, &quot;osm-way37850565-F1-O0017&quot;], &quot;length_m&quot;: 56.13}
+Answer: osm-way37850565-F0-S010 -&gt; osm-way37850565-F0-S001 -&gt; osm-way37850565-F0-S002 -&gt; osm-way37850565-F0-S007 -&gt; osm-way37850565-F1-S017 -&gt; osm-way37850565-F1-S016 -&gt; osm-way37850565-F1-S015 -&gt; osm-way37850565-F1-S001</pre></details></td></tr><tr><td><code>osm-way52060470-H06</code></td><td>straight_line_3d</td><td class="num">0.00</td><td>wrong answer<details><summary>question, expected answer, reply</summary><pre>We&#x27;re planning a wireless sensor link between Genusswerk (Floor 1) and Generic room -1.14 (Basement 1). What is the straight-line distance in metres between the centres of the two rooms (each room&#x27;s floor-plan centroid, at its floor&#x27;s elevation)? Finish with a line &#x27;Answer: &lt;number&gt;&#x27;.</pre><pre>{
+ &quot;type&quot;: &quot;number&quot;,
+ &quot;value&quot;: 159.87,
+ &quot;unit&quot;: &quot;m&quot;,
+ &quot;relative_tolerance&quot;: 0.02,
+ &quot;absolute_tolerance&quot;: 0.0
+}</pre><pre>There are two rooms named &quot;Genusswerk&quot; on Floor 1, so I can&#x27;t tell which one you mean from the name alone:
+
+- **Genusswerk** (`F1-S046`, 190.95 m², centroid 37.72, -1.67): about **142.7 m** from Generic room -1.14.
+- **Genusswerk** (`F1-S034`, 49.96 m², centroid 38.34, -28.46): about **159.87 m** from Generic room -1.14.
+
+Generic room -1.14 is on Basement 1 (elevation -3.0 m), and both distances are straight-line 3D between room centroids. I&#x27;ve used the larger room, `F1-S046`, for the answer line. If you meant the smaller one, the distance is 159.87 m.
+
+Answer: 142.7</pre></details></td></tr><tr><td><code>osm-way58216509-Q02</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Generic room N2146 (Floor 2) to Generic room N2103 (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way58216509-F2-S152&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S047&quot;,
+ &quot;optimal_length_m&quot;: 210.03,
+ &quot;space_path&quot;: [
+  &quot;osm-way58216509-F2-S152&quot;,
+  &quot;osm-way58216509-F2-S093&quot;,
+  &quot;osm-way58216509-F2-S104&quot;,
+  &quot;osm-way58216509-F2-S042&quot;,
+  &quot;osm-way58216509-F0-S065&quot;,
+  &quot;osm-way58216509-F0-S079&quot;,
+  &quot;osm-way58216509-F0-S070&quot;,
+  &quot;osm-way58216509-F0-S013&quot;,
+  &quot;osm-way58216509-F0-S087&quot;,
+  &quot;osm-way58216509-F2-S050&quot;,
+  &quot;osm-way58216509-F2-S007&quot;,
+  &quot;osm-way58216509-F2-S089&quot;,
+  &quot;osm-way58216509-F2-S047&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way58216509-F2-O0326&quot;,
+  &quot;osm-way58216509-F2-O0278&quot;,
+  &quot;osm-way58216509-F2-O0344&quot;,
+  &quot;osm-way58216509-V04&quot;,
+  &quot;osm-way58216509-F0-O0334&quot;,
+  &quot;osm-way58216509-F0-O0086&quot;,
+  &quot;osm-way58216509-F0-O0130&quot;,
+  &quot;osm-way58216509-F0-O0336&quot;,
+  &quot;osm-way58216509-V08&quot;,
+  &quot;osm-way58216509-F2-O0148&quot;,
+  &quot;osm-way58216509-F2-O0204&quot;,
+  &quot;osm-way58216509-F2-O0207&quot;
+ ]
+}</pre><pre>I used the Generic room N2146 with ID osm-way58216509-F2-S062 and the Generic room N2103 with ID osm-way58216509-F2-S047, since both names matched more than one room on Floor 2. The route is about 122 m and stays on Floor 2.
+
+Directions:
+1. Start in Generic room N2146.
+2. Go into Corridor N2196 (about 4 m).
+3. Go into Corridor N2100 (about 22 m).
+4. Go into Corridor N2197 (about 66 m).
+5. Go into Corridor N2198 (about 5 m).
+6. Arrive in Generic room N2103 (about 20 m).
+
+If you meant the other rooms with these numbers, tell me and I&#x27;ll re-route.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way58216509-F2-S062&quot;, &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S047&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way58216509-F2-S062&quot;, &quot;osm-way58216509-F2-S003&quot;, &quot;osm-way58216509-F2-S014&quot;, &quot;osm-way58216509-F2-S007&quot;, &quot;osm-way58216509-F2-S089&quot;, &quot;osm-way58216509-F2-S047&quot;], &quot;element_path&quot;: [&quot;osm-way58216509-F2-O0216&quot;, &quot;osm-way58216509-F2-O0168&quot;, &quot;osm-way58216509-F2-O0001&quot;, &quot;osm-way58216509-F2-O0204&quot;, &quot;osm-way58216509-F2-O0207&quot;], &quot;length_m&quot;: 121.65}
+Answer: osm-way58216509-F2-S062 -&gt; osm-way58216509-F2-S003 -&gt; osm-way58216509-F2-S014 -&gt; osm-way58216509-F2-S007 -&gt; osm-way58216509-F2-S089 -&gt; osm-way58216509-F2-S047</pre></details></td></tr><tr><td><code>osm-way58216509-Q03</code></td><td>route</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>How do I get from Generic room N2149 (Floor 2) to Generic room N2197I (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way58216509-F2-S146&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S149&quot;,
+ &quot;optimal_length_m&quot;: 8.03,
+ &quot;space_path&quot;: [
+  &quot;osm-way58216509-F2-S146&quot;,
+  &quot;osm-way58216509-F2-S167&quot;,
+  &quot;osm-way58216509-F2-S093&quot;,
+  &quot;osm-way58216509-F2-S149&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way58216509-F2-O0285&quot;,
+  &quot;osm-way58216509-F2-O0286&quot;,
+  &quot;osm-way58216509-F2-O0248&quot;
+ ]
+}</pre><pre>I found two rooms named &quot;Generic room N2149&quot; and two named &quot;Generic room N2197I&quot; on Floor 2, so I couldn&#x27;t tell which pair you meant. I used the first candidate of each (N2149 `osm-way58216509-F2-S056` and N2197I `osm-way58216509-F2-S059`). If you meant one of the others, let me know which.
+
+From Generic room N2149 the walk is about 8 m (8.03 m) to Generic room N2197I:
+
+1. Start in Generic room N2149.
+2. After about 4 m, go into Generic room N2148A.
+3. After about 2 m, go into Corridor N2196.
+4. After about 2 m, arrive in Generic room N2197I.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way58216509-F2-S056&quot;, &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S059&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way58216509-F2-S056&quot;, &quot;osm-way58216509-F2-S077&quot;, &quot;osm-way58216509-F2-S003&quot;, &quot;osm-way58216509-F2-S059&quot;], &quot;element_path&quot;: [&quot;osm-way58216509-F2-O0175&quot;, &quot;osm-way58216509-F2-O0176&quot;, &quot;osm-way58216509-F2-O0138&quot;], &quot;length_m&quot;: 8.03}
+Answer: osm-way58216509-F2-S056 -&gt; osm-way58216509-F2-S077 -&gt; osm-way58216509-F2-S003 -&gt; osm-way58216509-F2-S059</pre></details></td></tr><tr><td><code>osm-way58216509-Q07</code></td><td>tour</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Starting at Generic room N0131 (Ground floor), visit Generic room N2194 (Floor 2), then Generic room N2175 (Floor 2) in this order. What is the route?</pre><pre>{
+ &quot;stops&quot;: [
+  &quot;osm-way58216509-F0-S088&quot;,
+  &quot;osm-way58216509-F2-S017&quot;,
+  &quot;osm-way58216509-F2-S147&quot;
+ ],
+ &quot;optimal_length_m&quot;: 260.15,
+ &quot;legs&quot;: [
+  {
+   &quot;from_space_id&quot;: &quot;osm-way58216509-F0-S088&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S017&quot;,
+   &quot;optimal_length_m&quot;: 77.82,
+   &quot;space_path&quot;: [
+    &quot;osm-way58216509-F0-S088&quot;,
+    &quot;osm-way58216509-F0-S068&quot;,
+    &quot;osm-way58216509-F0-S077&quot;,
+    &quot;osm-way58216509-F0-S030&quot;,
+    &quot;osm-way58216509-F0-S054&quot;,
+    &quot;osm-way58216509-F2-S049&quot;,
+    &quot;osm-way58216509-F2-S015&quot;,
+    &quot;osm-way58216509-F2-S017&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way58216509-F0-O0104&quot;,
+    &quot;osm-way58216509-F0-O0072&quot;,
+    &quot;osm-way58216509-F0-O0070&quot;,
+    &quot;osm-way58216509-F0-O0331&quot;,
+    &quot;osm-way58216509-V07&quot;,
+    &quot;osm-way58216509-F2-O0170&quot;,
+    &quot;osm-way58216509-F2-O0017&quot;
+   ]
+  },
+  {
+   &quot;from_space_id&quot;: &quot;osm-way58216509-F2-S017&quot;,
+   &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S147&quot;,
+   &quot;optimal_length_m&quot;: 182.33,
+   &quot;space_path&quot;: [
+    &quot;osm-way58216509-F2-S017&quot;,
+    &quot;osm-way58216509-F2-S015&quot;,
+    &quot;osm-way58216509-F2-S049&quot;,
+    &quot;osm-way58216509-F0-S054&quot;,
+    &quot;osm-way58216509-F0-S030&quot;,
+    &quot;osm-way58216509-F0-S072&quot;,
+    &quot;osm-way58216509-F0-S079&quot;,
+    &quot;osm-way58216509-F0-S016&quot;,
+    &quot;osm-way58216509-F2-S032&quot;,
+    &quot;osm-way58216509-F2-S104&quot;,
+    &quot;osm-way58216509-F2-S097&quot;,
+    &quot;osm-way58216509-F2-S140&quot;,
+    &quot;osm-way58216509-F2-S180&quot;,
+    &quot;osm-way58216509-F2-S159&quot;,
+    &quot;osm-way58216509-F2-S147&quot;
+   ],
+   &quot;element_path&quot;: [
+    &quot;osm-way58216509-F2-O0017&quot;,
+    &quot;osm-way58216509-F2-O0170&quot;,
+    &quot;osm-way58216509-V07&quot;,
+    &quot;osm-way58216509-F0-O0331&quot;,
+    &quot;osm-way58216509-F0-O0057&quot;,
+    &quot;osm-way58216509-F0-O0079&quot;,
+    &quot;osm-way58216509-F0-O0328&quot;,
+    &quot;osm-way58216509-V03&quot;,
+    &quot;osm-way58216509-F2-O0341&quot;,
+    &quot;osm-way58216509-F2-O0217&quot;,
+    &quot;osm-way58216509-F2-O0258&quot;,
+    &quot;osm-way58216509-F2-O0324&quot;,
+    &quot;osm-way58216509-F2-O0322&quot;,
+    &quot;osm-way58216509-F2-O0261&quot;
+   ]
+  }
+ ]
+}</pre><pre>The route from Generic room N0131 (Ground floor) through Generic room N2194 to Generic room N2175 (Floor 2) is 171 m in total: 78 m to N2194, then 93 m to N2175.
+
+Three names were ambiguous, so I chose a candidate for each:
+- **N2194:** I used the first match, Floor 2 (S017). The other is S107.
+- **N2175:** I used the first match, Floor 2 (S057). The other is S147. There is also an N2175A (S069), which the route passes through.
+- **N0131:** only one match on the Ground floor.
+
+Directions:
+1. Start in Generic room N0131 (Ground floor) and go through Corridor N0171A, Corridor N0171C and Corridor N0194B.
+2. Take Lift 0.54 up to Floor 2.
+3. Step out into Stairwell N2195 and go into Generic room N2194.
+4. From N2194, go through Stairwell N2195, Corridor N2196, Corridors N2195B, N2195C and N2197, and Stairwell N2171.
+5. Go through Generic room N2175A into Generic room N2175.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way58216509-F0-S088&quot;, &quot;to_space_id&quot;: &quot;osm-way58216509-F2-S057&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way58216509-F0-S088&quot;, &quot;osm-way58216509-F0-S068&quot;, &quot;osm-way58216509-F0-S077&quot;, &quot;osm-way58216509-F0-S030&quot;, &quot;osm-way58216509-F0-S054&quot;, &quot;osm-way58216509-F2-S049&quot;, &quot;osm-way58216509-F2-S015&quot;, &quot;osm-way58216509-F2-S017&quot;, &quot;osm-way58216509-F2-S015&quot;, &quot;osm-way58216509-F2-S003&quot;, &quot;osm-way58216509-F2-S023&quot;, &quot;osm-way58216509-F2-S080&quot;, &quot;osm-way58216509-F2-S007&quot;, &quot;osm-way58216509-F2-S090&quot;, &quot;osm-way58216509-F2-S069&quot;, &quot;osm-way58216509-F2-S057&quot;], &quot;element_path&quot;: [&quot;osm-way58216509-F0-O0104&quot;, &quot;osm-way58216509-F0-O0072&quot;, &quot;osm-way58216509-F0-O0070&quot;, &quot;osm-way58216509-F0-O0331&quot;, &quot;osm-way58216509-V07&quot;, &quot;osm-way58216509-F2-O0170&quot;, &quot;osm-way58216509-F2-O0017&quot;, &quot;osm-way58216509-F2-O0017&quot;, &quot;osm-way58216509-F2-O0003&quot;, &quot;osm-way58216509-F2-O0007&quot;, &quot;osm-way58216509-F2-O0182&quot;, &quot;osm-way58216509-F2-O0184&quot;, &quot;osm-way58216509-F2-O0215&quot;, &quot;osm-way58216509-F2-O0212&quot;, &quot;osm-way58216509-F2-O0151&quot;], &quot;length_m&quot;: 171.04}
+Answer: osm-way58216509-F0-S088 -&gt; osm-way58216509-F0-S068 -&gt; osm-way58216509-F0-S077 -&gt; osm-way58216509-F0-S030 -&gt; osm-way58216509-F0-S054 -&gt; osm-way58216509-F2-S049 -&gt; osm-way58216509-F2-S015 -&gt; osm-way58216509-F2-S017 -&gt; osm-way58216509-F2-S015 -&gt; osm-way58216509-F2-S003 -&gt; osm-way58216509-F2-S023 -&gt; osm-way58216509-F2-S080 -&gt; osm-way58216509-F2-S007 -&gt; osm-way58216509-F2-S090 -&gt; osm-way58216509-F2-S069 -&gt; osm-way58216509-F2-S057</pre></details></td></tr><tr><td><code>osm-way27917482-Q09</code></td><td>route_with_closure</td><td class="num">0.00</td><td>route does not start, stop and end where asked<details><summary>question, expected answer, reply</summary><pre>Stairs 1 is closed for maintenance. How do I get from Generic room 03.08.033 (Floor 3) to Generic room 02.07.044 (Floor 2)?</pre><pre>{
+ &quot;from_space_id&quot;: &quot;osm-way27917482-F3-S016&quot;,
+ &quot;to_space_id&quot;: &quot;osm-way27917482-F2-S341&quot;,
+ &quot;optimal_length_m&quot;: 127.22,
+ &quot;space_path&quot;: [
+  &quot;osm-way27917482-F3-S016&quot;,
+  &quot;osm-way27917482-F3-S071&quot;,
+  &quot;osm-way27917482-F3-S073&quot;,
+  &quot;osm-way27917482-F3-S403&quot;,
+  &quot;osm-way27917482-F3-S001&quot;,
+  &quot;osm-way27917482-F0-S049&quot;,
+  &quot;osm-way27917482-F0-S026&quot;,
+  &quot;osm-way27917482-F0-S276&quot;,
+  &quot;osm-way27917482-F0-S283&quot;,
+  &quot;osm-way27917482-F1-S322&quot;,
+  &quot;osm-way27917482-F2-S328&quot;,
+  &quot;osm-way27917482-F2-S325&quot;,
+  &quot;osm-way27917482-F2-S342&quot;,
+  &quot;osm-way27917482-F2-S341&quot;
+ ],
+ &quot;element_path&quot;: [
+  &quot;osm-way27917482-F3-O0061&quot;,
+  &quot;osm-way27917482-F3-O0127&quot;,
+  &quot;osm-way27917482-F3-O0128&quot;,
+  &quot;osm-way27917482-F3-O0123&quot;,
+  &quot;osm-way27917482-V26&quot;,
+  &quot;osm-way27917482-F0-O0120&quot;,
+  &quot;osm-way27917482-F0-O1453&quot;,
+  &quot;osm-way27917482-F0-O1465&quot;,
+  &quot;osm-way27917482-V10&quot;,
+  &quot;osm-way27917482-V10&quot;,
+  &quot;osm-way27917482-F2-O1548&quot;,
+  &quot;osm-way27917482-F2-O1531&quot;,
+  &quot;osm-way27917482-F2-O1563&quot;
+ ],
+ &quot;closed_element_id&quot;: &quot;osm-way27917482-V01&quot;
+}</pre><pre>The route avoiding Stairs 1 is about 125 m. Three rooms on Floor 3 are named &quot;Generic room 03.08.033&quot;, so I used the first one (osm-way27917482-F3-S015). If you meant a different one, let me know.
+
+In short: take Lift 3.01 down to the Ground floor, walk through MI Magistrale to Stairwell 00.07.101, take Stairs 10 up to Floor 2, and continue to Generic room 02.07.044.
+Route JSON: {&quot;from_space_id&quot;: &quot;osm-way27917482-F3-S015&quot;, &quot;to_space_id&quot;: &quot;osm-way27917482-F2-S341&quot;, &quot;reachable&quot;: true, &quot;space_path&quot;: [&quot;osm-way27917482-F3-S015&quot;, &quot;osm-way27917482-F3-S071&quot;, &quot;osm-way27917482-F3-S073&quot;, &quot;osm-way27917482-F3-S403&quot;, &quot;osm-way27917482-F3-S001&quot;, &quot;osm-way27917482-F0-S049&quot;, &quot;osm-way27917482-F0-S026&quot;, &quot;osm-way27917482-F0-S276&quot;, &quot;osm-way27917482-F0-S283&quot;, &quot;osm-way27917482-F1-S322&quot;, &quot;osm-way27917482-F2-S328&quot;, &quot;osm-way27917482-F2-S325&quot;, &quot;osm-way27917482-F2-S342&quot;, &quot;osm-way27917482-F2-S341&quot;], &quot;element_path&quot;: [&quot;osm-way27917482-F3-O0063&quot;, &quot;osm-way27917482-F3-O0127&quot;, &quot;osm-way27917482-F3-O0128&quot;, &quot;osm-way27917482-F3-O0123&quot;, &quot;osm-way27917482-V26&quot;, &quot;osm-way27917482-F0-O0120&quot;, &quot;osm-way27917482-F0-O1453&quot;, &quot;osm-way27917482-F0-O1465&quot;, &quot;osm-way27917482-V10&quot;, &quot;osm-way27917482-V10&quot;, &quot;osm-way27917482-F2-O1548&quot;, &quot;osm-way27917482-F2-O1531&quot;, &quot;osm-way27917482-F2-O1563&quot;], &quot;length_m&quot;: 125.35}
+Answer: osm-way27917482-F3-S015 -&gt; osm-way27917482-F3-S071 -&gt; osm-way27917482-F3-S073 -&gt; osm-way27917482-F3-S403 -&gt; osm-way27917482-F3-S001 -&gt; osm-way27917482-F0-S049 -&gt; osm-way27917482-F0-S026 -&gt; osm-way27917482-F0-S276 -&gt; osm-way27917482-F0-S283 -&gt; osm-way27917482-F1-S322 -&gt; osm-way27917482-F2-S328 -&gt; osm-way27917482-F2-S325 -&gt; osm-way27917482-F2-S342 -&gt; osm-way27917482-F2-S341</pre></details></td></tr></table></div></main></body></html>

@@ -49,6 +49,8 @@ checked by deterministic rules. Your job: resolve every open issue.
 - When you learn something reusable about this data source, store it with `record_quirk`.
 Finish with the structured report once no issue is left open."""
 INJECTION_CLASSES = ("suspicious_id", "suspicious_text")
+# Fixes that leave floors, outlines, openings and connectors exactly as the source has them.
+GEOMETRY_SAFE_FIXES = ("suspicious_text", "rotation_out_of_range")
 
 
 class PatchOp(BaseModel):
@@ -153,6 +155,8 @@ def _apply_deterministic(session: _Session) -> int:
     for ops, reason, issue_ids, issue_class in deterministic_fixes(
         session.doc, session.open_issues()
     ):
+        if session.ctx.preserve_geometry and issue_class not in GEOMETRY_SAFE_FIXES:
+            continue  # stays an open issue in the report; the graders measure the source
         if session.patch(ops, reason, issue_ids, issue_class, author="auto")["ok"]:
             applied += 1
     return applied

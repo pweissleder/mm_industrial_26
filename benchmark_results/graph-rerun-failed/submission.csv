@@ -1,0 +1,165 @@
+question_id,answer
+osm-way37850565-H02,"There are three rooms named Büro on the Ground floor, and the building doesn't say which one is leaking. I used the first one listed (osm-way37850565-F0-S010, 26.06 m²), which has the Floor 1 Büro directly above it (osm-way37850565-F1-S003, 32.74 m²). If the leak is in one of the other two Büros, tell me and I'll check that one. The room above the other two is Büro (osm-way37850565-F1-S002) for the Büro with the centre at (2.61, -12.59), and Büro (osm-way37850565-F1-S002) also sits above the one at (-1.79, -11.12).
+
+Answer: Büro (osm-way37850565-F1-S003)"
+osm-way37850565-H03,"There are three rooms named ""Büro"" on the Ground floor, and none has a room number, so I can't tell which one has the leak. Here is what sits directly above each:
+
+- **Büro (osm-way37850565-F0-S010)**, 26.06 m²: directly above is **Büro (osm-way37850565-F1-S003)** on Floor 1, with 25.9 m² of overlap.
+- **Büro (osm-way37850565-F0-S011)**, 20.94 m²: directly above is **Büro (osm-way37850565-F1-S002)**, with 20.9 m² of overlap.
+- **Büro (osm-way37850565-F0-S012)**, 24.21 m²: above it are **Büro (osm-way37850565-F1-S002)**, with 14.0 m² of overlap, and **Büro (osm-way37850565-F1-S001)**, with 10.2 m².
+
+If you tell me which Büro the drip is in (for example by its position in the building or a neighbouring room), I can give you the exact room above. For now I've used the first one, the largest of the three, which is the one with the main overlap above it.
+
+Answer: Büro (osm-way37850565-F1-S003)"
+osm-way37850565-H04,"I used the first of the nine rooms named ""Büro"" on Floor 1 (space `osm-way37850565-F1-S001`), since they all share the same name and none has a room number. Its wall-sharing neighbours are:
+
+- Mehrzweckraum (S004), 6.9 m of shared wall
+- Büro (S002), 6.8 m of shared wall
+
+Both runs are at least 1 m, so both count. If you meant a different Büro on Floor 1, tell me its number and I'll recount.
+
+Answer: 2"
+osm-way37850565-Q05,"The route to the Büro on Floor 1 is about 60 m, going up the stairs. There are nine rooms named ""Büro"" on Floor 1 and none has a room number, so I routed to the first one listed (area 23.2 m²). If you meant a different Büro, tell me which one and I'll route there.
+
+1. Start in Kopierraum (Ground floor).
+2. Go into Flur.
+3. Go into Eingangshalle.
+4. Go into Stairwell 0.07 and take the stairs up to Floor 1.
+5. On Floor 1, go into Treppenhaus, then Flur.
+6. Go into Büro.
+Route JSON: {""from_space_id"": ""osm-way37850565-F0-S003"", ""to_space_id"": ""osm-way37850565-F1-S001"", ""reachable"": true, ""space_path"": [""osm-way37850565-F0-S003"", ""osm-way37850565-F0-S001"", ""osm-way37850565-F0-S002"", ""osm-way37850565-F0-S007"", ""osm-way37850565-F1-S017"", ""osm-way37850565-F1-S016"", ""osm-way37850565-F1-S015"", ""osm-way37850565-F1-S001""], ""element_path"": [""osm-way37850565-F0-O0028"", ""osm-way37850565-F0-O0027"", ""osm-way37850565-F0-O0030"", ""osm-way37850565-V01"", ""osm-way37850565-F1-O0025"", ""osm-way37850565-F1-O0008"", ""osm-way37850565-F1-O0017""], ""length_m"": 59.65}
+Answer: osm-way37850565-F0-S003 -> osm-way37850565-F0-S001 -> osm-way37850565-F0-S002 -> osm-way37850565-F0-S007 -> osm-way37850565-F1-S017 -> osm-way37850565-F1-S016 -> osm-way37850565-F1-S015 -> osm-way37850565-F1-S001"
+osm-way37850565-Q06,"The walk from Kitchen 2.05 to a Büro on Floor 1 is about 53 m, using the stairs. Floor 1 has nine rooms named ""Büro"" and none carries a room number, so I routed to the first one listed (osm-way37850565-F1-S001). If you meant another, tell me its number or position and I'll re-route.
+
+Directions:
+1. Start in Kitchen 2.05 (Floor 2).
+2. Go into the Treppenhaus after about 4 m.
+3. Go into Stairwell 2.06 after about 6 m.
+4. Take the stairs down to Floor 1.
+5. Go into the Treppenhaus after about 1 m.
+6. Go into the Flur after about 5 m.
+7. Go into the Büro after about 26 m. You arrive after about 3 m more.
+Route JSON: {""from_space_id"": ""osm-way37850565-F2-S005"", ""to_space_id"": ""osm-way37850565-F1-S001"", ""reachable"": true, ""space_path"": [""osm-way37850565-F2-S005"", ""osm-way37850565-F2-S001"", ""osm-way37850565-F2-S006"", ""osm-way37850565-F1-S017"", ""osm-way37850565-F1-S016"", ""osm-way37850565-F1-S015"", ""osm-way37850565-F1-S001""], ""element_path"": [""osm-way37850565-F2-O0003"", ""osm-way37850565-F2-O0022"", ""osm-way37850565-V01"", ""osm-way37850565-F1-O0025"", ""osm-way37850565-F1-O0008"", ""osm-way37850565-F1-O0017""], ""length_m"": 53.14}
+Answer: osm-way37850565-F2-S005 -> osm-way37850565-F2-S001 -> osm-way37850565-F2-S006 -> osm-way37850565-F1-S017 -> osm-way37850565-F1-S016 -> osm-way37850565-F1-S015 -> osm-way37850565-F1-S001"
+osm-way37850565-Q07,"I couldn't tell which ""Büro"" you mean: there are three on the Ground floor, all with the same name and no room number. I used the one closest to Toilet 2.03 (the 26.06 m² office at the top of the building, id osm-way37850565-F0-S010). The other two would take 44 m and 48 m.
+
+From that Büro:
+1. Go out into the Flur (about 3 m).
+2. Continue into the Eingangshalle (about 6 m).
+3. Enter Stairwell 0.07 (about 5 m) and take the stairs up to Floor 1, then on to Floor 2.
+4. On Floor 2, go into Treppenhaus (about 1 m), then the Foyer (about 6 m).
+5. Arrive at Toilet 2.03 after about 9 m more.
+
+The total walk is about 43 m. This route uses stairs. If you need step-free access, ask again and I'll route you via the lift.
+Route JSON: {""from_space_id"": ""osm-way37850565-F0-S010"", ""to_space_id"": ""osm-way37850565-F2-S003"", ""reachable"": true, ""space_path"": [""osm-way37850565-F0-S010"", ""osm-way37850565-F0-S001"", ""osm-way37850565-F0-S002"", ""osm-way37850565-F0-S007"", ""osm-way37850565-F1-S017"", ""osm-way37850565-F2-S006"", ""osm-way37850565-F2-S001"", ""osm-way37850565-F2-S002"", ""osm-way37850565-F2-S003""], ""element_path"": [""osm-way37850565-F0-O0033"", ""osm-way37850565-F0-O0027"", ""osm-way37850565-F0-O0030"", ""osm-way37850565-V01"", ""osm-way37850565-V01"", ""osm-way37850565-F2-O0022"", ""osm-way37850565-F2-O0004"", ""osm-way37850565-F2-O0005""], ""length_m"": 42.89}
+Answer: osm-way37850565-F0-S010 -> osm-way37850565-F0-S001 -> osm-way37850565-F0-S002 -> osm-way37850565-F0-S007 -> osm-way37850565-F1-S017 -> osm-way37850565-F2-S006 -> osm-way37850565-F2-S001 -> osm-way37850565-F2-S002 -> osm-way37850565-F2-S003"
+osm-way37850565-Q08,"Yes. All three ground-floor rooms named ""Büro"" have a step-free route to Toilet 0.04, and none of them needs stairs or the lift. Each goes through the Flur:
+
+- **Büro (S010, 26.06 m²):** Büro → Flur → Toilet 0.04, about 8.2 m
+- **Büro (S011, 20.94 m²):** Büro → Flur → Toilet 0.04, about 7.5 m (shortest)
+- **Büro (S012, 24.21 m²):** Büro → Flur → Toilet 0.04, about 11.3 m
+
+The three offices share the same name and no room number, so I can't tell which one you mean. I've given the shortest route, from Büro S011, in the answer line. If you meant another one, tell me which and I'll give its route.
+Route JSON: {""from_space_id"": ""osm-way37850565-F0-S011"", ""to_space_id"": ""osm-way37850565-F0-S004"", ""reachable"": true, ""space_path"": [""osm-way37850565-F0-S011"", ""osm-way37850565-F0-S001"", ""osm-way37850565-F0-S004""], ""element_path"": [""osm-way37850565-F0-O0034"", ""osm-way37850565-F0-O0029""], ""length_m"": 7.53}
+Answer: osm-way37850565-F0-S011 -> osm-way37850565-F0-S001 -> osm-way37850565-F0-S004"
+osm-way37850565-Q09,"The stairs are avoided, so the route uses the lift. I couldn't tell which of the nine rooms called ""Büro"" on Floor 1 you meant, so I routed from the first one listed (Büro, Floor 1, id S001). If you meant a different one, let me know its number and I'll recalculate.
+
+From Büro (Floor 1), the route is:
+1. Go into the Flur on Floor 1 (about 3 m).
+2. Continue into the Treppenhaus (about 26 m).
+3. Enter Lift 1.18 (about 5 m) and ride it down to the Ground floor.
+4. Step out into the Eingangshalle.
+5. Go through the Flur on the Ground floor (about 5 m) into Toilet 0.04 (about 5 m).
+
+The total walk is about 65 m.
+Route JSON: {""from_space_id"": ""osm-way37850565-F1-S001"", ""to_space_id"": ""osm-way37850565-F0-S004"", ""reachable"": true, ""space_path"": [""osm-way37850565-F1-S001"", ""osm-way37850565-F1-S015"", ""osm-way37850565-F1-S016"", ""osm-way37850565-F1-S018"", ""osm-way37850565-F0-S008"", ""osm-way37850565-F0-S002"", ""osm-way37850565-F0-S001"", ""osm-way37850565-F0-S004""], ""element_path"": [""osm-way37850565-F1-O0017"", ""osm-way37850565-F1-O0008"", ""osm-way37850565-F1-O0026"", ""osm-way37850565-V02"", ""osm-way37850565-F0-O0031"", ""osm-way37850565-F0-O0027"", ""osm-way37850565-F0-O0029""], ""length_m"": 65.35}
+Answer: osm-way37850565-F1-S001 -> osm-way37850565-F1-S015 -> osm-way37850565-F1-S016 -> osm-way37850565-F1-S018 -> osm-way37850565-F0-S008 -> osm-way37850565-F0-S002 -> osm-way37850565-F0-S001 -> osm-way37850565-F0-S004"
+osm-way37850565-Q10,"Starting in Büro on the Ground floor, the second stop is the same room, so the walk is just the trip up to Büro on Floor 1. Since several rooms share these names, I used the first listed Büro on each floor (Ground floor: osm-way37850565-F0-S010; Floor 1: osm-way37850565-F1-S001). If you meant a different one, let me know its room number.
+
+The route is 56.13 m. It takes the stairs (not the lift), so it is not step-free:
+1. Start in Büro (Ground floor).
+2. Go into Flur (about 3 m).
+3. Go into Eingangshalle (about 6 m).
+4. Go into Stairwell 0.07 (about 5 m).
+5. Take the stairs to Floor 1.
+6. Go into Treppenhaus (about 1 m).
+7. Go into Flur (about 5 m).
+8. Go into Büro on Floor 1 (about 26 m).
+Route JSON: {""from_space_id"": ""osm-way37850565-F0-S010"", ""to_space_id"": ""osm-way37850565-F1-S001"", ""reachable"": true, ""space_path"": [""osm-way37850565-F0-S010"", ""osm-way37850565-F0-S001"", ""osm-way37850565-F0-S002"", ""osm-way37850565-F0-S007"", ""osm-way37850565-F1-S017"", ""osm-way37850565-F1-S016"", ""osm-way37850565-F1-S015"", ""osm-way37850565-F1-S001""], ""element_path"": [""osm-way37850565-F0-O0033"", ""osm-way37850565-F0-O0027"", ""osm-way37850565-F0-O0030"", ""osm-way37850565-V01"", ""osm-way37850565-F1-O0025"", ""osm-way37850565-F1-O0008"", ""osm-way37850565-F1-O0017""], ""length_m"": 56.13}
+Answer: osm-way37850565-F0-S010 -> osm-way37850565-F0-S001 -> osm-way37850565-F0-S002 -> osm-way37850565-F0-S007 -> osm-way37850565-F1-S017 -> osm-way37850565-F1-S016 -> osm-way37850565-F1-S015 -> osm-way37850565-F1-S001"
+osm-way52060470-H06,"There are two rooms named ""Genusswerk"" on Floor 1, so I can't tell which one you mean from the name alone:
+
+- **Genusswerk** (`F1-S046`, 190.95 m², centroid 37.72, -1.67): about **142.7 m** from Generic room -1.14.
+- **Genusswerk** (`F1-S034`, 49.96 m², centroid 38.34, -28.46): about **159.87 m** from Generic room -1.14.
+
+Generic room -1.14 is on Basement 1 (elevation -3.0 m), and both distances are straight-line 3D between room centroids. I've used the larger room, `F1-S046`, for the answer line. If you meant the smaller one, the distance is 159.87 m.
+
+Answer: 142.7"
+osm-way58216509-H04,"I used the first of two identically named rooms, ""Generic room N2135"" on Floor 2 (the other one is a duplicate with the same name). From there:
+
+- **Nearest fire extinguisher:** in Stairwell N2195A, about 21.84 m away (through Corridor N2195B).
+- **Carry route:** Stairwell N2195A → Corridor N2195B → Corridor N2196 → Lift N2199N (Lift 1 down to the ground floor) → Corridor N0194B → Corridor N0171C → Corridor N0171A → Generic room N0180 (the largest generic room on the ground floor, 268.28 m²). This is 84.68 m.
+
+Total walking: 21.84 + 84.68 = 106.52 m.
+
+The duplicate room gives a different result: its nearest extinguisher is in Corridor N2195D, 11.01 m away. If you're in that room, the total would be shorter, but I haven't calculated the full route from there.
+
+Answer: 106.52"
+osm-way58216509-Q02,"I used the Generic room N2146 with ID osm-way58216509-F2-S062 and the Generic room N2103 with ID osm-way58216509-F2-S047, since both names matched more than one room on Floor 2. The route is about 122 m and stays on Floor 2.
+
+Directions:
+1. Start in Generic room N2146.
+2. Go into Corridor N2196 (about 4 m).
+3. Go into Corridor N2100 (about 22 m).
+4. Go into Corridor N2197 (about 66 m).
+5. Go into Corridor N2198 (about 5 m).
+6. Arrive in Generic room N2103 (about 20 m).
+
+If you meant the other rooms with these numbers, tell me and I'll re-route.
+Route JSON: {""from_space_id"": ""osm-way58216509-F2-S062"", ""to_space_id"": ""osm-way58216509-F2-S047"", ""reachable"": true, ""space_path"": [""osm-way58216509-F2-S062"", ""osm-way58216509-F2-S003"", ""osm-way58216509-F2-S014"", ""osm-way58216509-F2-S007"", ""osm-way58216509-F2-S089"", ""osm-way58216509-F2-S047""], ""element_path"": [""osm-way58216509-F2-O0216"", ""osm-way58216509-F2-O0168"", ""osm-way58216509-F2-O0001"", ""osm-way58216509-F2-O0204"", ""osm-way58216509-F2-O0207""], ""length_m"": 121.65}
+Answer: osm-way58216509-F2-S062 -> osm-way58216509-F2-S003 -> osm-way58216509-F2-S014 -> osm-way58216509-F2-S007 -> osm-way58216509-F2-S089 -> osm-way58216509-F2-S047"
+osm-way58216509-Q03,"I found two rooms named ""Generic room N2149"" and two named ""Generic room N2197I"" on Floor 2, so I couldn't tell which pair you meant. I used the first candidate of each (N2149 `osm-way58216509-F2-S056` and N2197I `osm-way58216509-F2-S059`). If you meant one of the others, let me know which.
+
+From Generic room N2149 the walk is about 8 m (8.03 m) to Generic room N2197I:
+
+1. Start in Generic room N2149.
+2. After about 4 m, go into Generic room N2148A.
+3. After about 2 m, go into Corridor N2196.
+4. After about 2 m, arrive in Generic room N2197I.
+Route JSON: {""from_space_id"": ""osm-way58216509-F2-S056"", ""to_space_id"": ""osm-way58216509-F2-S059"", ""reachable"": true, ""space_path"": [""osm-way58216509-F2-S056"", ""osm-way58216509-F2-S077"", ""osm-way58216509-F2-S003"", ""osm-way58216509-F2-S059""], ""element_path"": [""osm-way58216509-F2-O0175"", ""osm-way58216509-F2-O0176"", ""osm-way58216509-F2-O0138""], ""length_m"": 8.03}
+Answer: osm-way58216509-F2-S056 -> osm-way58216509-F2-S077 -> osm-way58216509-F2-S003 -> osm-way58216509-F2-S059"
+osm-way58216509-Q07,"The route from Generic room N0131 (Ground floor) through Generic room N2194 to Generic room N2175 (Floor 2) is 171 m in total: 78 m to N2194, then 93 m to N2175.
+
+Three names were ambiguous, so I chose a candidate for each:
+- **N2194:** I used the first match, Floor 2 (S017). The other is S107.
+- **N2175:** I used the first match, Floor 2 (S057). The other is S147. There is also an N2175A (S069), which the route passes through.
+- **N0131:** only one match on the Ground floor.
+
+Directions:
+1. Start in Generic room N0131 (Ground floor) and go through Corridor N0171A, Corridor N0171C and Corridor N0194B.
+2. Take Lift 0.54 up to Floor 2.
+3. Step out into Stairwell N2195 and go into Generic room N2194.
+4. From N2194, go through Stairwell N2195, Corridor N2196, Corridors N2195B, N2195C and N2197, and Stairwell N2171.
+5. Go through Generic room N2175A into Generic room N2175.
+Route JSON: {""from_space_id"": ""osm-way58216509-F0-S088"", ""to_space_id"": ""osm-way58216509-F2-S057"", ""reachable"": true, ""space_path"": [""osm-way58216509-F0-S088"", ""osm-way58216509-F0-S068"", ""osm-way58216509-F0-S077"", ""osm-way58216509-F0-S030"", ""osm-way58216509-F0-S054"", ""osm-way58216509-F2-S049"", ""osm-way58216509-F2-S015"", ""osm-way58216509-F2-S017"", ""osm-way58216509-F2-S015"", ""osm-way58216509-F2-S003"", ""osm-way58216509-F2-S023"", ""osm-way58216509-F2-S080"", ""osm-way58216509-F2-S007"", ""osm-way58216509-F2-S090"", ""osm-way58216509-F2-S069"", ""osm-way58216509-F2-S057""], ""element_path"": [""osm-way58216509-F0-O0104"", ""osm-way58216509-F0-O0072"", ""osm-way58216509-F0-O0070"", ""osm-way58216509-F0-O0331"", ""osm-way58216509-V07"", ""osm-way58216509-F2-O0170"", ""osm-way58216509-F2-O0017"", ""osm-way58216509-F2-O0017"", ""osm-way58216509-F2-O0003"", ""osm-way58216509-F2-O0007"", ""osm-way58216509-F2-O0182"", ""osm-way58216509-F2-O0184"", ""osm-way58216509-F2-O0215"", ""osm-way58216509-F2-O0212"", ""osm-way58216509-F2-O0151""], ""length_m"": 171.04}
+Answer: osm-way58216509-F0-S088 -> osm-way58216509-F0-S068 -> osm-way58216509-F0-S077 -> osm-way58216509-F0-S030 -> osm-way58216509-F0-S054 -> osm-way58216509-F2-S049 -> osm-way58216509-F2-S015 -> osm-way58216509-F2-S017 -> osm-way58216509-F2-S015 -> osm-way58216509-F2-S003 -> osm-way58216509-F2-S023 -> osm-way58216509-F2-S080 -> osm-way58216509-F2-S007 -> osm-way58216509-F2-S090 -> osm-way58216509-F2-S069 -> osm-way58216509-F2-S057"
+proc-factory-train-006-Q09,"With the Office staircase closed, take the Office lift instead. The route is about 61 m:
+
+1. Start in Office 1.09 (Floor 1).
+2. Walk about 2 m into Office corridor 1.01.
+3. Walk about 20 m into Lift 1.03.
+4. Ride the Office lift down to the Ground floor.
+5. Step out into Office corridor 0.10.
+6. Walk about 12 m into Meeting room 0.16.
+
+I only avoided the staircase for this route and didn't change the building's settings.
+Route JSON: {""from_space_id"": ""proc-factory-train-006-F1-S009"", ""to_space_id"": ""proc-factory-train-006-F0-S016"", ""reachable"": true, ""space_path"": [""proc-factory-train-006-F1-S009"", ""proc-factory-train-006-F1-S001"", ""proc-factory-train-006-F1-S003"", ""proc-factory-train-006-F0-S012"", ""proc-factory-train-006-F0-S010"", ""proc-factory-train-006-F0-S016""], ""element_path"": [""proc-factory-train-006-F1-O0038"", ""proc-factory-train-006-F1-O0032"", ""proc-factory-train-006-V02"", ""proc-factory-train-006-F0-O0015"", ""proc-factory-train-006-F0-O0020""], ""length_m"": 60.89}
+Answer: proc-factory-train-006-F1-S009 -> proc-factory-train-006-F1-S001 -> proc-factory-train-006-F1-S003 -> proc-factory-train-006-F0-S012 -> proc-factory-train-006-F0-S010 -> proc-factory-train-006-F0-S016"
+swiss-1650-Q01,"The internal stairs (""Internal stairs 0.07"") are on the Ground floor, in Corridor 0.07 (apartment 1), near the west wall of the corridor.
+
+Answer: Corridor 0.07 (apartment 1)"
+osm-way27917482-Q09,"The route avoiding Stairs 1 is about 125 m. Three rooms on Floor 3 are named ""Generic room 03.08.033"", so I used the first one (osm-way27917482-F3-S015). If you meant a different one, let me know.
+
+In short: take Lift 3.01 down to the Ground floor, walk through MI Magistrale to Stairwell 00.07.101, take Stairs 10 up to Floor 2, and continue to Generic room 02.07.044.
+Route JSON: {""from_space_id"": ""osm-way27917482-F3-S015"", ""to_space_id"": ""osm-way27917482-F2-S341"", ""reachable"": true, ""space_path"": [""osm-way27917482-F3-S015"", ""osm-way27917482-F3-S071"", ""osm-way27917482-F3-S073"", ""osm-way27917482-F3-S403"", ""osm-way27917482-F3-S001"", ""osm-way27917482-F0-S049"", ""osm-way27917482-F0-S026"", ""osm-way27917482-F0-S276"", ""osm-way27917482-F0-S283"", ""osm-way27917482-F1-S322"", ""osm-way27917482-F2-S328"", ""osm-way27917482-F2-S325"", ""osm-way27917482-F2-S342"", ""osm-way27917482-F2-S341""], ""element_path"": [""osm-way27917482-F3-O0063"", ""osm-way27917482-F3-O0127"", ""osm-way27917482-F3-O0128"", ""osm-way27917482-F3-O0123"", ""osm-way27917482-V26"", ""osm-way27917482-F0-O0120"", ""osm-way27917482-F0-O1453"", ""osm-way27917482-F0-O1465"", ""osm-way27917482-V10"", ""osm-way27917482-V10"", ""osm-way27917482-F2-O1548"", ""osm-way27917482-F2-O1531"", ""osm-way27917482-F2-O1563""], ""length_m"": 125.35}
+Answer: osm-way27917482-F3-S015 -> osm-way27917482-F3-S071 -> osm-way27917482-F3-S073 -> osm-way27917482-F3-S403 -> osm-way27917482-F3-S001 -> osm-way27917482-F0-S049 -> osm-way27917482-F0-S026 -> osm-way27917482-F0-S276 -> osm-way27917482-F0-S283 -> osm-way27917482-F1-S322 -> osm-way27917482-F2-S328 -> osm-way27917482-F2-S325 -> osm-way27917482-F2-S342 -> osm-way27917482-F2-S341"
