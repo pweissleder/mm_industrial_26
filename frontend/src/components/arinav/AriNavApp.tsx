@@ -37,6 +37,7 @@ import {
   PanIcon,
   PinIcon,
   PlusIcon,
+  SparkleIcon,
   TopIcon,
   UploadIcon,
   UserIcon,
@@ -50,6 +51,7 @@ import { useGuidance } from './useGuidance';
 import { useNavigation, type Which } from './useNavigation';
 import { usePipeline } from './usePipeline';
 import Viewer3D, { type CameraCommand } from './Viewer3D';
+import CallWrapped from './recap/CallWrapped';
 import {
   DEFAULT_VIEW,
   type CameraAction,
@@ -174,6 +176,13 @@ export default function AriNavApp() {
   // Navigator keeps the map clear: the sidebar starts closed there, and below 1100 px everywhere.
   const [sidebarOpen, setSidebarOpen] = useState(() => roomy() && mode !== 'navigator');
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [recapId, setRecapId] = useState<string | null>(null);
+  const closeRecap = useCallback(() => setRecapId(null), []);
+  const showRecapNow = () =>
+    api
+      .createRecap()
+      .then((stub) => setRecapId(stub.id))
+      .catch(() => window.alert('No conversations to recap yet. Chat with AriNav first.'));
   const [graph, setGraph] = useState<RoomGraphData | null>(null);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -905,6 +914,16 @@ export default function AriNavApp() {
             </button>
           ))}
         </div>
+        {developer && (
+          <button
+            className="btn btn--ghost btn--sm"
+            onClick={() => void showRecapNow()}
+            title="Recap the latest conversations now (Call Wrapped)"
+          >
+            <SparkleIcon width={15} height={15} />
+            <span className="topbar__upload-label">Wrapped</span>
+          </button>
+        )}
         {!navigatorMode && (
           <button
             className="btn btn--accent topbar__upload"
@@ -1145,7 +1164,10 @@ export default function AriNavApp() {
         suggestions={showingHq ? hq.location.metadata?.suggestions : undefined}
         onSelect={selectFromList}
         onBuildingChanged={reloadModel}
+        onOpenRecap={setRecapId}
       />
+
+      {recapId && <CallWrapped recapId={recapId} onClose={closeRecap} />}
 
       <UploadDialog
         open={uploadOpen}

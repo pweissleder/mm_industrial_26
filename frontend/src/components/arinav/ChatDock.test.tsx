@@ -358,3 +358,39 @@ describe('ChatDock', () => {
     expect(parts.join('')).toContain('by a Desk.');
   });
 });
+
+describe('ChatDock Call Wrapped', () => {
+  const live = { health, backendDown: false, draft: null, assistant, profile: 'user' as const };
+
+  it('opens the recap the backend starts when a conversation is reset', async () => {
+    vi.spyOn(api, 'assistantTurn').mockResolvedValue(turnReply('Ok.'));
+    const reset = vi
+      .spyOn(api, 'assistantReset')
+      .mockResolvedValue({ status: 'reset', recap: { id: 'rc1', status: 'pending' } });
+    const onOpenRecap = vi.fn();
+    const user = userEvent.setup();
+    render(<ChatDock {...live} onOpenRecap={onOpenRecap} />);
+    await user.type(screen.getByLabelText('Message'), 'Hi');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+    await screen.findByText('Ok.');
+    await user.click(screen.getByRole('button', { name: /New conversation/ }));
+    expect(reset).toHaveBeenCalledWith('s1');
+    await vi.waitFor(() => expect(onOpenRecap).toHaveBeenCalledWith('rc1'));
+  });
+
+  it('offers a recap started by a turn instead of interrupting', async () => {
+    vi.spyOn(api, 'assistantTurn').mockResolvedValue({
+      ...turnReply('Hello again.'),
+      recap: { id: 'rc2', status: 'pending' },
+    });
+    const onOpenRecap = vi.fn();
+    const user = userEvent.setup();
+    render(<ChatDock {...live} onOpenRecap={onOpenRecap} />);
+    await user.type(screen.getByLabelText('Message'), 'Hi');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+    await screen.findByText('Your Call Wrapped is ready.');
+    expect(onOpenRecap).not.toHaveBeenCalled();
+    await user.click(screen.getByRole('button', { name: 'Watch your Call Wrapped' }));
+    expect(onOpenRecap).toHaveBeenCalledWith('rc2');
+  });
+});

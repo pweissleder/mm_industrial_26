@@ -15,6 +15,7 @@ from threading import Lock
 from time import perf_counter
 from typing import Any, Protocol
 
+from app.assistant.memory import AgentMemory
 from app.assistant.port import JSON, NavigationError, NavigationPort
 from app.assistant.tools import build_tools
 
@@ -40,6 +41,7 @@ PHASES = {
     "building_fact": "Looking up building facts",
     "list_buildings": "Looking up buildings",
     "select_building": "Switching building",
+    "recall_memory": "Checking memory",
 }
 
 SYSTEM = """You are the building assistant of AriNav, an indoor navigation app. People ask you
@@ -78,6 +80,9 @@ Understanding requests
 - Keep restrictions (step-free, width) for the rest of the conversation unless changed.
 - Few tool calls: prefer find_nearest with and_route over separate search + route; don't repeat
   a search you already have; use building_fact only for explicit fact questions.
+- Questions about earlier conversations or the user's own history ("how often did I look for a
+  toilet", "how far have I walked", "how many floors did I climb", "what did we talk about") ->
+  recall_memory; answer only from its result. Its routes are the ones planned, not walked.
 - "Closest", "nearer" and "farther" only from walking distances the tools return; never call
   another option closer than the one they rank first. Mention alternatives only when useful,
   with their distance.
@@ -130,7 +135,8 @@ def default_state() -> JSON:
 
 
 class Session:
-    def __init__(self) -> None:
+    def __init__(self, session_id: str = "") -> None:
+        self.id = session_id
         self.lock = Lock()
         self.history: list[JSON] = []
         self.proposals: dict[str, JSON] = {}
@@ -142,6 +148,25 @@ class Session:
             "cache_read_input_tokens": 0,
             "cache_creation_input_tokens": 0,
         }
+
+
+def _floor_changes(data: JSON, route: JSON) -> list[JSON]:
+    """Stairs and lift rides of a route with the signed rise (m) between the floors' elevations."""
+    elevation = {f["id"]: f.get("elevation_m") for f in data.get("floors", [])}
+    changes = []
+    for t in route.get("transitions") or []:
+        if t.get("kind") not in {"stairs", "lift"}:
+            continue
+        low, high = elevation.get(t.get("from_floor_id")), elevation.get(t.get("to_floor_id"))
+        changes.append(
+            {
+                "kind": t["kind"],
+                "from_floor_id": t.get("from_floor_id"),
+                "to_floor_id": t.get("to_floor_id"),
+                "delta_m": None if low is None or high is None else round(high - low, 3),
+            }
+        )
+    return changes
 
 
 def _found_places(tools_called: list[JSON], limit: int = 6) -> str:
@@ -167,12 +192,14 @@ class Assistant:
         transport: Transport | None = None,
         model: str = MODEL,
         effort: str = EFFORT,
+        memory: AgentMemory | None = None,
     ) -> None:
         if model not in PRICES:
             raise ValueError(f"Unsupported assistant model {model}")
         self.navigation = navigation
         self.transport = transport
         self.model, self.effort = model, effort
+        self.memory = memory or AgentMemory()
         self.sessions: dict[str, Session] = {}
         self.sessions_lock = Lock()
         self.tools = build_tools(self._operation_fields())
@@ -186,6 +213,7 @@ class Assistant:
             "building_fact": self.tool_building_fact,
             "list_buildings": self.tool_list_buildings,
             "select_building": self.tool_select_building,
+            "recall_memory": self.tool_recall_memory,
         }
 
     def _operation_fields(self) -> str:
@@ -210,12 +238,13 @@ class Assistant:
             if session_id not in self.sessions:
                 if len(self.sessions) >= 64:
                     self.sessions.pop(next(iter(self.sessions)))
-                self.sessions[session_id] = Session()
+                self.sessions[session_id] = Session(session_id)
             return self.sessions[session_id]
 
     def reset(self, session_id: str) -> None:
         with self.sessions_lock:
             self.sessions.pop(session_id, None)
+        self.memory.end_session(session_id)
 
     # ---------- helpers ----------
     def _data(self, session: Session) -> JSON:
@@ -449,6 +478,7 @@ class Assistant:
         }.get(args.get("kind") or "")
         results = self.navigation.search(building_id, query, kind, args.get("floor_level"), 12)
         rows = [{k: v for k, v in r.items() if k not in {"score", "floor_id"}} for r in results]
+        self.memory.add_search(session.id, building_id, "find_places", query, len(rows))
         out: JSON = {"shown": len(rows), "results": rows}
         if len(rows) == 1:
             ui["focus"] = {"kind": rows[0]["kind"], "id": rows[0]["id"]}
@@ -478,6 +508,9 @@ class Assistant:
             )
         results = self.navigation.nearest(
             state["building_id"], state["start"], category, step_free, 5
+        )
+        self.memory.add_search(
+            session.id, state["building_id"], "find_nearest", category, len(results)
         )
         out: JSON = {
             "from": self.describe(self._data(session), state["start"]),
@@ -601,6 +634,19 @@ class Assistant:
             "assumed_closed": assume or None,
         }
         state["last_route"] = {k: summary[k] for k in ("mode", "status", "length_m", "from", "to")}
+        self.memory.add_route(
+            session.id,
+            state["building_id"],
+            {
+                **{k: result.get(k) for k in ("mode", "status", "reachable")},
+                **{k: result.get(k) for k in ("length_m", "walk_m", "vertical_cost_m")},
+                "start": start,
+                "target": destination,
+                "from": summary["from"],
+                "to": summary["to"],
+                "floor_changes": _floor_changes(data, result),
+            },
+        )
         return summary
 
     def tool_preview_closure(self, session: Session, args: JSON, ui: JSON) -> JSON:
@@ -701,6 +747,35 @@ class Assistant:
         ui["building_id"] = building_id
         return {"selected": self.snapshot(session)["building"]}
 
+    def tool_recall_memory(self, session: Session, args: JSON, ui: JSON) -> JSON:
+        topic, query = args.get("topic"), str(args.get("query") or "").strip()
+        if topic == "stats":
+            return {"stats": self.memory.stats()}
+        if topic == "recent_routes":
+            keys = ("at", "building_id", "from", "to", "mode", "walk_m", "length_m")
+            routes = self.memory.recent_events("route", 10)
+            return {
+                "routes": [
+                    {k: r.get(k) for k in keys}
+                    | {"floor_changes": [c["kind"] for c in r.get("floor_changes", [])]}
+                    for r in routes
+                ]
+            }
+        if topic == "search_chats" and not query:
+            raise NavigationError("invalid_input", "Give words to search the conversations for")
+        messages = (
+            self.memory.search_messages(query)
+            if topic == "search_chats"
+            else self.memory.recent_messages()
+        )
+        return {
+            "messages": [
+                {k: m[k] for k in ("at", "session_id", "role")} | {"text": m["text"][:300]}
+                for m in messages
+            ],
+            "note": "Oldest first; this conversation's own turns are included.",
+        }
+
     # ---------- human confirmation (not a model tool) ----------
     def confirm(self, session_id: str, proposal_id: str, approved: bool) -> JSON:
         session = self.session(session_id)
@@ -777,6 +852,9 @@ class Assistant:
         began = perf_counter()
         ui: JSON = {}
         self.sync_ui(session, ui_state)
+        self.memory.add_message(
+            session.id, session.state["building_id"], "user", text, voice=spoken
+        )
         messages: list[JSON] = []
         for item in session.history[-2 * HISTORY_TURNS :]:
             if messages and messages[-1]["role"] == item["role"]:
@@ -894,6 +972,7 @@ class Assistant:
         # Places this turn found, so "take me there" / "the second one" resolve next turn.
         found = _found_places(tools_called)
         session.history.append({"role": "user", "text": text})
+        self.memory.add_message(session.id, session.state["building_id"], "assistant", reply)
         session.history.append(
             {
                 "role": "assistant",

@@ -23,11 +23,14 @@ from app.api.routes import (
     ingestion,
     location,
     managed_agent,
+    memory,
     navigation,
     pipeline,
+    recaps,
     uploads,
 )
 from app.assistant import Assistant
+from app.assistant.recap import RecapService
 from app.assistant.voice import ElevenLabsVoice
 from app.config import Settings, get_settings
 from app.guardrails import AnthropicInputClassifier, InputGuard
@@ -76,6 +79,21 @@ def create_assistant(settings: Settings, navigation_service: Any) -> Assistant:
     )
 
 
+def create_recaps(settings: Settings, assistant: Assistant) -> RecapService:
+    """Call Wrapped over the assistant's memory, with the same Claude transport (or fallback)."""
+
+    def names() -> dict[str, str]:
+        return {b["id"]: b["name"] for b in assistant.navigation.buildings()}
+
+    return RecapService(
+        assistant.memory,
+        assistant.transport,
+        model=settings.recap_model,
+        every=settings.recap_every_sessions,
+        building_names=names,
+    )
+
+
 def create_voice(settings: Settings) -> ElevenLabsVoice | None:
     if not settings.elevenlabs_api_key:
         return None
@@ -119,6 +137,7 @@ def create_app(
         app.state.assistant = create_assistant(settings, app.state.navigation)
         if assistant_transport is not None:
             app.state.assistant.transport = assistant_transport
+        app.state.recaps = create_recaps(settings, app.state.assistant)
         app.state.voice = create_voice(settings)
         guard = input_guard or create_input_guard(settings)
         app.state.graph = build_graph(model or create_chat_model(settings), guard=guard)
@@ -149,6 +168,8 @@ def create_app(
     app.include_router(navigation.router, prefix="/api")
     app.include_router(location.router, prefix="/api")
     app.include_router(assistant.router, prefix="/api")
+    app.include_router(memory.router, prefix="/api")
+    app.include_router(recaps.router, prefix="/api")
     return app
 
 
