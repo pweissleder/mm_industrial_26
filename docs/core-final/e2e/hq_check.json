@@ -1,0 +1,27 @@
+{
+ "base": "http://127.0.0.1:4322",
+ "results": [
+  {
+   "id": "proc-factory-dev-003",
+   "hq_offered": true,
+   "hq_badge": true,
+   "hq_shown": true,
+   "preview_shown": true
+  },
+  {
+   "id": "proc-campus-dev-001",
+   "hq_offered": true,
+   "hq_badge": true,
+   "hq_shown": true,
+   "preview_shown": true
+  },
+  {
+   "id": "swiss-1689",
+   "hq_offered": true,
+   "hq_badge": true,
+   "hq_shown": true,
+   "preview_shown": true
+  }
+ ],
+ "page_errors": []
+}
