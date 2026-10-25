@@ -1422,7 +1422,7 @@ export default function AriNavApp() {
         </section>
       )}
 
-      {features.pov && <LookLayer immersive={immersive} />}
+      {features.pov && <LookLayer immersive={immersive} split={developer && isWide && immersive.view === 'pov'} />}
       {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
       {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
 

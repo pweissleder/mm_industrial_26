@@ -266,7 +266,7 @@ function RidePrompt(props: { immersive: Immersive }) {
 }
 
 /** Captures drags over the 3D view in POV to look around; optional pointer lock on request. */
-export function LookLayer(props: { immersive: Immersive }) {
+export function LookLayer(props: { immersive: Immersive; split?: boolean }) {
   const { immersive: im } = props;
   const ref = useRef<HTMLDivElement>(null);
   const last = useRef<[number, number] | null>(null);
@@ -314,7 +314,7 @@ export function LookLayer(props: { immersive: Immersive }) {
   return (
     <div
       ref={ref}
-      className="look-layer"
+      className={`look-layer${props.split ? ' look-layer--split' : ''}`}
       onPointerDown={down}
       onPointerMove={moveLook}
       onPointerUp={up}

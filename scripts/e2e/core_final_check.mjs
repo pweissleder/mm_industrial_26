@@ -224,6 +224,38 @@ await check('P1_desktop_dev_split_and_click_object_in_first_person', async () =>
   return { split, details, nav_status: moving.status };
 });
 
+await check('P1_desktop_dev_drag_map_outside_phone_look_inside', async () => {
+  const rect = await page.evaluate(() => window.__arinavScene.povRect);
+  const box = await page.locator('canvas').first().boundingBox();
+  const state = () =>
+    page.evaluate(() => ({ cam: window.__arinavScene.camera.position.toArray().map((v) => +v.toFixed(2)), yaw: window.__arinavImmersive.look().yaw }));
+  const drag = async (x, y) => {
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(x - 160, y + 40, { steps: 8 });
+    await page.mouse.up();
+    await page.waitForTimeout(500);
+  };
+  // a free spot on the map right of the phone (not under a card or chip)
+  const [mx, my] = await page.evaluate(([bx, by, w, h]) => {
+    for (const fy of [0.6, 0.7, 0.5, 0.8, 0.4])
+      for (const fx of [0.6, 0.55, 0.65, 0.5, 0.7]) {
+        const [x, y] = [bx + w * fx, by + h * fy];
+        if (document.elementFromPoint(x, y) instanceof HTMLCanvasElement) return [x, y];
+      }
+    return [bx + w * 0.6, by + h * 0.6];
+  }, [box.x, box.y, box.width, box.height]);
+  const a = await state();
+  await drag(mx, my); // the map, right of the phone
+  const b = await state();
+  await drag(box.x + rect.x + rect.w / 2, box.y + rect.y + rect.h / 3); // inside the phone
+  const c = await state();
+  const camMoved = a.cam.some((v, i) => Math.abs(v - b.cam[i]) > 0.05);
+  assert(camMoved && a.yaw === b.yaw, `map drag: camera ${JSON.stringify(a.cam)} -> ${JSON.stringify(b.cam)}, yaw ${a.yaw} -> ${b.yaw}`);
+  assert(c.yaw !== b.yaw, `phone drag did not turn the view (${b.yaw} -> ${c.yaw})`);
+  return { map_drag_moves_camera: camMoved, yaw_after_map_drag_same: a.yaw === b.yaw, yaw_after_phone_drag: c.yaw };
+});
+
 // ------------------------------------------------------------------ phone 390 x 844
 const phone = await open({ width: 390, height: 844 }, { isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
 current = phone;

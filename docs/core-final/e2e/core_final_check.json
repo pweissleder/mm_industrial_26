@@ -15,8 +15,8 @@
     ],
     "off_centre_m": 2.3,
     "walker": [
-     -5.836658028898513,
-     6.350819986629324
+     -5.728074794620855,
+     6.279574238447327
     ],
     "floor": "proc-factory-dev-003-F0"
    }
@@ -62,6 +62,15 @@
      "tries": 4
     },
     "nav_status": "active"
+   }
+  },
+  {
+   "name": "P1_desktop_dev_drag_map_outside_phone_look_inside",
+   "pass": true,
+   "detail": {
+    "map_drag_moves_camera": true,
+    "yaw_after_map_drag_same": true,
+    "yaw_after_phone_drag": 40
    }
   },
   {

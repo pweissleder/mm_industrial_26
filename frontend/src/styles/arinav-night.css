@@ -815,3 +815,13 @@
 .top-stack > .guidance.guidance--min {
   min-height: 0;
 }
+
+/* Developer split: dragging to look only over the embedded phone; the map around it orbits. */
+.look-layer--split {
+  inset: auto;
+  left: var(--phone-left, 0);
+  top: var(--phone-top, 0);
+  width: var(--phone-w, 300px);
+  height: var(--phone-h, 600px);
+  border-radius: 26px;
+}
