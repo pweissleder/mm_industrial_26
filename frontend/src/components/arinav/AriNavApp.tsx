@@ -47,7 +47,7 @@ import ChatDock, { type Draft, type PickPurpose } from './ChatDock';
 import DetailsCard from './DetailsCard';
 import DevPanel from './DevPanel';
 import GuidancePanel from './GuidancePanel';
-import { ImmersiveBar, LookLayer, PovHud, TouchJoystick } from './ImmersiveControls';
+import { ImmersiveBar, LookLayer, PovHud } from './ImmersiveControls';
 import { useImmersive } from './useImmersive';
 import { currentFeatures } from '../../lib/features';
 import {
@@ -108,6 +108,9 @@ const AUTO_HQ = 'arinav:auto-hq';
 const isGlb = (name: string) => /\.(glb|gltf)$/i.test(name);
 const WIDE = '(min-width: 1024px)';
 // Navigation-panel parts dropped when it has to make room, and a folded details card's height.
+// How long the arrival check shows before the navigation is closed.
+const ARRIVAL_MS = 2600;
+const ARRIVED_SAID = /^(i('ve| have) arrived|i('m| am) (here|there)|(we|i) made it|arrived)[.!]*$/i;
 const GUIDANCE_EXTRAS = '.guidance__settings, .guidance__debug-wrap, .guidance__hint';
 const FOLDED_CARD_PX = 86;
 // Below this an open details card folds instead of scrolling.
@@ -525,8 +528,18 @@ export default function AriNavApp() {
     if (simLoc.kind === 'point') return { space_id: simLoc.space_id, position: simLoc.position };
     if (simLoc.kind === 'space') return { space_id: simLoc.id, position: null };
     if (simLoc.kind === 'asset') {
+      // Beside the item, never in its body: just outside its footprint, towards the room centre
+      // (useImmersive falls back to the room centre when that point is not in the room).
       const a = viewModel.assets.find((x) => x.id === simLoc.id);
-      return a ? { space_id: a.space_id, position: null } : null;
+      if (!a) return null;
+      const room = viewModel.spaces.find((s) => s.id === a.space_id);
+      const [cx, cy] = [a.position[0], a.position[1]];
+      const [mx, my] = room
+        ? [room.polygon.reduce((t, q) => t + q[0], 0) / room.polygon.length, room.polygon.reduce((t, q) => t + q[1], 0) / room.polygon.length]
+        : [cx + 1, cy];
+      const len = Math.hypot(mx - cx, my - cy) || 1;
+      const r = Math.hypot(a.footprint?.width_m ?? 0.6, a.footprint?.depth_m ?? 0.6) / 2 + 0.35;
+      return { space_id: a.space_id, position: [cx + ((mx - cx) / len) * r, cy + ((my - cy) / len) * r] as [number, number] };
     }
     const o = viewModel.openings.find((x) => x.id === simLoc.id);
     const sid = o?.space_ids.find((x) => x !== 'outside');
@@ -650,6 +663,29 @@ export default function AriNavApp() {
     const label = atTarget ? (names.target ?? room) : `a point in ${room}`;
     setSimulatedRef.current({ endpoint, label, source: 'simulation' });
   }, [navStatus, guidance.snapshot, names]);
+  // Arrival ends the navigation once: a green check, then the route and its directions are
+  // cleared. The person stays at the target (the simulated location set above), ready for a new
+  // destination or free exploring.
+  const [arrived, setArrived] = useState<string | null>(null);
+  const clearRouteRef = useRef(nav.clearRoute);
+  clearRouteRef.current = nav.clearRoute;
+  const freeCameraRef = useRef(guidance.stop);
+  freeCameraRef.current = guidance.stop;
+  useEffect(() => {
+    if (navStatus !== 'arrived') return;
+    setArrived(names.target ?? '');
+    const finish = window.setTimeout(() => {
+      freeCameraRef.current();
+      clearRouteRef.current();
+    }, ARRIVAL_MS);
+    return () => window.clearTimeout(finish);
+    // Once per arrival: only the status change starts it.
+  }, [navStatus]);
+  useEffect(() => {
+    if (arrived === null) return;
+    const hide = window.setTimeout(() => setArrived(null), ARRIVAL_MS + 900);
+    return () => window.clearTimeout(hide);
+  }, [arrived]);
   const wasNavigating = useRef(false);
   useEffect(() => {
     if (wasNavigating.current && !navigationMode) setSettings((s) => ({ ...s, floor: 'all' }));
@@ -1291,9 +1327,11 @@ export default function AriNavApp() {
         ? 'Click a room to set your simulated location.'
         : 'Click the place you mean.';
 
-  // While navigating, the route has the room: no object details.
+  // While navigating, the route has the room: no object details. In first person a click on a
+  // thing in sight (equipment, door, lift, stairs) still opens its card.
+  const povThing = immersive.view === 'pov' && !!selection && selection.kind !== 'space';
   const showCard =
-    !!selection && !navigationMode && !(navigatorMode && selection.kind === 'space');
+    !!selection && (!navigationMode || povThing) && !(navigatorMode && selection.kind === 'space');
   const routeHandlers =
     selection && selection.kind !== 'object' && !navigatorMode
       ? developer
@@ -1694,7 +1732,6 @@ export default function AriNavApp() {
 
       {features.pov && <LookLayer immersive={immersive} />}
       {features.pov && <PovHud immersive={immersive} guidance={guidance} manualHelp={immersiveFeatures.game && immersive.driver === 'manual'} split={developer && isWide && immersive.view === 'pov'} />}
-      {immersiveFeatures.game && <TouchJoystick immersive={immersive} />}
 
       {features.memory && recapOpen && (
         <div className="recap-overlay">
@@ -1727,6 +1764,12 @@ export default function AriNavApp() {
         selection={chatSelection}
         simulated={nav.simulated}
         onTurn={(turn) => void applyTurn(turn)}
+        onLocalCommand={(text) => {
+          // Without indoor positioning only the person knows they are there: "I've arrived".
+          if (!guidance.navigating || !ARRIVED_SAID.test(text.trim())) return null;
+          guidance.arrive();
+          return `Great, you've arrived${names.target ? ` at ${names.target}` : ''}. Navigation ended.`;
+        }}
         onConfirmed={handleConfirmed}
         onPick={(purpose, reply) => setPick({ kind: purpose, reply })}
         onUseSelectionAsLocation={() => selection && void setLocationFrom(selection, true)}
@@ -1772,6 +1815,19 @@ export default function AriNavApp() {
       {toast && (
         <div className="toast" role="status">
           {toast}
+        </div>
+      )}
+      {arrived !== null && (
+        <div className="arrival" role="status" aria-live="assertive">
+          <span className="arrival__check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="30" height="30">
+              <path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
+          <span className="arrival__text">
+            <strong>You've arrived!</strong>
+            {arrived && <span>{arrived}</span>}
+          </span>
         </div>
       )}
     </div>

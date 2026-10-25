@@ -177,6 +177,12 @@ export default function GuidancePanel(props: Props) {
           )}
         </div>
       </div>
+      {!developer && g.navigating && (
+        // No indoor positioning: the walk along the route is simulated, never the person's position.
+        <p className="guidance__meta guidance__sim">
+          Simulated walk · your real position is not tracked. Say “I've arrived” when you are there.
+        </p>
+      )}
       {voice?.error && props.voiceAvailable && !voice.muted && (
         <p className="guidance__hint">Spoken hints paused: {voice.error}</p>
       )}

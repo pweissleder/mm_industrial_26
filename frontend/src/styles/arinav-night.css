@@ -491,8 +491,42 @@
 }
 
 /* Developer split view: the HUD sits in the middle of the first-person half. */
+/* Developer split view: the HUD sits inside the embedded phone (scene.ts phoneRect). */
 .pov-hud--split {
-  left: calc(var(--inset-left) + (100% - var(--inset-left)) / 4);
+  left: var(--phone-cx, 25%);
+  bottom: calc(var(--phone-bottom, 150px) + 14px);
+  max-width: calc(var(--phone-w, 300px) - 20px);
+}
+.pov-hud--split .pov-hud__step {
+  font-size: 0.82rem;
+}
+.pov-hud--split .pov-hud__help {
+  white-space: normal;
+  text-align: center;
+}
+
+.phone-mock {
+  position: absolute;
+  z-index: 2;
+  box-sizing: content-box;
+  margin: -9px 0 0 -9px;
+  border: 9px solid #111827;
+  border-radius: 34px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+    0 18px 40px rgba(11, 23, 54, 0.35);
+  pointer-events: none;
+}
+.phone-mock::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 34%;
+  height: 16px;
+  transform: translateX(-50%);
+  border-radius: 10px;
+  background: #111827;
 }
 
 /* Desktop first person: the compact chat card sits above the input, so the HUD goes above it. */
@@ -552,4 +586,73 @@
   flex: none;
   justify-content: flex-end;
   max-width: min(560px, calc(100vw - 2 * var(--gutter)));
+}
+
+/* Arrival: a short green check, then the navigation closes (AriNavApp, ARRIVAL_MS). */
+.arrival {
+  position: absolute;
+  z-index: 40;
+  top: 38%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 22px 14px 14px;
+  border-radius: var(--pill);
+  background: var(--navy);
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+  animation: arrival-in 0.32s cubic-bezier(0.2, 0.9, 0.3, 1.25);
+}
+.arrival__check {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #1f9d55;
+  color: #fff;
+}
+.arrival__check path {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: arrival-draw 0.45s 0.15s ease-out forwards;
+}
+.arrival__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.arrival__text strong {
+  font-size: 1.15rem;
+}
+.arrival__text span {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+@keyframes arrival-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+}
+@keyframes arrival-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrival,
+  .arrival__check path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* User/navigator profile: the walk along the route is simulated (no indoor positioning). */
+.guidance__sim {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
 }

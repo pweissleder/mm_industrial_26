@@ -44,6 +44,9 @@ PROFILES = ("stationary", "all", "none")
 GRAPH_CACHE_SIZE = 8
 CONTEXT_CACHE_SIZE = 400
 PRECISION_MAX_SECONDS = 20.0
+# beside_asset: a person starting "at" equipment stands this far outside its footprint circle.
+BESIDE_CLEARANCE_M = 0.35
+BESIDE_CANDIDATES = 16
 DOOR = official_map.DOOR_PREFIX
 
 
@@ -548,12 +551,33 @@ class NavigationService:
         unofficial = request.get("unofficial") or {}
         if not isinstance(unofficial, dict):
             raise NavigationError("invalid_input", "unofficial must be an object")
+        min_width = self._min_door_width(request, mode)
+        # Width-checked routing: doors with a known width below the requirement count as closed
+        # for this request only (the official rules and costs are otherwise untouched).
+        narrow = (
+            {
+                o["id"]
+                for o in entry.openings.values()
+                if o.get("width_m") is not None and float(o["width_m"]) < min_width - 1e-9
+            }
+            if min_width is not None
+            else set()
+        )
         with entry.lock:
             closed = sorted(entry.closed | set(assume))
             if mode == "official":
-                response = self._official(entry, start, target, via, step_free, closed, unofficial)
+                routed = sorted(set(closed) | narrow)
+                response = self._official(entry, start, target, via, step_free, routed, unofficial)
                 if _bool(request.get("exact_start"), "exact_start"):
-                    self._exact_start(entry, response, start, closed)
+                    self._exact_start(entry, response, start, routed)
+                elif (
+                    _bool(request.get("beside_asset"), "beside_asset") and start["kind"] == "asset"
+                ):
+                    self._beside_asset(entry, response, start, routed)
+                if min_width is not None:
+                    self._width_check(
+                        entry, response, min_width, narrow, (start, target, via, step_free, closed)
+                    )
             else:
                 if via:
                     raise NavigationError(
@@ -565,12 +589,117 @@ class NavigationService:
         response["assume_closed"] = assume
         # The constraints this route honours, so a later reroute keeps them (never loosens).
         response["constraints"] = {"step_free": step_free}
+        if min_width is not None:
+            response["constraints"]["min_door_width_m"] = min_width
         if mode == "precision":
             response["constraints"] |= {
                 k: request.get(k) for k in ("profile", "width_m", "safety_m") if k in request
             }
         response["elapsed_ms"] = _ms(began)
         return response
+
+    @staticmethod
+    def _min_door_width(request: JSON, mode: str) -> float | None:
+        value = request.get("min_door_width_m")
+        if value is None:
+            return None
+        if mode != "official":
+            raise NavigationError(
+                "invalid_input", "min_door_width_m is for official routes; precision uses width_m"
+            )
+        width = _number(value, "min_door_width_m", 0.0)
+        if not 0.05 <= width <= 5.0:
+            raise NavigationError("invalid_input", "min_door_width_m must be between 0.05 and 5")
+        return width
+
+    def _width_check(
+        self,
+        entry: _Entry,
+        response: JSON,
+        min_width: float,
+        narrow: set[str],
+        plain_args: tuple[JSON, JSON, list[JSON], bool, list[str]],
+    ) -> None:
+        """Report what the door-width check covered; if it made the target unreachable, name the
+        too-narrow doors the route would need (from the same route without the width limit)."""
+        openings = entry.openings
+        doors = [
+            t["element_id"] for t in response.get("transitions", []) if t.get("kind") == "door"
+        ]
+        known = [float(openings[d]["width_m"]) for d in doors if openings[d].get("width_m")]
+        check: JSON = {
+            "required_m": round(min_width, 3),
+            "doors_on_route": [{"id": d, "width_m": openings[d].get("width_m")} for d in doors],
+            "narrowest_door_m": round(min(known), 3) if known else None,
+            "unknown_width_doors": [d for d in doors if openings[d].get("width_m") is None],
+            "doors_too_narrow_in_building": len(narrow),
+            "scope": "Door widths only; corridors, furniture and lifts are not width-checked.",
+        }
+        if not response.get("reachable"):
+            start, target, via, step_free, closed = plain_args
+            plain = self._official(entry, start, target, via, step_free, closed, {})
+            needed = [
+                {"id": t["element_id"], "width_m": openings[t["element_id"]].get("width_m")}
+                for t in plain.get("transitions", [])
+                if t.get("kind") == "door" and t["element_id"] in narrow
+            ]
+            if plain.get("reachable") and needed:
+                check["too_narrow_on_only_route"] = needed
+                summary = (
+                    f"No route with doors at least {min_width:.2f} m wide; the route would need "
+                    + ", ".join(f"a {float(n['width_m']):.2f} m door" for n in needed)
+                    + "."
+                )
+                response["unreachable_reason"] = summary
+                response["diagnosis"] = {
+                    "category": "too_narrow",
+                    "summary": summary,
+                    "elements": [{"id": n["id"]} for n in needed],
+                }
+        response["width_check"] = check
+
+    def _beside_asset(self, entry: _Entry, response: JSON, start: JSON, closed: list[str]) -> None:
+        """Opt-in: a route from equipment starts where a person can stand next to it, not at the
+        item's centre (the official start, often inside a machine's body): the reachable point just
+        outside its footprint with the shortest official walk to the first door. Costs unchanged."""
+        if response.get("status") != "ok":
+            return
+        asset = entry.assets[start["id"]]
+        space_id = (response.get("start") or {}).get("space_id")
+        first = next((seg for seg in response["path"] if seg.get("kind") != "connector"), None)
+        if not space_id or first is None or first.get("space_id") != space_id:
+            return
+        footprint = asset.get("footprint") or {}
+        size = [float(footprint.get(k) or 0.6) for k in ("width_m", "depth_m")]
+        radius = 0.5 * math.hypot(*size) + BESIDE_CLEARANCE_M
+        cx, cy = (float(v) for v in asset["position"][:2])
+        view = challenge._view(entry.bmap, closed)
+        best: tuple[float, list[float]] | None = None
+        # The leg ends at the door (on the wall): aim at the latest leg point inside the room.
+        for goal in first["points"][:0:-1]:
+            for k in range(BESIDE_CANDIDATES):
+                angle = 2 * math.pi * k / BESIDE_CANDIDATES
+                point = [cx + radius * math.cos(angle), cy + radius * math.sin(angle)]
+                _, length, clear = challenge._walk_points(view, space_id, point, goal)
+                if clear and (best is None or length < best[0]):
+                    best = (float(length), point)
+            if best is not None:
+                break
+        if best is None:
+            response["warnings"] = [
+                *response.get("warnings", []),
+                "beside_asset: no free standing point next to the item; the route starts at it.",
+            ]
+            return
+        self._exact_start(
+            entry, response, {"kind": "point", "space_id": space_id, "position": best[1]}, closed
+        )
+        response["start"] = {**response["start"], "kind": "asset", "id": start["id"]}
+        response["assumptions"] = [
+            *response.get("assumptions", []),
+            f"beside_asset: the person stands {BESIDE_CLEARANCE_M:.2f} m outside the item's "
+            "footprint (furniture is not an obstacle in official routes).",
+        ]
 
     def _exact_start(self, entry: _Entry, response: JSON, start: JSON, closed: list[str]) -> None:
         """Opt-in for live guidance: a point start keeps its exact position. The official graph has

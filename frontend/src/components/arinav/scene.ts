@@ -32,6 +32,8 @@ import { EYE_HEIGHT_M, angleDiff, wrap360 } from '../../lib/spatial';
 import type { CameraAction, NavMode, ObjectInfo, ViewSettings } from './view';
 import { MAX_VISIBLE_ASSETS, buildAssetIndex, visibleAssetIds, type AssetIndex } from './assetCulling';
 
+// Vertical view angle of the first-person camera (wider on portrait phones, see renderPov).
+const POV_FOV = 72;
 const SLAB = 0.15;
 /** Minimap: hidden at phone widths (CSS px), else a rounded card with a thin gray border. */
 const MINIMAP_MIN_WIDTH = 640;
@@ -215,7 +217,7 @@ export class BuildingScene {
   private readonly camera = new THREE.PerspectiveCamera(40, 1, 0.1, 4000);
   // POV (night task §5): an eye-height camera at the person; the avatar lives on layer 1, which
   // only the overview cameras see, so it never blocks the lens.
-  private readonly povCamera = new THREE.PerspectiveCamera(72, 1, 0.05, 600);
+  private readonly povCamera = new THREE.PerspectiveCamera(POV_FOV, 1, 0.05, 600);
   private readonly miniCamera = new THREE.OrthographicCamera(-15, 15, 12, -12, 0.1, 400);
   // The minimap is rendered to a texture and drawn as a rounded card with a thin gray border.
   private readonly miniTarget = new THREE.WebGLRenderTarget(1, 1, { samples: 4 });
@@ -252,7 +254,7 @@ export class BuildingScene {
   private readonly miniFrameScene = new THREE.Scene().add(
     new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.miniFrame),
   );
-  private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number } = {
+  private look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number; roll?: number } = {
     view: 'overview',
     yaw: null,
     yawOffset: 0,
@@ -260,6 +262,10 @@ export class BuildingScene {
   };
   private povYaw: number | null = null;
   private split = false;
+  /** Developer split view: the first-person view as a phone over the overview (CSS frame). */
+  private readonly phoneFrame = Object.assign(document.createElement('div'), { className: 'phone-mock' });
+  /** Where the first-person view was last drawn (CSS px in the canvas), for picking in it. */
+  private povRect: { x: number; y: number; w: number; h: number } | null = null;
   private readonly controls: OrbitControls;
   private readonly sun = new THREE.DirectionalLight('#ffffff', 1.5);
   private readonly root = new THREE.Group();
@@ -323,6 +329,10 @@ export class BuildingScene {
   private readonly routeGroup = new THREE.Group();
   // Guidance: the walker figure, camera follow and a skippable route preview.
   private readonly walkerGroup = new THREE.Group();
+  private readonly walkerHalo = new THREE.Group();
+  private readonly walkerLegs: THREE.Group[] = [];
+  private readonly walkerArms: THREE.Group[] = [];
+  private walkerPhase = 0;
   private walkerPose: WalkerPose | null = null;
   private readonly doneGroup = new THREE.Group();
   private doneDrawnAt = -1;
@@ -422,6 +432,9 @@ export class BuildingScene {
     this.labelRenderer = new CSS2DRenderer();
     this.labelRenderer.domElement.className = 'viewer__labels';
     container.appendChild(this.labelRenderer.domElement);
+    this.phoneFrame.hidden = true;
+    this.phoneFrame.setAttribute('aria-hidden', 'true');
+    container.appendChild(this.phoneFrame);
 
     this.scene.add(new THREE.HemisphereLight('#ffffff', '#d6dbea', 1.7));
     this.sun.position.set(40, 90, 30);
@@ -473,6 +486,7 @@ export class BuildingScene {
     this.disposed = true;
     this.renderer.setAnimationLoop(null);
     this.resizeObserver.disconnect();
+    this.phoneFrame.remove();
     this.controls.dispose();
     this.clear();
     this.clearRouteObjects();
@@ -578,7 +592,7 @@ export class BuildingScene {
   }
 
   /** POV camera state (per frame from useImmersive); overview keeps the orbit camera. */
-  setLook(look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number }) {
+  setLook(look: { view: 'overview' | 'pov'; yaw: number | null; yawOffset: number; pitch: number; roll?: number }) {
     const entering = look.view === 'pov' && this.look.view !== 'pov';
     this.look = look;
     if (entering) this.povYaw = null;
@@ -590,15 +604,19 @@ export class BuildingScene {
   /** Developer split view: POV left, whole building right (same pose). */
   setSplit(on: boolean) {
     this.split = on;
+    this.phoneFrame.hidden = !on;
     this.needsRender = true;
   }
 
   /** Place the simulated person; null hides it. Follow mode keeps it in view (smoothed). */
   setWalker(pose: WalkerPose | null) {
+    const before = this.walkerGroup.visible ? this.walkerGroup.position.clone() : null;
     this.walkerPose = pose;
     this.walkerGroup.visible = !!pose && !!this.floors.length;
     if (pose) {
       this.walkerGroup.position.copy(this.walkerPoint(pose));
+      const moved = before ? Math.hypot(before.x - this.walkerGroup.position.x, before.z - this.walkerGroup.position.z) : 0;
+      this.swingWalker(moved < 2 ? moved : 0); // a jump (ride, reroute) is not a step
       // Building frame is counter-clockwise from +x; toVec maps building +y to scene -z.
       this.walkerGroup.rotation.y = THREE.MathUtils.degToRad(pose.headingDeg);
     }
@@ -843,28 +861,91 @@ export class BuildingScene {
   }
 
   private buildWalker() {
-    // A simple, readable figure: body, head and a direction arrow; drawn on top of walls.
-    const mat = (color: string) =>
-      new THREE.MeshBasicMaterial({ color, depthTest: false, transparent: true, opacity: 0.95 });
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.34, 1.2, 20), mat('#fb7928'));
-    body.position.y = 0.6;
-    const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 20, 14), mat('#fb7928'));
-    head.position.y = 1.5;
-    const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.9, 16), mat('#002478'));
-    arrow.rotation.z = -Math.PI / 2; // tip along +x (the heading direction)
-    arrow.position.set(0.85, 0.15, 0);
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.55, 0.8, 32), mat('#fb7928'));
-    ring.rotation.x = -Math.PI / 2;
-    ring.position.y = 0.03;
-    for (const m of [body, head, arrow, ring]) {
-      m.layers.set(1);
-      m.renderOrder = 13;
-      m.raycast = () => {};
-      this.walkerGroup.add(m);
+    // A person at real scale (about 1.75 m, facing +x): hard hat, high-visibility vest with
+    // reflective bands, dark trousers; lit like the building. Legs and arms swing with the
+    // distance walked (setWalker). Hidden parts show as a soft navy silhouette through walls.
+    // Transparent pass (opacity 1) so the silhouette below is drawn first, against the building only.
+    const lit = (color: string) => new THREE.MeshLambertMaterial({ color, transparent: true });
+    const capsule = (r: number, len: number) => new THREE.CapsuleGeometry(r, len, 6, 14);
+    const figure = new THREE.Group();
+    const add = (parent: THREE.Object3D, mesh: THREE.Mesh, x: number, y: number, z: number) => {
+      mesh.position.set(x, y, z);
+      parent.add(mesh);
+      return mesh;
+    };
+    const limb = (y: number, z: number, r: number, len: number, color: string, pivot: THREE.Group[]) => {
+      const joint = new THREE.Group();
+      joint.position.set(0, y, z);
+      add(joint, new THREE.Mesh(capsule(r, len), lit(color)), 0, -(len / 2 + r), 0);
+      figure.add(joint);
+      pivot.push(joint);
+    };
+    limb(0.9, 0.095, 0.075, 0.72, '#26324d', this.walkerLegs); // trousers
+    limb(0.9, -0.095, 0.075, 0.72, '#26324d', this.walkerLegs);
+    const torso = add(figure, new THREE.Mesh(capsule(0.17, 0.36), lit('#fb7928')), 0, 1.2, 0);
+    torso.scale.set(0.72, 1, 1);
+    for (const y of [1.1, 1.3]) {
+      const band = add(figure, new THREE.Mesh(new THREE.CylinderGeometry(0.173, 0.173, 0.035, 20), lit('#e9edf5')), 0, y, 0);
+      band.scale.set(0.72, 1, 1);
     }
-    // Readable at building scale (rooms are tens of metres across).
-    this.walkerGroup.scale.setScalar(1.6);
+    limb(1.47, 0.235, 0.055, 0.46, '#fb7928', this.walkerArms); // vest sleeves
+    limb(1.47, -0.235, 0.055, 0.46, '#fb7928', this.walkerArms);
+    add(figure, new THREE.Mesh(new THREE.SphereGeometry(0.105, 18, 14), lit('#d6a888')), 0, 1.64, 0);
+    const hat = add(
+      figure,
+      new THREE.Mesh(new THREE.SphereGeometry(0.122, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), lit('#f7f8fb')),
+      0.01,
+      1.675,
+      0,
+    );
+    hat.scale.set(1.05, 0.9, 1);
+    add(figure, new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.014, 22), lit('#f7f8fb')), 0.035, 1.675, 0);
+    // Through walls: the same shapes, drawn only where the building is in front of them (before
+    // the figure itself, so the figure never shows its own silhouette).
+    const ghost = new THREE.MeshBasicMaterial({
+      color: '#002478',
+      transparent: true,
+      opacity: 0.32,
+      depthWrite: false,
+      depthFunc: THREE.GreaterDepth,
+    });
+    const meshes: THREE.Mesh[] = [];
+    figure.traverse((o) => o instanceof THREE.Mesh && meshes.push(o));
+    for (const m of meshes) {
+      const copy = new THREE.Mesh(m.geometry, ghost);
+      copy.renderOrder = 11;
+      m.add(copy);
+    }
+    // On the floor: position disc and a view beam, always visible and grown with distance.
+    const floor = (geometry: THREE.BufferGeometry, color: string, opacity: number) => {
+      const m = new THREE.Mesh(
+        geometry,
+        new THREE.MeshBasicMaterial({ color, transparent: true, opacity, depthTest: false, depthWrite: false }),
+      );
+      m.rotation.x = -Math.PI / 2;
+      m.renderOrder = 12;
+      this.walkerHalo.add(m);
+      return m;
+    };
+    floor(new THREE.CircleGeometry(2.4, 40, -Math.PI / 6, Math.PI / 3), '#2f6bff', 0.18).position.y = 0.03;
+    floor(new THREE.CircleGeometry(0.5, 40), '#2f6bff', 0.28).position.y = 0.035;
+    floor(new THREE.RingGeometry(0.5, 0.58, 48), '#ffffff', 0.95).position.y = 0.04;
+    floor(new THREE.RingGeometry(0.58, 0.64, 48), '#2f6bff', 0.9).position.y = 0.04;
+    this.walkerGroup.add(this.walkerHalo, figure);
+    this.walkerGroup.traverse((o) => {
+      o.layers.set(1);
+      o.raycast = () => {};
+      if (o instanceof THREE.Mesh && o.renderOrder === 0) o.renderOrder = 13;
+    });
     this.walkerGroup.visible = false;
+  }
+
+  /** Legs and arms swing with the distance walked; standing still straightens them. */
+  private swingWalker(moved: number) {
+    this.walkerPhase = moved > 1e-4 ? this.walkerPhase + (moved / 0.75) * Math.PI : 0;
+    const swing = moved > 1e-4 ? Math.sin(this.walkerPhase) * 0.45 : 0;
+    this.walkerLegs.forEach((leg, i) => (leg.rotation.z = i ? -swing : swing));
+    this.walkerArms.forEach((arm, i) => (arm.rotation.z = (i ? swing : -swing) * 0.8));
   }
 
   private stepGuidanceCamera(now: number) {
@@ -884,6 +965,14 @@ export class BuildingScene {
       this.controls.target.lerp(pose.target, 0.35);
       this.needsRender = true;
       return;
+    }
+    if (this.walkerGroup.visible) {
+      // The floor disc stays readable from far away; the figure itself keeps its real size.
+      const grow = THREE.MathUtils.clamp(this.camera.position.distanceTo(this.walkerGroup.position) / 30, 1, 4);
+      if (Math.abs(this.walkerHalo.scale.x - grow) > 0.05) {
+        this.walkerHalo.scale.setScalar(grow);
+        this.needsRender = true;
+      }
     }
     if (this.follow && this.walkerPose && !this.fly) {
       const p = this.walkerPoint(this.walkerPose);
@@ -1844,20 +1933,36 @@ export class BuildingScene {
     const dir = new THREE.Vector3(Math.cos(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.sin(yaw) * Math.cos(pitch));
     this.povCamera.position.copy(eye);
     this.povCamera.lookAt(eye.clone().add(dir));
+    // Phone tilt (device orientation): roll about the view axis after aiming.
+    if (this.look.roll) this.povCamera.rotateZ(-THREE.MathUtils.degToRad(this.look.roll));
     const r = this.renderer;
-    // Split: both halves share the area right of the docked panel (nothing hides behind it).
+    // Split (developer, desktop): the whole building from the orbit camera fills the view right of
+    // the docked panel; the first-person view is an embedded phone (same pose, route and heading).
     const x0 = this.split ? Math.min(this.insetLeft, w / 2) : 0;
-    const povW = this.split ? Math.floor((w - x0) / 2) : w;
-    this.povCamera.aspect = povW / h;
+    const phone = this.split ? this.phoneRect(x0, w, h) : null;
+    const povW = phone ? phone.w : w;
+    const povH = phone ? phone.h : h;
+    this.povRect = phone ?? { x: 0, y: 0, w, h };
+    this.povCamera.aspect = povW / povH;
+    // A tall portrait phone would see a narrow slice at a fixed vertical angle (looks zoomed in):
+    // keep about 70 deg across, within a 100 deg vertical angle.
+    const across = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(70) / 2) / this.povCamera.aspect);
+    this.povCamera.fov = Math.min(100, Math.max(POV_FOV, THREE.MathUtils.radToDeg(across)));
     this.povCamera.updateProjectionMatrix();
     r.setScissorTest(true);
-    if (x0 > 0) {
-      r.setViewport(0, 0, x0, h);
-      r.setScissor(0, 0, x0, h);
+    if (phone) {
+      this.resizeCameraOnly();
+      r.setViewport(0, 0, w, h);
+      r.setScissor(0, 0, w, h);
+      r.render(this.scene, this.camera);
+      // GL counts from the bottom; the frame (CSS) from the top.
+      r.setViewport(phone.x, h - phone.y - phone.h, phone.w, phone.h);
+      r.setScissor(phone.x, h - phone.y - phone.h, phone.w, phone.h);
       r.clear();
+    } else {
+      r.setViewport(0, 0, w, h);
+      r.setScissor(0, 0, w, h);
     }
-    r.setViewport(x0, 0, povW, h);
-    r.setScissor(x0, 0, povW, h);
     // HQ walls are squashed to the overview wall height (about 1 m in an 8 m hall storey);
     // at eye height they must be full storey height, or one looks over every wall.
     const squashed = this.floors
@@ -1872,18 +1977,8 @@ export class BuildingScene {
       fv.walls.scale.y = scale;
       fv.walls.position.y = y;
     }
-    if (this.split) {
-      // Right half: the whole building from the orbit camera, with the person and the route.
-      const half = w - x0 - povW;
-      const aspect = this.camera.aspect;
-      this.camera.aspect = half / h;
-      this.camera.clearViewOffset();
-      this.camera.updateProjectionMatrix();
-      r.setViewport(x0 + povW, 0, half, h);
-      r.setScissor(x0 + povW, 0, half, h);
-      r.render(this.scene, this.camera);
-      this.camera.aspect = aspect;
-      this.resizeCameraOnly();
+    if (phone) {
+      // the overview was drawn first, under the phone
     } else if (w > MINIMAP_MIN_WIDTH) {
       // Minimap (top-down, north up, centred on the person) in the free area's top-left corner;
       // phones skip it, the first-person view needs the whole screen there.
@@ -1914,6 +2009,24 @@ export class BuildingScene {
     }
     r.setScissorTest(false);
     r.setViewport(0, 0, w, h);
+  }
+
+  /** The embedded phone (CSS px from the container's top-left) and its frame and HUD position. */
+  private phoneRect(x0: number, w: number, h: number) {
+    const width = Math.round(Math.min(300, Math.max(200, (w - x0) * 0.24)));
+    const height = Math.round(Math.min(width * 2.05, h - 210));
+    const rect = { x: Math.round(x0 + 28), y: Math.round(Math.max(96, (h - height) / 2 - 20)), w: width, h: height };
+    const style = this.phoneFrame.style;
+    const key = `${rect.x},${rect.y},${rect.w},${rect.h}`;
+    if (this.phoneFrame.dataset.rect !== key) {
+      this.phoneFrame.dataset.rect = key;
+      Object.assign(style, { left: `${rect.x}px`, top: `${rect.y}px`, width: `${rect.w}px`, height: `${rect.h}px` });
+      const app = this.container.closest<HTMLElement>('.app') ?? this.container;
+      app.style.setProperty('--phone-cx', `${rect.x + rect.w / 2}px`);
+      app.style.setProperty('--phone-bottom', `${h - rect.y - rect.h}px`);
+      app.style.setProperty('--phone-w', `${rect.w}px`);
+    }
+    return rect;
   }
 
   private resizeCameraOnly() {
@@ -1993,13 +2106,22 @@ export class BuildingScene {
 
   private pickHit(e: PointerEvent): { obj: THREE.Object3D; point: THREE.Vector3 } | null {
     const rect = this.renderer.domElement.getBoundingClientRect();
-    const ndc = new THREE.Vector2(
-      ((e.clientX - rect.left) / rect.width) * 2 - 1,
-      -((e.clientY - rect.top) / rect.height) * 2 + 1,
-    );
-    this.raycaster.setFromCamera(ndc, this.camera);
+    const [px, py] = [e.clientX - rect.left, e.clientY - rect.top];
+    const pov = this.look.view === 'pov' && this.walkerPose ? this.povRect : null;
+    const inPov = !!pov && px >= pov.x && px <= pov.x + pov.w && py >= pov.y && py <= pov.y + pov.h;
+    if (inPov && pov) {
+      // First person: through the eye camera, and nothing behind a wall (walls are not pickable
+      // themselves, so the nearest wall hit limits the pick distance).
+      const ndc = new THREE.Vector2(((px - pov.x) / pov.w) * 2 - 1, -((py - pov.y) / pov.h) * 2 + 1);
+      this.raycaster.setFromCamera(ndc, this.povCamera);
+    } else {
+      const ndc = new THREE.Vector2((px / rect.width) * 2 - 1, -(py / rect.height) * 2 + 1);
+      this.raycaster.setFromCamera(ndc, this.camera);
+    }
+    const wallAt = inPov ? this.nearestWallHit() : Infinity;
     const hits = this.raycaster.intersectObjects([this.root, this.connectors], true);
     for (const hit of hits) {
+      if (hit.distance > wallAt + 0.05) break;
       let visible = true;
       for (let o: THREE.Object3D | null = hit.object; o; o = o.parent) visible &&= o.visible;
       if (!visible || isGhost(hit.object)) continue;
@@ -2009,6 +2131,29 @@ export class BuildingScene {
       }
     }
     return null;
+  }
+
+  /** Distance along the current ray to the first wall at full storey height (first person). */
+  private nearestWallHit(): number {
+    const found: THREE.Intersection[] = [];
+    for (const fv of this.floors) {
+      if (!fv.walls.visible) continue;
+      const [scale, y] = [fv.walls.scale.y, fv.walls.position.y];
+      if (fv.hq) {
+        fv.walls.scale.y = 1;
+        fv.walls.position.y = 0;
+      }
+      fv.walls.updateMatrixWorld(true);
+      fv.walls.traverse((o) => {
+        if (o instanceof THREE.Mesh) THREE.Mesh.prototype.raycast.call(o, this.raycaster, found);
+      });
+      if (fv.hq) {
+        fv.walls.scale.y = scale;
+        fv.walls.position.y = y;
+        fv.walls.updateMatrixWorld(true);
+      }
+    }
+    return found.reduce((best, h) => Math.min(best, h.distance), Infinity);
   }
 
   private handlePointerDown = (e: PointerEvent) => {

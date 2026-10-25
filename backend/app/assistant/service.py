@@ -119,6 +119,13 @@ obstacle-checked path for a given width and safety margin (wheelchair, trolley, 
 machines); only for some buildings. If precision fails or is unsupported, say why simply and offer
 the official route, which is not obstacle-checked. Never call a route collision-free unless the
 precision result says it is checked.
+Width ("I'm 1 m wide", "my wheelchair is 0.8 m", "with a 10 cm margin"): save it with
+update_session (width_m, safety_m for a stated margin), then plan_route. Official routes then avoid
+every door narrower than width + 2 x margin (door_width_check in the result): say the narrowest
+door on the route, or, when the result says too narrow, that no route has wide enough doors and
+which door is too narrow. Doors of unknown width are not guaranteed. Only doors are checked:
+corridors, furniture and lifts are not, unless the precision router checked the route. Never say
+width is not supported.
 
 Changes: "what if X closes / what changes" -> preview_closure (changes nothing). Real changes
 (close/reopen) only via propose_change, then ask the user to press Confirm; never say a change
@@ -149,6 +156,10 @@ def default_state() -> JSON:
         "profile": "stationary",
         "width_m": 0.6,
         "safety_m": 0.05,
+        # True once the user stated their width ("I'm 1 m wide", wheelchair 0.8 m): official
+        # routes then avoid doors narrower than width + 2 x safety margin (if one was stated).
+        "width_stated": False,
+        "safety_stated": False,
         "last_route": None,
         # What the user is looking at on the map (not a start or destination).
         "inspected": None,
@@ -391,6 +402,8 @@ class Assistant:
     def snapshot(self, session: Session) -> JSON:
         state = session.state
         out: JSON = {k: state[k] for k in ("mode", "step_free", "profile", "width_m", "safety_m")}
+        out["width_stated"] = bool(state.get("width_stated"))
+        out["door_width_checked_m"] = self.door_width(state)
         out["building"] = None
         if state["building_id"]:
             data = self._data(session)
@@ -439,7 +452,15 @@ class Assistant:
         if isinstance(building_id, str) and building_id != state["building_id"]:
             self.navigation.state(building_id)  # raises for unknown buildings
             session.state = default_state() | {
-                k: state[k] for k in ("step_free", "profile", "width_m", "safety_m")
+                k: state[k]
+                for k in (
+                    "step_free",
+                    "profile",
+                    "width_m",
+                    "safety_m",
+                    "width_stated",
+                    "safety_stated",
+                )
             }
             session.state["building_id"] = building_id
             session.history.clear()  # context belongs to the previous building
@@ -514,10 +535,21 @@ class Assistant:
                         "invalid_input", f"{key} must be between {low} and {high}"
                     )
                 state[key] = float(value)
+                state[key.replace("_m", "_stated")] = True
 
     @staticmethod
-    def _settings(state: JSON) -> JSON:
-        return {k: state[k] for k in ("mode", "step_free", "profile", "width_m", "safety_m")}
+    def door_width(state: JSON) -> float | None:
+        """The clear door width official routes need: the stated width plus a stated safety margin
+        on both sides; None while the user has not stated a width (doors are then not checked)."""
+        if not state.get("width_stated"):
+            return None
+        margin = state["safety_m"] if state.get("safety_stated") else 0.0
+        return round(float(state["width_m"]) + 2 * float(margin), 3)
+
+    @classmethod
+    def _settings(cls, state: JSON) -> JSON:
+        out = {k: state[k] for k in ("mode", "step_free", "profile", "width_m", "safety_m")}
+        return out | {"door_width_m": cls.door_width(state)}
 
     # ---------- tools ----------
     def tool_find_places(self, session: Session, args: JSON, ui: JSON) -> JSON:
@@ -565,7 +597,7 @@ class Assistant:
             raise NavigationError(
                 "invalid_input", "Give a category such as exit or room_type:toilet"
             )
-        precision = state["mode"] == "precision"
+        precision = state["mode"] == "precision" or self.door_width(state) is not None
         results = self.navigation.nearest(
             state["building_id"],
             state["start"],
@@ -596,7 +628,11 @@ class Assistant:
             "closest. Any other result is farther.",
         }
         if precision:
-            out["checked_for"] = {k: state[k] for k in ("width_m", "safety_m", "profile")}
+            out["checked_for"] = (
+                {k: state[k] for k in ("width_m", "safety_m", "profile")}
+                if state["mode"] == "precision"
+                else {"door_width_m": self.door_width(state)}
+            )
             if excluded:
                 out["not_passable_at_this_width"] = excluded
         if not results:
@@ -730,6 +766,15 @@ class Assistant:
             "assumed_closed": assume or None,
             "step_free": state["step_free"],
         }
+        if result.get("width_check"):
+            check = result["width_check"]
+            summary["door_width_check"] = {
+                "required_m": check["required_m"],
+                "narrowest_door_on_route_m": check["narrowest_door_m"],
+                "doors_with_unknown_width": len(check["unknown_width_doors"]),
+                "too_narrow_doors_on_the_only_route": check.get("too_narrow_on_only_route"),
+                "scope": check["scope"],
+            }
         if state["step_free"]:
             summary["constraint"] = STEP_FREE_NOTE
         if moved_from:
@@ -767,6 +812,11 @@ class Assistant:
                 "safety_m": state["safety_m"],
                 "allow_schematic_vertical": True,
             }
+        else:
+            if Assistant.door_width(state) is not None:
+                request["min_door_width_m"] = Assistant.door_width(state)
+            if start.get("kind") == "asset":
+                request["beside_asset"] = True  # stand next to equipment, not in its body
         return request
 
     def _passable(self, state: JSON, target: JSON, step_free: bool) -> bool:

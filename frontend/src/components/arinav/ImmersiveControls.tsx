@@ -16,7 +16,7 @@ const ORIENTATION_TEXT: Record<string, string> = {
   active: 'Rotation on',
 };
 
-/** How long the phone's opened view switch waits for a choice before folding again. */
+/** How long the opened view switch waits for a choice before folding again. */
 const SWITCH_OPEN_MS = 4000;
 
 function useMedia(query: string): boolean {
@@ -41,15 +41,29 @@ export function ImmersiveBar(props: {
   const { immersive: im, features } = props;
   const pov = im.view === 'pov';
   const manual = im.driver === 'manual';
-  // Phones fold the view switch to the current view's icon; a tap unfolds it to choose.
-  const phone = useMedia('(max-width: 640px)');
+  // The view switch is folded to the current view's icon; hover (mouse), a click or a tap unfolds
+  // it to choose; a choice, Escape or a click elsewhere folds it again.
   const touch = useMedia('(pointer: coarse)');
+  const hover = useMedia('(hover: hover)');
   const [open, setOpen] = useState(false);
-  const folded = phone && !open;
+  const folded = !open;
+  const switchRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
     const timer = window.setTimeout(() => setOpen(false), SWITCH_OPEN_MS);
-    return () => window.clearTimeout(timer);
+    const outside = (e: PointerEvent) => {
+      if (!switchRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const escape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('pointerdown', outside);
+    window.addEventListener('keydown', escape);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('pointerdown', outside);
+      window.removeEventListener('keydown', escape);
+    };
   }, [open]);
   const choose = (view: 'overview' | 'pov') => {
     if (folded) return setOpen(true);
@@ -71,15 +85,19 @@ export function ImmersiveBar(props: {
     <div className="immersive-bar card" role="toolbar" aria-label="Navigation view">
       {features.pov && (
         <div
+          ref={switchRef}
           className={`segmented segmented--small view-switch${folded ? ' view-switch--folded' : ''}`}
           role="group"
           aria-label="Camera"
+          onMouseEnter={hover ? () => setOpen(true) : undefined}
+          onMouseLeave={hover ? () => setOpen(false) : undefined}
         >
           <button
             className="segmented__item view-switch__item"
             aria-pressed={!pov}
             aria-label="Overview"
-            title={folded ? 'Change view' : 'Overview'}
+            title={folded ? 'View: Overview (click to change)' : 'Overview'}
+            aria-expanded={!pov ? open : undefined}
             tabIndex={folded && pov ? -1 : undefined}
             onClick={() => choose('overview')}
           >
@@ -90,7 +108,8 @@ export function ImmersiveBar(props: {
             className="segmented__item view-switch__item"
             aria-pressed={pov}
             aria-label="First person"
-            title={folded ? 'Change view' : 'First person'}
+            title={folded ? 'View: First person (click to change)' : 'First person'}
+            aria-expanded={pov ? open : undefined}
             tabIndex={folded && !pov ? -1 : undefined}
             onClick={() => choose('pov')}
           >
@@ -228,6 +247,7 @@ export function LookLayer(props: { immersive: Immersive }) {
   const { immersive: im } = props;
   const ref = useRef<HTMLDivElement>(null);
   const last = useRef<[number, number] | null>(null);
+  const start = useRef<[number, number] | null>(null);
   const [locked, setLocked] = useState(false);
   useEffect(() => {
     // Only while this layer really holds the pointer lock (null === null must not count).
@@ -245,7 +265,23 @@ export function LookLayer(props: { immersive: Immersive }) {
   if (im.view !== 'pov') return null;
   const down = (e: ReactPointerEvent) => {
     last.current = [e.clientX, e.clientY];
+    start.current = [e.clientX, e.clientY];
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+  };
+  // A click or tap (no drag) goes through to the 3D view: things in sight open their details.
+  const up = (e: ReactPointerEvent) => {
+    last.current = null;
+    const s = start.current;
+    start.current = null;
+    const el = ref.current;
+    if (!s || !el || locked || Math.hypot(e.clientX - s[0], e.clientY - s[1]) > 6) return;
+    el.style.pointerEvents = 'none';
+    const under = document.elementFromPoint(e.clientX, e.clientY);
+    el.style.pointerEvents = '';
+    if (!(under instanceof HTMLCanvasElement)) return;
+    const init = { clientX: e.clientX, clientY: e.clientY, bubbles: true, pointerType: e.pointerType, pointerId: e.pointerId };
+    under.dispatchEvent(new PointerEvent('pointerdown', init));
+    under.dispatchEvent(new PointerEvent('pointerup', init));
   };
   const moveLook = (e: ReactPointerEvent) => {
     if (!last.current || locked) return;
@@ -258,7 +294,7 @@ export function LookLayer(props: { immersive: Immersive }) {
       className="look-layer"
       onPointerDown={down}
       onPointerMove={moveLook}
-      onPointerUp={() => (last.current = null)}
+      onPointerUp={up}
       onPointerCancel={() => (last.current = null)}
       onDoubleClick={() => void ref.current?.requestPointerLock?.()}
       title="Drag to look around · double-click to lock the mouse (Esc to release)"
